@@ -1,0 +1,2726 @@
+
+
+<!doctype html>
+<html lang="vi" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="MyBatis biên dịch sẵn: mapper và SQL được dịch thành Java thuần ngay lúc build — không proxy, không reflection, không OGNL lúc chạy.">
+      
+      
+        <meta name="author" content="LarkBatis contributors">
+      
+      
+        <link rel="canonical" href="https://larkbatis.github.io/latest/vi/wiki/performance/">
+      
+      
+        <link rel="prev" href="../design-rules/">
+      
+      
+        <link rel="next" href="../../features/">
+      
+      
+        
+          <link rel="alternate" href="../../../wiki/performance/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="vi">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Hiệu năng - LarkBatis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#performance" class="md-skip">
+          Bỏ qua
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You are reading the documentation for an older version.
+  <a href="../../../..">
+    <strong>Go to the latest version.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Đầu trang">
+    <a href="../../" title="LarkBatis" class="md-header__button md-logo" aria-label="LarkBatis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LarkBatis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Hiệu năng
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Follow system theme"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Follow system theme" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Chọn ngôn ngữ">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../wiki/performance/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="vi" class="md-select__link">
+              Tiếng Việt
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Tìm kiếm" placeholder="Tìm kiếm" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Tìm kiếm">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Chia sẻ" aria-label="Chia sẻ" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Xoá" aria-label="Xoá" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/larkbatis/larkbatis" title="Xem mã nguồn" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    larkbatis/larkbatis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Trang chủ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Bắt đầu
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../usage/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Sử dụng
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Wiki
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../features/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tính năng
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Thanh điều hướng" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="LarkBatis" class="md-nav__button md-logo" aria-label="LarkBatis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    LarkBatis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/larkbatis/larkbatis" title="Xem mã nguồn" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    larkbatis/larkbatis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trang chủ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bắt đầu
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bắt đầu
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Khởi động nhanh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/spring-boot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spring Boot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/build-plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/jpms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../usage/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sử dụng
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sử dụng
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/mappers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interface mapper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/xml-mappers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapper XML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/dynamic-sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL động
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/foreach-and-batches/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    foreach và batch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/result-maps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Result map và join
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/generated-keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Khoá tự sinh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stream kết quả
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/transactions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/raw-sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL thô và SqlFragment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kiểu dữ liệu và handler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/spring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tích hợp Spring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Xử lý sự cố
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wiki
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Wiki
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kiến trúc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shape-vs-value/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape và value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generated-code/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code sinh ra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vòng đời một lời gọi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lằn ranh thiết kế
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hiệu năng
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hiệu năng
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Mục lục">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Mục lục
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#read-off-the-source-certain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read off the source: certain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measured-on-the-codegen-poc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured on the codegen POC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measured on the codegen POC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-things-the-measurements-contradicted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three things the measurements contradicted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-has-to-be-reported-alongside-any-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What has to be reported alongside any number
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measured-on-larkbatis-itself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured on LarkBatis itself
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measured on LarkBatis itself">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reading-rows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading rows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-single-row-lookup-with-a-real-round-trip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A single-row lookup, with a real round trip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dynamic SQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#startup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Startup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#megamorphic-behaviour-the-prediction-was-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Megamorphic behaviour: the prediction was wrong
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jdk-version-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JDK version matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methodology-and-why-each-choice-was-forced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methodology, and why each choice was forced
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-an-argument-not-a-measurement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still an argument, not a measurement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-benefit-that-gets-talked-about-least" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The benefit that gets talked about least
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../features/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tính năng
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tính năng
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/mybatis-differences/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Khác biệt với MyBatis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/runtime-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cấu hình
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lỗi và chẩn đoán
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chuyển từ MyBatis sang
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lộ trình
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Mục lục">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Mục lục
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#read-off-the-source-certain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read off the source: certain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measured-on-the-codegen-poc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured on the codegen POC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measured on the codegen POC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-things-the-measurements-contradicted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three things the measurements contradicted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-has-to-be-reported-alongside-any-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What has to be reported alongside any number
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measured-on-larkbatis-itself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured on LarkBatis itself
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measured on LarkBatis itself">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reading-rows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading rows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-single-row-lookup-with-a-real-round-trip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A single-row lookup, with a real round trip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dynamic SQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#startup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Startup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#megamorphic-behaviour-the-prediction-was-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Megamorphic behaviour: the prediction was wrong
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jdk-version-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JDK version matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methodology-and-why-each-choice-was-forced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methodology, and why each choice was forced
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-an-argument-not-a-measurement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still an argument, not a measurement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-benefit-that-gets-talked-about-least" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The benefit that gets talked about least
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/larkbatis/larkbatis.github.io/edit/main/docs/wiki/performance.md" title="Chỉnh sửa" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h1>
+<p>Two kinds of number, kept separate: what can be read off the source and is therefore
+certain, and what had to be measured. Plus a third section for what is still
+only an argument.</p>
+<h2 id="read-off-the-source-certain">Read off the source: certain<a class="headerlink" href="#read-off-the-source-certain" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>MyBatis</th>
+<th>LarkBatis</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lines on the runtime classpath</td>
+<td>40,017</td>
+<td>~1,500</td>
+<td>Direct count of <code>src/main/java/org/apache/ibatis</code> (393 files). The LarkBatis figure is a design target</td>
+</tr>
+<tr>
+<td>Runtime dependencies</td>
+<td>ognl 3.4.11, javassist 3.32</td>
+<td>none beyond JDBC</td>
+<td>Both are <code>compile</code> + <code>optional</code> in MyBatis's POM: optional, but needed the moment you use dynamic SQL or lazy loading</td>
+</tr>
+<tr>
+<td>Reflection call sites on the hot query path</td>
+<td>4 groups</td>
+<td>0</td>
+<td><code>createCacheKey</code>, <code>getBoundSql</code> (OGNL), <code>setParameters</code>, <code>handleResultSets</code></td>
+</tr>
+<tr>
+<td>Reflective operations per row</td>
+<td>1 × column count</td>
+<td>0</td>
+<td><code>applyAutomaticMappings</code> calls <code>metaObject.setValue(property, value)</code> per column, through <code>BeanWrapper</code> → <code>MethodInvoker.invoke</code></td>
+</tr>
+<tr>
+<td>Hand-written <code>META-INF/native-image</code> files</td>
+<td>several</td>
+<td>0</td>
+<td>mybatis-3 ships no reachability metadata; its GraalVM issue has been open since 2019</td>
+</tr>
+<tr>
+<td>Wrong parameter type caught at</td>
+<td>runtime</td>
+<td>compile time</td>
+<td>The mapper is an ordinary interface with a real implementation, so javac checks it</td>
+</tr>
+<tr>
+<td>Auditing raw SQL insertion</td>
+<td>read every mapper</td>
+<td>one <code>grep</code></td>
+<td>All arbitrary text, <code>${}</code> and the escape hatch alike, goes through <code>SqlFragment.unsafeRawSql</code>. MyBatis has no equivalent convergence point</td>
+</tr>
+</tbody>
+</table>
+<h2 id="measured-on-the-codegen-poc">Measured on the codegen POC<a class="headerlink" href="#measured-on-the-codegen-poc" title="Permanent link">&para;</a></h2>
+<p>These come from a build-time codegen proof of concept for MyBatis, not from an estimate.
+Best of three, <code>findAll</code> over 10,000 rows.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Stock MyBatis</th>
+<th>Full AOT</th>
+<th>Δ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Allocation per row</td>
+<td>≈ 1.0 KB</td>
+<td>129 B</td>
+<td><strong>−87%</strong></td>
+</tr>
+<tr>
+<td>Latency per row</td>
+<td>0.30 µs</td>
+<td>0.08 µs</td>
+<td><strong>−73%</strong></td>
+</tr>
+<tr>
+<td>10k-row query · time</td>
+<td>≈ 3.0 ms</td>
+<td>0.8 ms</td>
+<td><strong>−72%</strong></td>
+</tr>
+<tr>
+<td>10k-row query · allocation</td>
+<td>≈ 10 MB</td>
+<td>1.23 MB</td>
+<td><strong>−88%</strong></td>
+</tr>
+<tr>
+<td>Dynamic search · time</td>
+<td>15–20 µs</td>
+<td>9.5 µs</td>
+<td><strong>−45%</strong></td>
+</tr>
+<tr>
+<td>Dynamic search · allocation</td>
+<td>28 KB</td>
+<td>12 KB</td>
+<td><strong>−57%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The 129 B per row that remains is very nearly all payload: the bean itself plus the
+<code>String</code>s the driver returns. That is a floor, not a first step.</p>
+<h3 id="three-things-the-measurements-contradicted">Three things the measurements contradicted<a class="headerlink" href="#three-things-the-measurements-contradicted" title="Permanent link">&para;</a></h3>
+<p><strong>1 · The row-read path wins by more than the dynamic-SQL path</strong> (−73%/−87% versus
+−45%/−57%). The design's own expectations were <em>most</em> cautious about the row-read path,
+on the theory that the JIT would inline <code>MethodInvoker</code> well. That caution was wrong.</p>
+<p><strong>2 · Escape analysis does not clean up the per-column garbage.</strong> If it did, stock would
+not allocate ~1.0 KB per row. The <code>setValue</code> → <code>BeanWrapper</code> → <code>Invoker</code> chain is too deep
+for the JIT to scalar-replace the <code>PropertyTokenizer</code> and the <code>Object[]</code>.</p>
+<p><strong>3 · The benefit is proportional to rows returned, and that has to be said out loud.</strong>
+3.0 ms → 0.8 ms over 10,000 rows is real. On a <code>findById</code> returning one row, the saving is
+about 0.2 µs beside a round trip of roughly 1 ms, which is noise.</p>
+<div class="admonition quote">
+<p class="admonition-title">The honest sentence</p>
+<p><strong>LarkBatis is an investment for report queries, exports, batches and list screens.
+It changes almost nothing for single-record lookups.</strong></p>
+<p>A migration proposal that omits this loses credibility the first time somebody runs
+their own benchmark.</p>
+</div>
+<h3 id="what-has-to-be-reported-alongside-any-number">What has to be reported alongside any number<a class="headerlink" href="#what-has-to-be-reported-alongside-any-number" title="Permanent link">&para;</a></h3>
+<p>Four things, without which a benchmark is not usable as evidence:</p>
+<ul>
+<li><strong>How many distinct bean types</strong> the run exercised. With one, the call sites are
+  monomorphic and the JIT is in its most favourable state <em>for stock</em>, meaning the real
+  production gap would be larger, not smaller.</li>
+<li><strong>Columns per row</strong>, because both allocation and latency scale with it.</li>
+<li><strong>JMH or a hand-rolled loop</strong>, and how allocation was captured (JFR, <code>ThreadMXBean</code>,
+  <code>-prof gc</code>).</li>
+<li><strong>The JDK version.</strong> Since JDK 18, <code>Method.invoke</code> is much faster thanks to JEP 416, so
+  the same suite on 17 and on 21 tells two different stories.</li>
+</ul>
+<h2 id="measured-on-larkbatis-itself">Measured on LarkBatis itself<a class="headerlink" href="#measured-on-larkbatis-itself" title="Permanent link">&para;</a></h2>
+<p><code>larkbatis-benchmarks</code> re-runs the comparison against the real implementation rather than
+the POC. Everything below is JMH 1.37, 2 forks × 5 warmup × 5 measurement iterations of
+one second, allocation from <code>-prof gc</code> (<code>gc.alloc.rate.norm</code>), against MyBatis 3.5.19 and
+H2 2.3.232 on an Apple M5 Pro.</p>
+<div class="admonition info">
+<p class="admonition-title">All figures are Temurin <strong>21</strong></p>
+<p>MyBatis's reflective path got measurably faster after JEP 416. Quoting the JDK 17
+numbers without saying so would overstate the case by about a fifth. See
+<a href="#jdk-version-matters">JDK version matters</a> below.</p>
+</div>
+<h3 id="reading-rows">Reading rows<a class="headerlink" href="#reading-rows" title="Permanent link">&para;</a></h3>
+<p><code>findAll()</code> over the whole table. <code>NarrowRow</code> is 4 columns, <code>WideRow</code> is 12.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Rows</th>
+<th style="text-align: right;">Columns</th>
+<th style="text-align: right;">MyBatis</th>
+<th style="text-align: right;">LarkBatis</th>
+<th style="text-align: right;">Time</th>
+<th style="text-align: right;">Allocation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1.48 µs</td>
+<td style="text-align: right;">0.36 µs</td>
+<td style="text-align: right;"><strong>−75%</strong></td>
+<td style="text-align: right;">6.6 KB → 1.8 KB (−73%)</td>
+</tr>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3.29 µs</td>
+<td style="text-align: right;">0.43 µs</td>
+<td style="text-align: right;"><strong>−87%</strong></td>
+<td style="text-align: right;">10.7 KB → 1.9 KB (−83%)</td>
+</tr>
+<tr>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">17.1 µs</td>
+<td style="text-align: right;">3.23 µs</td>
+<td style="text-align: right;"><strong>−81%</strong></td>
+<td style="text-align: right;">67.6 KB → 10.2 KB (−85%)</td>
+</tr>
+<tr>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">39.4 µs</td>
+<td style="text-align: right;">5.78 µs</td>
+<td style="text-align: right;"><strong>−85%</strong></td>
+<td style="text-align: right;">107 KB → 19.1 KB (−82%)</td>
+</tr>
+<tr>
+<td style="text-align: right;">10,000</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1.53 ms</td>
+<td style="text-align: right;">0.29 ms</td>
+<td style="text-align: right;"><strong>−81%</strong></td>
+<td style="text-align: right;">6.77 MB → 1.05 MB (−84%)</td>
+</tr>
+<tr>
+<td style="text-align: right;">10,000</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3.38 ms</td>
+<td style="text-align: right;">0.54 ms</td>
+<td style="text-align: right;"><strong>−84%</strong></td>
+<td style="text-align: right;">10.2 MB → 1.88 MB (−82%)</td>
+</tr>
+</tbody>
+</table>
+<p>Per row at 10,000 rows and 12 columns: <strong>338 ns → 54 ns</strong>, and <strong>1,018 B → 188 B</strong>.</p>
+<p>The POC's numbers hold up. They were, if anything, slightly conservative: −72%/−88% there,
+−84%/−82% here with a real JDBC driver in <em>both</em> columns and on a JDK that favours MyBatis.</p>
+<p>The saving scales with <strong>columns</strong>, not only rows. Going from 4 to 12 columns roughly
+doubles MyBatis's per-row cost and barely moves LarkBatis's. MyBatis pays a
+<code>PropertyTokenizer</code>, an <code>Object[]</code>, a map lookup and a reflective call per column, while
+the generated reader pays a <code>getX</code> and a <code>putfield</code>.</p>
+<h3 id="a-single-row-lookup-with-a-real-round-trip">A single-row lookup, with a real round trip<a class="headerlink" href="#a-single-row-lookup-with-a-real-round-trip" title="Permanent link">&para;</a></h3>
+<p><code>findById(7)</code>: one row, four columns.</p>
+<table>
+<thead>
+<tr>
+<th>Transport</th>
+<th style="text-align: right;">MyBatis</th>
+<th style="text-align: right;">LarkBatis</th>
+<th style="text-align: right;">Time</th>
+<th style="text-align: right;">Allocation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>in process</td>
+<td style="text-align: right;">1.45 µs</td>
+<td style="text-align: right;">0.36 µs</td>
+<td style="text-align: right;">−75%</td>
+<td style="text-align: right;">6.6 KB → 1.6 KB (−75%)</td>
+</tr>
+<tr>
+<td>H2 over loopback TCP</td>
+<td style="text-align: right;">94.2 µs ± 1.7</td>
+<td style="text-align: right;">89.2 µs ± 1.0</td>
+<td style="text-align: right;"><strong>−5%</strong></td>
+<td style="text-align: right;">8.9 KB → 4.0 KB (−55%)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The honest sentence above now has evidence.</strong> With a genuine socket and wire protocol in
+the way, the mapper-layer difference is five percent. Loopback TCP is the <em>cheapest</em>
+possible round trip, so a database on another host makes the difference smaller still, not
+larger. The allocation saving survives and still matters for GC pressure under load; the
+latency saving does not.</p>
+<h3 id="dynamic-sql">Dynamic SQL<a class="headerlink" href="#dynamic-sql" title="Permanent link">&para;</a></h3>
+<p>Three <code>&lt;if&gt;</code> branches inside a <code>&lt;where&gt;</code>. <strong>Every setting returns exactly one row</strong>, because
+the statement pins <code>id = #{pinnedId}</code> and the optional predicates are all non-restrictive,
+so row reading is a constant and the only thing that varies is how much SQL gets assembled.
+The benchmark asserts the row count, because the first version of it let the count vary from
+100 to 1 and two of its three numbers were really the row-read result under another name.</p>
+<table>
+<thead>
+<tr>
+<th>Live branches</th>
+<th style="text-align: right;">MyBatis</th>
+<th style="text-align: right;">LarkBatis</th>
+<th style="text-align: right;">Time</th>
+<th style="text-align: right;">Allocation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td style="text-align: right;">2.15 µs</td>
+<td style="text-align: right;">0.41 µs</td>
+<td style="text-align: right;"><strong>−81%</strong></td>
+<td style="text-align: right;">10.4 KB → 2.1 KB (−79%)</td>
+</tr>
+<tr>
+<td>one</td>
+<td style="text-align: right;">3.60 µs</td>
+<td style="text-align: right;">1.48 µs</td>
+<td style="text-align: right;"><strong>−59%</strong></td>
+<td style="text-align: right;">15.9 KB → 6.9 KB (−56%)</td>
+</tr>
+<tr>
+<td>all three</td>
+<td style="text-align: right;">4.86 µs</td>
+<td style="text-align: right;">2.14 µs</td>
+<td style="text-align: right;"><strong>−56%</strong></td>
+<td style="text-align: right;">18.4 KB → 7.8 KB (−57%)</td>
+</tr>
+</tbody>
+</table>
+<p>The shape of that column is the interesting part. With no branch live, LarkBatis has
+nothing to assemble, since the statement is a constant <code>String</code>, and wins by 81%. As
+branches come alive it has to do <code>StringBuilder</code> work too, and the gap settles at about 56%:
+the honest steady-state cost of dynamic SQL once both sides are really building a string.</p>
+<p>The POC's most counter-intuitive finding therefore survives: it measured −45% on the
+dynamic path against −73% on the row-read path and called the ordering surprising. Here it
+is <strong>−56% against −84%</strong>. Assembling SQL is string work both sides have to do, and the
+interpreter's overhead on top of it is smaller than the per-column reflection overhead the
+row-read path removes.</p>
+<h3 id="startup">Startup<a class="headerlink" href="#startup" title="Permanent link">&para;</a></h3>
+<p>Cold JVM, one shot per fork, ten forks. Both sides bring up the same application: four
+mapper interfaces (one carrying 50 statements), one mapper XML, and a real query at the
+end. Quoted on JDK 17, the only run whose error bars are tight enough to mean anything.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">MyBatis</th>
+<th style="text-align: right;">LarkBatis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cold start to first row</td>
+<td style="text-align: right;">61.8 ms ± 3.7</td>
+<td style="text-align: right;"><strong>6.3 ms ± 0.8</strong></td>
+</tr>
+<tr>
+<td>Allocation</td>
+<td style="text-align: right;">27.0 MB</td>
+<td style="text-align: right;">15.8 MB</td>
+</tr>
+</tbody>
+</table>
+<p><strong>−90%, and previously unmeasured.</strong> The 55 ms is XML parsing, <code>Reflector</code> construction,
+the type-handler registry, OGNL and XPath class loading, and <code>MappedStatement</code> construction
+for 51 statements. LarkBatis does none of it, because that work happened during <code>javac</code>.</p>
+<p>The old caveat still stands: in a real Spring Boot application this sits under context
+creation and pool warmup. But 55 ms is not noise in a serverless or native-image context,
+which is exactly where the claim is made.</p>
+<h3 id="megamorphic-behaviour-the-prediction-was-wrong">Megamorphic behaviour: the prediction was wrong<a class="headerlink" href="#megamorphic-behaviour-the-prediction-was-wrong" title="Permanent link">&para;</a></h3>
+<p>50 single-row reads of a 6-column table. <code>mono</code> reads one result class 50 times; <code>mega</code>
+reads 50 different result classes once each.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">MyBatis</th>
+<th style="text-align: right;">LarkBatis</th>
+<th style="text-align: right;">LarkBatis advantage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>monomorphic (1 bean type)</td>
+<td style="text-align: right;">103.5 µs</td>
+<td style="text-align: right;">22.8 µs</td>
+<td style="text-align: right;">4.54×</td>
+</tr>
+<tr>
+<td>megamorphic (50 bean types)</td>
+<td style="text-align: right;">123.4 µs</td>
+<td style="text-align: right;">26.2 µs</td>
+<td style="text-align: right;">4.71×</td>
+</tr>
+<tr>
+<td>megamorphic penalty</td>
+<td style="text-align: right;"><strong>+19.3%</strong></td>
+<td style="text-align: right;"><strong>+15.0%</strong></td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+<p>The mechanism is real and the effect is small. MyBatis does pay 19% more for 50 types than
+for one, but LarkBatis pays 15% for the same change, and the advantage widens only from
+4.54× to 4.71×.</p>
+<p>Allocation gives it away: 394 KB versus 398 KB for MyBatis, 100.4 KB versus 100.8 KB for
+LarkBatis. Nothing changes. Whatever megamorphic dispatch costs here, it costs it in
+inlining, not in extra work, and MyBatis's per-column allocation, the actual bulk of its
+cost, is identical either way.</p>
+<div class="admonition warning">
+<p class="admonition-title">Do not argue 'it gets worse at scale'</p>
+<p>The design expected the gap to widen substantially with many mappers. It does not. The
+honest claim is that the advantage is already large with one bean type and stays
+roughly constant, which is the better argument anyway, because it does not depend on
+the reader's codebase being big.</p>
+</div>
+<h3 id="jdk-version-matters">JDK version matters<a class="headerlink" href="#jdk-version-matters" title="Permanent link">&para;</a></h3>
+<p>The design asked for the suite on two JDKs straddling JEP 416, which put core reflection on
+method handles. It named 11 and 21; LarkBatis requires 17, and JEP 416 landed in 18, so
+17-versus-21 straddles the same change.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">JDK 17</th>
+<th style="text-align: right;">JDK 21</th>
+<th style="text-align: right;">change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyBatis, 10,000 × 4 cols</td>
+<td style="text-align: right;">2.13 ms</td>
+<td style="text-align: right;">1.53 ms</td>
+<td style="text-align: right;"><strong>−28%</strong></td>
+</tr>
+<tr>
+<td>MyBatis, 10,000 × 12 cols</td>
+<td style="text-align: right;">3.95 ms</td>
+<td style="text-align: right;">3.38 ms</td>
+<td style="text-align: right;"><strong>−14%</strong></td>
+</tr>
+<tr>
+<td>MyBatis, 100 × 4 cols</td>
+<td style="text-align: right;">22.8 µs</td>
+<td style="text-align: right;">17.1 µs</td>
+<td style="text-align: right;"><strong>−25%</strong></td>
+</tr>
+<tr>
+<td>LarkBatis, 10,000 × 4 cols</td>
+<td style="text-align: right;">0.302 ms</td>
+<td style="text-align: right;">0.289 ms</td>
+<td style="text-align: right;">−4%</td>
+</tr>
+<tr>
+<td>LarkBatis, 10,000 × 12 cols</td>
+<td style="text-align: right;">0.582 ms</td>
+<td style="text-align: right;">0.541 ms</td>
+<td style="text-align: right;">−7%</td>
+</tr>
+<tr>
+<td>LarkBatis, 100 × 4 cols</td>
+<td style="text-align: right;">3.56 µs</td>
+<td style="text-align: right;">3.23 µs</td>
+<td style="text-align: right;">−9%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MyBatis gets meaningfully faster on a newer JDK; LarkBatis barely moves</strong>, exactly what
+the mechanism predicts, since MyBatis's per-column path ends in <code>Method.invoke</code> and
+generated code has no reflection to accelerate. Allocation moved the same way (MyBatis
+9.00 → 6.77 MB per 10,000 narrow rows).</p>
+<p>The advantage therefore narrows on newer JDKs: <strong>7.1× on JDK 17, 5.3× on JDK 21</strong> for the
+same 10,000 × 4 workload. Always say which JDK a number came from.</p>
+<h3 id="methodology-and-why-each-choice-was-forced">Methodology, and why each choice was forced<a class="headerlink" href="#methodology-and-why-each-choice-was-forced" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>A pinned session on both sides.</strong> MyBatis's <code>SqlSession</code> holds one connection for its
+  lifetime; <code>JdbcLarkBatisSession</code> acquires and closes one per statement. Comparing them
+  directly would measure H2 connect cost on one side only. The startup benchmark is the
+  exception, where connection setup is part of what is measured.</li>
+<li><strong>MyBatis's first-level cache turned down to <code>STATEMENT</code> scope.</strong> It defaults to
+  <code>SESSION</code>, and every benchmark holds one session open, so the second <code>findById(1)</code> would
+  return a cached object without touching JDBC. That single default is the difference
+  between a benchmark and a <code>HashMap</code> lookup. The second-level cache is off, because
+  LarkBatis dropped it and comparing different feature sets is not a comparison.</li>
+<li><strong>A real JDBC driver in both columns.</strong> A stubbed <code>ResultSet</code> would isolate the mapper
+  layer and flatter LarkBatis; H2's cost is inside both numbers, which makes every gap
+  above a <em>lower bound</em>.</li>
+<li><strong>H2 over its own TCP server</strong> for the round-trip case: a genuine socket and wire
+  protocol on loopback. Not MySQL over a LAN, and used only as a lower bound.</li>
+<li><strong>The megamorphic experiment generates its 50 result classes and 200 call sites from the
+  build script.</strong> Reaching them by reflection would have put the very cost being measured
+  back into both sides.</li>
+<li><strong>Never run another build while JMH runs.</strong> The first full pass of this suite was
+  discarded because concurrent builds polluted it.</li>
+</ul>
+<h2 id="still-an-argument-not-a-measurement">Still an argument, not a measurement<a class="headerlink" href="#still-an-argument-not-a-measurement" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Why to believe it</th>
+<th>Why to doubt it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Native image works out of the box</td>
+<td>No <code>Proxy</code>, no <code>Class.forName</code>, no <code>setAccessible</code> anywhere in the runtime or generated code, so there is no reachability metadata to write</td>
+<td>No native-image build has been run. See below</td>
+</tr>
+<tr>
+<td>It holds up under concurrency</td>
+<td>Nothing in the generated code is shared mutable state; the session is the only seam</td>
+<td>Every benchmark here is single-threaded. Contention, pool behaviour and GC under parallel load are untested</td>
+</tr>
+<tr>
+<td>Build time stays acceptable</td>
+<td>Generation is per-mapper and incremental</td>
+<td>Not measured on a large codebase. This is the cost side of the trade and it is the one still missing</td>
+</tr>
+</tbody>
+</table>
+<h2 id="native-image">Native image<a class="headerlink" href="#native-image" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Structurally ready, not yet verified</p>
+<p>LarkBatis contains no <code>Proxy.newProxyInstance</code>, no <code>Class.forName</code> and no
+<code>setAccessible</code>, in the runtime module or in generated code, so there is no
+reachability metadata to write for the mapper layer. That is a property of the design
+you can check by reading it.</p>
+<p><strong>An actual native-image build has not been run yet.</strong> The smoke test is open M5 work.
+Until there is a real build, this is the project's strongest <em>qualitative</em> promise and
+it is unverified. It should not be presented as a result.</p>
+</div>
+<p>Your JDBC driver may still need metadata of its own. That is a driver concern, not a
+mapper-layer one.</p>
+<h2 id="the-benefit-that-gets-talked-about-least">The benefit that gets talked about least<a class="headerlink" href="#the-benefit-that-gets-talked-about-least" title="Permanent link">&para;</a></h2>
+<p><strong>You can read the SQL that will run, in your IDE.</strong> Open <code>UserMapper$$Impl.java</code>, put a
+breakpoint inside an <code>&lt;if&gt;</code> branch, and watch a stack trace point at a real Java line
+instead of <code>MapperProxy.invoke → MapperMethod.execute → …</code>.</p>
+<p>For a codebase with 300 mapper methods, that is worth more day to day than a few
+microseconds per query, and it is the thing users notice first.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Trở lại mục lục
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Chân trang" >
+        
+          
+          <a href="../design-rules/" class="md-footer__link md-footer__link--prev" aria-label="Trước: Lằn ranh thiết kế">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Trước
+              </span>
+              <div class="md-ellipsis">
+                Lằn ranh thiết kế
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../features/" class="md-footer__link md-footer__link--next" aria-label="Sau: Supported Features">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sau
+              </span>
+              <div class="md-ellipsis">
+                Supported Features
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 LarkBatis contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/larkbatis" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.tracking", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0110\u00e3 sao ch\u00e9p", "clipboard.copy": "Sao ch\u00e9p v\u00e0o b\u1ed9 nh\u1edb t\u1ea1m", "search.result.more.one": "1 t\u1eeb kh\u00e1c trong trang", "search.result.more.other": "# t\u1eeb kh\u00e1c trong trang", "search.result.none": "Kh\u00f4ng t\u00ecm th\u1ea5y t\u00e0i li\u1ec7u li\u00ean quan", "search.result.one": "1 t\u00e0i li\u1ec7u li\u00ean quan", "search.result.other": "# t\u00e0i li\u1ec7u li\u00ean quan", "search.result.placeholder": "Nh\u1eadp \u0111\u1ec3 b\u1eaft \u0111\u1ea7u t\u00ecm ki\u1ebfm", "search.result.term.missing": "Kh\u00f4ng", "select.version": "Ch\u1ecdn phi\u00ean b\u1ea3n"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
