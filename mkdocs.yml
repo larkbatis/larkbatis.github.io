@@ -1,0 +1,157 @@
+# Material for MkDocs — site config for LightBatis.
+# Scaffolded from the `docs-site-repo` skill; placeholders already substituted.
+
+site_name: LightBatis
+site_url: https://light-batis.github.io/
+site_description: >-
+  An ahead-of-time MyBatis: mappers and SQL are compiled into plain Java at build time — no proxies, no reflection, no OGNL at runtime.
+site_author: LightBatis contributors
+copyright: Copyright &copy; 2026 LightBatis contributors
+
+# repo_url points at the CODE repo (that is what the header icon should link to),
+# while the edit button has to point into the DOCS repo — hence the explicit
+# template rather than the default `edit_uri`, which is resolved against repo_url.
+repo_url: https://github.com/light-batis/lightbatis
+repo_name: light-batis/lightbatis
+edit_uri_template: https://github.com/light-batis/light-batis.github.io/edit/main/docs/{path}
+
+theme:
+  name: material
+  language: en
+  custom_dir: overrides
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Follow system theme
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mike:
+      # `symlink` is mike's default and is the wrong choice here: this site is
+      # published as a Pages *artifact* (tar → deploy-pages), not by serving the
+      # gh-pages branch, and a symlinked `latest/` does not survive that round
+      # trip reliably. `copy` costs disk and nothing else.
+      alias_type: copy
+      canonical_version: latest
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra:
+  version:
+    provider: mike
+    default: latest
+    alias: true
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/light-batis
+
+# Turn silent docs rot into build output. `mkdocs build --strict` promotes every
+# `warn` below into a non-zero exit, which is what CI runs.
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - getting-started/index.md
+      - Quick Start: getting-started/quick-start.md
+      - Spring Boot: getting-started/spring-boot.md
+      - Build Plugins: getting-started/build-plugins.md
+      - Java Modules: getting-started/jpms.md
+  - Usage:
+      - usage/index.md
+      - Mapper Interfaces: usage/mappers.md
+      - Mapper XML: usage/xml-mappers.md
+      - Dynamic SQL: usage/dynamic-sql.md
+      - foreach and Batches: usage/foreach-and-batches.md
+      - Result Maps and Joins: usage/result-maps.md
+      - Generated Keys: usage/generated-keys.md
+      - Streaming Results: usage/streaming.md
+      - Transactions: usage/transactions.md
+      - Raw SQL and SqlFragment: usage/raw-sql.md
+      - Types and Handlers: usage/types.md
+      - Spring Integration: usage/spring.md
+      - Troubleshooting: usage/troubleshooting.md
+  - Wiki:
+      - wiki/index.md
+      - Architecture: wiki/architecture.md
+      - Shape vs Value: wiki/shape-vs-value.md
+      - Generated Code: wiki/generated-code.md
+      - Life of a Call: wiki/call-flow.md
+      - Design Red Lines: wiki/design-rules.md
+      - Performance: wiki/performance.md
+  - Features:
+      - features/index.md
+      - MyBatis Differences: features/mybatis-differences.md
+      - Annotations: features/annotations.md
+      - Runtime API: features/runtime-api.md
+      - Configuration: features/configuration.md
+      - Errors and Diagnostics: features/errors.md
+      - Migrating from MyBatis: features/migration.md
+      - Roadmap: features/roadmap.md

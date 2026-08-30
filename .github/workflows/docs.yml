@@ -1,0 +1,157 @@
+# Target path: .github/workflows/docs.yml
+#
+# Two jobs on purpose:
+#
+#   version  — builds ONE version of the docs and commits it into the `gh-pages`
+#              branch via mike. That branch is a *content store*, not a served
+#              site; it accumulates 0.1/, 0.2/, dev/, latest/, versions.json.
+#   publish  — checks that whole branch out and hands it to GitHub Pages as an
+#              artifact. Pages "source" is therefore GitHub Actions, not a branch.
+#
+# Splitting them keeps `contents: write` (needed for mike's commit) away from the
+# job that holds `id-token: write`, and makes the two failure modes distinct: a
+# broken doc build never touches the live site, and a Pages outage never loses a
+# built version.
+#
+# mike pushes to gh-pages with GITHUB_TOKEN; pushes made with GITHUB_TOKEN do not
+# trigger workflows, so this file cannot retrigger itself.
+
+name: docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "overrides/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - ".github/workflows/docs.yml"
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version identifier to deploy (mike convention: major.minor, e.g. 0.1)"
+        required: true
+        default: "dev"
+      aliases:
+        description: "Space-separated aliases to move onto this version (e.g. `latest`), or empty"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# Never let two deployments race for the same Pages site. `cancel-in-progress:
+# false` rather than true: a cancelled mike run can leave gh-pages half written.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  version:
+    name: Build version into gh-pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # mike reads and rewrites origin/gh-pages; fetch-depth 0 is what makes
+          # that ref exist locally. A shallow checkout fails on the first deploy
+          # of a second version.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+
+      - run: pip install -r requirements-docs.txt
+
+      - name: Resolve version and aliases
+        id: target
+        env:
+          EVENT: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_ALIASES: ${{ inputs.aliases }}
+        # Event data goes through env, never through ${{ }} interpolated straight
+        # into the script body — a tag name is attacker-influenceable text.
+        run: |
+          set -euo pipefail
+          case "$EVENT" in
+            release)
+              ver="${RELEASE_TAG#v}"   # v0.1.0 -> 0.1.0
+              ver="${ver%.*}"          # 0.1.0  -> 0.1   (mike's recommended granularity)
+              aliases="latest"
+              ;;
+            workflow_dispatch)
+              ver="$INPUT_VERSION"
+              aliases="$INPUT_ALIASES"
+              ;;
+            *)
+              ver="dev"                # main is the moving development site
+              aliases=""
+              ;;
+          esac
+          echo "version=$ver"     >> "$GITHUB_OUTPUT"
+          echo "aliases=$aliases" >> "$GITHUB_OUTPUT"
+          echo "Deploying version '$ver' with aliases '$aliases'"
+
+      - name: Build strict
+        # Runs before mike so a broken link or a nav entry pointing at a missing
+        # file fails here, with nothing yet committed to gh-pages.
+        run: mkdocs build --strict --site-dir "$RUNNER_TEMP/strict-check"
+
+      - name: Configure the committer identity mike will use
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Deploy version with mike
+        env:
+          VERSION: ${{ steps.target.outputs.version }}
+          ALIASES: ${{ steps.target.outputs.aliases }}
+        run: |
+          set -euo pipefail
+          # $ALIASES is intentionally unquoted: mike takes aliases as separate argv
+          # entries, and the empty case must expand to no argument at all.
+          # shellcheck disable=SC2086
+          mike deploy --push --update-aliases "$VERSION" $ALIASES
+          # Idempotent, and --allow-undefined keeps the very first (dev-only)
+          # deploy from failing before any release has claimed the alias.
+          mike set-default --push --allow-undefined latest
+          mike list
+
+  publish:
+    name: Publish gh-pages to GitHub Pages
+    needs: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: gh-pages
+          path: _pages
+
+      - name: Drop VCS metadata from the artifact
+        # The checkout above brings _pages/.git with it. upload-pages-artifact v4+
+        # excludes dotfiles by default, but relying on that to keep the repository
+        # history out of a published artifact is not a control — delete it.
+        run: rm -rf _pages/.git
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _pages
+
+      - id: deployment
+        uses: actions/deploy-pages@v5

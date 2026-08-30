@@ -1,0 +1,14 @@
+{# Target path: overrides/main.html
+
+   Material renders this banner only when the reader is on a version that is not
+   the `extra.version.default` alias. Without a custom `outdated` block the theme
+   has nothing to render and old versions look current — which is the whole
+   failure mode versioned docs exist to prevent. #}
+{% extends "base.html" %}
+
+{% block outdated %}
+  You are reading the documentation for an older version.
+  <a href="{{ '../' ~ base_url }}">
+    <strong>Go to the latest version.</strong>
+  </a>
+{% endblock %}

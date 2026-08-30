@@ -1,0 +1,5 @@
+# Pinned so a docs build is reproducible and a Material release never breaks CI
+# unattended. Bump deliberately, then re-run the local verification contract.
+# mkdocs itself arrives as a dependency of mkdocs-material.
+mkdocs-material==9.7.7
+mike==2.2.0

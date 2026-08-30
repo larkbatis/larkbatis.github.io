@@ -1,0 +1,6 @@
+# Target path: .gitignore
+site/
+.venv/
+__pycache__/
+.cache/
+.DS_Store
