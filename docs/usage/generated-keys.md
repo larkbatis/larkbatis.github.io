@@ -67,7 +67,7 @@ public int insert(User u) {
 error asking where the key should go.
 
 Composite keys are comma-separated on both attributes, and the two lists must be the
-same length — a mismatch is a compile error naming both counts:
+same length, and a mismatch is a compile error naming both counts:
 
 ```java
 @Options(useGeneratedKeys = true, keyProperty = "tenantId,id", keyColumn = "tenant_id,id")
@@ -91,7 +91,7 @@ An `@Insert` taking a `List<T>` compiles to `addBatch()` / `executeBatch()`, and
 come back as one `ResultSet` that has to line up with the list:
 
 ```java
-int n = LightBatisSql.sum(ps.executeBatch());
+int n = LarkBatisSql.sum(ps.executeBatch());
 try (ResultSet gk = ps.getGeneratedKeys()) {
     int i = 0;
     while (gk.next() && i < orders.size()) {
@@ -99,7 +99,7 @@ try (ResultSet gk = ps.getGeneratedKeys()) {
         i++;
     }
     if (i != orders.size()) {
-        throw new LightBatisKeyCountMismatchException(STMT_insertAll, orders.size(), i);
+        throw new LarkBatisKeyCountMismatchException(STMT_insertAll, orders.size(), i);
     }
 }
 ```
@@ -107,7 +107,7 @@ try (ResultSet gk = ps.getGeneratedKeys()) {
 The count check is not defensive programming for its own sake: drivers exist that return
 fewer keys than rows, and MyBatis documents the same failure mode. Silently accepting it
 would leave part of your batch with unset ids and nobody the wiser, so
-`LightBatisKeyCountMismatchException` names the statement, the expected count and the
+`LarkBatisKeyCountMismatchException` names the statement, the expected count and the
 actual one.
 
 ## `<selectKey>` is not supported
@@ -125,7 +125,7 @@ int insert(User u);
 ```
 
 ```java
-try (LightBatisTx tx = session.begin()) {
+try (LarkBatisTx tx = session.begin()) {
     u.setId(mapper.nextUserId());
     mapper.insert(u);
     tx.commit();
@@ -138,5 +138,5 @@ with this as the fix.
 ## When no key comes back
 
 If a statement declares `useGeneratedKeys` and the driver returns nothing,
-`LightBatisNoKeyException` is thrown naming the statement — rather than leaving a `0` id
-to travel through your code and fail somewhere unrelated.
+`LarkBatisNoKeyException` is thrown naming the statement, instead of leaving a `0` id to
+travel through your code and fail somewhere unrelated.

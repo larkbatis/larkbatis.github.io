@@ -1,9 +1,9 @@
 # Mapper Interfaces
 
 A mapper is an ordinary Java interface. There is no base type, no marker on the methods
-beyond the statement annotation, and no runtime proxy — the build emits a
+beyond the statement annotation, and no runtime proxy. The build emits a
 `final class UserMapper$$Impl implements UserMapper` with a public constructor taking a
-`LightBatisSession`.
+`LarkBatisSession`.
 
 ## Statement annotations
 
@@ -49,7 +49,7 @@ position. What `name` resolves against depends on the method signature:
 
 === "Several parameters"
 
-    Every parameter needs a name the SQL can use — the declared name, or `@Param`.
+    Every parameter needs a name the SQL can use: the declared name, or `@Param`.
 
     ```java
     @Select("SELECT id, name FROM users WHERE name LIKE #{pattern} AND id > #{after}")
@@ -82,7 +82,7 @@ expression. There is no `Map` or `Object` parameter: there would be no type to r
 |---|---|
 | `User findById(long)` | `rs.next() ? UserRow.read(rs) : null` |
 | `List<User> findAll()` | `while (rs.next()) out.add(UserRow.read(rs))` |
-| `Stream<User> streamAll()` | An open cursor — the caller closes it. See [Streaming](streaming.md) |
+| `Stream<User> streamAll()` | An open cursor; the caller closes it. See [Streaming](streaming.md) |
 | `long countByName(String)` | Column 1, read as a `long` |
 | `int insert(User)` | `ps.executeUpdate()` |
 | `void delete(long)` | `ps.executeUpdate()`, result discarded |
@@ -96,7 +96,7 @@ long countByName(@Param("pattern") String pattern);
 
 ## Result classes
 
-A result class needs a no-arg constructor and setters. That is the whole contract — no
+A result class needs a no-arg constructor and setters, and nothing further: no
 annotations, no interface, no registration.
 
 ```java
@@ -112,9 +112,9 @@ Columns find properties by `snake_case` → `camelCase`, **applied at build time
 always**: `created_at` → `setCreatedAt`. There is no `mapUnderscoreToCamelCase` switch,
 because there is no runtime to switch it in.
 
-Where the convention is not enough, alias the column in the select list or declare a
-[`<resultMap>`](result-maps.md). The `@Column` annotation ships in the annotations
-artifact for this purpose but is **not yet read by the processor** — see
+Where the convention is not enough, name the column on the property with
+[`@Column`](../features/annotations.md#column) on the field, the setter or the getter,
+alias it in the select list, or declare a [`<resultMap>`](result-maps.md). See
 [Types and Handlers](types.md#column-naming).
 
 ### Positional or name-based reads
@@ -126,19 +126,20 @@ u.setId(rs.getLong(1));
 u.setName(rs.getString(2));
 ```
 
-When it cannot — `SELECT *`, a `${}` splice inside the select list, an unaliased
-expression — that one statement falls back to a name-based reader that resolves indexes
-from `ResultSetMetaData` **once, on the first row**, and then reads positionally for the
-rest. It is correct and measurably slower, and the build tells you which statement it
-happened to. See [Generated Code](../wiki/generated-code.md#row-readers).
+When it cannot parse the list, that one statement falls back to a name-based reader that
+resolves indexes from `ResultSetMetaData` **once, on the first row**, and then reads
+positionally for the rest. Three things stop it parsing: `SELECT *`, a `${}` splice inside
+the select list, and an unaliased expression. The fallback is correct and measurably slower,
+and the build tells you which statement took it. See [Generated
+Code](../wiki/generated-code.md#row-readers).
 
-!!! note "`@LightBatisRow`"
+!!! note "`@LarkBatisRow`"
 
-    The annotations artifact declares `@LightBatisRow` to request a row reader for a
-    class that never appears as a statement's `resultType` — one used only by the
-    [escape hatch](raw-sql.md#the-escape-hatch). As of `0.1.0-SNAPSHOT` **the processor
-    does not read it**. Until it lands, give the class one statement that returns it, or
-    write the `RowReader` lambda by hand.
+    A class that never appears as a statement's `resultType`, such as one used only by
+    the [escape hatch](raw-sql.md#the-escape-hatch), has nothing to trigger a reader.
+    Mark it [`@LarkBatisRow`](../features/annotations.md#larkbatisrow) and it gets one
+    anyway. Its declaration order is the canonical column order, there being no select
+    list to take an order from.
 
 ## Default methods
 
@@ -147,7 +148,7 @@ interface like any other, and the generated implementation inherits it. This is 
 hand-assembled SQL lives:
 
 ```java
-default List<User> recent(LightBatisSession s, int limit) {
+default List<User> recent(LarkBatisSession s, int limit) {
     return s.query(
             SqlFragment.unsafeRawSql(
                     "SELECT id, name, email, created_at FROM users"
@@ -163,16 +164,16 @@ See [Raw SQL and SqlFragment](raw-sql.md).
 
 ## The generated registry
 
-Every mapper in the compilation appears in one `LightBatisMappers` class:
+Every mapper in the compilation appears in one `LarkBatisMappers` class:
 
 ```java
-UserMapper mapper = LightBatisMappers.userMapper(session);
+UserMapper mapper = LarkBatisMappers.userMapper(session);
 ```
 
-It is a static factory over a closed set known at compile time — there is no
+`LarkBatisMappers` is a static factory over a closed set known at compile time. No
 `addMapper()` and no runtime registration, because there is nothing to register. Under
 Spring you never touch it: the generated `@Configuration` declares the same
 constructors as beans.
 
 By default the registry lands in the common package prefix of all mappers; override with
-`-Alightbatis.registryPackage=com.example.app`.
+`-Alarkbatis.registryPackage=com.example.app`.

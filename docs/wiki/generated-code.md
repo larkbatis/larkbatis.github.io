@@ -1,7 +1,7 @@
 # Generated Code
 
 Generated code is a **feature**, not an implementation detail. It is meant to be opened,
-read, and stepped through in a debugger — a stack trace should point at a real Java line
+read, and stepped through in a debugger. A stack trace should point at a real Java line
 in your package, not at `MapperProxy.invoke → MapperMethod.execute → …`.
 
 For a codebase with 300 mapper methods, that debuggability is worth more day to day than
@@ -13,8 +13,8 @@ a few microseconds per query.
 |---|---|---|
 | `UserMapper$$Impl` | one per mapper | The implementation. One method per statement |
 | `UserRow` | one per result class | Three reads and a column resolver. Shared by every statement returning `User` |
-| `LightBatisMappers` | one per compilation | Static factory over the closed set of mappers |
-| `LightBatisMapperConfiguration` | one per compilation, if Spring is present | `@Bean` per mapper |
+| `LarkBatisMappers` | one per compilation | Static factory over the closed set of mappers |
+| `LarkBatisMapperConfiguration` | one per compilation, if Spring is present | `@Bean` per mapper |
 
 Everything lands in your own package, next to the interface. Under JPMS that means nothing
 has to be exported for it.
@@ -22,16 +22,16 @@ has to be exported for it.
 ## The mapper implementation
 
 ```java
-@Generated("io.github.lightbatis.processor.LightBatisProcessor")
+@Generated("io.github.larkbatis.processor.LarkBatisProcessor")
 public final class UserMapper$$Impl implements UserMapper {
 
     private static final String SQL_findById =
             "SELECT id, name, email, created_at FROM users WHERE id = ?";   // (1)!
     private static final String[] KEYS_insert = { "id" };                   // (2)!
 
-    private final LightBatisSession s;
+    private final LarkBatisSession s;
 
-    public UserMapper$$Impl(LightBatisSession s) {                          // (3)!
+    public UserMapper$$Impl(LarkBatisSession s) {                          // (3)!
         this.s = s;
     }
 
@@ -52,14 +52,14 @@ public final class UserMapper$$Impl implements UserMapper {
 }
 ```
 
-1.  Static SQL is a `static final String` — allocated once, interned, and the same object
+1.  Static SQL is a `static final String`, allocated once, interned, and the same object
     every call. `#{}` already became `?` at build time.
 2.  Explicit key columns for `useGeneratedKeys`, so `prepareStatement(sql, String[])` can
     be used instead of the non-portable `RETURN_GENERATED_KEYS`.
 3.  A public constructor taking the session. That is what makes it an ordinary Spring bean
     with no `FactoryBean` in sight.
 4.  Borrowed, not opened. Under a transaction this is the transaction's connection.
-5.  `setLong`, not `setObject` — chosen at build time from the parameter's declared type.
+5.  `setLong`, not `setObject`, chosen at build time from the parameter's declared type.
 6.  Translation carries the SQL text into the exception.
 7.  `release`, in `finally`. The connection is **not** in try-with-resources.
 
@@ -86,11 +86,11 @@ try (PreparedStatement ps = c.prepareStatement(sql)) {
     ...
 ```
 
-1.  Capacity computed at build time from the longest possible text — no `StringBuilder`
+1.  Capacity computed at build time from the longest possible text, so no `StringBuilder`
     growth.
 2.  `<where>` folded into a guarded literal. `|` rather than `||` because both operands are
     already-computed locals; there is nothing to short-circuit.
-3.  The leading-`AND` rule, constant-folded into a ternary over known locals — not a
+3.  The leading-`AND` rule, constant-folded into a ternary over known locals, never a
     runtime substring search of the assembled fragment.
 4.  Binding walks the **same** conditions in the **same** order. That is why the SQL and
     the parameters can never disagree: there is no name-to-position map between them, just
@@ -137,17 +137,17 @@ public final class UserRow {
 
 1.  The escape hatch reuses this, so hand-assembled SQL still reads rows without
     reflection.
-2.  **Positional read** — used when the generator parsed the select list. Every index is a
+2.  **Positional read**, used when the generator parsed the select list. Every index is a
     literal.
-3.  **Indexed read** — `c[k]` is the ResultSet position of property *k*, `0` meaning "not
-    selected". A property whose column is absent stays unset rather than becoming null.
-4.  **Column resolver** — runs once, on the first row, when the select list could not be
+3.  **Indexed read**: `c[k]` is the ResultSet position of property *k*, `0` meaning "not
+    selected". A property whose column is absent stays unset, never null.
+4.  **Column resolver**, run once on the first row when the select list could not be
     parsed. Unmatched columns are ignored, matching MyBatis auto-mapping. The
     `replace("_","").toLowerCase()` is the `snake_case` convention, applied here for the
     same reason it is applied at build time elsewhere.
 
 This three-entry shape is why `SELECT *` costs one metadata pass and then reads
-positionally, rather than a name lookup per column per row.
+positionally, with no name lookup per column per row.
 
 ## Result maps
 
@@ -174,8 +174,8 @@ typed local compared with `!=`, so a `long` key costs no boxing per row. The pri
 ## The registry and the Spring configuration
 
 ```java
-public final class LightBatisMappers {
-    public static UserMapper userMapper(LightBatisSession s) {
+public final class LarkBatisMappers {
+    public static UserMapper userMapper(LarkBatisSession s) {
         return new UserMapper$$Impl(s);
     }
 }
@@ -183,9 +183,9 @@ public final class LightBatisMappers {
 
 ```java
 @Configuration(proxyBeanMethods = false)
-public class LightBatisMapperConfiguration {
+public class LarkBatisMapperConfiguration {
     @Bean
-    public UserMapper userMapper(LightBatisSession s) {
+    public UserMapper userMapper(LarkBatisSession s) {
         return new UserMapper$$Impl(s);
     }
 }
@@ -193,8 +193,8 @@ public class LightBatisMapperConfiguration {
 
 Both are the same three lines twice, and that is the point: a mapper is a class with a
 constructor, so registering one is ordinary. `proxyBeanMethods = false` avoids the runtime
-CGLIB subclass Spring would otherwise build — the exact runtime bytecode generation this
-project exists to remove.
+CGLIB subclass Spring would otherwise build, which is the exact runtime bytecode
+generation this project exists to remove.
 
 ## Reading the diff
 
@@ -203,7 +203,7 @@ repository, so any emitter change shows up as a reviewed diff:
 
 ```console
 $ ./gradlew test -Pupdate-golden
-$ git diff lightbatis-processor/src/test/resources/golden/
+$ git diff larkbatis-processor/src/test/resources/golden/
 ```
 
 If a change to an emitter produces no golden diff, it changed nothing. If it produces one

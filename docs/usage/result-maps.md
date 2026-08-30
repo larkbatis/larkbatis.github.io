@@ -38,7 +38,7 @@ An `<association>` works the same way for a single child:
 ## What it compiles to
 
 A loop that starts a new parent where the `<id>` column changes, and skips the child when
-its `<id>` column is `NULL` — a `LEFT JOIN` miss:
+its `<id>` column is `NULL`, which is a `LEFT JOIN` miss:
 
 ```java
 List<Team> out = new ArrayList<>();
@@ -68,7 +68,7 @@ while (rs.next()) {
 
 1.  MyBatis does this job by building a `CacheKey` per row: reflect over the id columns,
     read each through a `TypeHandler`, hash, look the parent up in a map. Here the key is
-    a typed local compared with `!=` — a `long` key costs no boxing per row.
+    a typed local compared with `!=`, so a `long` key costs no boxing per row.
 2.  The `LEFT JOIN` miss test. Without it, an unmatched parent would gain a child of all
     nulls.
 
@@ -84,7 +84,7 @@ while (rs.next()) {
     ```
 
     A statement using a nested result map with **no `ORDER BY` at all** gets a build-time
-    note. A wrong `ORDER BY` cannot be detected at build time — that one is on you.
+    note. A wrong `ORDER BY` cannot be detected at build time, so that one is on you.
 
 ## No auto-mapping
 
@@ -93,8 +93,8 @@ column matching inside a `<resultMap>`.
 
 - A `<result>` whose column is missing from the select list is a **build warning**, and
   leaves that property unset.
-- An `<id>` whose column is missing is a **build error** — that column is what the loop
-  reads.
+- An `<id>` whose column is missing is a **build error**, because that column is what the
+  loop reads.
 
 If you want columns matched to property names by convention, use `resultType` instead.
 That path *does* apply `snake_case` → `camelCase`, at build time. The two are different
@@ -102,19 +102,20 @@ tools: `resultType` for "map what matches", `resultMap` for "map what I say".
 
 ## Column positions
 
-When the select list parses, positions are constants. When it does not — `SELECT *`, a
-`${}` splice, an unaliased expression like `1 + 1` — that statement gets its own
-generated resolver that reads `ResultSetMetaData` once on the first row and matches the
-column names the map declared. Correct either way; the build tells you which happened.
+When the select list parses, positions are constants. When it does not, that statement
+gets its own generated resolver that reads `ResultSetMetaData` once on the first row and
+matches the column names the map declared. Correct either way, and the build tells you
+which happened. See
+[Positional or name-based reads](mappers.md#positional-or-name-based-reads).
 
-## Narrowed on purpose
+## What a result map cannot do { #narrowed-on-purpose }
 
 Each of these is a **compile error naming the replacement**:
 
 | Not supported | Instead |
 |---|---|
 | More than one level of nesting, or two nested mappings in one map | One join, one grouping key |
-| `select=` on `<association>` / `<collection>` (nested select) | Write the join — the nested select *is* the N+1 it avoids |
+| `select=` on `<association>` / `<collection>` (nested select) | Write the join; the nested select *is* the N+1 it avoids |
 | `resultMap=` inside a nested mapping | Spell the child's `<id>`/`<result>` out, which keeps the one-level limit visible |
 | `columnPrefix` | Alias the child columns in the select list |
 | `extends` | Spell the mappings out |
@@ -124,9 +125,8 @@ Each of these is a **compile error naming the replacement**:
 | `<id column="x"/>` with no `property` | Map the key to a property and mark that `<id>` |
 | A type alias in `type` / `ofType` / `javaType` | The fully-qualified class name |
 
-Deeper object graphs are assembled in Java from two statements. That is not a workaround
-for a missing feature — it is the same number of round trips, with the assembly visible
-in code you can read.
+Deeper object graphs are assembled in Java from two statements: the same number of round
+trips, with the assembly visible in code you can read.
 
 ## `Stream` and nested result maps
 

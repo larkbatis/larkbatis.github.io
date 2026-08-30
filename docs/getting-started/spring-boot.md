@@ -1,26 +1,33 @@
 # Spring Boot Quick Start
 
 There is no `@MapperScan`, no `SqlSessionFactoryBean` and no `SqlSessionTemplate`.
-A mapper implementation is a real class with a real constructor, so it is an ordinary
-bean — the processor emits a `@Configuration` with one `@Bean` method per mapper, and
-the auto-configuration supplies the single `LightBatisSession` those methods ask for.
+A mapper implementation is a real class with a real constructor, so it is an ordinary bean.
+The processor emits a `@Configuration` with one `@Bean` method per mapper, and the
+auto-configuration supplies the single `LarkBatisSession` those methods ask for.
 
 ## 1 · Dependencies
 
 ```kotlin title="build.gradle.kts"
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("io.github.lightbatis:lightbatis-annotations:0.1.0-SNAPSHOT")
-    implementation("io.github.lightbatis:lightbatis-spring-boot-starter:0.1.0-SNAPSHOT")
-    annotationProcessor("io.github.lightbatis:lightbatis-processor:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0-SNAPSHOT")
+    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")
 
     runtimeOnly("com.h2database:h2")
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.compilerArgs.add("-parameters")
+    options.compilerArgs.add("-parameters")   // (1)!
 }
 ```
+
+1.  Keeps real parameter names in the class file, so `#{id}` still finds `id` on a Gradle
+    incremental build. Without it the processor can see `arg0` instead and fail to resolve
+    the bind. Spring Boot's own starter parent sets the same flag for its constructor
+    binding, so this line is often already there.
+    [Troubleshooting](../usage/troubleshooting.md#what-the-flag-actually-does) has the
+    detail.
 
 That is the whole setup. Works on **Spring Boot 3 and Spring Boot 4** from the same jar.
 
@@ -29,10 +36,10 @@ That is the whole setup. Works on **Spring Boot 3 and Spring Boot 4** from the s
 ```java title="AccountMapper.java"
 package com.example.app;
 
-import io.github.lightbatis.annotations.Insert;
-import io.github.lightbatis.annotations.Options;
-import io.github.lightbatis.annotations.Select;
-import io.github.lightbatis.annotations.Update;
+import io.github.larkbatis.annotations.Insert;
+import io.github.larkbatis.annotations.Options;
+import io.github.larkbatis.annotations.Select;
+import io.github.larkbatis.annotations.Update;
 import java.util.List;
 
 public interface AccountMapper {
@@ -82,21 +89,21 @@ public class AccountService {
 ```
 
 1.  An ordinary constructor injection of an ordinary bean. The bean is
-    `AccountMapper$$Impl`, declared by the generated
-    `LightBatisMapperConfiguration`, which lands in your base package so
-    `@SpringBootApplication`'s default `@ComponentScan` picks it up.
+    `AccountMapper$$Impl`, declared by the generated `LarkBatisMapperConfiguration`,
+    which lands in your base package so `@SpringBootApplication`'s default
+    `@ComponentScan` picks it up.
 
-`@Transactional` works because `SpringLightBatisSession.conn()` goes through
-`DataSourceUtils`, which returns the connection already bound to the running
-transaction. `REQUIRES_NEW`, `NESTED`, rollback rules and `readOnly = true` all behave
-exactly as they do for `JdbcTemplate` — Spring owns the transaction; LightBatis only
-asks for a connection. Sharing one transaction with `JdbcTemplate` or JPA works for the
-same reason.
+`@Transactional` works because `SpringLarkBatisSession.conn()` goes through
+`DataSourceUtils`, which returns the connection already bound to the running transaction.
+Spring owns the transaction and LarkBatis only asks for a connection, so `REQUIRES_NEW`,
+`NESTED`, rollback rules and `readOnly = true` all behave exactly as they do for
+`JdbcTemplate`. Sharing one transaction with `JdbcTemplate` or JPA works for the same
+reason. [Spring Integration](../usage/spring.md) has the connection contract in full.
 
 ## 4 · Configure (optional)
 
 ```yaml title="application.yml"
-lightbatis:
+larkbatis:
   max-sql-variants: 64                # distinct SQL texts per statement before a warning
   fail-on-unbounded-fragment: false   # true = throw instead; useful in staging
 ```
@@ -107,39 +114,38 @@ text, so a fragment whose value set is not bounded grows them without limit. See
 
 ## What the processor generated
 
-```java title="LightBatisMapperConfiguration.java"
-@Generated("io.github.lightbatis.processor.LightBatisProcessor")
+```java title="LarkBatisMapperConfiguration.java"
+@Generated("io.github.larkbatis.processor.LarkBatisProcessor")
 @Configuration(proxyBeanMethods = false)   // (1)!
-public class LightBatisMapperConfiguration {
+public class LarkBatisMapperConfiguration {
 
     @Bean
-    public AccountMapper accountMapper(LightBatisSession s) {
+    public AccountMapper accountMapper(LarkBatisSession s) {
         return new AccountMapper$$Impl(s);
     }
 }
 ```
 
-1.  Load-bearing, not style. The default `true` makes Spring build a CGLIB subclass of
-    this class at runtime — exactly the runtime bytecode generation LightBatis exists to
-    remove.
+1.  Required, not cosmetic. Left at its default of `true`, Spring builds a CGLIB
+    subclass of this class at runtime, which is precisely the runtime bytecode generation
+    LarkBatis exists to remove.
 
 ## When the defaults do not fit
 
 | Situation | What to do |
 |---|---|
-| Mappers outside the scanned packages | `-Alightbatis.springConfigPackage=com.example.app`, or `@Import(LightBatisMapperConfiguration.class)` |
-| You want to declare the mapper beans yourself | `-Alightbatis.springConfig=false` |
-| More than one `DataSource` | Declare one `SpringLightBatisSession` per `DataSource` and write the `@Bean` methods yourself. The auto-configuration is `@ConditionalOnSingleCandidate`, so it backs off rather than guessing — mark one `DataSource` `@Primary`, or suppress the generated class |
+| Mappers outside the scanned packages | `-Alarkbatis.springConfigPackage=com.example.app`, or `@Import(LarkBatisMapperConfiguration.class)` |
+| You want to declare the mapper beans yourself | `-Alarkbatis.springConfig=false` |
+| More than one `DataSource` | Declare one `SpringLarkBatisSession` per `DataSource` and write the `@Bean` methods yourself. The auto-configuration is `@ConditionalOnSingleCandidate`, so it backs off rather than guessing. Mark one `DataSource` `@Primary`, or suppress the generated class |
 
-Per-mapper `DataSource` selection is deliberately deferred: no design without a real
-service that needs it.
+Per-mapper `DataSource` selection is deferred until a real service needs it.
 
 ## Spring AOT and native image
 
-`@Bean AccountMapper accountMapper(LightBatisSession s)` has a static return type, so
-Spring AOT treats it like any other bean — no `getObjectType()` at runtime, no proxy
-hint, no `reflect-config.json` for the mapper layer. `MapperFactoryBean` is the opposite
-case: the bean type is only known at runtime, and what it returns is a JDK proxy.
+`@Bean AccountMapper accountMapper(LarkBatisSession s)` has a static return type, so
+Spring AOT treats it like any other bean: no `getObjectType()` at runtime, no proxy hint,
+no `reflect-config.json` for the mapper layer. `MapperFactoryBean` is the opposite case,
+where the bean type is only known at runtime and what it returns is a JDK proxy.
 
 Read on: [Spring Integration](../usage/spring.md) covers the Boot 3 / Boot 4 story, what
 runs and what does not, and the properties in detail.

@@ -20,11 +20,11 @@ with one `@Bean` method per mapper.
 
 | Module | Role |
 |---|---|
-| `lightbatis-spring` | `SpringLightBatisSession` — connections via `DataSourceUtils`, exception translation via `SQLExceptionTranslator` |
-| `lightbatis-spring-boot-autoconfigure` | `LightBatisAutoConfiguration`, `LightBatisProperties`, the `AutoConfiguration.imports` entry |
-| `lightbatis-spring-boot-starter` | Empty — dependencies only |
+| `larkbatis-spring` | `SpringLarkBatisSession`: connections via `DataSourceUtils`, exception translation via `SQLExceptionTranslator` |
+| `larkbatis-spring-boot-autoconfigure` | `LarkBatisAutoConfiguration`, `LarkBatisProperties`, the `AutoConfiguration.imports` entry |
+| `larkbatis-spring-boot-starter` | Empty; dependencies only |
 
-## `SpringLightBatisSession`
+## `SpringLarkBatisSession`
 
 The one rule the class exists to enforce:
 
@@ -36,16 +36,17 @@ public Connection conn() {
 ```
 
 `DataSourceUtils` hands back the connection already bound to the running transaction, and
-opens a fresh one only when there is none. `release()` is its mirror — a no-op inside a
-transaction, a real close outside one. That is why generated bodies keep the `Connection`
-out of try-with-resources: only `release` knows whether it may really be closed.
+opens a fresh one only when there is none. `release()` does the reverse: a no-op inside a
+transaction, a real close outside one. Generated bodies therefore keep the `Connection`
+out of try-with-resources. See
+[Why generated code never closes the Connection](transactions.md#why-generated-code-never-closes-the-connection).
 
 The class holds no state beyond its two collaborators and is safe to share across
 threads. One bean per `DataSource`.
 
 Exception translation goes through Spring's `SQLExceptionTranslator`, defaulting to
 `SQLExceptionSubclassTranslator` (Spring's own default since 6.0), which reads the
-standard `SQLException` subclass tree rather than a per-vendor error-code table. So your
+standard `SQLException` subclass tree and not a per-vendor error-code table. So your
 existing `DuplicateKeyException` handlers keep working unchanged.
 
 ## What runs and what does not
@@ -60,12 +61,12 @@ existing `DuplicateKeyException` handlers keep working unchanged.
 | Sharing a transaction with `JdbcTemplate` or JPA | works | Same `DataSourceUtils`, same `DataSourceTransactionManager` |
 | Spring AOP on a mapper bean | works | The mapper is a real bean |
 | MyBatis `ExecutorType.BATCH` | absent | There is no executor. Batch is a [method signature](foreach-and-batches.md#jdbc-batches) |
-| MyBatis plugins / interceptors | absent | Dropped by design |
+| MyBatis plugins / interceptors | absent | Dropped; they hook a runtime pipeline that does not exist |
 
 ## Properties
 
 ```yaml
-lightbatis:
+larkbatis:
   max-sql-variants: 64                # distinct SQL texts per statement before a warning
   fail-on-unbounded-fragment: false   # true = throw instead of one warning
 ```
@@ -74,30 +75,30 @@ Both are about the operational cost of `${}`: statement caches are keyed by SQL 
 a fragment whose value set is not bounded grows them without limit. See
 [Raw SQL](raw-sql.md#tracking-sql-variants).
 
-!!! note "`log-sql` is deliberately absent"
+!!! note "`log-sql` is not implemented"
 
     It appears in the design document's property list and is not implemented. Every
     generated body would have to carry a logging branch, and the generated shape has none.
-    SQL logging belongs to the driver or the pool — `net.ttddyy:datasource-proxy`, p6spy —
+    SQL logging belongs to the driver or the pool (`net.ttddyy:datasource-proxy`, p6spy)
     until there is a reason to change that.
 
 ## When the defaults do not fit
 
 | Situation | What to do |
 |---|---|
-| Mappers outside the scanned packages | `-Alightbatis.springConfigPackage=com.example.app`, or `@Import(LightBatisMapperConfiguration.class)` |
-| You want to declare the mapper beans yourself | `-Alightbatis.springConfig=false` |
-| More than one `DataSource` | Declare one `SpringLightBatisSession` per `DataSource` and write the mapper `@Bean` methods yourself |
+| Mappers outside the scanned packages | `-Alarkbatis.springConfigPackage=com.example.app`, or `@Import(LarkBatisMapperConfiguration.class)` |
+| You want to declare the mapper beans yourself | `-Alarkbatis.springConfig=false` |
+| More than one `DataSource` | Declare one `SpringLarkBatisSession` per `DataSource` and write the mapper `@Bean` methods yourself |
 
 On multiple data sources: `@ConditionalOnSingleCandidate` makes the auto-configuration
-back off entirely rather than guess, and the generated `@Configuration` takes a single
-`LightBatisSession` — so mark one `@Primary`, or suppress the generated class with the
+back off entirely instead of guessing, and the generated `@Configuration` takes a single
+`LarkBatisSession`, so mark one `@Primary` or suppress the generated class with the
 option above. Per-mapper `DataSource` selection is **deferred**: no design without a real
 service that needs it.
 
 ## Spring Boot 3 and Spring Boot 4
 
-One jar works on both, and that took one deliberate decision. Boot 4 moved
+One jar works on both, and it took one decision to get there. Boot 4 moved
 `DataSourceAutoConfiguration` out of `spring-boot-autoconfigure` into the new
 `spring-boot-jdbc` module and renamed its package:
 
@@ -107,15 +108,15 @@ One jar works on both, and that took one deliberate decision. Boot 4 moved
 | `@AutoConfiguration`, `@ConditionalOn*` | `org.springframework.boot.autoconfigure(.condition)` | unchanged |
 | `@ConfigurationProperties` | `org.springframework.boot.context.properties` | unchanged |
 
-So `LightBatisAutoConfiguration` declares its ordering with `afterName` and lists **both**
+So `LarkBatisAutoConfiguration` declares its ordering with `afterName` and lists **both**
 package names.
 
 !!! danger "Why this is not style"
 
     `after = DataSourceAutoConfiguration.class` compiled against Boot 3 cannot be resolved
     on Boot 4, and Spring's response is to drop the whole auto-configuration from the
-    candidate list — no bean, no warning. Nothing goes wrong until something asks for a
-    `LightBatisSession` and the context fails to start.
+    candidate list: no bean, no warning. Nothing goes wrong until something asks for a
+    `LarkBatisSession` and the context fails to start.
 
     A name that matches nothing is simply ignored, which is what makes listing both safe.
     Verified by migrating a real Boot 4.1 service; a test asserts both names are still
@@ -124,9 +125,9 @@ package names.
 
 ## Spring AOT and native image
 
-`@Bean AccountMapper accountMapper(LightBatisSession s)` has a static return type, so AOT
+`@Bean AccountMapper accountMapper(LarkBatisSession s)` has a static return type, so AOT
 treats it like any other bean: no `getObjectType()` at runtime, no proxy hint, no
-`reflect-config.json` for the mapper layer. `MapperFactoryBean` is the opposite case — the
+`reflect-config.json` for the mapper layer. `MapperFactoryBean` is the opposite case: the
 bean type is only known at runtime and what it returns is a JDK proxy.
 
 `proxyBeanMethods = false` on the generated `@Configuration` is load-bearing, not style:

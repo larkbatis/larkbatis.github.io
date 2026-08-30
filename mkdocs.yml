@@ -1,19 +1,19 @@
-# Material for MkDocs — site config for LightBatis.
+# Material for MkDocs — site config for LarkBatis.
 # Scaffolded from the `docs-site-repo` skill; placeholders already substituted.
 
-site_name: LightBatis
-site_url: https://light-batis.github.io/
+site_name: LarkBatis
+site_url: https://larkbatis.github.io/
 site_description: >-
   An ahead-of-time MyBatis: mappers and SQL are compiled into plain Java at build time — no proxies, no reflection, no OGNL at runtime.
-site_author: LightBatis contributors
-copyright: Copyright &copy; 2026 LightBatis contributors
+site_author: LarkBatis contributors
+copyright: Copyright &copy; 2026 LarkBatis contributors
 
 # repo_url points at the CODE repo (that is what the header icon should link to),
 # while the edit button has to point into the DOCS repo — hence the explicit
 # template rather than the default `edit_uri`, which is resolved against repo_url.
-repo_url: https://github.com/light-batis/lightbatis
-repo_name: light-batis/lightbatis
-edit_uri_template: https://github.com/light-batis/light-batis.github.io/edit/main/docs/{path}
+repo_url: https://github.com/larkbatis/larkbatis
+repo_name: larkbatis/larkbatis
+edit_uri_template: https://github.com/larkbatis/larkbatis.github.io/edit/main/docs/{path}
 
 theme:
   name: material
@@ -38,27 +38,99 @@ theme:
     - content.tooltips
     - content.action.edit
   palette:
+    # The `custom` pair has to be repeated here, not just on the two concrete
+    # entries: Material renders the FIRST palette entry's colors onto <body>,
+    # and only rewrites them from the matching light/dark entry once its JS
+    # runs. Leaving these unset falls back to the theme default (indigo) and
+    # flashes it at every first-time visitor, who lands on this entry.
     - media: "(prefers-color-scheme)"
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-auto
         name: Follow system theme
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
 
+# The brand palette lives here: Material has no named color for #0D6E78 /
+# #A85426, so `custom` above pulls its variables from this stylesheet.
+extra_css:
+  - stylesheets/extra.css
+
 plugins:
   - search
+
+  # Vietnamese lives alongside English in the SAME docs tree, as `*.vi.md`
+  # siblings (`docs_structure: suffix`). The alternative, `folder`, would move
+  # all 34 English pages into `docs/en/` and rewrite every nav entry for nothing.
+  #
+  # `fallback_to_default` is what makes an incremental translation shippable: a
+  # page with no `.vi.md` sibling is served under /vi/ as its English original
+  # instead of 404-ing, so the language switcher never lands a reader on a dead
+  # URL. It also means a missing translation is invisible in the build log —
+  # `mkdocs build --strict` will NOT tell you a page is untranslated.
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: vi
+          name: Tiếng Việt
+          build: true
+          site_description: >-
+            MyBatis biên dịch sẵn: mapper và SQL được dịch thành Java thuần ngay lúc build — không proxy, không reflection, không OGNL lúc chạy.
+          # Only the labels written in `nav` below need a mapping here. Entries
+          # that take their title from the page's own H1 (every section index)
+          # are translated by the `.vi.md` file itself.
+          nav_translations:
+            Home: Trang chủ
+            Getting Started: Bắt đầu
+            Quick Start: Khởi động nhanh
+            Build Plugins: Plugin build
+            Java Modules: Java Module
+            Usage: Sử dụng
+            Mapper Interfaces: Interface mapper
+            Mapper XML: Mapper XML
+            Dynamic SQL: SQL động
+            foreach and Batches: foreach và batch
+            Result Maps and Joins: Result map và join
+            Generated Keys: Khoá tự sinh
+            Streaming Results: Stream kết quả
+            Transactions: Transaction
+            Raw SQL and SqlFragment: SQL thô và SqlFragment
+            Types and Handlers: Kiểu dữ liệu và handler
+            Spring Integration: Tích hợp Spring
+            Troubleshooting: Xử lý sự cố
+            Architecture: Kiến trúc
+            Shape vs Value: Shape và value
+            Generated Code: Code sinh ra
+            Life of a Call: Vòng đời một lời gọi
+            Design Red Lines: Lằn ranh thiết kế
+            Performance: Hiệu năng
+            Features: Tính năng
+            MyBatis Differences: Khác biệt với MyBatis
+            Annotations: Annotation
+            Runtime API: API runtime
+            Configuration: Cấu hình
+            Errors and Diagnostics: Lỗi và chẩn đoán
+            Migrating from MyBatis: Chuyển từ MyBatis sang
+            Roadmap: Lộ trình
+
   - mike:
       # `symlink` is mike's default and is the wrong choice here: this site is
       # published as a Pages *artifact* (tar → deploy-pages), not by serving the
@@ -106,7 +178,7 @@ extra:
     alias: true
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/light-batis
+      link: https://github.com/larkbatis
 
 # Turn silent docs rot into build output. `mkdocs build --strict` promotes every
 # `warn` below into a non-zero exit, which is what CI runs.

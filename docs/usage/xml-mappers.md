@@ -6,7 +6,7 @@ with the same id. The namespace is the interface's fully-qualified name.
 ```java title="UserSearchMapper.java"
 package com.example.app;
 
-import io.github.lightbatis.annotations.Mapper;
+import io.github.larkbatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
@@ -46,7 +46,7 @@ public interface UserSearchMapper {
 ```
 
 The DTD reference is kept so existing files parse unchanged and editors keep completing.
-It is not fetched or validated against at build time.
+The build neither fetches it nor validates against it.
 
 ## Why `@Mapper` is needed here
 
@@ -74,7 +74,7 @@ public interface UserMapper {
 
 ## Where the XML is found
 
-The processor scans the directories given by `-Alightbatis.mapperDir`. The
+The processor scans the directories given by `-Alarkbatis.mapperDir`. The
 [build plugins](../getting-started/build-plugins.md) pass it for you, defaulting to
 `src/main/resources`, and register the files as compile inputs so an XML edit
 regenerates.
@@ -93,7 +93,7 @@ logback settings and anything else in the same tree is ignored. A mapper XML who
 | `<where>` `<set>` `<trim>` | Literal attributes only, constant-folded at build time |
 | `<foreach>` | Statically-typed collections, arrays and maps. [See here](foreach-and-batches.md) |
 | `<resultMap>` | One level of `<association>` / `<collection>`. [See here](result-maps.md) |
-| `<bind>` `<discriminator>` `<parameterMap>` `<cache>` `<selectKey>` | Not supported — see [MyBatis Differences](../features/mybatis-differences.md) |
+| `<bind>` `<discriminator>` `<parameterMap>` `<cache>` `<selectKey>` | Not supported; see [MyBatis Differences](../features/mybatis-differences.md) |
 
 `resultType` and `resultMap` take **fully-qualified class names**. There is no type-alias
 registry: an alias is a runtime lookup table, and this is a build.
@@ -118,22 +118,22 @@ registry: an alias is a runtime lookup table, and this is a build.
 </select>
 ```
 
-After inlining, the statement is indistinguishable from one written out in full —
+After inlining, the statement is indistinguishable from one written out in full,
 including for select-list parsing, so `<include>` does not cost you positional row
 reads.
 
 ## Whitespace
 
-Fragments are joined with exactly one space and the result is trimmed. That is a
-deliberate, documented policy rather than a reproduction of MyBatis's incidental
-whitespace, which differs between MyBatis versions in `<trim>` handling. If you are
-comparing generated SQL against MyBatis output character by character, expect whitespace
-to differ and semantics not to.
+Fragments are joined with exactly one space and the result is trimmed. The policy is
+documented and fixed, and it does not reproduce MyBatis's incidental whitespace, which
+differs between MyBatis versions in `<trim>` handling. If you are comparing generated SQL
+against MyBatis output character by character, expect whitespace to differ and semantics not
+to.
 
 ## Annotations that still apply
 
 XML statements are still bound to a Java method, so method-level and interface-level
-annotations still work — `@PadPow2` on a `<foreach>` statement, `@Param` on the
+annotations still work: `@PadPow2` on a `<foreach>` statement, `@Param` on the
 parameters, `@Options` on an `<insert>`:
 
 ```java

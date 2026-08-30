@@ -1,9 +1,9 @@
 # Usage
 
-Everything you write in LightBatis is one of two things: a **mapper interface** whose
+Everything you write in LarkBatis is one of two things: a **mapper interface** whose
 methods carry statement annotations, or a mapper interface marked `@Mapper` whose
-statements live in **mapper XML**. Both compile to the same generated implementation;
-they are frontends onto one intermediate representation, not two code paths.
+statements live in **mapper XML**. Both compile to the same generated implementation.
+They are two frontends onto one intermediate representation, not two code paths.
 
 ## The shape of a project
 
@@ -22,8 +22,8 @@ At build time the processor emits, into the same package:
 UserMapper$$Impl.java              one per mapper
 UserSearchMapper$$Impl.java
 UserRow.java                       one per result class
-LightBatisMappers.java             one per compilation
-LightBatisMapperConfiguration.java one, if Spring is on the build classpath
+LarkBatisMappers.java             one per compilation
+LarkBatisMapperConfiguration.java one, if Spring is on the build classpath
 ```
 
 ## Pages in this section
@@ -42,7 +42,7 @@ LightBatisMapperConfiguration.java one, if Spring is on the build classpath
 
 -   **[Dynamic SQL](dynamic-sql.md)**
 
-    `<if>`, `<choose>`, `<where>`, `<set>`, `<trim>` — and the narrow `test` grammar that
+    `<if>`, `<choose>`, `<where>`, `<set>`, `<trim>`, and the narrow `test` grammar that
     replaces OGNL.
 
 -   **[foreach and Batches](foreach-and-batches.md)**
@@ -64,7 +64,7 @@ LightBatisMapperConfiguration.java one, if Spring is on the build classpath
 
 -   **[Transactions](transactions.md)**
 
-    `LightBatisTx` vote-to-commit semantics, nesting, and `@Transactional`.
+    `LarkBatisTx` vote-to-commit semantics, nesting, and `@Transactional`.
 
 -   **[Raw SQL and SqlFragment](raw-sql.md)**
 
@@ -77,7 +77,7 @@ LightBatisMapperConfiguration.java one, if Spring is on the build classpath
 
 -   **[Spring Integration](spring.md)**
 
-    What `mybatis-spring` does that LightBatis does not need, and what it still does.
+    What `mybatis-spring` does that LarkBatis does not need, and what it still does.
 
 -   **[Troubleshooting](troubleshooting.md)**
 
@@ -88,17 +88,16 @@ LightBatisMapperConfiguration.java one, if Spring is on the build classpath
 ## Two rules that explain most surprises
 
 **1 · If it can be decided at build time, it is.** Column indexes, type-handler choices,
-`<trim>` prefixes, `<include>` bodies, whether a comparison is on a `long` or a `String`
-— none of that is inspected at runtime. Which means a mistake in any of them is a
-compile error rather than a stack trace, and the message names the mapper method.
+`<trim>` prefixes, `<include>` bodies, whether a comparison is on a `long` or a `String`:
+none of it is inspected at runtime. A mistake in any of them surfaces as a compile error
+naming the mapper method, not as a stack trace.
 
-**2 · If it cannot, it must be explicit.** The list of things resolved at runtime is
-short and closed: parameter values, the boolean results of `<if>`/`<when>` tests, the
-size of a `<foreach>` collection, the rows in a `ResultSet`, the actual column count
-when the select list could not be parsed, the contents of a `SqlFragment`, and the
-`databaseId` chosen once at startup. Anything you want that is not on that list has to
-be spelled out in the mapper signature — which is why a `String` bound to `${}` is a
-compile error and not a shrug.
+**2 · If it cannot, it must be explicit.** The list of things resolved at runtime is short
+and closed: parameter values, the boolean results of `<if>`/`<when>` tests, the size of a
+`<foreach>` collection, the rows in a `ResultSet`, the actual column count when the select
+list could not be parsed, and the contents of a `SqlFragment`. Anything not on that list
+has to be spelled out in the mapper signature, which is why binding a `String` to `${}`
+fails the build instead of passing quietly.
 
 The full statement of that boundary is in the wiki:
 [Shape vs Value](../wiki/shape-vs-value.md).

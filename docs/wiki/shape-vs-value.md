@@ -1,6 +1,6 @@
 # Shape vs Value
 
-Every design decision in LightBatis follows from one cut. On one side: everything
+Every design decision in LarkBatis follows from one cut. On one side: everything
 derivable from the **shape** of a mapper, which stopped changing when you saved the file.
 On the other: the **values** that flow through a call at runtime.
 
@@ -8,8 +8,8 @@ The shape side is resolved at build time. The value side is the only thing left.
 
 ## The closed list
 
-This is the whole of what may be resolved at runtime. It is a closed list on purpose — an
-open one would quietly grow back into an interpreter.
+The list below is the whole of what may be resolved at runtime, and it is closed: an open
+one would quietly grow back into an interpreter.
 
 | Resolved at runtime | Why it has to be |
 |---|---|
@@ -18,10 +18,15 @@ open one would quietly grow back into an interpreter.
 | The **size** of a `<foreach>` collection | It depends on parameter values |
 | The **rows** in a `ResultSet` | The database produced them |
 | The **actual column count**, when the generator could not parse the select list | `SELECT *` has no static answer |
-| The **contents** of a `SqlFragment` | It is the deliberate escape hatch, and it is audited |
-| `databaseId` | Chosen once at startup |
+| The **contents** of a `SqlFragment` | The escape hatch, and it is audited |
 
-Everything else happens at build time. Not "usually", not "when possible" — everything.
+Everything else happens at build time. Not "usually", not "when possible": everything.
+
+The design reserved one more slot — a `databaseId` chosen once at startup, so a statement
+could have a per-vendor variant. **It was never built.** A `databaseId` attribute on a
+statement is a compile error today, and the answer to two vendors is two mapper
+interfaces. The row is called out here rather than quietly left off, because a list that
+claims to be closed has to be honest about what is on it.
 
 ## What that buys, item by item
 
@@ -42,8 +47,8 @@ parameter type is a build error naming the method. In MyBatis it is a runtime
 `ReflectionException` on the unlucky code path.
 
 **There is no metadata to write for native image.** No `Proxy`, no `Class.forName`, no
-`setAccessible` — so nothing to declare. This is a *consequence* of the cut, not a feature
-that was added.
+`setAccessible`, so nothing to declare. The property is a *consequence* of the cut, not a
+feature that was added.
 
 **Reflection cannot be reintroduced accidentally.** There is no runtime that could do it.
 A feature request that needs runtime type inspection has no place to put it, which is why
@@ -51,27 +56,27 @@ the [dropped feature list](../features/mybatis-differences.md) is what it is.
 
 **Some MyBatis features become impossible rather than unimplemented.** That distinction
 matters when reading the dropped list. `<discriminator>` chooses a result class from a
-column value — the *shape* of the result depends on a runtime value, so it is on the wrong
-side of the cut by construction. Lazy loading needs a proxy per result object. Plugins
+column value, so the *shape* of the result depends on a runtime value and it lands on the
+wrong side of the cut by construction. Lazy loading needs a proxy per result object. Plugins
 hook a runtime pipeline that does not exist. None of these are "not yet".
 
 ## Where the cut is uncomfortable
 
-Three places, and it is worth being honest that they are trade-offs rather than free wins.
+Three places, and it is worth being honest that they are trade-offs and not free wins.
 
 **1 · `<foreach>` cardinality.** The number of placeholders genuinely is a runtime value,
-so the SQL text is assembled at runtime for those statements. LightBatis compiles the loop
-rather than interpreting a tree, but the text still varies — which is why those statements
+so the SQL text is assembled at runtime for those statements. LarkBatis compiles the loop
+instead of interpreting a tree, but the text still varies, which is why those statements
 get variant tracking and why `@PadPow2` exists.
 
 **2 · `SELECT *`.** The column count is not knowable at build time. That one statement
 falls back to name-based reads resolved from `ResultSetMetaData` on the first row. Correct,
 slower, and reported at build time so it is a decision.
 
-**3 · `${}`.** Sometimes an identifier really does come from configuration. Rather than
-banning it, the cut is enforced at the type level: only `SqlFragment`, closed-value types,
-or `@OrderBy(allowed = {...})` may be spliced, and arbitrary text has exactly one named
-entry point.
+**3 · `${}`.** Sometimes an identifier really does come from configuration. Instead of a
+ban, the cut is enforced at the type level: only `SqlFragment`, closed-value types, or
+`@OrderBy(allowed = {...})` may be spliced, and arbitrary text has exactly one named entry
+point.
 
 ## The test for any new feature
 

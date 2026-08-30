@@ -14,9 +14,9 @@ flowchart LR
     subgraph run["Runtime — ~1,500 lines, zero deps"]
         E --> G1["UserMapper$$Impl"]
         E --> G2["UserRow"]
-        E --> G3["LightBatisMappers"]
-        E --> G4["LightBatisMapperConfiguration"]
-        G1 --> RT["lightbatis-runtime<br/>LightBatisSession · JdbcCodec · SqlFragment"]
+        E --> G3["LarkBatisMappers"]
+        E --> G4["LarkBatisMapperConfiguration"]
+        G1 --> RT["larkbatis-runtime<br/>LarkBatisSession · JdbcCodec · SqlFragment"]
         RT --> JDBC[("JDBC driver")]
     end
 ```
@@ -28,12 +28,12 @@ answers to "does this reach an application's runtime classpath".
 
 | Repository | Modules | Scope |
 |---|---|---|
-| `lightbatis` | `lightbatis-annotations` | runtime — annotations only, no logic |
-| | `lightbatis-runtime` | runtime — zero dependencies beyond JDBC |
-| | `lightbatis-processor` | **build-only** — the generator |
-| `lightbatis-gradle-plugin` | — | build-only — plugin id `io.github.lightbatis` |
-| `lightbatis-maven-plugin` | — | build-only — same job for Maven |
-| `lightbatis-spring` | `lightbatis-spring`, `-spring-boot-autoconfigure`, `-spring-boot-starter` | runtime — transactions, Boot auto-config |
+| `larkbatis` | `larkbatis-annotations` | runtime: annotations only, no logic |
+| | `larkbatis-runtime` | runtime: zero dependencies beyond JDBC |
+| | `larkbatis-processor` | **build-only**: the generator |
+| `larkbatis-gradle-plugin` | | build-only: plugin id `io.github.larkbatis` |
+| `larkbatis-maven-plugin` | | build-only: same job for Maven |
+| `larkbatis-spring` | `larkbatis-spring`, `-spring-boot-autoconfigure`, `-spring-boot-starter` | runtime: transactions, Boot auto-config |
 
 The rule that keeps this honest: **build-only modules must never leak onto an
 application's runtime classpath.** The generator is a compile-time tool; if it can be
@@ -46,8 +46,8 @@ stops being checkable.
 
 Two frontends, one output. The annotation path runs as a plain
 `javax.annotation.processing.Processor`. The XML path parses mapper files handed to it as
-directory paths by the build plugin. Both produce the same IR, so there is one set of
-emitters and one set of semantics — not two code paths that drift.
+directory paths by the build plugin. Both produce the same IR. One set of emitters, one
+set of semantics, and no second code path to drift.
 
 The frontend does all the work that "resolving the shape" means:
 
@@ -60,15 +60,15 @@ The frontend does all the work that "resolving the shape" means:
 - inline `<sql>`/`<include>`
 - lower `<foreach>` into a placeholder loop and a binding loop
 
-Anything it cannot decide is a compile error naming the mapper method — never a runtime
+Anything it cannot decide is a compile error naming the mapper method, never a runtime
 fallback.
 
 ### The IR
 
 `MapperModel` is the boundary. It carries statements, parameters, result shapes, dynamic
-nodes, key models and reader access strategies, and it is deliberately not shaped like
-either frontend. Golden snapshots of the IR are part of the test suite, so a frontend
-change that alters meaning shows up as an IR diff before it becomes a generated-code diff.
+nodes, key models and reader access strategies, and its shape follows neither frontend.
+Golden snapshots of the IR are part of the test suite, so a frontend change that alters
+meaning shows up as an IR diff before it becomes a generated-code diff.
 
 ### Emitters
 
@@ -76,45 +76,41 @@ JavaPoet, one emitter per artefact:
 
 | Emitter | Output |
 |---|---|
-| `MapperImplEmitter` | `UserMapper$$Impl` — one per mapper |
-| `RowReaderEmitter` | `UserRow` — one per result class |
-| `RegistryEmitter` | `LightBatisMappers` — one per compilation |
-| `SpringConfigurationEmitter` | `LightBatisMapperConfiguration` — when spring-context is on the build classpath |
+| `MapperImplEmitter` | `UserMapper$$Impl`, one per mapper |
+| `RowReaderEmitter` | `UserRow`, one per result class |
+| `RegistryEmitter` | `LarkBatisMappers`, one per compilation |
+| `SpringConfigurationEmitter` | `LarkBatisMapperConfiguration`, when spring-context is on the build classpath |
 
 The registry emitter is why the processor is **aggregating**: it needs every mapper in the
-compilation to write one complete registry. That is also why
-`useIncrementalCompilation=false` breaks Maven builds — recompiling only stale sources
-would regenerate the registry from a partial view.
+compilation to write one complete registry. The same requirement is what breaks Maven
+builds under `useIncrementalCompilation=false`, where recompiling only stale sources would
+regenerate the registry from a partial view.
 
 ## The runtime phase
 
-`lightbatis-runtime` is small enough to list:
+`larkbatis-runtime` is small enough to list:
 
 | Type | Job |
 |---|---|
-| `LightBatisSession` | Borrow a `Connection`, give it back, translate exceptions. The whole environment a generated mapper needs |
-| `JdbcLightBatisSession` | The standalone implementation, plus `LightBatisTx` |
-| `SpringLightBatisSession` | The Spring one — `DataSourceUtils` instead of `dataSource.getConnection()` |
+| `LarkBatisSession` | Borrow a `Connection`, give it back, translate exceptions. The whole environment a generated mapper needs |
+| `JdbcLarkBatisSession` | The standalone implementation, plus `LarkBatisTx` |
+| `SpringLarkBatisSession` | The Spring one: `DataSourceUtils` instead of `dataSource.getConnection()` |
 | `JdbcCodec` | Null-aware and converting read/write helpers. The inlined remains of the `TypeHandler` layer |
 | `SqlFragment` | The one gate arbitrary SQL text passes through |
-| `LightBatisSql` | `trackVariants`, `padPow2`, `sum` — static helpers referenced by generated code |
+| `LarkBatisSql` | Static helpers referenced by generated code: `trackVariants`, `padPow2`, `sum` |
 | `RowReader`, `StatementBinder` | Two functional interfaces the escape hatch takes |
 | `ResultSetStream` | Cursor-backed `Stream` with resource ownership |
-| `LightBatisException` + subclasses | The unchecked exception tree |
+| `LarkBatisException` + subclasses | The unchecked exception tree |
 
 Nothing in that list inspects a type, resolves a name, or consults a registry. That all
 happened at build time.
 
 ## Why a build-tool plugin exists at all
 
-`Filer.getResource` is not specified to reach files under `src/main/resources`, and the
-implementations that do reach them do not agree on how. So the processor reads mapper XML
-with plain `java.io` and takes a directory path as an option instead. Something has to
-supply that path **and** register the XML files as compile inputs, or an XML-only edit
-would not regenerate anything.
-
-That is the entire reason both build plugins exist. Neither generates code; all generation
-stays inside javac. See [Build Plugins](../getting-started/build-plugins.md).
+The processor cannot reach mapper XML through `Filer.getResource`, so it takes a directory
+path as an option and something has to supply that path. Both build plugins exist for that
+one job. Neither generates code; all generation stays inside javac.
+[Build Plugins](../getting-started/build-plugins.md) has the full reasoning.
 
 ## Verification strategy
 
@@ -132,4 +128,4 @@ Three layers, because "the generated code compiles" proves very little:
    than guessed.
 
 Plus a `CompileFailTest` for every "this is a compile error" promise the documentation
-makes — including the ones on this site.
+makes, including the ones on this site.

@@ -1,8 +1,8 @@
 # Quick Start
 
-Five minutes from an empty project to a working mapper. This is the plain-JDBC path —
-no Spring, no XML. Everything here comes from the `lightbatis-sample` module of the
-core repository, which is also the native-image smoke-test subject.
+Five minutes from an empty project to a working mapper, on the plain-JDBC path: no
+Spring, no XML. Everything here comes from the `larkbatis-sample` module of the core
+repository, which is also the native-image smoke-test subject.
 
 ## 1 · A result class
 
@@ -35,8 +35,8 @@ public class User {
 }
 ```
 
-Column names map to properties with `snake_case` → `camelCase` applied **at build
-time**, always. `created_at` finds `setCreatedAt`. Where that convention is not enough, alias the
+Column names map to properties with `snake_case` → `camelCase`, applied **at build time**,
+always. `created_at` finds `setCreatedAt`. Where that convention is not enough, alias the
 column in the select list or declare a [`<resultMap>`](../usage/result-maps.md).
 
 ## 2 · A mapper interface
@@ -44,10 +44,10 @@ column in the select list or declare a [`<resultMap>`](../usage/result-maps.md).
 ```java title="UserMapper.java"
 package com.example.app;
 
-import io.github.lightbatis.annotations.Insert;
-import io.github.lightbatis.annotations.Options;
-import io.github.lightbatis.annotations.Param;
-import io.github.lightbatis.annotations.Select;
+import io.github.larkbatis.annotations.Insert;
+import io.github.larkbatis.annotations.Options;
+import io.github.larkbatis.annotations.Param;
+import io.github.larkbatis.annotations.Select;
 import java.util.List;
 
 public interface UserMapper {
@@ -70,7 +70,7 @@ public interface UserMapper {
 No `@Mapper` marker is needed: an interface with statement annotations is found by the
 processor on its own. The marker exists for interfaces whose statements live entirely in
 [mapper XML](../usage/xml-mappers.md), which would otherwise never reach a processing
-round.
+round at all.
 
 ## 3 · Compile
 
@@ -84,27 +84,27 @@ Three files appear next to your sources, in the same package:
 |---|---|
 | `UserMapper$$Impl` | The implementation. Plain JDBC, one method per statement |
 | `UserRow` | The row reader for `User`. One per result class, shared by every statement returning it |
-| `LightBatisMappers` | A static factory for every mapper in the compilation |
+| `LarkBatisMappers` | A static factory for every mapper in the compilation |
 
-They are real source files, and reading them is part of the design — see
+They are real source files, and reading them is part of the design. See
 [Generated Code](../wiki/generated-code.md).
 
 !!! tip "If nothing is generated"
 
-    Check that `lightbatis-processor` is on `annotationProcessor` (not `implementation`),
+    Check that `larkbatis-processor` is on `annotationProcessor` (not `implementation`),
     and that you are compiling with javac. See [Troubleshooting](../usage/troubleshooting.md).
 
 ## 4 · Wire it up and run
 
-`LightBatisSession` is the only thing a generated mapper needs: a way to borrow a
+`LarkBatisSession` is the only thing a generated mapper needs: a way to borrow a
 `Connection`, a way to give it back, and exception translation. The standalone
 implementation takes a `DataSource`.
 
 ```java title="SampleApp.java"
 package com.example.app;
 
-import io.github.lightbatis.runtime.JdbcLightBatisSession;
-import io.github.lightbatis.runtime.LightBatisTx;
+import io.github.larkbatis.runtime.JdbcLarkBatisSession;
+import io.github.larkbatis.runtime.LarkBatisTx;
 import java.time.Instant;
 import javax.sql.DataSource;
 
@@ -113,15 +113,15 @@ public class SampleApp {
     public static void main(String[] args) {
         DataSource ds = /* HikariCP, H2, whatever you already use */;
 
-        JdbcLightBatisSession session = new JdbcLightBatisSession(ds);
-        UserMapper mapper = LightBatisMappers.userMapper(session);
+        JdbcLarkBatisSession session = new JdbcLarkBatisSession(ds);
+        UserMapper mapper = LarkBatisMappers.userMapper(session);
 
         User u = new User();
         u.setName("Ada");
         u.setEmail("ada@example.com");
         u.setCreatedAt(Instant.now());
 
-        try (LightBatisTx tx = session.begin()) {
+        try (LarkBatisTx tx = session.begin()) {
             mapper.insert(u);
             tx.commit();
         }
@@ -178,12 +178,13 @@ public static User read(ResultSet rs) throws SQLException {
 Every column index and every accessor was chosen at build time. Nothing here inspects a
 type, resolves a property name or consults a registry.
 
-!!! note "The Connection is not in try-with-resources — on purpose"
+!!! note "The Connection is deliberately not in try-with-resources"
 
     Only `s.release(c)` knows whether the connection may really be closed. Under a
-    managed transaction (Spring's or LightBatis's own) it belongs to the transaction and
-    closing it would be wrong. This shape is a
-    [design red line](../wiki/design-rules.md), not an oversight.
+    managed transaction, Spring's or LarkBatis's own, the connection belongs to that
+    transaction and closing it would be wrong.
+    [Transactions](../usage/transactions.md#why-generated-code-never-closes-the-connection)
+    has the full rule.
 
 ## Where to go next
 

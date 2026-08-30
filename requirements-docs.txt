@@ -3,3 +3,4 @@
 # mkdocs itself arrives as a dependency of mkdocs-material.
 mkdocs-material==9.7.7
 mike==2.2.0
+mkdocs-static-i18n==1.3.0

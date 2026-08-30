@@ -1,25 +1,25 @@
 # Migrating from MyBatis
 
-The migration path is the point of the project — it is what LightBatis has that Micronaut
+The migration path is the point of the project, and it is what LarkBatis has that Micronaut
 Data and jOOQ do not. So the tooling for it is treated as being as important as the
 generator itself.
 
 ## Start with a scan
 
-`lightbatis-scan` points at an existing MyBatis codebase and prints what migrating it
+`larkbatis-scan` points at an existing MyBatis codebase and prints what migrating it
 would cost, with file and line numbers. It compiles nothing and resolves no dependencies,
-so it runs against a checkout of a service nobody has built yet — which is when the
+so it runs against a checkout of a service nobody has built yet, which is when the
 question "would this even work for us" actually gets asked.
 
 ```console
-$ ./gradlew :lightbatis-scanner:installDist
-$ ./build/install/lightbatis-scanner/bin/lightbatis-scan /path/to/legacy-service
+$ ./gradlew :larkbatis-scanner:installDist
+$ ./build/install/larkbatis-scanner/bin/larkbatis-scan /path/to/legacy-service
 ```
 
 ```text
-lightbatis-scan — what would it cost to move this codebase to LightBatis
+larkbatis-scan — what would it cost to move this codebase to LarkBatis
 
-usage: lightbatis-scan [options] <path>...
+usage: larkbatis-scan [options] <path>...
 
   --summary            counts only, no per-line detail
   --min=LEVEL          detail level: BLOCKER, EDIT, REVIEW, INFO (default REVIEW)
@@ -32,7 +32,7 @@ Nothing is rewritten. The report is the deliverable, and the edits are yours to 
 
 ### It uses the real frontend
 
-The scanner depends on `lightbatis-processor` and runs **the same grammar checker and the
+The scanner depends on `larkbatis-processor` and runs **the same grammar checker and the
 same XML parser** the build will run. So a scan report cannot drift away from what
 actually compiles. Line positions are found by text scanning, because no parser returns a
 trustworthy position for a `${}` in the middle of a text node.
@@ -44,7 +44,7 @@ Ordered by how much human judgement a finding needs, because the first question 
 
 | | Meaning |
 |---|---|
-| **BLOCKER** | No LightBatis equivalent — the design dropped it. The mapper changes |
+| **BLOCKER** | No LarkBatis equivalent; the design dropped it. The mapper changes |
 | **EDIT** | A rewrite with a known shape. The tool can say exactly what to write |
 | **REVIEW** | Supported, but only after someone decides how |
 | **INFO** | Compiles as-is; worth knowing before it surprises someone |
@@ -55,7 +55,7 @@ Not the file, and not the finding. One `<bind>` in a 90-statement mapper must no
 the other 89, and "1,113 findings" is not something anyone can act on. A sentence like
 *"N of M statements compile unchanged"* is what decides a migration proposal.
 
-The report also prints **concentration**, not just counts — how many files the findings
+The report also prints **concentration**, not just counts: how many files the findings
 live in, and the five files holding the most. In the MyBatis source tree's own mapper
 corpus, 1,003 of 1,006 grammar rejections are in three files, and 1,000 of those in a
 single generated fixture. Without an "in N files" column that reads as a codebase-wide
@@ -86,10 +86,10 @@ wall when it is nothing of the kind.
 | `objectFactory` / `objectWrapperFactory` | BLOCKER | Hooks into a reflection layer that is gone |
 | `<include>` with a computed `refid` | BLOCKER | `refid` must be literal |
 | `<selectKey>` | REVIEW | `useGeneratedKeys` with explicit `keyProperty`/`keyColumn`, or a statement of its own |
-| Custom `TypeHandler` | REVIEW | Point at the handler explicitly *(and note `@Handler` is not yet implemented)* |
-| `<script>` in an annotation | REVIEW | Read, but the same grammar rules apply — check the tests it contains |
+| Custom `TypeHandler` | REVIEW | Mapper XML `typeHandler=` is read as-is; rewrite the handler class against `LarkBatisTypeHandler` |
+| `<script>` in an annotation | REVIEW | Read, but the same grammar rules apply, so check the tests it contains |
 | Direct `SqlSession` use | REVIEW | Call the mapper, or use `session.query(SqlFragment, binder, GeneratedRow.READER)` |
-| `mapUnderscoreToCamelCase` is off | REVIEW | LightBatis applies it at build time, always. Affected columns need explicit mapping |
+| `mapUnderscoreToCamelCase` is off | REVIEW | LarkBatis applies it at build time, always. Affected columns need `@Column` on the property, or a `<resultMap>` |
 | More than one environment / `DataSource` | REVIEW | One `DataSource` per build for now |
 | `<foreach>` | INFO | Supported; counted because it is what makes a statement's SQL-variant count grow |
 | Dynamic statement | INFO | Compiles to boolean locals and a `StringBuilder` |
@@ -99,13 +99,13 @@ wall when it is nothing of the kind.
 1. **Scan, and read the concentration column first.** If the blockers live in three files,
    the answer to "can we do this" is different from what the raw count suggests.
 2. **Start with one mapper, not one module.** A mapper is the unit that compiles.
-3. **Fix processor ordering before anything else** if the project uses Lombok — declare
-   `lightbatis-processor` *after* it. This is the single most common first-day failure,
+3. **Fix processor ordering before anything else** if the project uses Lombok: declare
+   `larkbatis-processor` *after* it. This is the single most common first-day failure,
    and it presents as "the result class has no accessors", which sounds like a different
    problem entirely.
 4. **Do the `${}` call sites next.** They are EDIT-severity and mechanical, and finishing
    them is the first time anyone has looked at every raw-SQL splice in the codebase.
-5. **Then the `test=` expressions.** Mostly truthiness — `count` → `count != 0`. Check the
+5. **Then the `test=` expressions.** Mostly truthiness: `count` → `count != 0`. Check the
    [null-comparison divergence](mybatis-differences.md#behavioural-divergences-to-check-when-migrating)
    while you are in there, because that one does not produce a compile error.
 6. **Leave the blockers for a design conversation.** Each has a named replacement, but the
@@ -117,7 +117,7 @@ wall when it is nothing of the kind.
 A trial migration of a real internal service was run on a copy as an exit
 criterion, and its whole test suite passed. Two defects surfaced that no unit test had
 found: the **Lombok processor-ordering** problem, and the **Spring Boot 4
-auto-configuration** package rename — the latter being a failure with no symptom until the
+auto-configuration** package rename, the latter being a failure with no symptom until the
 context refuses to start. Both are now fixed and both are covered by tests.
 
 What has *not* been completed is the other half of that criterion: running the migrated
@@ -125,8 +125,7 @@ service in a real environment for a week.
 
 ## What will change in your workflow
 
-Three things, and it is worth agreeing on them before starting rather than discovering
-them:
+Three things, and it is better to agree on them before starting than to discover them:
 
 - **Editing SQL means rebuilding.** For a team used to editing mapper XML and restarting,
   this is a genuine change. What you get back is javac catching the type errors that used
@@ -137,4 +136,4 @@ them:
   handles the mechanical shape of the edit.
 
 For the honest version of what you get in return, see
-[Performance](../wiki/performance.md) — particularly the part about single-record lookups.
+[Performance](../wiki/performance.md), particularly the part about single-record lookups.

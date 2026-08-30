@@ -1,6 +1,6 @@
 # Annotations
 
-Everything in `io.github.lightbatis.annotations`. All of them are `CLASS`-retention: they
+Everything in `io.github.larkbatis.annotations`. All of them are `CLASS`-retention: they
 exist for the compiler and never appear at runtime, which is why a modular consumer
 declares the artifact `requires static`.
 
@@ -24,7 +24,7 @@ public @interface Select { String[] value(); }
 User findByEmail(String email);
 ```
 
-A method may have **either** a statement annotation **or** an XML statement — both, or
+A method may have **either** a statement annotation **or** an XML statement. Both, or
 neither, is a compile error.
 
 ---
@@ -79,7 +79,7 @@ Only the generated-keys subset of the MyBatis annotation is supported.
 |---|---|
 | `useGeneratedKeys` | Ask the driver for generated keys after an `INSERT` |
 | `keyProperty` | Property (or `param.property`) the key is assigned to. **Required** when `useGeneratedKeys` is set; a wrong name is a compile error. Comma-separated for composite keys |
-| `keyColumn` | Column name(s) of the key, comma-separated. Strongly recommended — omitting it produces a **mandatory build warning** and falls back to `RETURN_GENERATED_KEYS`, which returns `ROWID` on Oracle and every column on PostgreSQL |
+| `keyColumn` | Column name(s) of the key, comma-separated. Strongly recommended: omitting it produces a **mandatory build warning** and falls back to the non-portable `RETURN_GENERATED_KEYS`. See [Generated Keys](../usage/generated-keys.md) |
 
 If both are comma-separated, the two lists must be the same length.
 
@@ -102,7 +102,7 @@ public @interface OrderBy { String[] allowed(); }
 
 Permits a `String` parameter to be bound to `${}`, by compiling it to a `switch` over the
 literal allow-list. A value outside the list is rejected at runtime with
-`LightBatisRejectedException` and never reaches the SQL text.
+`LarkBatisRejectedException` and never reaches the SQL text.
 
 ```java
 @Select("SELECT id, name, email, created_at FROM users ORDER BY ${sort}")
@@ -122,7 +122,7 @@ public @interface PadPow2 { }
 ```
 
 Pads a `<foreach>` placeholder count up to the next power of two, repeating the last
-element — bounding SQL-text variants at log₂(n) instead of n. Hibernate calls the same
+element, which bounds SQL-text variants at log₂(n) instead of n. Hibernate calls the same
 trick `in_clause_parameter_padding`.
 
 On an interface it applies to every statement; on a method, to that one.
@@ -131,56 +131,142 @@ On an interface it applies to every statement; on a method, to that one.
 
     Repeating the last element is invisible only in an `IN` list. The generator requires
     the `<foreach>` body to be a single `#{}` bind and the statement not to be an
-    `INSERT` — otherwise padding is a **compile error** rather than silently duplicated
-    rows.
+    `INSERT`. Outside those limits padding is a **compile error**, never silently
+    duplicated rows.
 
 [Details](../usage/foreach-and-batches.md#padpow2-bounding-the-sql-variants)
 
 ---
 
-## Declared but not yet implemented
-
-These three ship in the annotations artifact and reserve their design, but the processor
-does **not** read them as of `0.1.0-SNAPSHOT`. Applying one has no effect.
-
-### `@Column`
+## `@Column`
 
 ```java
 @Retention(CLASS) @Target({FIELD, METHOD})
 public @interface Column { String value(); }
 ```
 
-Intended to override the column a result property maps to, where the build-time
-`snake_case` → `camelCase` convention is not enough.
+Names the column a result property reads from, where the build-time `snake_case` →
+`camelCase` convention is not enough: a legacy name the property should not be bent to,
+or one that has no relation to the property name at all.
 
-**Today:** use a `<resultMap>`, or alias the column in the select list
-(`SELECT usr_email AS email`).
+```java
+public class Contact {
 
-### `@Handler`
+    @Column("contact_id")
+    private long id;
+    private String email;
+    private String phone;
+
+    @Column("usr_email")
+    public void setEmail(String email) { this.email = email; }
+
+    @Column("mobile")
+    public String getPhone() { return phone; }
+
+    // ...
+}
+```
+
+Read on the **field, the setter and the getter**: the annotation targets `FIELD` and
+`METHOD` both, and the site you pick is the site that is read. Two of them naming
+different columns for one property is a compile error, because there is no correct way to
+pick between them.
+
+The name replaces the property name everywhere a column is matched: the positional reader
+when the select list parses, and the name-based `switch` when it does not. Matching stays
+case-insensitive with underscores ignored, so `@Column("usr_email")` also matches a
+`USR_EMAIL` label.
+
+!!! warning "One column, one property"
+
+    Two properties resolving to the same column is a compile error naming both, and that
+    includes a `@Column` colliding with another property's own name. The generated
+    reader switches on that name, so there is no reading that could be right.
+
+A `<resultMap>` still wins where it applies: it names columns per statement, which is
+more specific than a class-wide default.
+
+---
+
+## `@LarkBatisRow`
+
+```java
+@Retention(CLASS) @Target(TYPE)
+public @interface LarkBatisRow { }
+```
+
+Asks for a generated row reader for a class that never appears as a statement's
+`resultType`: the shape of an ad-hoc query, read only by the
+[escape hatch](../usage/raw-sql.md#the-escape-hatch).
+
+```java
+@LarkBatisRow
+public class DomainCount {
+    private String domain;
+    private long total;
+    // no-arg constructor + setters, as for any result class
+}
+```
+
+```java
+default List<DomainCount> countByDomain(LarkBatisSession s, int minimum) {
+    return s.query(
+            SqlFragment.unsafeRawSql("SELECT ... GROUP BY domain HAVING COUNT(*) >= ?"),
+            ps -> ps.setInt(1, minimum),
+            DomainCountRow.READER);   // generated because of the annotation
+}
+```
+
+The same reasoning keeps `s.query(...)` taking a `RowReader<T>` instead of a `Class<T>`.
+A `Class` there would have to be inspected at runtime to find setters, costing the
+no-reflection property the whole design rests on. The reader is generated, so javac
+checks the result type and there is nothing to discover at startup.
+
+The class has the same contract as any result class: no-arg constructor and setters. Its
+**declaration order is the canonical column order** of `READER`, there being no select
+list to take an order from. Hand-assembled SQL either selects the columns in that order,
+or reads through `DomainCountRow.columns(rs)` and `DomainCountRow.read(rs, c)`, which
+match on name.
+
+Marking a class that a statement already returns is harmless: one reader is generated
+either way.
+
+---
+
+## `@Handler`
 
 ```java
 @Retention(CLASS) @Target({PARAMETER, FIELD, METHOD})
 public @interface Handler { Class<?> value(); }
 ```
 
-Intended to select a custom type handler for one parameter or one result property — named
+Names the `LarkBatisTypeHandler` that moves one parameter or one result property: named
 explicitly, called directly from generated code, with no registry lookup and no discovery
-scan. A mapper XML `typeHandler=` attribute is rejected with a message pointing at this
-annotation.
-
-**Today:** convert at the edge of the mapper, or use the
-[escape hatch](../usage/raw-sql.md#the-escape-hatch), where the binder and the reader are
-both yours.
-
-### `@LightBatisRow`
+scan. It also lifts the [type whitelist](../usage/types.md) for the value it moves, which
+is usually the reason to reach for it.
 
 ```java
-@Retention(CLASS) @Target(TYPE)
-public @interface LightBatisRow { }
+public class Wallet {
+
+    @Handler(MoneyHandler.class)
+    private Money balance;
+}
+
+@Select("SELECT id FROM wallet WHERE balance >= #{floor}")
+List<Long> atLeast(@Handler(MoneyHandler.class) Money floor);
 ```
 
-Intended to request a generated row reader for a class that never appears as a statement's
-`resultType` — typically one used only by the escape hatch.
+Read on the **field, the setter and the getter**, as `@Column` is, and two of them naming
+different handlers is a compile error. A mapper XML `typeHandler=` attribute names the
+same thing and is read the same way; the two must agree.
 
-**Today:** give the class one statement that returns it, or write the `RowReader` lambda
-by hand.
+The handler class has to be public and concrete, with a public no-argument constructor,
+and stateless, because one instance is shared. See
+[custom type handlers](../usage/types.md#custom-type-handlers) for the full contract.
+
+!!! note "Why `Class<?>` and not `Class<? extends LarkBatisTypeHandler<?>>`"
+
+    Bounding it would make `larkbatis-annotations` depend on `larkbatis-runtime`, and
+    that artifact has no dependencies, which is what lets you declare it
+    `requires static`. The processor makes the check javac would have made, and gets to
+    say *why* a handler was rejected while it is at it.

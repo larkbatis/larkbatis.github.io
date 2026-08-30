@@ -4,7 +4,7 @@ The complete matrix. :material-check: means implemented and tested;
 :material-alert: means narrowed with a documented rule; :material-close: means dropped by
 design, with a compile error naming the replacement.
 
-Version **`0.1.0-SNAPSHOT`** — milestones M1 through M4 are implemented, M5 is in
+Version **`0.1.0-SNAPSHOT`**. Milestones M1 through M4 are implemented, M5 is in
 progress.
 
 ## Statements
@@ -36,7 +36,7 @@ progress.
 | `@PadPow2` | :material-check: | Bounds `IN`-list SQL variants. Enforced to `IN`-list shape |
 | `<bind>` | :material-close: | Introduces an OGNL variable. Compute it in Java and pass it in |
 | OGNL in `test` | :material-close: | Replaced by a [narrow grammar](../usage/dynamic-sql.md#the-test-grammar); truthiness is a compile error |
-| `databaseId` | :material-check: | Chosen once at startup |
+| `databaseId` | :material-close: | A `databaseId` attribute is a compile error. Give each database its own mapper interface |
 
 ## Results
 
@@ -44,7 +44,7 @@ progress.
 |---|---|---|
 | `resultType` with convention mapping | :material-check: | `snake_case` → `camelCase`, at build time, always |
 | Positional row reads | :material-check: | When the select list parses |
-| Name-based fallback | :material-check: | `SELECT *` etc. — indexes resolved once from `ResultSetMetaData` |
+| Name-based fallback | :material-check: | `SELECT *` etc.; indexes resolved once from `ResultSetMetaData` |
 | Scalar results | :material-check: | `long`, `String`, … read from column 1 |
 | `List<T>` returns | :material-check: | |
 | `Stream<T>` returns | :material-check: | Caller closes. [Details](../usage/streaming.md) |
@@ -66,15 +66,15 @@ progress.
 | `java.sql.Date` / `Time` / `Timestamp` | :material-check: | |
 | `Instant`, `LocalDate`, `LocalTime`, `LocalDateTime` | :material-check: | |
 | Enums (by `name()`) | :material-check: | Also a closed-value type, so valid for `${}` |
-| `@Column` | :material-alert: | **Declared, not yet implemented.** Use a `<resultMap>` or a select-list alias |
-| `@Handler` custom handlers | :material-alert: | **Declared, not yet implemented.** [Details](../usage/types.md#custom-type-handlers) |
+| `@Column` | :material-check: | Names the column on the field, the setter or the getter. [Details](annotations.md#column) |
+| `@Handler` custom handlers | :material-check: | Named on the property, the parameter, or in mapper XML. No discovery. [Details](../usage/types.md#custom-type-handlers) |
 | TypeHandler discovery / registry | :material-close: | There is no registry to discover into |
 
 ## Sessions, transactions, execution
 
 | | | Notes |
 |---|---|---|
-| `LightBatisTx` scopes, nesting, vote-to-commit | :material-check: | [Details](../usage/transactions.md) |
+| `LarkBatisTx` scopes, nesting, vote-to-commit | :material-check: | [Details](../usage/transactions.md) |
 | Spring `@Transactional` | :material-check: | Via `DataSourceUtils` |
 | Spring exception translation | :material-check: | `SQLExceptionSubclassTranslator` by default |
 | Spring Boot auto-configuration | :material-check: | Boot 3 and Boot 4 from one jar |
@@ -88,7 +88,7 @@ progress.
 | First-level cache | :material-close: | No session to hold it |
 | Runtime `addMapper()` | :material-close: | The mapper set is closed at compile time |
 | Multiple `DataSource`s per mapper | :material-alert: | Deferred. Declare one session per `DataSource` and write the `@Bean` methods yourself |
-| SQL logging (`log-sql`) | :material-close: | Belongs to the driver or the pool — datasource-proxy, p6spy |
+| SQL logging (`log-sql`) | :material-close: | Belongs to the driver or the pool: datasource-proxy, p6spy |
 
 ## Build and packaging
 
@@ -98,16 +98,16 @@ progress.
 | Gradle plugin | :material-check: | [Details](../getting-started/build-plugins.md) |
 | Maven plugin | :material-check: | Needs `<extensions>true</extensions>` |
 | JPMS named modules | :material-check: | All five published artifacts |
-| Lombok interoperability | :material-check: | Declare the LightBatis processor *after* Lombok |
+| Lombok interoperability | :material-check: | Declare the LarkBatis processor *after* Lombok |
 | Incremental builds | :material-alert: | Aggregating processor; compile with `-parameters` under Gradle |
 | Test-scoped mappers | :material-close: | Only the `compile` source set is wired |
-| GraalVM native image | :material-alert: | Structurally ready — no reflection to declare — but **not yet verified by a real build** |
-| Legacy-mapper scanner | :material-check: | `lightbatis-scan`. [Details](migration.md) |
+| GraalVM native image | :material-alert: | Structurally ready, with no reflection to declare, but **not yet verified by a real build** |
+| Legacy-mapper scanner | :material-check: | `larkbatis-scan`. [Details](migration.md) |
 
 ## Read next
 
-- [MyBatis Differences](mybatis-differences.md) — the dropped and narrowed list, with the
+- [MyBatis Differences](mybatis-differences.md): the dropped and narrowed list, with the
   reason for each
-- [Annotations](annotations.md) — every annotation and its attributes
-- [Runtime API](runtime-api.md) — the public runtime surface
-- [Configuration](configuration.md) — processor options, properties, system properties
+- [Annotations](annotations.md): every annotation and its attributes
+- [Runtime API](runtime-api.md): the public runtime surface
+- [Configuration](configuration.md): processor options, properties, system properties

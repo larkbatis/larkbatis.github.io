@@ -114,15 +114,14 @@ is last for each combination and emits the comma only where a later branch will 
 
 ## `<trim>`
 
-Supported with **literal attributes** — `prefix`, `suffix`, `prefixOverrides`,
-`suffixOverrides` — which are constant-folded at build time. That is what makes `<where>`
+Supported with **literal attributes** (`prefix`, `suffix`, `prefixOverrides`,
+`suffixOverrides`), which are constant-folded at build time. That is what makes `<where>`
 and `<set>` compile to the code above; they are `<trim>` with fixed attributes.
 
 ## The `test` grammar
 
-This is the one place LightBatis deliberately refuses to be MyBatis-compatible. `test`
-is **not** OGNL. It is a narrow grammar, type-checked against the mapper method's
-parameters:
+Compatibility with MyBatis stops here, and only here. `test` is **not** OGNL. It is a narrow
+grammar, type-checked against the mapper method's parameters:
 
 | Accepted | Example |
 |---|---|
@@ -131,7 +130,7 @@ parameters:
 | Boolean operators | `and`, `or`, `not`, parentheses |
 | Size and emptiness | `ids.size() > 0`, `name.length() > 3`, `!ids.isEmpty()` |
 | Boolean-returning methods | `user.isActive()` |
-| Bare booleans | `active` — where `active` really is a `boolean`/`Boolean` property |
+| Bare booleans | `active`, where `active` really is a `boolean`/`Boolean` property |
 
 Anything else is a **compile error naming the offending token**.
 
@@ -142,7 +141,7 @@ Anything else is a **compile error naming the offending token**.
     <if test="user">       <!-- compile error -->
     ```
 
-    MyBatis treats a non-null, non-zero, non-empty value as true. LightBatis refuses to
+    MyBatis treats a non-null, non-zero, non-empty value as true. LarkBatis refuses to
     guess which of those you meant. Write `count != 0`, `user != null`, or
     `!list.isEmpty()`.
 
@@ -154,10 +153,10 @@ Anything else is a **compile error naming the offending token**.
 
 OGNL coerces; the grammar does not. The rules are stated once and hold everywhere:
 
-| Expression | LightBatis | MyBatis / OGNL |
+| Expression | LarkBatis | MyBatis / OGNL |
 |---|---|---|
-| `a == null` / `a != null` | Null-propagating over every reference step of the path — same as OGNL's null-safe navigation | Same |
-| `age <= 18` when `age` is null | **`false`** — a null anywhere along either operand makes the comparison false | `true` — null coerces to zero |
+| `a == null` / `a != null` | Null-propagating over every reference step of the path, same as OGNL's null-safe navigation | Same |
+| `age <= 18` when `age` is null | **`false`**, because a null anywhere along either operand makes the comparison false | `true`, null coerces to zero |
 | `a != b` | Exactly `!(a == b)` | Same |
 | `user.isActive()` when `user` is null | **`false`** | Throws |
 
@@ -169,9 +168,9 @@ is the same ambiguity the grammar rejects for truthiness. The
 ## Dynamic SQL and statement caches
 
 A statement whose text depends on runtime conditions produces more than one SQL string.
-That is fine and bounded — with *n* independent `<if>`s the ceiling is 2ⁿ texts, known
-at build time. What is *not* bounded is a `${}` splice or a `<foreach>` whose cardinality
-varies, so those statements get a `LightBatisSql.trackVariants` call. See
+The count is bounded: with *n* independent `<if>`s the ceiling is 2ⁿ texts, known at
+build time. What is *not* bounded is a `${}` splice or a `<foreach>` whose cardinality
+varies, so those statements get a `LarkBatisSql.trackVariants` call. See
 [Raw SQL](raw-sql.md#tracking-sql-variants).
 
 ## Verifying against MyBatis
@@ -180,4 +179,4 @@ The core repository carries a differential test harness: the same mapper is run 
 MyBatis's interpreted path and through the generated code against a recording
 `DataSource`, and the resulting SQL text and parameter bindings are compared. There is
 also a sweep over the mapper XML corpus in the MyBatis source tree, which is how the
-grammar's coverage was measured rather than guessed.
+grammar's coverage was measured, not guessed.

@@ -1,9 +1,9 @@
 # Types and Handlers
 
 The MyBatis `TypeHandler` layer is a runtime registry: for every parameter and every
-column, look up a handler by Java type and JDBC type, then call it. LightBatis makes
+column, look up a handler by Java type and JDBC type, then call it. LarkBatis makes
 that choice at build time and inlines the result. What is left at runtime is
-`JdbcCodec` — a handful of static helpers for the types whose natural JDBC accessor is
+`JdbcCodec`, a handful of static helpers for the types whose natural JDBC accessor is
 primitive or needs a conversion.
 
 ## What binds without help
@@ -36,7 +36,7 @@ public static Long longOrNull(ResultSet rs, int column) throws SQLException {
 The choice between `rs.getLong(i)` and `JdbcCodec.longOrNull(rs, i)` is made at build
 time from the property's declared type. A `long` property gets the primitive read; a
 `Long` property gets the null-aware one. Declaring the property nullable is how you ask
-for null handling — there is no separate setting.
+for null handling. No separate setting exists.
 
 On the write side, `JdbcCodec.setLong(ps, i, null)` calls `ps.setNull(i, Types.BIGINT)`
 with the right SQL type, which some drivers require.
@@ -55,11 +55,10 @@ List<Order> byStatus(Status status);
 ```
 
 An enum is also a **closed-value type**, so it is one of the few things that may be bound
-to `${}` — its entire value space is known at build time. See
+to `${}`, because its entire value space is known at build time. See
 [Raw SQL](raw-sql.md#the-rule).
 
-An enum stored as an ordinal or a custom code needs a custom handler, which is
-not yet implemented — see below.
+An enum stored as an ordinal or a custom code needs a [custom handler](#custom-type-handlers).
 
 ## `java.time`
 
@@ -68,8 +67,8 @@ not yet implemented — see below.
 `Instant` uses `Timestamp.toInstant()` and `Timestamp.from(...)`, so the value is
 absolute and the JVM default time zone does not enter into it.
 
-Zone-carrying types (`ZonedDateTime`, `OffsetDateTime`) are not built in — a column has
-no zone to carry, so the conversion needs a decision that belongs to your application.
+Zone-carrying types (`ZonedDateTime`, `OffsetDateTime`) are not built in. A column has no
+zone to carry, so the conversion needs a decision that belongs to your application.
 Store `Instant`, and convert at the edge of the mapper.
 
 ## Column naming
@@ -87,44 +86,121 @@ Where the convention is not enough, a `<resultMap>` names the column explicitly:
 </resultMap>
 ```
 
-!!! warning "`@Column` is declared but not yet implemented"
+Or `@Column` names it on the property itself, once, for every statement:
 
-    `io.github.lightbatis.annotations.Column` ships in the annotations artifact and is the
-    reserved mechanism for naming a column on the property itself. As of
-    `0.1.0-SNAPSHOT` **the processor does not read it** — putting it on a property has no
-    effect. Use a `<resultMap>`, or alias the column in the select list:
+```java
+public class User {
 
-    ```sql
-    SELECT usr_email AS email FROM users
-    ```
+    @Column("usr_email")
+    private String email;
 
-    A codebase that relied on `mapUnderscoreToCamelCase` being *off* needs one of those
-    two, and the [migration scanner](../features/migration.md) reports the case.
+    public void setEmail(String email) { this.email = email; }
+}
+```
+
+The annotation is read on the **field, the setter or the getter**, whichever site you
+put it on. Two of them naming different columns for one property is a compile error, and
+so is two properties landing on the same column. See
+[`@Column`](../features/annotations.md#column).
+
+A codebase that relied on `mapUnderscoreToCamelCase` being *off* needs `@Column` or a
+`<resultMap>`, and the [migration scanner](../features/migration.md) reports the case.
 
 ## Custom type handlers
 
-!!! warning "`@Handler` is declared but not yet implemented"
+Types the table above does not cover (your own `Money`, a JSON column, an enum stored as
+an ordinal) move through a handler you write:
 
-    `io.github.lightbatis.annotations.Handler` ships in the annotations artifact and
-    reserves the design: a handler class named **explicitly** on the parameter or the
-    property, called directly from generated code, with no registry and no discovery
-    scan. As of `0.1.0-SNAPSHOT` **the processor does not read it**, and a mapper XML
-    `typeHandler=` attribute is rejected with a message pointing here.
+```java
+public class MoneyHandler implements LarkBatisTypeHandler<Money> {
 
-    Until it lands, convert at the edges of the mapper: expose the column as a type from
-    the table above and map it in your own code, or use the
-    [escape hatch](raw-sql.md#the-escape-hatch), where the `StatementBinder` and the
-    `RowReader` are both yours to write.
+    @Override
+    public Money read(ResultSet rs, int column) throws SQLException {
+        long cents = rs.getLong(column);
+        return rs.wasNull() ? null : new Money(cents);
+    }
 
-What will *not* change when it lands: there is no handler discovery. Being explicit is
-the trade — you lose "declare it once and it applies everywhere", and you gain a
-generated call site that javac type-checks and you can navigate to in the IDE.
+    @Override
+    public void write(PreparedStatement ps, int index, Money value) throws SQLException {
+        if (value == null) {
+            ps.setNull(index, Types.BIGINT);
+        } else {
+            ps.setLong(index, value.cents());
+        }
+    }
+}
+```
+
+Three rules, all checked during `javac`:
+
+- **Public, concrete, public no-arg constructor, and stateless.** Generated code holds
+  one instance in a `static final` field and shares it. A handler that needs
+  construction arguments is a handler that is not stateless; use the
+  [escape hatch](raw-sql.md#the-escape-hatch) instead.
+- **The type argument is the value's own type**, not a supertype. `read` has to return
+  something the setter accepts.
+- **The handler owns `null`** in both directions. There is no `jdbcType` to fall back
+  on, so a handler that wants `setNull` calls it itself.
+
+### Naming it
+
+Three sites, all read at build time.
+
+On the property, meaning the field, the setter or the getter, as with `@Column`:
+
+```java
+public class Wallet {
+
+    @Handler(MoneyHandler.class)
+    private Money balance;
+}
+```
+
+On a mapper parameter:
+
+```java
+@Select("SELECT id FROM wallet WHERE balance >= #{floor}")
+List<Long> atLeast(@Handler(MoneyHandler.class) Money floor);
+```
+
+Or in mapper XML, which is the form a migrated MyBatis mapper already carries, where the
+bean needs no annotation at all:
+
+```xml
+<resultMap id="entry" type="com.example.Entry">
+    <id property="id" column="id"/>
+    <result property="amount" column="amount" typeHandler="com.example.MoneyHandler"/>
+</resultMap>
+
+<insert id="insert">
+    INSERT INTO ledger (id, amount)
+    VALUES (#{id}, #{amount, typeHandler=com.example.MoneyHandler})
+</insert>
+```
+
+A handler also lifts the type whitelist for the value it moves: `Money` is not in the
+table above, and these compile anyway.
+
+### What is still not there
+
+**No discovery.** No `<typeHandlers>` registry, no `@MappedTypes` scan, no
+`(Type, JdbcType)` lookup. Being explicit is the trade: you lose "declare it once and it
+applies everywhere", and you gain a generated call site that javac type-checks and you
+can navigate to in the IDE.
+
+**One reading per result class.** One row reader is generated per class, so a property
+has one handler. Two statements naming different handlers for the same property is a
+build error, because two readings would mean two result classes.
+
+**Not on a mapper method.** `@Handler` on the method itself is rejected: a scalar result
+reads column 1 and has no property to hang a handler on. Return a bean, or use the
+escape hatch.
 
 ## Result classes, once more
 
 The contract is small enough to restate: **a no-arg constructor and setters**. No base
 class, no annotation, no registration, no `<constructor>` mapping. A class with neither a
-no-arg constructor nor setters is a build error naming the class — and if it carries
-Lombok annotations, the message says so, because that is nearly always a processor
-ordering problem rather than a missing accessor. See
+no-arg constructor nor setters is a build error naming the class. If it carries Lombok
+annotations, the message says so, because the cause is nearly always processor ordering
+and not a missing accessor. See
 [Troubleshooting](troubleshooting.md).
