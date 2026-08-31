@@ -8,6 +8,13 @@
         <xhtml:link rel="alternate" hreflang="vi" href="https://larkbatis.github.io/latestvi/"/>
     </url>
     <url>
+        <loc>https://larkbatis.github.io/latest/license/</loc>
+        <lastmod>2026-08-31</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://larkbatis.github.io/latest/license/"/>
+        <xhtml:link rel="alternate" hreflang="vi" href="https://larkbatis.github.io/latestvi/license/"/>
+    </url>
+    <url>
         <loc>https://larkbatis.github.io/latest/features/</loc>
         <lastmod>2026-08-31</lastmod>
         <changefreq>daily</changefreq>
@@ -244,6 +251,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="vi" href="https://larkbatis.github.io/latest/vi/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://larkbatis.github.io/latest"/>
+    </url>
+    <url>
+        <loc>https://larkbatis.github.io/latest/vi/license/</loc>
+        <lastmod>2026-08-31</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="vi" href="https://larkbatis.github.io/latest/vi/license/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://larkbatis.github.io/latestlicense/"/>
     </url>
     <url>
         <loc>https://larkbatis.github.io/latest/vi/features/</loc>
