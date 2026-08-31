@@ -979,10 +979,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nguoi-goi-so-huu-tai-nguyen" class="md-nav__link">
+  <a href="#trach-nhiem-ong-tai-nguyen-thuoc-ve-phia-goi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Người gọi sở hữu tài nguyên
+        Trách nhiệm đóng tài nguyên thuộc về phía gọi
       
     </span>
   </a>
@@ -990,10 +990,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#vi-sao-stream-la-tuan-tu" class="md-nav__link">
+  <a href="#vi-sao-stream-trong-larkbatis-la-tuan-tu-sequential" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao stream là tuần tự
+        Vì sao Stream trong LarkBatis là tuần tự (sequential)
       
     </span>
   </a>
@@ -1001,10 +1001,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nhung-gi-stream-uoc" class="md-nav__link">
+  <a href="#kha-nang-ho-tro-stream" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những gì stream được
+        Khả năng hỗ trợ stream
       
     </span>
   </a>
@@ -1012,10 +1012,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cua-thoat-hiem-cung-stream-uoc" class="md-nav__link">
+  <a href="#loi-thoat-thu-cong-cung-ho-tro-stream" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cửa thoát hiểm cũng stream được
+        Lối thoát thủ công cũng hỗ trợ stream
       
     </span>
   </a>
@@ -1023,10 +1023,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#duoi-spring" class="md-nav__link">
+  <a href="#su-dung-trong-spring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dưới Spring
+        Sử dụng trong Spring
       
     </span>
   </a>
@@ -1765,10 +1765,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nguoi-goi-so-huu-tai-nguyen" class="md-nav__link">
+  <a href="#trach-nhiem-ong-tai-nguyen-thuoc-ve-phia-goi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Người gọi sở hữu tài nguyên
+        Trách nhiệm đóng tài nguyên thuộc về phía gọi
       
     </span>
   </a>
@@ -1776,10 +1776,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#vi-sao-stream-la-tuan-tu" class="md-nav__link">
+  <a href="#vi-sao-stream-trong-larkbatis-la-tuan-tu-sequential" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao stream là tuần tự
+        Vì sao Stream trong LarkBatis là tuần tự (sequential)
       
     </span>
   </a>
@@ -1787,10 +1787,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nhung-gi-stream-uoc" class="md-nav__link">
+  <a href="#kha-nang-ho-tro-stream" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những gì stream được
+        Khả năng hỗ trợ stream
       
     </span>
   </a>
@@ -1798,10 +1798,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cua-thoat-hiem-cung-stream-uoc" class="md-nav__link">
+  <a href="#loi-thoat-thu-cong-cung-ho-tro-stream" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cửa thoát hiểm cũng stream được
+        Lối thoát thủ công cũng hỗ trợ stream
       
     </span>
   </a>
@@ -1809,10 +1809,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#duoi-spring" class="md-nav__link">
+  <a href="#su-dung-trong-spring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dưới Spring
+        Sử dụng trong Spring
       
     </span>
   </a>
@@ -1856,9 +1856,7 @@
 
 
 <h1 id="stream-ket-qua">Stream kết quả<a class="headerlink" href="#stream-ket-qua" title="Permanent link">&para;</a></h1>
-<p>Một phương thức mapper có thể trả về <code>Stream&lt;T&gt;</code> thay cho <code>List&lt;T&gt;</code>. Khi đó các dòng đến
-lần lượt từng dòng một từ một con trỏ đang mở, và đó chính là mục đích: một tập kết quả
-quá lớn để giữ trong bộ nhớ sẽ không bao giờ trở thành một danh sách.</p>
+<p>Phương thức mapper có thể khai báo kiểu trả về <code>Stream&lt;T&gt;</code> thay vì <code>List&lt;T&gt;</code>. Dữ liệu được đọc tuần tự từng dòng từ con trỏ <code>ResultSet</code> đang mở, giúp xử lý các tập dữ liệu lớn mà không gây tràn bộ nhớ (Out Of Memory).</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users ORDER BY id"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">Stream</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">streamAll</span><span class="p">();</span>
 </span></code></pre></div>
@@ -1866,20 +1864,16 @@ quá lớn để giữ trong bộ nhớ sẽ không bao giờ trở thành một
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">rows</span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">User</span><span class="p">::</span><span class="n">isActive</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">exporter</span><span class="p">::</span><span class="n">write</span><span class="p">);</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="nguoi-goi-so-huu-tai-nguyen">Người gọi sở hữu tài nguyên<a class="headerlink" href="#nguoi-goi-so-huu-tai-nguyen" title="Permanent link">&para;</a></h2>
+<h2 id="trach-nhiem-ong-tai-nguyen-thuoc-ve-phia-goi">Trách nhiệm đóng tài nguyên thuộc về phía gọi<a class="headerlink" href="#trach-nhiem-ong-tai-nguyen-thuoc-ve-phia-goi" title="Permanent link">&para;</a></h2>
 <div class="admonition danger">
-<p class="admonition-title"><code>try</code>-with-resources ở đây không phải tuỳ chọn</p>
-<p>Đây là hình dạng sinh ra duy nhất mà tài nguyên JDBC sống lâu hơn chính phương thức
-đã mở chúng, nên thân sinh ra <strong>không có <code>finally</code></strong>. Đóng stream chính là thứ đóng
-<code>ResultSet</code> và <code>PreparedStatement</code> rồi trả <code>Connection</code> về.</p>
+<p class="admonition-title">Bắt buộc sử dụng try-with-resources khi gọi Stream</p>
+<p>Đây là trường hợp duy nhất mà tài nguyên JDBC sống lâu hơn chính phương thức mapper mở chúng, do đó thân phương thức sinh ra <strong>không thể có khối <code>finally</code> đóng kết nối</strong>. Việc đóng stream (<code>close()</code>) chính là thao tác đóng <code>ResultSet</code>, <code>PreparedStatement</code> và giải phóng <code>Connection</code>.</p>
 <ul>
-<li><strong>Ngoài transaction</strong>, một stream không bao giờ được đóng sẽ giữ một <code>Connection</code>
-  của pool chừng nào nó còn với tới được. Đó là rò rỉ pool.</li>
-<li><strong>Trong transaction</strong>, connection vẫn thuộc về transaction, còn stream giữ
-  statement và con trỏ cho tới khi nó kết thúc.</li>
+<li><strong>Ngoài transaction</strong>: nếu không đóng stream, <code>Connection</code> sẽ bị giữ vô thời hạn cho đến khi GC thu hồi đối tượng. Đây là lỗi rò rỉ connection pool nghiêm trọng.</li>
+<li><strong>Trong transaction</strong>: connection được quản lý bởi transaction, nhưng stream vẫn giữ statement và con trỏ mở cho đến khi hoàn tất.</li>
 </ul>
 </div>
-<p>Thân sinh ra làm cho quyền sở hữu đó hiện rõ:</p>
+<p>Mã nguồn sinh ra thể hiện rõ quyền sở hữu tài nguyên này:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Override</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">streamByStatus</span><span class="p">(</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
@@ -1896,47 +1890,46 @@ quá lớn để giữ trong bộ nhớ sẽ không bao giờ trở thành một
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Trao cả ba tài nguyên cho stream, và stream sẽ nhả chúng ra khi <code>close()</code>.</li>
-<li>Nhánh xử lý lỗi, tức bất cứ thứ gì ném lỗi <em>trước khi</em> stream tồn tại, sẽ tự tay gỡ
-    lại toàn bộ, với lỗi dọn dẹp được nén vào lỗi thật chứ không thay thế nó.</li>
+<li>Chuyển giao toàn bộ ba tài nguyên cho stream; stream sẽ đóng tất cả khi gọi <code>close()</code>.</li>
+<li>Khối catch xử lý các lỗi xảy ra <em>trước khi</em> khởi tạo stream thành công: dọn dẹp các tài nguyên đã mở dở dang và đính kèm lỗi dọn dẹp vào ngoại lệ chính (suppressed exception).</li>
 </ol>
-<h2 id="vi-sao-stream-la-tuan-tu">Vì sao stream là tuần tự<a class="headerlink" href="#vi-sao-stream-la-tuan-tu" title="Permanent link">&para;</a></h2>
-<p>Stream trả về là tuần tự và không tách nhánh được. Song song hoá một con trỏ nghĩa là
-đọc trước vào bộ nhớ, mà đó đúng là thứ kiểu trả về <code>Stream</code> được chọn để tránh. Nếu bạn
-muốn song song, hãy gom một khúc có giới hạn rồi song song hoá khúc đó.</p>
-<h2 id="nhung-gi-stream-uoc">Những gì stream được<a class="headerlink" href="#nhung-gi-stream-uoc" title="Permanent link">&para;</a></h2>
+<h2 id="vi-sao-stream-trong-larkbatis-la-tuan-tu-sequential">Vì sao Stream trong LarkBatis là tuần tự (sequential)<a class="headerlink" href="#vi-sao-stream-trong-larkbatis-la-tuan-tu-sequential" title="Permanent link">&para;</a></h2>
+<p>Stream trả về luôn là tuần tự và không hỗ trợ tách nhánh (<code>spliterator</code> không song song). Song song hoá một con trỏ JDBC bắt buộc phải nạp trước toàn bộ dữ liệu vào RAM — điều đi ngược lại mục đích tiết kiệm bộ nhớ của <code>Stream</code>. Nếu cần xử lý song song, hãy đọc dữ liệu theo từng batch có kích thước giới hạn rồi xử lý song song trên từng batch đó.</p>
+<h2 id="kha-nang-ho-tro-stream">Khả năng hỗ trợ stream<a class="headerlink" href="#kha-nang-ho-tro-stream" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Kiểu dữ liệu</th>
+<th>Hỗ trợ</th>
+<th>Cơ chế xử lý</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>Stream&lt;User&gt;</code> trên một bean</td>
-<td>Được, dùng row reader sinh ra</td>
+<td>Có</td>
+<td>Sử dụng row reader sinh sẵn</td>
 </tr>
 <tr>
 <td><code>Stream&lt;String&gt;</code>, <code>Stream&lt;Long&gt;</code> (vô hướng)</td>
-<td>Được, đọc cột 1, không bean, không reader</td>
+<td>Có</td>
+<td>Đọc trực tiếp cột 1, không cần bean hay reader</td>
 </tr>
 <tr>
 <td><code>SELECT *</code></td>
-<td>Được, chỉ số lấy từ <code>ResultSetMetaData</code> trước dòng đầu tiên</td>
+<td>Có</td>
+<td>Đọc vị trí từ <code>ResultSetMetaData</code> ở dòng đầu tiên</td>
 </tr>
 <tr>
-<td>Một <code>&lt;resultMap&gt;</code> lồng nhau</td>
-<td><strong>Lỗi biên dịch</strong></td>
+<td><code>&lt;resultMap&gt;</code> lồng nhau</td>
+<td><strong>Không</strong></td>
+<td>Lỗi biên dịch</td>
 </tr>
 </tbody>
 </table>
-<p>Mục cuối đáng để hiểu hơn là để lách. Một đối tượng cha trải trên nhiều dòng, nên nó chỉ
-hoàn chỉnh khi đối tượng cha <em>tiếp theo</em> bắt đầu. Trả lời điều đó từ một con trỏ
-đọc-từng-dòng nghĩa là phải đệm, và như vậy là mất hết ý nghĩa. Hãy stream các dòng
-phẳng rồi tự gom nhóm, hoặc dùng <code>List</code> và chấp nhận tốn bộ nhớ.</p>
-<h2 id="cua-thoat-hiem-cung-stream-uoc">Cửa thoát hiểm cũng stream được<a class="headerlink" href="#cua-thoat-hiem-cung-stream-uoc" title="Permanent link">&para;</a></h2>
-<p><code>LarkBatisSession.queryStream</code> là bản stream tương ứng của <code>query</code>:</p>
+<p>Đối tượng cha trong result map lồng nhau trải dài trên nhiều dòng và chỉ hoàn chỉnh khi dòng của đối tượng cha kế tiếp xuất hiện. Xử lý điều này trên con trỏ đọc tuần tự buộc phải đệm dữ liệu vào bộ nhớ. Với dữ liệu lồng nhau, hãy stream các dòng phẳng rồi tự gom nhóm, hoặc dùng <code>List</code> nếu kích thước dữ liệu cho phép.</p>
+<h2 id="loi-thoat-thu-cong-cung-ho-tro-stream">Lối thoát thủ công cũng hỗ trợ stream<a class="headerlink" href="#loi-thoat-thu-cong-cung-ho-tro-stream" title="Permanent link">&para;</a></h2>
+<p><code>LarkBatisSession.queryStream</code> là phiên bản stream tương ứng của <code>query</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">default</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">streamRecent</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">queryStream</span><span class="p">(</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span>
@@ -1946,9 +1939,9 @@ phẳng rồi tự gom nhóm, hoặc dùng <code>List</code> và chấp nhận t
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">            </span><span class="n">UserRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Cùng một quy tắc sở hữu: người gọi phải đóng. Xem <a href="../raw-sql/#the-escape-hatch">SQL thô</a>.</p>
-<h2 id="duoi-spring">Dưới Spring<a class="headerlink" href="#duoi-spring" title="Permanent link">&para;</a></h2>
-<p><code>@Transactional</code> và stream đi cùng nhau được, quy tắc sở hữu không đổi:</p>
+<p>Quy tắc đóng tài nguyên không đổi: bên gọi bắt buộc phải đóng stream trong try-with-resources. Xem <a href="../raw-sql/#the-escape-hatch">SQL thô</a>.</p>
+<h2 id="su-dung-trong-spring">Sử dụng trong Spring<a class="headerlink" href="#su-dung-trong-spring" title="Permanent link">&para;</a></h2>
+<p><code>@Transactional</code> và <code>Stream</code> hoạt động hoàn toàn tương thích với nhau:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Transactional</span><span class="p">(</span><span class="n">readOnly</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="n">Writer</span><span class="w"> </span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="na">streamAll</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>

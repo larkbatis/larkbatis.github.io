@@ -1113,10 +1113,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cai-gi-chay-va-cai-gi-khong" class="md-nav__link">
+  <a href="#kha-nang-tuong-thich-tinh-nang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cái gì chạy và cái gì không
+        Khả năng tương thích tính năng
       
     </span>
   </a>
@@ -1124,10 +1124,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-property" class="md-nav__link">
+  <a href="#cau-hinh-thuoc-tinh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các property
+        Cấu hình thuộc tính
       
     </span>
   </a>
@@ -1135,10 +1135,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khi-mac-inh-khong-vua" class="md-nav__link">
+  <a href="#tuy-bien-nang-cao" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Khi mặc định không vừa
+        Tuỳ biến nâng cao
       
     </span>
   </a>
@@ -1809,10 +1809,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cai-gi-chay-va-cai-gi-khong" class="md-nav__link">
+  <a href="#kha-nang-tuong-thich-tinh-nang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cái gì chạy và cái gì không
+        Khả năng tương thích tính năng
       
     </span>
   </a>
@@ -1820,10 +1820,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-property" class="md-nav__link">
+  <a href="#cau-hinh-thuoc-tinh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các property
+        Cấu hình thuộc tính
       
     </span>
   </a>
@@ -1831,10 +1831,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khi-mac-inh-khong-vua" class="md-nav__link">
+  <a href="#tuy-bien-nang-cao" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Khi mặc định không vừa
+        Tuỳ biến nâng cao
       
     </span>
   </a>
@@ -1900,20 +1900,13 @@
 
 
 <h1 id="tich-hop-spring">Tích hợp Spring<a class="headerlink" href="#tich-hop-spring" title="Permanent link">&para;</a></h1>
-<p>Một nửa <code>mybatis-spring</code> bốc hơi ở đây, và biết <em>nửa nào</em> thì hiểu được toàn bộ phần tích
-hợp. <code>mybatis-spring</code> tồn tại để giải đúng hai bài toán:</p>
+<p>Khối lượng cấu hình phức tạp của <code>mybatis-spring</code> được giản lược tối đa trong LarkBatis. <code>mybatis-spring</code> vốn cần giải quyết hai bài toán:</p>
 <ol>
-<li><strong>Một mapper là interface không có phần hiện thực</strong>, nên Spring không tạo bean cho nó
-   được. Giải bằng <code>@MapperScan</code> → <code>ClassPathMapperScanner</code> → <code>MapperFactoryBean</code> →
-   <code>MapperProxy</code>.</li>
-<li><strong><code>SqlSession</code> phải dùng chung <code>Connection</code> với <code>@Transactional</code>.</strong> Giải bằng
-   <code>SqlSessionTemplate</code> + <code>SqlSessionUtils</code> + <code>SpringManagedTransaction</code>.</li>
+<li><strong>Interface mapper không có phần hiện thực</strong>, khiến Spring không thể trực tiếp khởi tạo bean. Phải giải quyết qua <code>@MapperScan</code> → <code>ClassPathMapperScanner</code> → <code>MapperFactoryBean</code> → <code>MapperProxy</code>.</li>
+<li><strong><code>SqlSession</code> phải dùng chung <code>Connection</code> với <code>@Transactional</code>.</strong> Phải giải quyết qua <code>SqlSessionTemplate</code> → <code>SqlSessionUtils</code> → <code>SpringManagedTransaction</code>.</li>
 </ol>
-<p><strong>Bài toán 1 ở đây không còn là bài toán.</strong> <code>AccountMapper$$Impl</code> là một lớp thật với
-constructor thật, tức là một bean bình thường. Bộ quét, <code>FactoryBean</code> và phần hậu xử lý
-<code>BeanDefinition</code> đều biến mất, thay bằng một <code>@Configuration</code> được sinh ra với mỗi mapper
-một phương thức <code>@Bean</code>.</p>
-<p><strong>Bài toán 2 thì không đụng tới</strong>, và nó gần như là toàn bộ nội dung của phần tích hợp.</p>
+<p><strong>Bài toán 1 không còn tồn tại trong LarkBatis.</strong> <code>AccountMapper$$Impl</code> là một class Java thông thường với constructor nhận <code>LarkBatisSession</code>, đóng vai trò như một Spring bean tiêu chuẩn. Toàn bộ cơ chế quét class, <code>FactoryBean</code> và xử lý <code>BeanDefinition</code> được thay thế bằng class <code>@Configuration</code> sinh sẵn với mỗi mapper là một phương thức <code>@Bean</code>.</p>
+<p><strong>Bài toán 2 được giải quyết gọn gàng</strong>, và đó là nội dung chính của tầng tích hợp Spring.</p>
 <h2 id="cac-module">Các module<a class="headerlink" href="#cac-module" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1925,135 +1918,119 @@ một phương thức <code>@Bean</code>.</p>
 <tbody>
 <tr>
 <td><code>larkbatis-spring</code></td>
-<td><code>SpringLarkBatisSession</code>: connection qua <code>DataSourceUtils</code>, dịch exception qua <code>SQLExceptionTranslator</code></td>
+<td><code>SpringLarkBatisSession</code>: lấy connection qua <code>DataSourceUtils</code>, dịch ngoại lệ qua <code>SQLExceptionTranslator</code></td>
 </tr>
 <tr>
 <td><code>larkbatis-spring-boot-autoconfigure</code></td>
-<td><code>LarkBatisAutoConfiguration</code>, <code>LarkBatisProperties</code>, mục trong <code>AutoConfiguration.imports</code></td>
+<td><code>LarkBatisAutoConfiguration</code>, <code>LarkBatisProperties</code>, khai báo trong <code>AutoConfiguration.imports</code></td>
 </tr>
 <tr>
 <td><code>larkbatis-spring-boot-starter</code></td>
-<td>Rỗng; chỉ có phụ thuộc</td>
+<td>Starter module quản lý dependency</td>
 </tr>
 </tbody>
 </table>
 <h2 id="springlarkbatissession"><code>SpringLarkBatisSession</code><a class="headerlink" href="#springlarkbatissession" title="Permanent link">&para;</a></h2>
-<p>Quy tắc duy nhất mà lớp này sinh ra để cưỡng chế:</p>
+<p>Quy tắc lấy kết nối duy nhất mà class này thực thi:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Override</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">Connection</span><span class="w"> </span><span class="nf">conn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DataSourceUtils</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">dataSource</span><span class="p">);</span><span class="w">   </span><span class="c1">// không bao giờ dataSource.getConnection()</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DataSourceUtils</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">dataSource</span><span class="p">);</span><span class="w">   </span><span class="c1">// không bao giờ gọi trực tiếp dataSource.getConnection()</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>DataSourceUtils</code> trả về đúng connection đã gắn vào transaction đang chạy, và chỉ mở một
-connection mới khi chưa có cái nào. <code>release()</code> làm ngược lại: lệnh rỗng khi ở
-trong transaction, một lần đóng thật khi ở ngoài. Vì vậy các thân phương thức sinh ra giữ
-<code>Connection</code> nằm ngoài try-with-resources. Xem
-<a href="../transactions/#why-generated-code-never-closes-the-connection">Vì sao code sinh ra không bao giờ đóng Connection</a>.</p>
-<p>Lớp này không giữ trạng thái gì ngoài hai cộng tác viên của nó và dùng chung giữa các
-luồng được. Mỗi <code>DataSource</code> một bean.</p>
-<p>Việc dịch exception đi qua <code>SQLExceptionTranslator</code> của Spring, mặc định là
-<code>SQLExceptionSubclassTranslator</code> (cũng là mặc định của chính Spring từ 6.0). Bộ dịch này
-đọc cây lớp con <code>SQLException</code> chuẩn chứ không dùng bảng mã lỗi riêng theo từng hãng. Nhờ
-vậy các handler <code>DuplicateKeyException</code> sẵn có của bạn vẫn chạy nguyên.</p>
-<h2 id="cai-gi-chay-va-cai-gi-khong">Cái gì chạy và cái gì không<a class="headerlink" href="#cai-gi-chay-va-cai-gi-khong" title="Permanent link">&para;</a></h2>
+<p><code>DataSourceUtils</code> trả về đúng connection đang gắn với transaction Spring hiện tại và chỉ mở kết nối mới khi chưa có transaction nào. <code>release()</code> đóng vai trò ngược lại: là no-op khi ở trong transaction, và đóng kết nối thực sự khi ở ngoài transaction. Vì vậy các thân phương thức sinh ra luôn giữ <code>Connection</code> nằm ngoài khối try-with-resources. Xem <a href="../transactions/#why-generated-code-never-closes-the-connection">Vì sao code sinh ra không bao giờ đóng Connection</a>.</p>
+<p><code>SpringLarkBatisSession</code> là thread-safe và được đăng ký như một Spring bean duy nhất cho mỗi <code>DataSource</code>.</p>
+<p>Việc dịch exception sử dụng <code>SQLExceptionTranslator</code> của Spring (mặc định là <code>SQLExceptionSubclassTranslator</code> từ Spring 6.0). Nhờ vậy, các exception nghiệp vụ như <code>DuplicateKeyException</code> hay <code>DataIntegrityViolationException</code> được ném ra nhất quán, giúp các <code>@ExceptionHandler</code> sẵn có của bạn hoạt động trơn tru.</p>
+<h2 id="kha-nang-tuong-thich-tinh-nang">Khả năng tương thích tính năng<a class="headerlink" href="#kha-nang-tuong-thich-tinh-nang" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Tình huống</th>
-<th></th>
-<th>Vì sao</th>
+<th>Kết quả</th>
+<th>Cơ chế hoạt động</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>@Transactional</code> trên service, mapper được gọi bên trong</td>
-<td>chạy</td>
-<td><code>DataSourceUtils</code> trả về connection của transaction</td>
+<td><code>@Transactional</code> trên service</td>
+<td>Hoạt động</td>
+<td><code>DataSourceUtils</code> trả về connection của transaction hiện tại</td>
 </tr>
 <tr>
-<td><code>REQUIRES_NEW</code>, <code>NESTED</code>, các quy tắc rollback</td>
-<td>chạy</td>
-<td>Spring lo hết</td>
+<td><code>REQUIRES_NEW</code>, <code>NESTED</code>, rollback rules</td>
+<td>Hoạt động</td>
+<td>Spring Transaction Manager xử lý toàn diện</td>
 </tr>
 <tr>
 <td><code>readOnly = true</code></td>
-<td>chạy</td>
-<td>Spring đặt cờ đó lên connection</td>
+<td>Hoạt động</td>
+<td>Spring đặt cờ readOnly lên Connection</td>
 </tr>
 <tr>
-<td>Mapper được gọi ngoài mọi transaction</td>
-<td>chạy</td>
-<td>Auto-commit; <code>release</code> đóng nó ngay</td>
+<td>Mapper gọi ngoài transaction</td>
+<td>Hoạt động</td>
+<td>Chế độ auto-commit; <code>release</code> đóng kết nối ngay lập tức</td>
 </tr>
 <tr>
 <td>Phương thức mapper trả về <code>Stream</code></td>
-<td>chạy</td>
-<td>Stream giữ một connection của pool cho tới khi đóng; trong transaction thì <code>release</code> là lệnh rỗng. Dùng <code>try (Stream&lt;T&gt; …)</code> trong mọi trường hợp</td>
+<td>Hoạt động</td>
+<td>Stream giữ connection cho tới khi đóng; trong transaction <code>release</code> là no-op; luôn dùng <code>try (Stream&lt;T&gt; …)</code></td>
 </tr>
 <tr>
 <td>Chia sẻ transaction với <code>JdbcTemplate</code> hoặc JPA</td>
-<td>chạy</td>
-<td>Cùng <code>DataSourceUtils</code>, cùng <code>DataSourceTransactionManager</code></td>
+<td>Hoạt động</td>
+<td>Dùng chung <code>DataSourceUtils</code> và cùng một <code>PlatformTransactionManager</code></td>
 </tr>
 <tr>
-<td>Spring AOP trên một bean mapper</td>
-<td>chạy</td>
-<td>Mapper là một bean thật</td>
+<td>Spring AOP trên bean mapper</td>
+<td>Hoạt động</td>
+<td>Mapper là Spring bean thông thường</td>
 </tr>
 <tr>
 <td><code>ExecutorType.BATCH</code> của MyBatis</td>
-<td>không có</td>
-<td>Làm gì có executor. Batch là một <a href="../foreach-and-batches/#jdbc-batches">chữ ký phương thức</a></td>
+<td>Không có</td>
+<td>Thay bằng <a href="../foreach-and-batches/#jdbc-batches">chữ ký phương thức batch</a></td>
 </tr>
 <tr>
 <td>Plugin / interceptor của MyBatis</td>
-<td>không có</td>
-<td>Đã bỏ: bốn đối tượng mà chúng bọc chính là thứ mà thân phương thức sinh ra thay thế. Spring AOP trên bean mapper vẫn chạy, và <a href="../../features/mybatis-differences/#what-replaces-a-plugin">có công thức thay thế cho từng loại plugin</a></td>
+<td>Không có</td>
+<td>Đã lược bỏ; thay thế bằng Spring AOP trên bean mapper hoặc DataSource proxy. Xem <a href="../../features/mybatis-differences/#what-replaces-a-plugin">Công thức thay thế plugin</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="cac-property">Các property<a class="headerlink" href="#cac-property" title="Permanent link">&para;</a></h2>
+<h2 id="cau-hinh-thuoc-tinh">Cấu hình thuộc tính<a class="headerlink" href="#cau-hinh-thuoc-tinh" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">larkbatis</span><span class="p">:</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># số câu SQL khác nhau cho mỗi statement trước khi cảnh báo</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># true = ném lỗi thay vì một cảnh báo</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># true = ném lỗi thay vì chỉ cảnh báo</span>
 </span></code></pre></div>
-<p>Cả hai đều xoay quanh cái giá vận hành của <code>${}</code>: statement cache được đánh khoá bằng văn
-bản SQL, nên một fragment có tập giá trị không bị chặn sẽ làm chúng phình ra vô hạn. Xem
-<a href="../raw-sql/#tracking-sql-variants">SQL thô</a>.</p>
+<p>Cả hai thuộc tính này giúp kiểm soát statement cache tránh bị phình to do <code>${}</code> hoặc <code>&lt;foreach&gt;</code>. Xem <a href="../raw-sql/#tracking-sql-variants">SQL thô</a>.</p>
 <div class="admonition note">
-<p class="admonition-title"><code>log-sql</code> chưa được hiện thực</p>
-<p>Mọi thân phương thức sinh ra sẽ phải mang thêm một nhánh ghi log, mà hình dạng sinh
-ra thì không có nhánh nào như vậy. Việc ghi log SQL thuộc về driver hoặc pool
-(<code>net.ttddyy:datasource-proxy</code>, p6spy) cho tới khi có lý do đổi điều đó.</p>
+<p class="admonition-title">Chưa hỗ trợ <code>log-sql</code> trực tiếp</p>
+<p>Để ghi log SQL, hãy sử dụng giải pháp ở tầng DataSource hoặc Connection Pool (như <code>net.ttddyy:datasource-proxy</code>, p6spy). Điều này giúp thân phương thức sinh ra không phải gánh thêm rẽ nhánh ghi log không cần thiết.</p>
 </div>
-<h2 id="khi-mac-inh-khong-vua">Khi mặc định không vừa<a class="headerlink" href="#khi-mac-inh-khong-vua" title="Permanent link">&para;</a></h2>
+<h2 id="tuy-bien-nang-cao">Tuỳ biến nâng cao<a class="headerlink" href="#tuy-bien-nang-cao" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Tình huống</th>
-<th>Làm gì</th>
+<th>Hướng xử lý</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Mapper nằm ngoài các package được quét</td>
+<td>Mapper nằm ngoài package quét mặc định</td>
 <td><code>-Alarkbatis.springConfigPackage=com.example.app</code>, hoặc <code>@Import(LarkBatisMapperConfiguration.class)</code></td>
 </tr>
 <tr>
-<td>Bạn muốn tự khai báo các bean mapper</td>
+<td>Tự khai báo bean mapper thủ công</td>
 <td><code>-Alarkbatis.springConfig=false</code></td>
 </tr>
 <tr>
-<td>Có nhiều hơn một <code>DataSource</code></td>
-<td>Khai báo mỗi <code>DataSource</code> một <code>SpringLarkBatisSession</code> rồi tự viết các phương thức <code>@Bean</code> cho mapper</td>
+<td>Sử dụng nhiều <code>DataSource</code></td>
+<td>Khai báo mỗi <code>DataSource</code> một bean <code>SpringLarkBatisSession</code> và tự viết các phương thức <code>@Bean</code> khởi tạo mapper</td>
 </tr>
 </tbody>
 </table>
-<p>Về chuyện nhiều data source: <code>@ConditionalOnSingleCandidate</code> khiến auto-configuration lùi
-hẳn lại thay vì đoán mò, còn <code>@Configuration</code> sinh ra thì nhận đúng một
-<code>LarkBatisSession</code>, nên hãy đánh dấu một cái là <code>@Primary</code>, hoặc tắt lớp sinh ra bằng
-tuỳ chọn ở trên. Việc chọn <code>DataSource</code> theo từng mapper được <strong>để lại</strong>: chưa thiết kế
-khi chưa có một service thật cần đến nó.</p>
+<p>Khi có nhiều <code>DataSource</code>, <code>@ConditionalOnSingleCandidate</code> sẽ tự động tắt auto-configuration để tránh cấu hình nhầm lẫn. Bạn chỉ cần đánh dấu một DataSource là <code>@Primary</code> hoặc tự định nghĩa bean mapper tương ứng.</p>
 <h2 id="spring-boot-3-va-spring-boot-4">Spring Boot 3 và Spring Boot 4<a class="headerlink" href="#spring-boot-3-va-spring-boot-4" title="Permanent link">&para;</a></h2>
 <p>Một jar chạy trên cả hai, và điều đó đến từ một quyết định có chủ ý. Boot 4 đã dời
 <code>DataSourceAutoConfiguration</code> khỏi <code>spring-boot-autoconfigure</code> sang module mới

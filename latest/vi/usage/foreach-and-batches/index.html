@@ -895,10 +895,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nhung-gi-lap-uoc" class="md-nav__link">
+  <a href="#cac-kieu-du-lieu-ho-tro-lap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những gì lặp được
+        Các kiểu dữ liệu hỗ trợ lặp
       
     </span>
   </a>
@@ -906,10 +906,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dung-index" class="md-nav__link">
+  <a href="#su-dung-index" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dùng index
+        Sử dụng index
       
     </span>
   </a>
@@ -917,10 +917,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gan-mot-property-cua-phan-tu" class="md-nav__link">
+  <a href="#gan-thuoc-tinh-cua-phan-tu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Gắn một property của phần tử
+        Gán thuộc tính của phần tử
       
     </span>
   </a>
@@ -942,7 +942,7 @@
   <a href="#padpow2-bounding-the-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @PadPow2: chặn số biến thể SQL
+        @PadPow2: Giới hạn số biến thể SQL
       
     </span>
   </a>
@@ -1776,10 +1776,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nhung-gi-lap-uoc" class="md-nav__link">
+  <a href="#cac-kieu-du-lieu-ho-tro-lap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những gì lặp được
+        Các kiểu dữ liệu hỗ trợ lặp
       
     </span>
   </a>
@@ -1787,10 +1787,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dung-index" class="md-nav__link">
+  <a href="#su-dung-index" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dùng index
+        Sử dụng index
       
     </span>
   </a>
@@ -1798,10 +1798,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gan-mot-property-cua-phan-tu" class="md-nav__link">
+  <a href="#gan-thuoc-tinh-cua-phan-tu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Gắn một property của phần tử
+        Gán thuộc tính của phần tử
       
     </span>
   </a>
@@ -1823,7 +1823,7 @@
   <a href="#padpow2-bounding-the-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @PadPow2: chặn số biến thể SQL
+        @PadPow2: Giới hạn số biến thể SQL
       
     </span>
   </a>
@@ -1878,10 +1878,7 @@
 
 
 <h1 id="foreach-va-batch">foreach và batch<a class="headerlink" href="#foreach-va-batch" title="Permanent link">&para;</a></h1>
-<p><code>&lt;foreach&gt;</code> là ca khó nhất trong SQL động, bởi vì số lượng placeholder đúng là thứ duy
-nhất về câu SQL mà thật sự không biết được trước lúc chạy. LarkBatis biên dịch nó
-thành <strong>hai vòng lặp duyệt cùng những phần tử đó theo cùng thứ tự đó</strong>: một vòng nối
-placeholder, một vòng gắn giá trị.</p>
+<p><code>&lt;foreach&gt;</code> là trường hợp phức tạp nhất trong SQL động vì số lượng placeholder chỉ được xác định lúc runtime. LarkBatis biên dịch nó thành <strong>hai vòng lặp duyệt qua cùng tập phần tử theo đúng thứ tự</strong>: một vòng dựng chuỗi placeholder (<code>?, ?, ?</code>), một vòng gán giá trị tham số vào <code>PreparedStatement</code>.</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIds"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
@@ -1914,12 +1911,10 @@ placeholder, một vòng gắn giá trị.</p>
 </span></code></pre></div>
 <ol>
 <li>Xem <a href="#empty-collections">Tập hợp rỗng</a> bên dưới.</li>
-<li>Số phần tử của tập hợp làm đổi câu SQL, nên statement này được theo dõi y như một
-    chỗ chèn <code>${}</code>.</li>
-<li>Vòng lặp thứ hai. Không có tầng đặt tên <code>__frch_id_0</code> nào để dẫn giá trị đi qua, vì
-    chỉ số vòng lặp đã nối placeholder thứ <em>k</em> với giá trị thứ <em>k</em> rồi.</li>
+<li>Số lượng phần tử thay đổi làm thay đổi chuỗi câu SQL, nên statement này được theo dõi biến thể tương tự như một điểm chèn <code>${}</code>.</li>
+<li>Vòng lặp thứ hai gán trực tiếp giá trị theo chỉ số vòng lặp, không cần biến trung gian <code>__frch_id_0</code>.</li>
 </ol>
-<h2 id="nhung-gi-lap-uoc">Những gì lặp được<a class="headerlink" href="#nhung-gi-lap-uoc" title="Permanent link">&para;</a></h2>
+<h2 id="cac-kieu-du-lieu-ho-tro-lap">Các kiểu dữ liệu hỗ trợ lặp<a class="headerlink" href="#cac-kieu-du-lieu-ho-tro-lap" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1946,9 +1941,8 @@ placeholder, một vòng gắn giá trị.</p>
 </tr>
 </tbody>
 </table>
-<p>Tất cả đều phải <strong>có kiểu tĩnh</strong>: <code>List&lt;Long&gt;</code>, không phải <code>List</code>. Chính kiểu phần tử là
-thứ quyết định chọn <code>ps.setLong</code> thay vì <code>ps.setString</code> ngay lúc build.</p>
-<p>Vòng lặp lồng được, và <code>item</code> của vòng ngoài có thể làm <code>collection</code> của vòng trong:</p>
+<p>Tất cả đều phải <strong>định kiểu tĩnh rõ ràng</strong>: <code>List&lt;Long&gt;</code>, không dùng raw type <code>List</code>. Kiểu phần tử là cơ sở để bộ sinh code chọn gọi <code>ps.setLong</code> thay vì <code>ps.setString</code> ngay lúc build.</p>
+<p>Hỗ trợ vòng lặp lồng nhau, và <code>item</code> của vòng ngoài có thể làm <code>collection</code> của vòng trong:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIdGroups"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"groups"</span><span class="w"> </span><span class="na">item=</span><span class="s">"group"</span><span class="w"> </span><span class="na">separator=</span><span class="s">" OR "</span><span class="nt">&gt;</span>
@@ -1960,11 +1954,9 @@ thứ quyết định chọn <code>ps.setLong</code> thay vì <code>ps.setString
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdGroups</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">groups</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Các vòng lặp ngang hàng có thể dùng lại cùng một tên <code>index</code>; bộ sinh code tự đổi tên
-tách chúng ra.</p>
-<h2 id="dung-index">Dùng <code>index</code><a class="headerlink" href="#dung-index" title="Permanent link">&para;</a></h2>
-<p><code>index</code> là vị trí (hoặc khoá của map), và nó bind được như mọi giá trị khác. Đây
-chính là chiêu "giữ nguyên thứ tự đầu vào" quen thuộc:</p>
+<p>Các vòng lặp ngang hàng có thể dùng lại cùng một tên <code>index</code>; bộ sinh code sẽ tự động phân tách phạm vi biến.</p>
+<h2 id="su-dung-index">Sử dụng <code>index</code><a class="headerlink" href="#su-dung-index" title="Permanent link">&para;</a></h2>
+<p><code>index</code> là vị trí (hoặc khoá của map), và có thể bind như mọi tham số khác. Đây là kỹ thuật quen thuộc để giữ nguyên thứ tự đầu vào:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIdsOrdered"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
@@ -1980,35 +1972,28 @@ chính là chiêu "giữ nguyên thứ tự đầu vào" quen thuộc:</p>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>(name<span class="w"> </span>=<span class="w"> </span>#{column}<span class="w"> </span>AND<span class="w"> </span>email<span class="w"> </span>=<span class="w"> </span>#{value})
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nt">&lt;/foreach&gt;</span>
 </span></code></pre></div>
-<h2 id="gan-mot-property-cua-phan-tu">Gắn một property của phần tử<a class="headerlink" href="#gan-mot-property-cua-phan-tu" title="Permanent link">&para;</a></h2>
-<p>Thân vòng lặp không nhất thiết phải gắn chính phần tử đó:</p>
+<h2 id="gan-thuoc-tinh-cua-phan-tu">Gán thuộc tính của phần tử<a class="headerlink" href="#gan-thuoc-tinh-cua-phan-tu" title="Permanent link">&para;</a></h2>
+<p>Thân vòng lặp có thể gán property của phần tử thay vì chính phần tử đó:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"probes"</span><span class="w"> </span><span class="na">item=</span><span class="s">"p"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{p.email}<span class="nt">&lt;/foreach&gt;</span>
 </span></code></pre></div>
 <h2 id="empty-collections">Tập hợp rỗng<a class="headerlink" href="#empty-collections" title="Permanent link">&para;</a></h2>
 <div class="admonition danger">
-<p class="admonition-title"><code>&lt;foreach&gt;</code> rỗng thì ném exception</p>
+<p class="admonition-title"><code>&lt;foreach&gt;</code> rỗng sẽ ném exception</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>LarkBatisEmptyForeachException:
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  &lt;foreach collection="ids"&gt; is empty in statement com.example.app.UserBatchMapper.findByIds;
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  wrap the loop in an &lt;if&gt; testing the collection if an empty one should drop the fragment instead
 </span></code></pre></div>
+<p>MyBatis không chèn bất kỳ chuỗi nào (kể cả <code>open</code> và <code>close</code>) khi tập hợp rỗng, dẫn đến câu SQL lỗi cú pháp <code>... WHERE id IN</code> gửi xuống database mà không chỉ rõ mapper hay tham số nào.</p>
+<p>LarkBatis chủ động ném <code>LarkBatisEmptyForeachException</code> ngay tại chỗ gọi kèm đầy đủ thông tin.</p>
 </div>
-<p>MyBatis đóng góp <em>hoàn toàn không gì cả</em> cho một tập hợp rỗng, kể cả <code>open</code> và <code>close</code>.
-Kết cục là <code>... WHERE id IN</code> đi thẳng xuống
-database rồi chết ở đó, với một lỗi cú pháp không gọi tên cả mapper lẫn tham số. Chết
-ngay tại đây thì gọi tên được cả hai, đúng ở chỗ gọi đang giữ cái danh sách rỗng ấy.</p>
-<p>Nếu bạn thật sự muốn mảnh SQL đó biến mất, hãy nói ra, và bạn giữ được đúng hành vi của
-MyBatis:</p>
+<p>Nếu bạn muốn đoạn SQL đó biến mất khi danh sách rỗng, hãy bọc trong thẻ <code>&lt;if&gt;</code> để giữ đúng hành vi của MyBatis:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"ids != null and !ids.isEmpty()"</span><span class="nt">&gt;</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>AND<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="nt">&lt;/if&gt;</span>
 </span></code></pre></div>
-<h2 id="padpow2-bounding-the-sql-variants"><code>@PadPow2</code>: chặn số biến thể SQL<a class="headerlink" href="#padpow2-bounding-the-sql-variants" title="Permanent link">&para;</a></h2>
-<p>Câu SQL của một statement có <code>&lt;foreach&gt;</code> thay đổi theo số phần tử, nên statement cache
-của driver và của database sẽ phình lên theo <strong>mọi số phần tử từng gặp</strong>. <code>@PadPow2</code>
-làm tròn số placeholder lên luỹ thừa của hai gần nhất bằng cách lặp lại phần tử cuối,
-qua đó chặn con số kia ở log₂(n) biến thể thay vì n. Hibernate gọi đúng chiêu này là
-<code>in_clause_parameter_padding</code>.</p>
+<h2 id="padpow2-bounding-the-sql-variants"><code>@PadPow2</code>: Giới hạn số biến thể SQL<a class="headerlink" href="#padpow2-bounding-the-sql-variants" title="Permanent link">&para;</a></h2>
+<p>Câu SQL của một statement có <code>&lt;foreach&gt;</code> thay đổi theo số phần tử, khiến statement cache của JDBC driver và database bị phình to theo từng kích thước danh sách. <code>@PadPow2</code> làm tròn số placeholder lên luỹ thừa của 2 gần nhất bằng cách lặp lại phần tử cuối cùng, qua đó chặn số biến thể ở mức log₂(n) thay vì n. Trong Hibernate, kỹ thuật tương đương có tên là <code>in_clause_parameter_padding</code>.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@PadPow2</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdsPadded</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p">);</span>
 </span></code></pre></div>
@@ -2023,14 +2008,10 @@ qua đó chặn con số kia ở log₂(n) biến thể thay vì n. Hibernate g�
 </span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">last0</span><span class="p">);</span><span class="w">      </span><span class="c1">// lặp lại phần tử cuối</span>
 </span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Đặt trên interface thì áp cho mọi statement; đặt trên một phương thức thì chỉ cho phương
-thức đó.</p>
+<p>Đặt trên interface thì áp dụng cho mọi statement; đặt trên phương thức thì chỉ áp dụng cho phương thức đó.</p>
 <div class="admonition warning">
-<p class="admonition-title">Phải tự bật, và có kiểm soát</p>
-<p>Lặp lại phần tử cuối chỉ vô hình ở chỗ mà giá trị trùng không làm đổi kết quả, tức
-là một danh sách <code>IN</code>. Bộ sinh code cưỡng chế điều đó: thân <code>&lt;foreach&gt;</code> phải là đúng
-một lần bind <code>#{}</code> và statement không được là <code>INSERT</code>. Ngược lại thì việc chèn thêm
-là <strong>lỗi biên dịch</strong>, chứ không phải âm thầm nhân đôi các dòng.</p>
+<p class="admonition-title">Quy tắc an toàn bắt buộc</p>
+<p>Việc lặp lại phần tử cuối cùng chỉ an toàn tuyệt đối trong mệnh đề <code>IN</code>. Bộ sinh code kiểm tra nghiêm ngặt: thân <code>&lt;foreach&gt;</code> phải chứa duy nhất một liên kết <code>#{}</code> và câu lệnh không phải là <code>INSERT</code>. Nằm ngoài các điều kiện này, việc pad sẽ <strong>báo lỗi biên dịch</strong>.</p>
 </div>
 <h2 id="values-nhieu-dong"><code>VALUES</code> nhiều dòng<a class="headerlink" href="#values-nhieu-dong" title="Permanent link">&para;</a></h2>
 <p>Một <code>&lt;foreach&gt;</code> trong <code>INSERT</code> dựng nên một statement với nhiều bộ giá trị:</p>
@@ -2042,9 +2023,7 @@ là <strong>lỗi biên dịch</strong>, chứ không phải âm thầm nhân đ
 </span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="nt">&lt;/insert&gt;</span>
 </span></code></pre></div>
 <h2 id="jdbc-batches">Batch của JDBC<a class="headerlink" href="#jdbc-batches" title="Permanent link">&para;</a></h2>
-<p>Batch không phải một chế độ executor mà bạn cấu hình, bởi làm gì có executor nào. Nó là một
-<strong>chữ ký phương thức</strong>: một <code>@Insert</code> có tham số là <code>List&lt;T&gt;</code> sẽ biên dịch thành
-<code>addBatch()</code> / <code>executeBatch()</code>.</p>
+<p>Batch trong LarkBatis không phải là một chế độ cấu hình Executor như trong MyBatis, mà được định nghĩa trực tiếp qua <strong>chữ ký phương thức</strong>: một phương thức <code>@Insert</code> nhận tham số <code>List&lt;T&gt;</code> sẽ tự động biên dịch thành luồng JDBC <code>addBatch()</code> / <code>executeBatch()</code>.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO orders (status, total, placed_at) VALUES (#{status}, #{total}, #{placedAt})"</span><span class="p">)</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insertAll</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orders</span><span class="p">);</span>
@@ -2081,16 +2060,12 @@ là <strong>lỗi biên dịch</strong>, chứ không phải âm thầm nhân đ
 </span><span id="__span-13-30"><a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Một batch rỗng là lệnh rỗng trả về 0. Khác với <code>&lt;foreach&gt;</code> rỗng, ở đây không sinh ra
-    câu SQL méo mó nào cần bảo vệ bạn khỏi.</li>
-<li>Có những driver trả về ít khoá hơn số dòng. Làm ngơ chuyện đó sẽ để lại một phần
-    batch mang id null mà chẳng ai hay. Xem <a href="../generated-keys/">Khoá tự sinh</a>.</li>
+<li>Batch rỗng sẽ trả về 0 ngay lập tức mà không gửi lệnh nào xuống database.</li>
+<li>Một số JDBC driver trả về ít khoá hơn số dòng. Kiểm tra này giúp phát hiện lỗi thiếu ID trong batch. Xem <a href="../generated-keys/">Khoá tự sinh</a>.</li>
 </ol>
 <div class="admonition note">
-<p class="admonition-title">Batch và SQL động không đi cùng nhau</p>
-<p>Câu SQL của một statement batch phải giống hệt nhau cho mọi dòng, và chính điều đó
-làm nó thành một prepared statement duy nhất. Một phương thức batch mà statement có
-chứa thẻ động là lỗi biên dịch.</p>
+<p class="admonition-title">Batch không đi cùng với SQL động</p>
+<p>Câu SQL của statement batch phải giống hệt nhau cho mọi dòng dữ liệu để sử dụng chung một PreparedStatement duy nhất. Phương thức batch có chứa thẻ động là lỗi biên dịch.</p>
 </div>
 
 

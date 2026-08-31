@@ -1912,8 +1912,7 @@
 
 
 <h1 id="kien-truc">Kiến trúc<a class="headerlink" href="#kien-truc" title="Permanent link">&para;</a></h1>
-<p>Hai pha và một IR. Mọi thứ ở pha build đều bị vứt đi trước khi ứng dụng chạy; mọi thứ ở
-pha runtime đều là code đọc được.</p>
+<p>Hai pha và một mô hình trung gian (IR). Mọi thành phần ở pha build đều được giải phóng trước khi ứng dụng thực thi; toàn bộ thành phần ở pha runtime đều là mã nguồn Java thuần minh bạch.</p>
 <pre class="mermaid"><code>flowchart LR
     subgraph build["Lúc build — không thứ gì được đóng gói"]
         A["Interface mapper&lt;br/&gt;@Select / @Insert"] --&gt; F

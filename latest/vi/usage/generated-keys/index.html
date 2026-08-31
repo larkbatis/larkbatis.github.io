@@ -951,10 +951,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#luon-goi-ten-cac-cot-khoa" class="md-nav__link">
+  <a href="#luon-khai-bao-ten-cot-khoa-tuong-minh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Luôn gọi tên các cột khoá
+        Luôn khai báo tên cột khoá tường minh
       
     </span>
   </a>
@@ -995,10 +995,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khi-khong-co-khoa-nao-quay-ve" class="md-nav__link">
+  <a href="#khi-khong-co-khoa-nao-tra-ve" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Khi không có khoá nào quay về
+        Khi không có khoá nào trả về
       
     </span>
   </a>
@@ -1754,10 +1754,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#luon-goi-ten-cac-cot-khoa" class="md-nav__link">
+  <a href="#luon-khai-bao-ten-cot-khoa-tuong-minh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Luôn gọi tên các cột khoá
+        Luôn khai báo tên cột khoá tường minh
       
     </span>
   </a>
@@ -1798,10 +1798,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khi-khong-co-khoa-nao-quay-ve" class="md-nav__link">
+  <a href="#khi-khong-co-khoa-nao-tra-ve" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Khi không có khoá nào quay về
+        Khi không có khoá nào trả về
       
     </span>
   </a>
@@ -1834,8 +1834,7 @@
 
 
 <h1 id="khoa-tu-sinh">Khoá tự sinh<a class="headerlink" href="#khoa-tu-sinh" title="Permanent link">&para;</a></h1>
-<p><code>@Options(useGeneratedKeys = true, ...)</code> hỏi driver lấy khoá mà một <code>INSERT</code> sinh ra rồi
-gán nó vào một property của đối tượng tham số.</p>
+<p><code>@Options(useGeneratedKeys = true, ...)</code> yêu cầu JDBC driver trả về khoá tự sinh sau câu lệnh <code>INSERT</code> và gán trực tiếp vào property của đối tượng tham số.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name, email, created_at) VALUES (#{name}, #{email}, #{createdAt})"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
@@ -1864,46 +1863,37 @@ gán nó vào một property của đối tượng tham số.</p>
 </span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li><strong>Tên cột</strong> khoá viết tường minh, bởi vì <code>RETURN_GENERATED_KEYS</code> mang ý nghĩa khác
-    nhau trên các database khác nhau. Xem bên dưới.</li>
-<li>Cả setter lẫn accessor đều được chọn lúc build từ <code>keyProperty</code> và kiểu khai báo của
-    property đó.</li>
+<li><strong>Tên cột</strong> khoá được khai báo tường minh vì <code>RETURN_GENERATED_KEYS</code> có hành vi không đồng nhất giữa các hệ quản trị database. Xem chi tiết bên dưới.</li>
+<li>Cả setter lẫn accessor đều được xác định tĩnh lúc build từ <code>keyProperty</code> và kiểu dữ liệu của property đó.</li>
 </ol>
-<h2 id="luon-goi-ten-cac-cot-khoa">Luôn gọi tên các cột khoá<a class="headerlink" href="#luon-goi-ten-cac-cot-khoa" title="Permanent link">&para;</a></h2>
+<h2 id="luon-khai-bao-ten-cot-khoa-tuong-minh">Luôn khai báo tên cột khoá tường minh<a class="headerlink" href="#luon-khai-bao-ten-cot-khoa-tuong-minh" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
-<p class="admonition-title"><code>keyColumn</code> là tuỳ chọn trong annotation nhưng trên thực tế gần như bắt buộc</p>
-<p><code>prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)</code> không khả chuyển:</p>
+<p class="admonition-title"><code>keyColumn</code> là tuỳ chọn trong annotation nhưng gần như bắt buộc trên production</p>
+<p><code>prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)</code> không đảm bảo tính di động (portable):</p>
 <ul>
-<li><strong>Oracle</strong> trả về <code>ROWID</code>, không phải giá trị sequence của bạn.</li>
-<li><strong>PostgreSQL</strong> trả về <em>mọi</em> cột của dòng vừa chèn.</li>
+<li><strong>Oracle</strong> trả về <code>ROWID</code> thay vì giá trị sequence thực tế.</li>
+<li><strong>PostgreSQL</strong> trả về <em>toàn bộ</em> các cột của dòng vừa chèn.</li>
 </ul>
-<p>Truyền một <code>String[]</code> tên cột tường minh là dạng duy nhất mang cùng một nghĩa ở mọi
-nơi. Khi có <code>keyColumn</code>, bộ sinh code phát ra <code>prepareStatement(sql, String[])</code>. Khi
-thiếu nó, chẳng có tên nào để bỏ vào mảng, nên nó lùi về <code>RETURN_GENERATED_KEYS</code> và
-đưa ra một <strong>cảnh báo build bắt buộc</strong>:</p>
+<p>Truyền một mảng <code>String[]</code> tên cột tường minh là cách duy nhất mang lại hành vi nhất quán trên mọi database. Khi có <code>keyColumn</code>, bộ sinh code phát ra <code>prepareStatement(sql, String[])</code>. Khi thiếu nó, hệ thống buộc phải fallback về <code>RETURN_GENERATED_KEYS</code> và phát ra một <strong>cảnh báo build bắt buộc</strong>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>warning: useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS,
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>which returns ROWID on Oracle and all columns on PostgreSQL. Name the key column(s)
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>explicitly.
 </span></code></pre></div>
-<p>Hãy coi cảnh báo đó là lỗi khi review. Nó là khác biệt giữa "chạy được trên H2" và
-"chạy được trên production".</p>
+<p>Hãy xử lý cảnh báo này trong quá trình code review để đảm bảo ứng dụng vận hành chính xác trên môi trường production.</p>
 </div>
-<p>Ngược lại, <code>keyProperty</code> là <strong>bắt buộc</strong>: <code>useGeneratedKeys</code> mà thiếu nó là lỗi biên
-dịch, hỏi rằng khoá thì nên đi đâu.</p>
-<p>Khoá tổ hợp thì viết cách nhau bằng dấu phẩy ở cả hai thuộc tính, và hai danh sách phải
-dài bằng nhau, và lệch nhau là lỗi biên dịch nêu rõ cả hai con số:</p>
+<p><code>keyProperty</code> là <strong>thuộc tính bắt buộc</strong>: bật <code>useGeneratedKeys</code> mà thiếu <code>keyProperty</code> là lỗi biên dịch.</p>
+<p>Với khoá tổ hợp (composite keys), hãy phân tách các tên bằng dấu phẩy ở cả hai thuộc tính; hai danh sách phải có cùng số lượng phần tử:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenantId,id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenant_id,id"</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="keyproperty-khi-co-nhieu-tham-so"><code>keyProperty</code> khi có nhiều tham số<a class="headerlink" href="#keyproperty-khi-co-nhieu-tham-so" title="Permanent link">&para;</a></h2>
-<p>Khi phương thức có nhiều hơn một tham số, <code>keyProperty</code> phải gọi tên cả tham số:</p>
+<p>Khi phương thức có nhiều hơn một tham số, <code>keyProperty</code> phải chỉ rõ tên tham số tiền tố:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name) VALUES (#{u.name})"</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"u.id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"u"</span><span class="p">)</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"audit"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">audit</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Sai tên là <strong>lỗi lúc biên dịch</strong>, không phải một <code>ReflectionException</code> lúc chạy.</p>
+<p>Tên tham số không tồn tại sẽ bị bắt ngay <strong>lúc biên dịch</strong>, không phải lỗi <code>ReflectionException</code> lúc runtime.</p>
 <h2 id="insert-theo-batch">Insert theo batch<a class="headerlink" href="#insert-theo-batch" title="Permanent link">&para;</a></h2>
-<p>Một <code>@Insert</code> nhận <code>List&lt;T&gt;</code> biên dịch thành <code>addBatch()</code> / <code>executeBatch()</code>, và các khoá
-quay về dưới dạng một <code>ResultSet</code> duy nhất phải khớp hàng với danh sách:</p>
+<p>Một <code>@Insert</code> nhận <code>List&lt;T&gt;</code> biên dịch thành <code>addBatch()</code> / <code>executeBatch()</code>, và các khoá trả về dưới dạng một <code>ResultSet</code> duy nhất được ánh xạ tương ứng vào từng phần tử của danh sách:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -1916,15 +1906,9 @@ quay về dưới dạng một <code>ResultSet</code> duy nhất phải khớp h
 </span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Phép kiểm số lượng này không phải lập trình phòng thủ cho có: có những driver trả về ít
-khoá hơn số dòng, và MyBatis cũng ghi nhận đúng kiểu hỏng đó. Âm thầm chấp nhận sẽ để
-lại một phần batch với id chưa được gán mà chẳng ai hay, nên
-<code>LarkBatisKeyCountMismatchException</code> gọi tên statement, số lượng mong đợi và số lượng
-thực tế.</p>
+<p>Phép kiểm tra số lượng này đảm bảo an toàn: một số JDBC driver trả về ít khoá hơn số dòng chèn thực tế. Việc bỏ qua lỗi này sẽ khiến một phần dữ liệu trong batch có id không được gán mà không ai hay biết. <code>LarkBatisKeyCountMismatchException</code> sẽ chỉ rõ tên statement, số lượng khoá kỳ vọng và số lượng thực tế nhận được.</p>
 <h2 id="selectkey-is-not-supported"><code>&lt;selectKey&gt;</code> không được hỗ trợ<a class="headerlink" href="#selectkey-is-not-supported" title="Permanent link">&para;</a></h2>
-<p>Những database không hỗ trợ khoá tự sinh (hoặc những quy trình đọc sequence <em>trước</em> khi
-insert) vẫn dùng <code>&lt;selectKey&gt;</code> trong MyBatis. Nó không được hiện thực, bởi vì nó là một
-statement thứ hai đội lốt một tuỳ chọn. Hãy viết statement thứ hai đó ra:</p>
+<p>Những database không hỗ trợ khoá tự sinh (hoặc quy trình đọc sequence <em>trước</em> khi insert) thường dùng <code>&lt;selectKey&gt;</code> trong MyBatis. Tính năng này không được hỗ trợ vì thực chất nó là một câu lệnh thứ hai chạy ngầm ẩn dưới dạng tuỳ chọn. Hãy viết tường minh câu lệnh thứ hai đó ra:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT user_seq.NEXTVAL FROM dual"</span><span class="p">)</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">nextUserId</span><span class="p">();</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
@@ -1937,12 +1921,9 @@ statement thứ hai đội lốt một tuỳ chọn. Hãy viết statement thứ
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
 </span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><a href="../../features/migration/">Trình quét mã cũ</a> báo cáo mọi <code>&lt;selectKey&gt;</code> mà nó tìm thấy kèm
-đúng cách sửa này.</p>
-<h2 id="khi-khong-co-khoa-nao-quay-ve">Khi không có khoá nào quay về<a class="headerlink" href="#khi-khong-co-khoa-nao-quay-ve" title="Permanent link">&para;</a></h2>
-<p>Nếu một statement khai báo <code>useGeneratedKeys</code> mà driver chẳng trả về gì,
-<code>LarkBatisNoKeyException</code> được ném ra kèm tên statement, thay vì để một id <code>0</code> đi lang
-thang trong code của bạn rồi chết ở một chỗ chẳng liên quan.</p>
+<p><a href="../../features/migration/">Trình quét mã cũ</a> sẽ tự động phát hiện mọi thẻ <code>&lt;selectKey&gt;</code> và gợi ý đoạn code thay thế tương ứng.</p>
+<h2 id="khi-khong-co-khoa-nao-tra-ve">Khi không có khoá nào trả về<a class="headerlink" href="#khi-khong-co-khoa-nao-tra-ve" title="Permanent link">&para;</a></h2>
+<p>Nếu một statement khai báo <code>useGeneratedKeys</code> mà JDBC driver không trả về khoá nào, <code>LarkBatisNoKeyException</code> sẽ được ném ra kèm tên statement, ngăn ngừa việc giá trị mặc định <code>0</code> lan truyền trong ứng dụng và gây lỗi ở tầng nghiệp vụ khác.</p>
 
 
 

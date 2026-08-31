@@ -1063,22 +1063,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nhung-gi-gan-uoc-ma-khong-can-tro-giup" class="md-nav__link">
+  <a href="#cac-kieu-du-lieu-ho-tro-san" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những gì gắn được mà không cần trợ giúp
+        Các kiểu dữ liệu hỗ trợ sẵn
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Những gì gắn được mà không cần trợ giúp">
+    <nav class="md-nav" aria-label="Các kiểu dữ liệu hỗ trợ sẵn">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vi-sao-cac-kieu-boc-phai-i-qua-jdbccodec" class="md-nav__link">
+  <a href="#co-che-xu-ly-null-cua-kieu-wrapper-qua-jdbccodec" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao các kiểu bọc phải đi qua JdbcCodec
+        Cơ chế xử lý null của kiểu wrapper qua JdbcCodec
       
     </span>
   </a>
@@ -1810,22 +1810,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nhung-gi-gan-uoc-ma-khong-can-tro-giup" class="md-nav__link">
+  <a href="#cac-kieu-du-lieu-ho-tro-san" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những gì gắn được mà không cần trợ giúp
+        Các kiểu dữ liệu hỗ trợ sẵn
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Những gì gắn được mà không cần trợ giúp">
+    <nav class="md-nav" aria-label="Các kiểu dữ liệu hỗ trợ sẵn">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vi-sao-cac-kieu-boc-phai-i-qua-jdbccodec" class="md-nav__link">
+  <a href="#co-che-xu-ly-null-cua-kieu-wrapper-qua-jdbccodec" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao các kiểu bọc phải đi qua JdbcCodec
+        Cơ chế xử lý null của kiểu wrapper qua JdbcCodec
       
     </span>
   </a>
@@ -1946,19 +1946,15 @@
 
 
 <h1 id="kieu-du-lieu-va-handler">Kiểu dữ liệu và handler<a class="headerlink" href="#kieu-du-lieu-va-handler" title="Permanent link">&para;</a></h1>
-<p>Tầng <code>TypeHandler</code> của MyBatis là một registry lúc chạy: với mỗi tham số và mỗi cột, tra
-một handler theo kiểu Java và kiểu JDBC, rồi gọi nó. LarkBatis đưa ra lựa chọn đó ngay
-lúc build rồi chèn thẳng kết quả vào code sinh ra. Còn lại lúc chạy là <code>JdbcCodec</code>, một
-nhúm hàm tĩnh cho những kiểu mà accessor JDBC tự nhiên của chúng là kiểu nguyên thuỷ hoặc
-cần một phép chuyển đổi.</p>
-<h2 id="nhung-gi-gan-uoc-ma-khong-can-tro-giup">Những gì gắn được mà không cần trợ giúp<a class="headerlink" href="#nhung-gi-gan-uoc-ma-khong-can-tro-giup" title="Permanent link">&para;</a></h2>
-<p><code>#{}</code> và các property kết quả xử lý trực tiếp những kiểu sau:</p>
+<p>Tầng <code>TypeHandler</code> của MyBatis vận hành như một registry động lúc runtime: với mỗi tham số và mỗi cột, hệ thống tra cứu handler theo cặp (javaType, jdbcType) và gọi qua reflection. LarkBatis định hình toàn bộ các ánh xạ này từ lúc build và phát ra trực tiếp các lệnh gọi tương ứng. Khi chạy, runtime chỉ sử dụng <code>JdbcCodec</code> — tập hợp các static helper xử lý null an toàn cho các kiểu dữ liệu cơ bản hoặc cần chuyển đổi.</p>
+<h2 id="cac-kieu-du-lieu-ho-tro-san">Các kiểu dữ liệu hỗ trợ sẵn<a class="headerlink" href="#cac-kieu-du-lieu-ho-tro-san" title="Permanent link">&para;</a></h2>
+<p>Ký hiệu <code>#{}</code> và các property kết quả hỗ trợ trực tiếp các kiểu sau:</p>
 <table>
 <thead>
 <tr>
 <th>Kiểu Java</th>
-<th>Đọc</th>
-<th>Ghi</th>
+<th>Đọc dữ liệu</th>
+<th>Ghi dữ liệu</th>
 </tr>
 </thead>
 <tbody>
@@ -1973,7 +1969,7 @@ cần một phép chuyển đổi.</p>
 <td><code>ps.setLong(i, v)</code> v.v.</td>
 </tr>
 <tr>
-<td><code>Long</code>, <code>Integer</code>, … (kiểu bọc)</td>
+<td><code>Long</code>, <code>Integer</code>, … (kiểu wrapper)</td>
 <td><code>JdbcCodec.longOrNull(rs, i)</code></td>
 <td><code>JdbcCodec.setLong(ps, i, v)</code></td>
 </tr>
@@ -1989,8 +1985,8 @@ cần một phép chuyển đổi.</p>
 </tr>
 <tr>
 <td><code>java.sql.Date</code>, <code>Time</code>, <code>Timestamp</code></td>
-<td>trực tiếp</td>
-<td>trực tiếp</td>
+<td>trực tiếp qua JDBC</td>
+<td>trực tiếp qua JDBC</td>
 </tr>
 <tr>
 <td><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code>, <code>LocalDateTime</code></td>
@@ -2004,53 +2000,36 @@ cần một phép chuyển đổi.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="vi-sao-cac-kieu-boc-phai-i-qua-jdbccodec">Vì sao các kiểu bọc phải đi qua <code>JdbcCodec</code><a class="headerlink" href="#vi-sao-cac-kieu-boc-phai-i-qua-jdbccodec" title="Permanent link">&para;</a></h3>
-<p><code>rs.getLong(i)</code> trả về <code>0</code> cho một <code>NULL</code> của SQL. Các hàm trợ giúp cho kiểu bọc làm đúng
-điều bạn thật sự muốn:</p>
+<h3 id="co-che-xu-ly-null-cua-kieu-wrapper-qua-jdbccodec">Cơ chế xử lý null của kiểu wrapper qua <code>JdbcCodec</code><a class="headerlink" href="#co-che-xu-ly-null-cua-kieu-wrapper-qua-jdbccodec" title="Permanent link">&para;</a></h3>
+<p><code>rs.getLong(i)</code> mặc định trả về <code>0</code> cho giá trị <code>NULL</code> trong database. Các hàm helper cho kiểu wrapper đảm bảo trả về đúng <code>null</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="nf">longOrNull</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">column</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">column</span><span class="p">);</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">wasNull</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Việc chọn giữa <code>rs.getLong(i)</code> và <code>JdbcCodec.longOrNull(rs, i)</code> được quyết lúc build từ
-kiểu khai báo của property. Property kiểu <code>long</code> nhận phép đọc nguyên thuỷ; property kiểu
-<code>Long</code> nhận phép đọc có nhận biết null. Khai báo property cho phép null chính là cách bạn
-yêu cầu xử lý null. Không có thiết lập riêng nào cả.</p>
-<p>Ở phía ghi, <code>JdbcCodec.setLong(ps, i, null)</code> gọi <code>ps.setNull(i, Types.BIGINT)</code> với đúng
-kiểu SQL, điều mà một số driver bắt buộc phải có.</p>
+<p>Việc chọn giữa <code>rs.getLong(i)</code> và <code>JdbcCodec.longOrNull(rs, i)</code> được quyết định tĩnh lúc build dựa trên kiểu khai báo của property: kiểu <code>long</code> nguyên thuỷ dùng đọc trực tiếp, kiểu <code>Long</code> wrapper dùng helper nhận biết null.</p>
+<p>Khi ghi dữ liệu, <code>JdbcCodec.setLong(ps, i, null)</code> sẽ gọi <code>ps.setNull(i, Types.BIGINT)</code> với đúng kiểu SQL tương ứng.</p>
 <h2 id="enum">Enum<a class="headerlink" href="#enum" title="Permanent link">&para;</a></h2>
-<p>Enum ánh xạ theo <code>name()</code> của nó mặc định, theo cả hai chiều, và có xử lý <code>null</code>:</p>
+<p>Enum được ánh xạ theo <code>name()</code> mặc định cho cả hai chiều và hỗ trợ an toàn <code>null</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">NEW</span><span class="p">,</span><span class="w"> </span><span class="n">PAID</span><span class="p">,</span><span class="w"> </span><span class="n">SHIPPED</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, status, total FROM orders WHERE status = #{status}"</span><span class="p">)</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">byStatus</span><span class="p">(</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Enum cũng là một <strong>kiểu giá trị đóng</strong>, nên nó là một trong số ít thứ được phép bind vào
-<code>${}</code>, vì toàn bộ không gian giá trị của nó đã biết từ lúc build. Xem
-<a href="../raw-sql/#the-rule">SQL thô</a>.</p>
-<p>Một enum lưu dưới dạng ordinal hoặc một mã tuỳ biến thì cần
-<a href="#custom-type-handlers">handler riêng</a>.</p>
+<p>Enum là một <strong>kiểu dữ liệu có tập giá trị đóng</strong>, do đó nó được phép bind trực tiếp vào <code>${}</code> vì toàn bộ không gian giá trị đã biết trước lúc build. Xem <a href="../raw-sql/#the-rule">SQL thô</a>.</p>
+<p>Nếu cần lưu enum dưới dạng số thứ tự (ordinal) hoặc mã tuỳ biến, bạn cần khai báo <a href="#custom-type-handlers">type handler riêng</a>.</p>
 <h2 id="javatime"><code>java.time</code><a class="headerlink" href="#javatime" title="Permanent link">&para;</a></h2>
-<p><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code> và <code>LocalDateTime</code> chuyển đổi qua
-<code>java.sql.Timestamp</code> / <code>Date</code> / <code>Time</code>, đúng như các handler của MyBatis vẫn làm.
-<code>Instant</code> dùng <code>Timestamp.toInstant()</code> và <code>Timestamp.from(...)</code>, nên giá trị là tuyệt đối
-và múi giờ mặc định của JVM không xen vào.</p>
-<p>Các kiểu mang theo múi giờ (<code>ZonedDateTime</code>, <code>OffsetDateTime</code>) không được dựng sẵn. Một
-cột thì chẳng có múi giờ nào để mang, nên phép chuyển đổi cần một quyết định vốn thuộc về
-ứng dụng của bạn. Hãy lưu <code>Instant</code>, và chuyển đổi ở rìa của mapper.</p>
+<p><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code> và <code>LocalDateTime</code> được chuyển đổi qua <code>java.sql.Timestamp</code> / <code>Date</code> / <code>Time</code>. <code>Instant</code> sử dụng <code>Timestamp.toInstant()</code> và <code>Timestamp.from(...)</code>, đảm bảo giá trị là tuyệt đối và không bị ảnh hưởng bởi múi giờ mặc định của JVM.</p>
+<p>Các kiểu dữ liệu kèm múi giờ (<code>ZonedDateTime</code>, <code>OffsetDateTime</code>) không được tích hợp sẵn vì cột database chuẩn không lưu thông tin timezone. Khuyến nghị lưu trữ <code>Instant</code> (UTC) và chuyển đổi timezone ở tầng service.</p>
 <h2 id="column-naming">Đặt tên cột<a class="headerlink" href="#column-naming" title="Permanent link">&para;</a></h2>
-<p>Cột tìm ra property theo <code>snake_case</code> → <code>camelCase</code>, áp dụng lúc build:
-<code>created_at</code> → <code>setCreatedAt</code>. Mặc định là bật — MyBatis thì mặc định tắt — và
-<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> mang mặc định của MyBatis sang. Lựa chọn
-này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
-Xem <a href="../../features/configuration/#column-naming">Cấu hình</a>.</p>
-<p>Chỗ nào quy ước không đủ thì một <code>&lt;resultMap&gt;</code> gọi tên cột tường minh:</p>
+<p>Tên cột được tự động ánh xạ sang property theo quy ước <code>snake_case</code> → <code>camelCase</code> lúc build (<code>created_at</code> → <code>setCreatedAt</code>). Mặc định được bật; bạn có thể dùng <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> để tắt. Xem <a href="../../features/configuration/#column-naming">Cấu hình</a>.</p>
+<p>Khi cần ánh xạ tuỳ biến, bạn có thể dùng <code>&lt;resultMap&gt;</code>:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"userMap"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">    </span><span class="na">column=</span><span class="s">"id"</span><span class="nt">/&gt;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&lt;result</span><span class="w"> </span><span class="na">property=</span><span class="s">"email"</span><span class="w"> </span><span class="na">column=</span><span class="s">"usr_email"</span><span class="nt">/&gt;</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nt">&lt;/resultMap&gt;</span>
 </span></code></pre></div>
-<p>Hoặc <code>@Column</code> đặt tên cột ngay trên property, một lần, dùng cho mọi statement:</p>
+<p>Hoặc sử dụng <code>@Column</code> trực tiếp trên property:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">User</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"usr_email"</span><span class="p">)</span>

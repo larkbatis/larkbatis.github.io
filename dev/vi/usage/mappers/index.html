@@ -2011,8 +2011,7 @@ có vấn đề. Không có tham số kiểu <code>Map</code> hay <code>Object</
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">countByName</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"pattern"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pattern</span><span class="p">);</span>
 </span></code></pre></div>
 <h2 id="lop-ket-qua">Lớp kết quả<a class="headerlink" href="#lop-ket-qua" title="Permanent link">&para;</a></h2>
-<p>Một lớp kết quả cần constructor không tham số và các setter, ngoài ra không cần gì thêm:
-không annotation, không interface, không đăng ký.</p>
+<p>Một lớp kết quả cần constructor không tham số và các setter, ngoài ra không cần gì thêm:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">User</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
@@ -2020,39 +2019,20 @@ không annotation, không interface, không đăng ký.</p>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="c1">// getter và setter</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Cột tìm ra property theo <code>snake_case</code> → <code>camelCase</code>, <strong>áp dụng lúc build</strong>:
-<code>created_at</code> → <code>setCreatedAt</code>. Mặc định là bật — MyBatis thì mặc định tắt — và
-<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> mang mặc định của MyBatis sang. Lựa chọn
-này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
-Xem <a href="../../features/configuration/#column-naming">Cấu hình</a>.</p>
-<p>Chỗ nào quy ước đó không đủ thì đặt tên cột ngay trên property bằng
-<a href="../../features/annotations/#column"><code>@Column</code></a> trên field, setter hoặc getter, hoặc đặt
-alias cho cột trong select list, hoặc khai báo một
-<a href="../result-maps/"><code>&lt;resultMap&gt;</code></a>. Xem <a href="../types/#column-naming">Kiểu dữ liệu và handler</a>.</p>
+<p>Tên cột được tự động ánh xạ sang property theo quy ước <code>snake_case</code> → <code>camelCase</code> <strong>trực tiếp lúc build</strong> (ví dụ <code>created_at</code> → <code>setCreatedAt</code>). Quy ước này mặc định được bật trong LarkBatis (trong khi MyBatis mặc định tắt). Nếu cần giữ nguyên hành vi của MyBatis, bạn có thể truyền cờ <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code>. Ánh xạ này được biên dịch thẳng vào row reader sinh sẵn; hoàn toàn không có tuỳ chọn tra cứu lúc runtime. Xem <a href="../../features/configuration/#column-naming">Cấu hình</a>.</p>
+<p>Trường hợp tên cột khác biệt hoặc quy ước trên không đáp ứng được, bạn có thể dùng <a href="../../features/annotations/#column"><code>@Column</code></a> đặt trực tiếp trên field, setter hoặc getter, hoặc đặt alias cho cột trong câu SELECT, hoặc khai báo <a href="../result-maps/"><code>&lt;resultMap&gt;</code></a>. Xem <a href="../types/#column-naming">Kiểu dữ liệu và handler</a>.</p>
 <h3 id="positional-or-name-based-reads">Đọc theo vị trí hay theo tên<a class="headerlink" href="#positional-or-name-based-reads" title="Permanent link">&para;</a></h3>
-<p>Khi bộ sinh code phân tích được select list, chỉ số cột là hằng số:</p>
+<p>Khi bộ sinh code phân tích được danh sách SELECT, chỉ số cột sẽ là các hằng số tĩnh:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">u</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 </span></code></pre></div>
-<p>Khi không phân tích được, riêng statement đó lùi về dùng reader theo tên: reader này lấy
-chỉ số từ <code>ResultSetMetaData</code> <strong>một lần duy nhất, ở dòng đầu tiên</strong>, rồi đọc theo vị trí
-cho phần còn lại. Có ba thứ làm nó không phân tích được: <code>SELECT *</code>, một chỗ chèn <code>${}</code>
-nằm trong select list, và một biểu thức không đặt alias. Cách lùi này vẫn đúng, chậm hơn
-ở mức đo được, và bản build sẽ cho bạn biết statement nào rơi vào trường hợp đó. Xem
-<a href="../../wiki/generated-code/#row-readers">Code sinh ra</a>.</p>
+<p>Khi không thể phân tích cú pháp tĩnh danh sách SELECT (do <code>SELECT *</code>, chèn <code>${}</code> trong select list, hoặc biểu thức tính toán không đặt alias), statement đó sẽ sử dụng cơ chế fallback: đọc vị trí cột từ <code>ResultSetMetaData</code> <strong>đúng một lần duy nhất ở dòng đầu tiên</strong>, sau đó tiếp tục đọc dữ liệu theo vị trí cho các dòng còn lại. Cơ chế này đảm bảo tính chính xác và trình biên dịch sẽ thông báo rõ statement nào rơi vào trường hợp fallback. Xem <a href="../../wiki/generated-code/#row-readers">Code sinh ra</a>.</p>
 <div class="admonition note">
 <p class="admonition-title"><code>@LarkBatisRow</code></p>
-<p>Một lớp không bao giờ xuất hiện làm <code>resultType</code> của statement nào, chẳng hạn lớp
-chỉ dùng bởi <a href="../raw-sql/#the-escape-hatch">cửa thoát hiểm</a>, thì không có gì kích hoạt
-việc sinh reader cho nó. Đánh dấu nó bằng
-<a href="../../features/annotations/#larkbatisrow"><code>@LarkBatisRow</code></a> là có reader. Thứ tự
-khai báo của lớp chính là thứ tự cột chuẩn, bởi ở đây không có select list nào để
-lấy thứ tự ra cả.</p>
+<p>Với những class không bao giờ xuất hiện làm <code>resultType</code> của statement nào (chẳng hạn class chỉ dùng cho <a href="../raw-sql/#the-escape-hatch">lối thoát thủ công</a>), bạn hãy đánh dấu class đó bằng <a href="../../features/annotations/#larkbatisrow"><code>@LarkBatisRow</code></a> để kích hoạt sinh row reader. Thứ tự khai báo field trong class chính là thứ tự cột chuẩn.</p>
 </div>
 <h2 id="phuong-thuc-default">Phương thức <code>default</code><a class="headerlink" href="#phuong-thuc-default" title="Permanent link">&para;</a></h2>
-<p>Một phương thức <code>default</code> trên interface mapper được để yên: nó được biên dịch vào
-interface như mọi phương thức khác, và lớp hiện thực sinh ra thừa kế nó. Đây là chỗ để
-SQL ráp tay:</p>
+<p>Phương thức <code>default</code> trên interface mapper được giữ nguyên: javac biên dịch trực tiếp vào interface và class <code>$$Impl</code> sinh ra sẽ kế thừa phương thức đó. Đây là vị trí lý tưởng để viết các truy vấn SQL tuỳ biến:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">recent</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span>
@@ -2062,19 +2042,13 @@ SQL ráp tay:</p>
 </span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="n">UserRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Để ý xem thứ gì vẫn an toàn kiểu ngay cả ở đây: các dòng vẫn được đọc bởi reader
-<code>UserRow</code> <strong>được sinh ra</strong>, nên vẫn không có reflection nào và kiểu kết quả vẫn được
-javac kiểm tra. Xem <a href="../raw-sql/">SQL thô và SqlFragment</a>.</p>
+<p>Các dòng dữ liệu vẫn được đọc an toàn qua <code>UserRow.READER</code> sinh sẵn: hoàn toàn không sử dụng reflection và kiểu kết quả luôn được javac kiểm tra kiểu tĩnh. Xem <a href="../raw-sql/">SQL thô và SqlFragment</a>.</p>
 <h2 id="registry-sinh-ra">Registry sinh ra<a class="headerlink" href="#registry-sinh-ra" title="Permanent link">&para;</a></h2>
-<p>Mọi mapper trong lần biên dịch đều xuất hiện trong một lớp <code>LarkBatisMappers</code> duy nhất:</p>
+<p>Tất cả các mapper trong một lần biên dịch đều được tập hợp trong class static factory <code>LarkBatisMappers</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">UserMapper</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisMappers</span><span class="p">.</span><span class="na">userMapper</span><span class="p">(</span><span class="n">session</span><span class="p">);</span>
 </span></code></pre></div>
-<p><code>LarkBatisMappers</code> là một factory tĩnh trên một tập đóng đã biết lúc biên dịch. Không có
-<code>addMapper()</code> và không có đăng ký lúc chạy, bởi vì chẳng có gì để đăng ký. Dưới Spring bạn
-không bao giờ động tới nó: lớp <code>@Configuration</code> sinh ra khai báo chính những constructor đó
-thành bean.</p>
-<p>Mặc định registry rơi vào tiền tố package chung của tất cả mapper; ghi đè bằng
-<code>-Alarkbatis.registryPackage=com.example.app</code>.</p>
+<p><code>LarkBatisMappers</code> là một static factory cho tập hợp mapper cố định đã biết lúc compile. Không có phương thức <code>addMapper()</code> động lúc runtime vì mọi mapper đều đã được xác định trước. Khi dùng Spring Boot, bạn không cần gọi trực tiếp class này vì class <code>@Configuration</code> sinh ra sẽ tự động đăng ký các bean tương ứng.</p>
+<p>Mặc định, registry nằm tại package prefix chung của các mapper; bạn có thể ghi đè vị trí này bằng cờ <code>-Alarkbatis.registryPackage=com.example.app</code>.</p>
 
 
 
