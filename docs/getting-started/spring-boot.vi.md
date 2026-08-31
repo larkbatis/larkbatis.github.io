@@ -1,12 +1,10 @@
-# Khởi động nhanh với Spring Boot
+# Tích hợp với Spring Boot
 
-Không có `@MapperScan`, không `SqlSessionFactoryBean` và không `SqlSessionTemplate`.
-Phần hiện thực của một mapper là một lớp thật với constructor thật, nên nó là một bean
-bình thường. Processor phát ra một `@Configuration` với mỗi mapper một phương thức
-`@Bean`, còn auto-configuration thì cung cấp cái `LarkBatisSession` duy nhất mà các
-phương thức đó yêu cầu.
+Với LarkBatis, bạn không cần `@MapperScan`, không cần `SqlSessionFactoryBean`, và không cần `SqlSessionTemplate`. Mỗi mapper là một class Java cụ thể với constructor công khai, nên Spring quản lý chúng như các bean thông thường.
 
-## 1 · Phụ thuộc
+Processor tự động sinh ra class `@Configuration` chứa các phương thức `@Bean` tương ứng cho từng mapper, và Spring Boot Starter tự động cung cấp `LarkBatisSession`.
+
+## 1. Cấu hình Dependencies
 
 ```kotlin title="build.gradle.kts"
 dependencies {
@@ -23,15 +21,11 @@ tasks.withType<JavaCompile>().configureEach {
 }
 ```
 
-1.  Giữ lại tên tham số thật trong file class, để `#{id}` vẫn tìm ra `id` ở một bản build
-    incremental của Gradle. Thiếu nó, processor có thể chỉ thấy `arg0` và không xử lý được
-    chỗ gắn tham số. Starter parent của chính Spring Boot cũng đặt đúng cờ này cho phần
-    constructor binding, nên dòng này thường đã có sẵn.
-    [Xử lý sự cố](../usage/troubleshooting.md#what-the-flag-actually-does) có phần chi tiết.
+1.  Lưu tên tham số phương thức vào class file để các bản build incremental của Gradle không bị mất tên tham số `#{id}`.
 
-Chỉ có vậy. Cùng một jar chạy được trên **cả Spring Boot 3 lẫn Spring Boot 4**.
+Cùng một starter jar tương thích trên **cả Spring Boot 3 và Spring Boot 4**.
 
-## 2 · Một mapper
+## 2. Định nghĩa Mapper Interface
 
 ```java title="AccountMapper.java"
 package com.example.app;
@@ -59,7 +53,7 @@ public interface AccountMapper {
 }
 ```
 
-## 3 · Inject nó vào
+## 3. Inject vào Spring Service
 
 ```java title="AccountService.java"
 package com.example.app;
@@ -88,31 +82,21 @@ public class AccountService {
 }
 ```
 
-1.  Một lần inject qua constructor bình thường cho một bean bình thường. Bean đó là
-    `AccountMapper$$Impl`, được khai báo bởi lớp `LarkBatisMapperConfiguration` sinh ra,
-    lớp này nằm trong base package của bạn nên `@ComponentScan` mặc định của
-    `@SpringBootApplication` nhặt được nó.
+1.  Constructor injection tiêu chuẩn. Bean thực thi là `AccountMapper$$Impl`, được cấu hình trong class `LarkBatisMapperConfiguration` sinh ra tại base package.
 
-`@Transactional` hoạt động vì `SpringLarkBatisSession.conn()` đi qua
-`DataSourceUtils`, và hàm đó trả về đúng connection đã được gắn vào transaction đang
-chạy. `REQUIRES_NEW`, `NESTED`, các quy tắc rollback và `readOnly = true` đều hành xử y
-hệt như với `JdbcTemplate`: Spring sở hữu transaction, LarkBatis chỉ đi xin một
-connection. Chia sẻ chung một transaction với `JdbcTemplate` hay JPA cũng hoạt động vì
-đúng lý do đó.
+Annotation `@Transactional` hoạt động mượt mà vì `SpringLarkBatisSession.conn()` gọi `DataSourceUtils.getConnection(dataSource)`, tự động liên kết với connection đang hoạt động của Spring Transaction Manager. Mọi cơ chế propagation (`REQUIRES_NEW`, `NESTED`), rollback rules và `readOnly = true` đều hoạt động tương tự như khi sử dụng `JdbcTemplate`.
 
-## 4 · Cấu hình (tuỳ chọn)
+## 4. Cấu hình Properties (Tuỳ chọn)
 
 ```yaml title="application.yml"
 larkbatis:
-  max-sql-variants: 64                # số câu SQL khác nhau cho mỗi statement trước khi cảnh báo
-  fail-on-unbounded-fragment: false   # true = ném lỗi luôn; hữu ích ở môi trường staging
+  max-sql-variants: 64                # Ngưỡng cảnh báo số lượng biến thể SQL động
+  fail-on-unbounded-fragment: false   # Ném exception thay vì log cảnh báo (khuyến khích bật trên staging)
 ```
 
-Cả hai thiết lập đều xoay quanh cái giá vận hành của `${}`: statement cache được đánh
-khoá bằng chính câu SQL, nên một fragment mà tập giá trị không bị chặn sẽ làm cache
-phình ra vô hạn. Xem [Cấu hình](../features/configuration.md).
+Xem chi tiết tại [Cấu hình](../features/configuration.md).
 
-## Processor đã sinh ra cái gì
+## Mã nguồn Spring Configuration được sinh ra
 
 ```java title="LarkBatisMapperConfiguration.java"
 @Generated("io.github.larkbatis.processor.LarkBatisProcessor")
@@ -126,27 +110,19 @@ public class LarkBatisMapperConfiguration {
 }
 ```
 
-1.  Đây là bắt buộc, không phải cho đẹp. Giá trị mặc định `true` khiến Spring dựng một
-    lớp con CGLIB của lớp này lúc chạy, đúng thứ sinh bytecode lúc chạy mà
-    LarkBatis sinh ra để loại bỏ.
+1.  `proxyBeanMethods = false` ngăn chặn Spring tạo class CGLIB proxy lúc runtime.
 
-## Khi mặc định không vừa
+## Tùy biến cấu hình nâng cao
 
-| Tình huống | Làm gì |
+| Nhu cầu | Giải pháp |
 |---|---|
-| Mapper nằm ngoài các package được quét | `-Alarkbatis.springConfigPackage=com.example.app`, hoặc `@Import(LarkBatisMapperConfiguration.class)` |
-| Bạn muốn tự khai báo các bean mapper | `-Alarkbatis.springConfig=false` |
-| Có nhiều hơn một `DataSource` | Khai báo mỗi `DataSource` một `SpringLarkBatisSession` và tự viết các phương thức `@Bean`. Auto-configuration mang `@ConditionalOnSingleCandidate`, nên nó lùi lại chứ không đoán mò. Hãy đánh dấu một `DataSource` là `@Primary`, hoặc tắt lớp được sinh ra |
+| Mapper nằm ngoài package quét mặc định | Thêm `-Alarkbatis.springConfigPackage=com.example.app` hoặc khai báo `@Import(LarkBatisMapperConfiguration.class)` |
+| Tự định nghĩa các bean mapper thủ công | Thêm cờ `-Alarkbatis.springConfig=false` để tắt sinh `@Configuration` tự động |
+| Sử dụng nhiều DataSource | Khai báo một `SpringLarkBatisSession` cho từng `DataSource` và tự viết các phương thức `@Bean` cho mapper tương ứng |
 
-Việc chọn `DataSource` theo từng mapper được cố ý để lại: chưa thiết kế khi chưa có một
-service thật cần đến nó.
+## Spring AOT và GraalVM Native Image
 
-## Spring AOT và native image
+Phương thức `@Bean AccountMapper accountMapper(LarkBatisSession s)` có kiểu trả về tĩnh rõ ràng. Spring AOT phân tích và đăng ký bean trực tiếp mà không cần cấu hình reflection metadata hay JDK dynamic proxy hints.
 
-`@Bean AccountMapper accountMapper(LarkBatisSession s)` có kiểu trả về tĩnh, nên Spring
-AOT đối xử với nó như mọi bean khác: không cần `getObjectType()` lúc chạy, không hint
-proxy, không `reflect-config.json` cho tầng mapper. `MapperFactoryBean` là trường hợp
-ngược lại: kiểu của bean chỉ biết được lúc chạy, và thứ nó trả về là một JDK proxy.
+Đọc tiếp: [Tích hợp Spring chi tiết](../usage/spring.md).
 
-Đọc tiếp: [Tích hợp Spring](../usage/spring.md) nói về câu chuyện Boot 3 / Boot 4, cái
-gì chạy và cái gì không, cùng chi tiết các property.

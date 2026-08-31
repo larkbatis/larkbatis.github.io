@@ -1,133 +1,87 @@
-# Kiến trúc
+# Kiến trúc tổng thể
 
-Hai pha và một mô hình trung gian (IR). Mọi thành phần ở pha build đều được giải phóng trước khi ứng dụng thực thi; toàn bộ thành phần ở pha runtime đều là mã nguồn Java thuần minh bạch.
+Kiến trúc LarkBatis gồm hai pha tách biệt rõ ràng và một mô hình biểu diễn trung gian (Intermediate Representation - IR). Mọi công việc phân tích, kiểm tra kiểu dữ liệu và sinh mã nguồn diễn ra hoàn toàn trong pha build; runtime chỉ là một lớp mỏng gọi JDBC trực tiếp.
 
 ```mermaid
 flowchart LR
-    subgraph build["Lúc build — không thứ gì được đóng gói"]
-        A["Interface mapper<br/>@Select / @Insert"] --> F
+    subgraph build["Pha Build (javac annotation processing)"]
+        A["Mapper Interface<br/>@Select / @Insert"] --> F
         B["Mapper XML<br/>&lt;select&gt; &lt;if&gt; &lt;foreach&gt;"] --> F
-        F["Frontend<br/>phân tích · kiểm kiểu · gấp hằng"] --> IR["MapperModel<br/>(IR)"]
-        IR --> E["Emitter<br/>JavaPoet"]
+        F["Frontend Parser<br/>phân tích cú pháp · kiểm tra kiểu · gập hằng"] --> IR["MapperModel<br/>(IR)"]
+        IR --> E["JavaPoet Emitter"]
     end
-    subgraph run["Lúc chạy — ~1.500 dòng, không phụ thuộc"]
+    subgraph run["Pha Runtime (~1.500 dòng code, JDBC thuần)"]
         E --> G1["UserMapper$$Impl"]
         E --> G2["UserRow"]
         E --> G3["LarkBatisMappers"]
         E --> G4["LarkBatisMapperConfiguration"]
         G1 --> RT["larkbatis-runtime<br/>LarkBatisSession · JdbcCodec · SqlFragment"]
-        RT --> JDBC[("JDBC driver")]
+        RT --> JDBC[("JDBC Driver")]
     end
 ```
 
-## Các repository
+## Phân chia Repository và Module
 
-Bốn repository độc lập, bởi vì chúng có vòng đời khác nhau và câu trả lời khác nhau cho
-câu hỏi "thứ này có chạm tới classpath lúc chạy của ứng dụng không".
-
-| Repository | Module | Phạm vi |
+| Repository | Module | Phạm vi sử dụng |
 |---|---|---|
-| `larkbatis` | `larkbatis-annotations` | runtime: chỉ annotation, không logic |
-| | `larkbatis-runtime` | runtime: không phụ thuộc gì ngoài JDBC |
-| | `larkbatis-processor` | **chỉ lúc build**: bộ sinh code |
-| `larkbatis-gradle-plugin` | | chỉ lúc build: plugin id `io.github.larkbatis` |
-| `larkbatis-maven-plugin` | | chỉ lúc build: cùng nhiệm vụ cho Maven |
-| `larkbatis-spring` | `larkbatis-spring`, `-spring-boot-autoconfigure`, `-spring-boot-starter` | runtime: transaction, auto-config cho Boot |
+| `larkbatis` | `larkbatis-annotations` | Annotation-only (phạm vi `CLASS`), không chứa logic |
+| | `larkbatis-runtime` | Runtime core: JDBC thuần (~1.500 dòng code) |
+| | `larkbatis-processor` | **Build-time only**: Annotation processor sinh mã nguồn |
+| `larkbatis-gradle-plugin` | Plugin ID `io.github.larkbatis` | **Build-time only**: Tự động cấu hình Gradle task và incremental input |
+| `larkbatis-maven-plugin` | Maven Plugin | **Build-time only**: Cấu hình compiler path và refresh XML |
+| `larkbatis-spring` | `larkbatis-spring`, starter, autoconfigure | Tích hợp Spring Boot và `DataSourceUtils` |
 
-Quy tắc giữ cho điều này trung thực: **module chỉ dùng lúc build tuyệt đối không được lọt
-ra classpath lúc chạy của ứng dụng.** Bộ sinh code là một công cụ lúc biên dịch; nếu với
-tới được nó lúc chạy thì sớm muộn sẽ có người với tới, và khẳng định trung tâm của thiết
-kế không còn kiểm chứng được nữa.
+Quy tắc bất biến: **Các module build-time tuyệt đối không xuất hiện trên runtime classpath của ứng dụng.**
 
-## Pha build
+## Pha Build (Compile-Time)
 
-### Frontend
+### Frontend Parser
 
-Hai frontend, một đầu ra. Đường annotation chạy như một
-`javax.annotation.processing.Processor` thuần. Đường XML phân tích các file mapper được
-plugin build đưa cho dưới dạng đường dẫn thư mục. Cả hai sinh ra cùng một IR. Chỉ có một bộ
-emitter, một bộ ngữ nghĩa, và không có đường code thứ hai để mà lệch dần đi.
+LarkBatis hỗ trợ 2 frontend đầu vào: Java Annotation (`@Select`, `@Insert`, v.v.) và XML Mapper. Cả hai đều được chuyển đổi về cùng một cấu trúc `MapperModel` (IR) duy nhất:
 
-Frontend làm toàn bộ phần việc mà "resolve shape" nghĩa là:
+- Phân tích cú pháp câu SQL, chuyển `#{}` thành các vị trí parameter bind và kiểm tra an toàn cho `${}`.
+- Kiểm tra kiểu dữ liệu tĩnh của các tham số và truy vết getter thuộc tính.
+- Phân tích danh sách SELECT để cố định index đọc cột trong `ResultSet`.
+- Chọn hàm chuyển đổi kiểu dữ liệu tối ưu trong `JdbcCodec`.
+- Biên dịch các biểu thức `test` trong thẻ `<if>` thành mã Java boolean tương ứng.
+- Tối ưu tiền tố/hậu tố của `<where>`, `<set>`, `<trim>`.
+- Inlined các thẻ `<sql>` / `<include>` trực tiếp vào vị trí gọi.
+- Biên dịch `<foreach>` thành hai vòng lặp duyệt tuần tự.
 
-- phân tích câu SQL, biến `#{}` thành các chỗ bind theo vị trí và `${}` thành các chỗ
-  chèn đã được kiểm tra
-- resolve mọi tên `#{}` dựa trên kiểu tham số của phương thức, đi dọc các đường dẫn
-  property
-- phân tích select list, khi nó phân tích được, để cố định vị trí cột
-- chọn hàm đọc và hàm ghi cho mọi giá trị từ kiểu Java khai báo của nó
-- biên dịch mọi `<if test>` thành một biểu thức boolean Java, hoặc từ chối nó
-- gấp `<where>`, `<set>`, `<trim>` thành hằng cùng các lệnh nối chỉ chạy khi điều kiện
-  đúng
-- chèn thẳng `<sql>`/`<include>` vào chỗ dùng
-- chuyển `<foreach>` thành một vòng lặp placeholder và một vòng lặp bind giá trị
+### Intermediate Representation (IR)
 
-Bất cứ thứ gì nó không quyết được đều là lỗi biên dịch nêu tên phương thức mapper, không
-bao giờ là một phương án lùi lúc chạy.
+`MapperModel` đóng vai trò là ranh giới trừu tượng độc lập giữa frontend parser và backend code emitter. IR mang đầy đủ thông tin về statement, kiểu tham số, cấu trúc kết quả và chiến lược đọc dòng.
 
-### IR
+### JavaPoet Emitter
 
-`MapperModel` là ranh giới. Nó mang theo statement, tham số, hình dạng kết quả, các nút
-động, mô hình khoá và chiến lược truy cập của reader, và nó cố ý không mang hình dạng của
-frontend nào cả. Ảnh chụp chuẩn của IR là một phần của bộ test, nên một thay đổi ở
-frontend làm đổi ngữ nghĩa sẽ lộ ra dưới dạng diff của IR trước khi nó thành diff của code
-sinh ra.
+Hệ thống sử dụng JavaPoet để sinh ra 4 nhóm file Java:
 
-### Emitter
+| Emitter | File sinh ra | Nhiệm vụ |
+|---|---|---|
+| `MapperImplEmitter` | `UserMapper$$Impl.java` | Lớp triển khai JDBC cho từng mapper interface |
+| `RowReaderEmitter` | `UserRow.java` | Lớp đọc dữ liệu `ResultSet` cho từng POJO kết quả |
+| `RegistryEmitter` | `LarkBatisMappers.java` | Static factory khởi tạo các mapper trong lần build |
+| `SpringConfigurationEmitter` | `LarkBatisMapperConfiguration.java` | Class `@Configuration` đăng ký Spring Bean |
 
-JavaPoet, mỗi sản phẩm một emitter:
+## Pha Runtime
 
-| Emitter | Đầu ra |
+Thư viện runtime `larkbatis-runtime` có kích thước nhỏ gọn:
+
+| Thành phần | Vai trò |
 |---|---|
-| `MapperImplEmitter` | `UserMapper$$Impl`, mỗi mapper một cái |
-| `RowReaderEmitter` | `UserRow`, mỗi lớp kết quả một cái |
-| `RegistryEmitter` | `LarkBatisMappers`, mỗi lần biên dịch một cái |
-| `SpringConfigurationEmitter` | `LarkBatisMapperConfiguration`, khi spring-context có trên classpath lúc build |
+| `LarkBatisSession` | Interface quản lý kết nối JDBC, giải phóng connection và dịch mã lỗi |
+| `JdbcLarkBatisSession` | Triển khai cho standalone JDBC, tích hợp `LarkBatisTx` |
+| `SpringLarkBatisSession` | Triển khai cho Spring Boot, tích hợp `DataSourceUtils` |
+| `JdbcCodec` | Tập hợp các static helper đọc/ghi dữ liệu JDBC có xử lý null an toàn |
+| `SqlFragment` | Cổng kiểm soát duy nhất cho các chuỗi SQL động |
+| `LarkBatisSql` | Các hàm tiện ích hỗ trợ runtime (`trackVariants`, `padPow2`, `sum`) |
+| `RowReader`, `StatementBinder` | Functional interfaces phục vụ các truy vấn động thủ công |
+| `LarkBatisException` | Cây unchecked exception mang theo câu lệnh SQL gây lỗi |
 
-Emitter cho registry là lý do processor thuộc loại **aggregating**: nó cần mọi mapper
-trong lần biên dịch để viết ra một registry đầy đủ. Cũng chính yêu cầu đó làm hỏng các bản
-build Maven khi bật `useIncrementalCompilation=false`, vì chỉ biên dịch lại những file đã
-cũ sẽ sinh lại registry từ một góc nhìn thiếu.
+## Chiến lược kiểm chứng chất lượng
 
-## Pha runtime
+1. **Emitter Specification Tests**: Đo lường mã nguồn sinh ra so với các class mẫu viết tay chuẩn mực.
+2. **Snapshot Testing (Golden Master)**: Lưu trữ bản chụp mã nguồn sinh ra của kho mapper và kiểm tra sự sai khác (diff) qua từng lần commit.
+3. **Differential Testing với MyBatis**: Chạy song song cùng một mapper trên cả hai runtime (MyBatis và LarkBatis), so sánh từng chuỗi SQL sinh ra và từng tham số JDBC bind trên cùng một DataSource mô phỏng.
+4. **CompileFailTest**: Đảm bảo tất cả các quy tắc vi phạm cú pháp hoặc kiểu dữ liệu đều được `javac` bắt chính xác và báo lỗi biên dịch rõ ràng.
 
-`larkbatis-runtime` nhỏ tới mức liệt kê ra được hết:
-
-| Kiểu | Nhiệm vụ |
-|---|---|
-| `LarkBatisSession` | Mượn một `Connection`, trả nó lại, dịch exception. Toàn bộ môi trường mà một mapper sinh ra cần |
-| `JdbcLarkBatisSession` | Bản hiện thực độc lập, kèm `LarkBatisTx` |
-| `SpringLarkBatisSession` | Bản cho Spring: `DataSourceUtils` thay cho `dataSource.getConnection()` |
-| `JdbcCodec` | Các hàm đọc/ghi có nhận biết null và có chuyển đổi. Tàn dư của tầng `TypeHandler`, đã chèn thẳng vào code sinh ra |
-| `SqlFragment` | Cái cổng duy nhất mà câu SQL tuỳ ý phải đi qua |
-| `LarkBatisSql` | Các hàm tĩnh mà code sinh ra tham chiếu tới: `trackVariants`, `padPow2`, `sum` |
-| `RowReader`, `StatementBinder` | Hai functional interface mà cửa thoát hiểm nhận vào |
-| `ResultSetStream` | `Stream` dựa trên con trỏ, có quyền sở hữu tài nguyên |
-| `LarkBatisException` + các lớp con | Cây exception unchecked |
-
-Không thứ nào trong danh sách đó đi soi kiểu, resolve tên, hay tra một registry. Tất cả
-những việc đó đã xảy ra lúc build.
-
-## Vì sao lại phải có plugin cho công cụ build
-
-Processor không với tới mapper XML qua `Filer.getResource` được, nên nó nhận một đường
-dẫn thư mục qua tuỳ chọn, và phải có thứ gì đó cung cấp đường dẫn ấy. Hai plugin build
-tồn tại chỉ vì việc đó. Không plugin nào sinh code; toàn bộ việc sinh code nằm bên trong
-javac. [Plugin build](../getting-started/build-plugins.md) có đầy đủ lý do.
-
-## Chiến lược kiểm chứng
-
-Ba tầng, bởi vì "code sinh ra biên dịch được" chứng minh rất ít:
-
-1. **Một bản đặc tả emitter viết tay.** Trước khi các emitter tồn tại, hình dạng đích của
-   code sinh ra đã được viết tay ra thành Java biên dịch được và có test. Các emitter được
-   đo lại theo bản đó.
-2. **Ảnh chụp chuẩn.** Đầu ra sinh ra cho một kho mapper được commit lại và đem diff. Một
-   thay đổi có chủ ý ở emitter là một diff được review, không phải một thay đổi vô hình.
-3. **Kiểm thử vi sai.** Cùng một mapper chạy qua đường thông dịch của MyBatis và qua code
-   sinh ra, đối diện một `DataSource` ghi lại mọi thứ; câu SQL và các tham số bind
-   được đem so sánh. Một lượt quét toàn bộ kho mapper XML trong cây mã nguồn MyBatis là
-   cách độ phủ thực tế của ngữ pháp biểu thức được đo đạc chứ không phải phỏng đoán.
-
-Cộng thêm một `CompileFailTest` cho mỗi lời hứa "đây là lỗi biên dịch" mà tài liệu đưa ra,
-kể cả những lời hứa trên chính trang web này.

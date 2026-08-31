@@ -1,26 +1,25 @@
 # Cài đặt
 
-LarkBatis là ba artifact trên bản build của bạn: hai jar runtime nhỏ và một annotation
-processor không bao giờ lọt ra classpath ứng dụng.
+LarkBatis bao gồm ba artifact chính trong cấu hình build: hai thư viện runtime nhỏ và một annotation processor chỉ chạy lúc biên dịch (không xuất hiện trên runtime classpath của ứng dụng).
 
-| Artifact | Scope | Là gì |
+| Artifact | Scope | Vai trò |
 |---|---|---|
-| `io.github.larkbatis:larkbatis-annotations` | `implementation` | Các annotation cho mapper. Không chứa logic, retention `CLASS` |
-| `io.github.larkbatis:larkbatis-runtime` | `implementation` | `LarkBatisSession`, `LarkBatisTx`, `JdbcCodec`, `SqlFragment`. Không phụ thuộc gì ngoài JDBC |
-| `io.github.larkbatis:larkbatis-processor` | `annotationProcessor` | Bộ sinh code. Chỉ dùng lúc build: tuyệt đối không được xuất hiện trên classpath lúc chạy |
+| `io.github.larkbatis:larkbatis-annotations` | `implementation` | Chứa các annotation của mapper (retention `CLASS`, không chứa logic) |
+| `io.github.larkbatis:larkbatis-runtime` | `implementation` | `LarkBatisSession`, `LarkBatisTx`, `JdbcCodec`, `SqlFragment` (không phụ thuộc gì ngoài JDBC) |
+| `io.github.larkbatis:larkbatis-processor` | `annotationProcessor` | Annotation processor sinh code Java thuần lúc biên dịch |
 
 Phiên bản hiện tại: **`0.1.0`**.
 
-## Yêu cầu
+## Yêu cầu môi trường
 
-| | |
+| Thành phần | Yêu cầu |
 |---|---|
-| Java | 17 trở lên (bản thân dự án build trên toolchain Java 17) |
-| Trình biên dịch | **Chỉ javac.** Processor phụ thuộc vào hành vi của javac: thứ tự khai báo của các phần tử, và việc resolve nhiều vòng cho kiểu được sinh ra. ECJ / Eclipse batch compilation không được hỗ trợ |
-| Công cụ build | Gradle hoặc Maven. Chỉ cần plugin build nếu bạn dùng mapper XML |
-| Database | Bất cứ thứ gì có JDBC driver |
+| Java | Java 17 trở lên |
+| Trình biên dịch | **Chỉ hỗ trợ javac.** Processor phụ thuộc vào cơ chế phân tích AST và multi-round type resolution của javac. Không hỗ trợ ECJ (Eclipse Compiler for Java) |
+| Công cụ build | Gradle hoặc Maven. Cần cài đặt thêm build plugin nếu dự án sử dụng mapper XML |
+| Database | Mọi cơ sở dữ liệu có JDBC driver chuẩn |
 
-## Gradle
+## Cấu hình Gradle
 
 ```kotlin title="build.gradle.kts"
 plugins {
@@ -42,14 +41,9 @@ tasks.withType<JavaCompile>().configureEach {
 }
 ```
 
-1.  Cờ này bảo javac giữ lại tên tham số thật trong file class. Thiếu nó, một bản build
-    incremental của Gradle có thể đưa cho processor một phương thức mapper mà tham số tên
-    là `arg0`, `arg1`, khiến `#{id}` không còn gì để đối chiếu. Đặt tên cho từng tham số
-    bằng `@Param("...")` cũng được.
-    [Xử lý sự cố](../usage/troubleshooting.md#what-the-flag-actually-does) giải thích vì
-    sao build sạch lại giấu mất vấn đề này.
+1.  Cờ `-parameters` yêu cầu `javac` lưu tên tham số thật vào bytecode class file. Nếu thiếu cờ này, các bản build incremental của Gradle có thể truyền class file chứa tên tham số nhân tạo (`arg0`, `arg1`) cho processor, khiến bộ biên dịch không tìm thấy tên tham số cho `#{id}`. Bạn cũng có thể dùng `@Param("...")` trực tiếp trên từng tham số. Xem thêm [Khắc phục sự cố](../usage/troubleshooting.md#what-the-flag-actually-does).
 
-## Maven
+## Cấu hình Maven
 
 ```xml title="pom.xml"
 <dependencies>
@@ -85,9 +79,9 @@ tasks.withType<JavaCompile>().configureEach {
 </build>
 ```
 
-## Spring Boot
+## Cấu hình Spring Boot
 
-Một starter thay cho cả ba khai báo ở trên, và không cần `@MapperScan`:
+Sử dụng starter tiện ích của Spring Boot, không cần `@MapperScan`:
 
 ```kotlin
 dependencies {
@@ -97,16 +91,11 @@ dependencies {
 }
 ```
 
-Xem [Spring Boot](spring-boot.md) để có phần thiết lập đầy đủ và
-[Tích hợp Spring](../usage/spring.md) để biết bên dưới nó chạy thế nào.
+Xem [Spring Boot](spring-boot.md) để biết cách thiết lập chi tiết và [Tích hợp Spring](../usage/spring.md) để hiểu cơ chế hoạt động bên dưới.
 
-## Mapper XML
+## Dự án sử dụng Mapper XML
 
-Nếu có statement nào của bạn nằm trong mapper XML thay vì trong annotation, hãy thêm
-[plugin build](build-plugins.md) tương ứng với công cụ build của bạn. Processor đọc
-mapper XML bằng `java.io` thuần, nằm ngoài `Filer` của trình biên dịch, bởi vì đặc tả của
-`Filer.getResource` không đảm bảo với tới được `src/main/resources`. Vì vậy phải nói cho
-công cụ build biết rằng những file đó là đầu vào biên dịch.
+Nếu bạn định nghĩa câu truy vấn trong file XML thay vì annotation, hãy thêm [build plugin](build-plugins.md) tương ứng. Do annotation processor đọc XML qua file I/O thông thường (ngoài phạm vi `Filer`), build plugin giúp thông báo cho Gradle/Maven biết các file XML là compile input cần theo dõi khi thay đổi:
 
 === "Gradle"
 
@@ -128,21 +117,16 @@ công cụ build biết rằng những file đó là đầu vào biên dịch.
     </plugin>
     ```
 
-## Dùng chung với Lombok
+## Thứ tự cấu hình khi dùng Lombok
 
-Hãy khai báo `larkbatis-processor` **sau** `org.projectlombok:lombok`. Lombok ghi
-getter và setter của nó vào AST khi processor của chính nó chạy, còn javac thì chạy các
-processor tìm được theo đúng thứ tự trên classpath. Khai báo trước, LarkBatis sẽ nhìn
-thấy một lớp kết quả không có lấy một accessor nào.
+Hãy khai báo `larkbatis-processor` **đứng sau** Lombok trong danh sách `annotationProcessor`. Lombok tạo getter/setter trên AST khi processor của nó chạy; nếu LarkBatis chạy trước, nó sẽ thấy class POJO không có getter/setter nào và báo lỗi:
 
 ```kotlin
 annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // sau
+annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // bắt buộc đặt sau Lombok
 ```
 
-Lỗi build có nêu đúng vấn đề khi nó phát hiện annotation của Lombok trên lớp đó, nhưng
-cách sửa vẫn chỉ là một dòng thứ tự này.
-
-## Tiếp theo
+## Bước tiếp theo
 
 [Viết mapper đầu tiên :material-arrow-right:](quick-start.md){ .md-button .md-button--primary }
+

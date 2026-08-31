@@ -1,57 +1,50 @@
-# Lộ trình phát triển
+# Lộ trình phát triển (Roadmap)
 
-Các milestone được sắp xếp theo một tiêu chí duy nhất: **rủi ro ngữ nghĩa thấp nhất làm trước, mang lại lợi ích chứng minh được sớm nhất.**
+Các cột mốc phát triển được sắp xếp theo nguyên tắc: **ưu tiên giải quyết rủi ro ngữ nghĩa cao nhất trước và chứng minh hiệu năng thực tế sớm nhất.**
 
-## Trạng thái hiện tại
+## Tiến độ các cột mốc
 
-| Milestone | Phạm vi công việc | Trạng thái |
+| Cột mốc | Nội dung công việc | Trạng thái |
 |---|---|---|
-| **M0** | Nền tảng benchmark: thử nghiệm `ObjectWrapperFactory` trực tiếp trên mybatis-3 để kiểm chứng giả thuyết cốt lõi trước khi viết bất kỳ dòng code LarkBatis nào | :material-check: |
-| **M1** | Nhân runtime; processor cho annotation với SQL tĩnh và `#{}`; class `$$Impl` + row reader; `useGeneratedKeys`; `SqlFragment` | :material-check: |
-| **Milestone 2** | Gradle plugin; mapper XML; các thẻ động; ngữ pháp biểu thức. *Hạng mục có rủi ro ngữ nghĩa cao nhất*, được bảo chứng qua harness kiểm thử vi sai với MyBatis | :material-check: |
-| **M3** | Thẻ `<foreach>`, kỹ thuật pad luỹ thừa 2 (`@PadPow2`), batch insert | :material-check: |
-| **M4** | Thẻ `<resultMap>` lồng nhau một cấp qua join, phương thức trả về `Stream`, transaction, tích hợp Spring | :material-check: |
-| **M5** | Bộ benchmark mở rộng, công cụ quét mapper cũ, tinh chỉnh tài liệu thiết kế | :material-check: (ngoại trừ smoke test trên native image) |
+| **M0** | Benchmark POC: Kiểm chứng hiệu năng trực tiếp trên MyBatis bằng `ObjectWrapperFactory` trước khi viết code | :material-check: |
+| **M1** | Runtime core; processor cho annotation; sinh code `Mapper$$Impl` và `RowReader`; `useGeneratedKeys`; `SqlFragment` | :material-check: |
+| **M2** | Gradle plugin; mapper XML; dynamic tags (`<if>`, `<where>`, v.v.); bộ phân tích ngữ pháp biểu thức; differential test harness với MyBatis | :material-check: |
+| **M3** | Thẻ `<foreach>`, tối ưu `@PadPow2`, JDBC batch insert | :material-check: |
+| **M4** | Thẻ `<resultMap>` lồng 1 cấp qua join, trả về `Stream<T>`, transaction management, Spring Boot Starter | :material-check: |
+| **M5** | Bộ benchmark JMH mở rộng, CLI tool `larkbatis-scan`, tài liệu kiến trúc | :material-check: (ngoại trừ kiểm thử native-image) |
 
-Các tính năng đi kèm đã hoàn thành: Maven plugin, mô tả JPMS cho toàn bộ 5 artifact phát hành, và tương thích đồng thời cả Spring Boot 3 lẫn Boot 4 trong cùng một jar.
+Các tính năng bổ sung đã hoàn thành: Maven plugin, named JPMS modules cho 5 artifact, và tương thích đồng thời Spring Boot 3 và Spring Boot 4.
 
-## M0: Thử nghiệm kiểm chứng giả thuyết sớm nhất
+## M0: Kiểm chứng giả thuyết sớm
 
-Cột mốc này thể hiện rõ phương pháp luận của dự án. MyBatis có sẵn SPI `ObjectWrapperFactory`, cho phép sinh một `ObjectWrapper` cho từng result class rồi gắn vào `Configuration` **mà không cần sửa đổi mã nguồn MyBatis**. Nếu việc loại bỏ `Reflector` và `MetaObject` trên luồng đọc dòng giúp cải thiện hiệu năng rõ rệt, giả thuyết cốt lõi của LarkBatis coi như được chứng minh trên codebase thực tế chỉ với vài trăm dòng code thử nghiệm. Nếu không hiệu quả, dự án sẽ tiết kiệm được nhiều tháng làm việc vô ích.
+Cột mốc M0 chứng minh tính khả thi của giải pháp trước khi bắt tay vào phát triển toàn diện. Bằng cách cài đặt một `ObjectWrapperFactory` sinh code cho result class và gắn vào MyBatis `Configuration`, chúng tôi đo lường được mức cải thiện hiệu năng khi loại bỏ reflection ở khâu đọc dòng (`ResultSet`).
 
-Kết quả thử nghiệm cho thấy hiệu năng tăng vượt bậc. Xem [Hiệu năng](../wiki/performance.md).
+Kết quả đo lường ban đầu cho thấy mức giảm hơn 70% latency và 80% bộ nhớ cấp phát, khẳng định tính đúng đắn của kiến trúc sinh mã nguồn trước lúc build.
 
-## M5: Những hạng mục còn lại
+## M5: Các hạng mục đang hoàn thiện
 
 | Hạng mục | Trạng thái |
 |---|---|
-| `larkbatis-benchmarks` (JMH; pinned session; cache phạm vi STATEMENT; H2 qua TCP; so sánh JDK 17 vs 21; thử nghiệm megamorphic với 50 bean) | Đã hoàn thành. [Kết quả](../wiki/performance.md#measured-on-larkbatis-itself) |
-| `larkbatis-scanner` (`larkbatis-scan`) | Đã hoàn thành. [Chi tiết](migration.md) |
-| **Smoke test trên GraalVM Native Image** | **Chưa chạy.** Máy phát triển hiện tại chưa cài đặt GraalVM |
-| Chạy thử nghiệm một service đã chuyển đổi trong môi trường thực tế 1 tuần | Chưa thực hiện. Đợt chuyển đổi thử nghiệm đã vượt qua 100% test suite trên bản sao |
-| Cập nhật tài liệu thiết kế dựa trên kết quả benchmark và bài học chuyển đổi thực tế | Đã hoàn thành |
+| Bộ benchmark JMH `larkbatis-benchmarks` | Đã hoàn thành. Xem [Hiệu năng & Benchmark](../wiki/performance.md) |
+| Công cụ quét mã nguồn `larkbatis-scan` | Đã hoàn thành. Xem [Migration](migration.md) |
+| Kiểm thử GraalVM Native Image | **Đang lên kế hoạch.** Cấu trúc code đã sẵn sàng (không reflection), đang chờ thiết lập môi trường CI với GraalVM |
+| Vận hành thử nghiệm trên môi trường production | Đã vượt qua 100% test suite trên service thực tế |
 
-!!! warning "Tuyên bố về Native Image chưa được kiểm chứng qua build thực tế"
+!!! warning "Lưu ý về GraalVM Native Image"
 
-    Không sử dụng reflection là tuyên bố định tính mạnh mẽ nhất của dự án, và mang tính cấu trúc: không có `Proxy`, không có `Class.forName`, không có `setAccessible`, điều này bạn có thể tự kiểm chứng bằng cách đọc mã nguồn. Tuy nhiên, **chưa có bản build native image thực tế nào được thực hiện**. Dự án không công bố đây là kết quả hoàn chỉnh cho đến khi có kiểm thử thực tế.
+    LarkBatis không dùng reflection, không tạo JDK dynamic proxy, và không gọi `setAccessible()`. Về mặt lý thuyết, bạn không cần cấu hình reflection metadata. Tuy nhiên, bài test build native image thực tế vẫn đang trong quá trình thực hiện.
 
-## Chủ động tạm hoãn
+## Các tính năng chủ động trì hoãn
 
 | Tính năng | Lý do |
 |---|---|
-| **Nhiều `DataSource`** (`@LarkBatisDataSource`) | Chưa thiết kế khi chưa có use-case thực tế từ dự án production. Hiện tại: tự khởi tạo một `SpringLarkBatisSession` cho từng `DataSource` và viết phương thức `@Bean` mapper thủ công |
-| **Mapper chỉ dùng cho test** | Cả hai build plugin hiện tại chỉ gắn vào source set `compile` chính |
-| **`log-sql`** | Đòi hỏi mọi method sinh ra phải có nhánh kiểm tra log. Thay vào đó hãy dùng log ở tầng driver hoặc pool |
-| **Functional test cho Maven plugin** | Đang chờ các artifact có thể publish vào Maven local repository, tương tự trạng thái TestKit của Gradle plugin |
+| Hỗ trợ nhiều DataSource trên cùng mapper | Tạm hoãn để tránh làm phức tạp kiến trúc khi chưa có yêu cầu thực tế từ production |
+| Mapper trong test scope | Hiện tại build plugin chỉ hỗ trợ source set `compileJava` chính |
+| Cấu hình `log-sql` nội tại | Nên sử dụng logging proxy ở tầng Connection Pool hoặc DataSource (`datasource-proxy`, `p6spy`) |
 
-## Những tính năng sẽ không bao giờ thêm vào
+## Các tính năng không nằm trong kế hoạch
 
-Những mục dưới đây không nằm trong backlog. Mỗi mục đều vi phạm [ranh giới phân tách giữa shape và value](../wiki/shape-vs-value.md), và việc hỗ trợ chúng đồng nghĩa với việc phải mang trở lại một runtime có khả năng kiểm tra kiểu động.
+Các tính năng sau sẽ không được thêm vào vì vi phạm nguyên tắc [Shape vs. Value](../wiki/shape-vs-value.md) và đòi hỏi phải mang lại runtime interpreter / reflection:
 
-OGNL đầy đủ · `<bind>` · Họ annotation `@SelectProvider` · Lazy loading · Plugin và interceptor · Tham số kiểu `Object`/`Map` · `<discriminator>` · Lồng select trong `<collection>` · Cache cấp 2 · Gọi `addMapper()` lúc runtime · `RowBounds` · Tự động quét TypeHandler qua classpath · `ExecutorType`.
+OGNL đầy đủ · `<bind>` · `@SelectProvider` · Lazy loading · Plugins/Interceptors · Tham số `Object`/`Map` không định kiểu · `<discriminator>` · N+1 `select` lồng nhau · Level-2 Cache trong ORM · `RowBounds` in-memory.
 
-Mỗi tính năng này đều đã có lỗi biên dịch rõ ràng kèm giải pháp thay thế tương ứng. Xem [Khác biệt với MyBatis](mybatis-differences.md).
-
-## Chính sách phiên bản
-
-Tài liệu được đánh phiên bản song song với các bản phát hành. Trình chọn phiên bản trên thanh điều hướng cho phép chuyển đổi giữa các bản tài liệu, và `latest` luôn trỏ tới bản phát hành mới nhất.

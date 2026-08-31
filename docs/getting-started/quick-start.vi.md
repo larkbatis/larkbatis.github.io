@@ -1,10 +1,10 @@
-# Khởi động nhanh
+# Hướng dẫn nhanh 5 phút
 
-Chỉ mất 5 phút để thiết lập một mapper hoàn chỉnh từ project rỗng. Đây là luồng JDBC thuần tuý: không phụ thuộc Spring, không cần XML. Toàn bộ ví dụ dưới đây được trích từ module `larkbatis-sample` trong repository lõi.
+Chỉ mất khoảng 5 phút để xây dựng một mapper hoàn chỉnh từ đầu. Đây là ví dụ sử dụng JDBC thuần: không cần Spring, không cần file XML. Toàn bộ mã nguồn mẫu được lấy từ module `larkbatis-sample` trong repository.
 
-## 1 · Result Class
+## 1. Tạo Result Class
 
-Một Java bean chuẩn: chỉ cần constructor không tham số và các setter tương ứng. Không kế thừa class cha, không cần annotation hay implement interface nào.
+Một POJO Java tiêu chuẩn với constructor không tham số và các setter tương ứng:
 
 ```java title="User.java"
 package com.example.app;
@@ -32,9 +32,9 @@ public class User {
 }
 ```
 
-Tên cột được tự động ánh xạ sang property theo quy ước `snake_case` → `camelCase` ngay lúc build (ví dụ `created_at` ánh xạ vào `setCreatedAt`). Trường hợp tên cột khác biệt, bạn có thể đặt alias trong câu SELECT hoặc khai báo [`<resultMap>`](../usage/result-maps.md).
+Tên cột được tự động ánh xạ sang setter theo quy ước `snake_case` → `camelCase` lúc biên dịch (ví dụ cột `created_at` tự động gọi `setCreatedAt()`).
 
-## 2 · Interface Mapper
+## 2. Khai báo Interface Mapper
 
 ```java title="UserMapper.java"
 package com.example.app;
@@ -62,31 +62,31 @@ public interface UserMapper {
 }
 ```
 
-Không bắt buộc khai báo `@Mapper`: interface có chứa annotation statement sẽ được processor tự động nhận diện. Annotation `@Mapper` chỉ cần thiết khi toàn bộ statement được khai báo trong [mapper XML](../usage/xml-mappers.md).
+Không bắt buộc phải thêm `@Mapper`: processor tự động nhận diện các interface có annotation `@Select`, `@Insert`, `@Update`, `@Delete`. Annotation `@Mapper` chỉ cần thiết khi bạn viết câu lệnh hoàn toàn trong [mapper XML](../usage/xml-mappers.md).
 
-## 3 · Biên dịch
+## 3. Biên dịch dự án
 
 ```console
 $ ./gradlew compileJava
 ```
 
-Ba tệp Java được sinh ra trong cùng package với mapper của bạn:
+Trình biên dịch sẽ sinh ra 3 class Java trong cùng package với mapper của bạn:
 
-| Tệp sinh ra | Ý nghĩa |
+| Class sinh ra | Vai trò |
 |---|---|
-| `UserMapper$$Impl` | Class triển khai cụ thể bằng JDBC thuần; mỗi statement tương ứng một phương thức |
-| `UserRow` | Row reader cho `User`: sinh riêng cho từng result class và dùng chung cho mọi statement trả về class đó |
-| `LarkBatisMappers` | Static factory khởi tạo tất cả mapper trong lần biên dịch |
+| `UserMapper$$Impl` | Class triển khai cụ thể của mapper, chứa các lệnh gọi JDBC trực tiếp |
+| `UserRow` | Chứa các phương thức tĩnh đọc `ResultSet` để ánh xạ dữ liệu thành đối tượng `User` |
+| `LarkBatisMappers` | Factory tĩnh dùng để khởi tạo mapper instance |
 
-Các tệp sinh ra là mã nguồn Java thực thụ, được thiết kế rõ ràng để lập trình viên có thể đọc hiểu và debug trực tiếp. Xem [Code sinh ra](../wiki/generated-code.md).
+Mã nguồn sinh ra là file Java thông thường, có thể đọc và đặt breakpoint debug trực tiếp. Xem [Mã nguồn sinh ra](../wiki/generated-code.md).
 
-!!! tip "Nếu không có file nào được sinh ra"
+!!! tip "Nếu không thấy code được sinh ra"
 
-    Hãy kiểm tra xem `larkbatis-processor` đã được khai báo trong `annotationProcessor` hay chưa (không phải `implementation`), và đảm bảo bạn đang biên dịch bằng `javac`. Xem [Xử lý sự cố](../usage/troubleshooting.md).
+    Kiểm tra xem `larkbatis-processor` đã được khai báo ở cấu hình `annotationProcessor` (Gradle) hay `<annotationProcessorPaths>` (Maven) chưa, và đảm bảo bạn đang biên dịch bằng `javac`. Xem [Khắc phục sự cố](../usage/troubleshooting.md).
 
-## 4 · Khởi chạy ứng dụng
+## 4. Thực thi truy vấn
 
-`LarkBatisSession` là cầu nối duy nhất mà mapper sinh ra cần tới: cung cấp kết nối `Connection`, giải phóng kết nối và dịch exception. Bản triển khai độc lập nhận trực tiếp một `DataSource`.
+`LarkBatisSession` là đối tượng runtime duy nhất mà mapper cần: quản lý lấy/trả connection và dịch mã lỗi JDBC.
 
 ```java title="SampleApp.java"
 package com.example.app;
@@ -99,7 +99,7 @@ import javax.sql.DataSource;
 public class SampleApp {
 
     public static void main(String[] args) {
-        DataSource ds = /* HikariCP, H2, hoặc DataSource bạn đang sử dụng */;
+        DataSource ds = /* Khởi tạo HikariCP, H2 hoặc DataSource bất kỳ */;
 
         JdbcLarkBatisSession session = new JdbcLarkBatisSession(ds);
         UserMapper mapper = LarkBatisMappers.userMapper(session);
@@ -114,18 +114,18 @@ public class SampleApp {
             tx.commit();
         }
 
-        System.out.println(u.getId());              // được gán tự động nhờ useGeneratedKeys
+        System.out.println(u.getId());              // ID tự động được gán nhờ useGeneratedKeys
         System.out.println(mapper.findById(u.getId()));
         System.out.println(mapper.countByName("A%"));
     }
 }
 ```
 
-`session.begin()` mở một scope transaction tương thích với try-with-resources. Lệnh `commit()` đóng vai trò bỏ phiếu (vote): commit thực sự chỉ diễn ra khi scope ngoài cùng đóng lại. Rời khỏi bất kỳ scope nào mà không commit sẽ tự động chuyển toàn bộ transaction sang trạng thái rollback-only. Xem [Transaction](../usage/transactions.md).
+`session.begin()` mở một scope transaction tương thích với `try`-with-resources. Lệnh `commit()` đóng vai trò bỏ phiếu (vote): commit vật lý xuống database chỉ diễn ra khi scope ngoài cùng kết thúc thành công. Xem [Transactions](../usage/transactions.md).
 
-## 5 · Đọc mã nguồn sinh ra
+## 5. Xem mã nguồn được sinh ra
 
-Mở tệp `UserMapper$$Impl.java` trong IDE. Câu SQL là một hằng số `static final String` với dấu `?` thay thế cho `#{}`. Các tham số được gán theo thứ tự tĩnh và dữ liệu dòng được đọc theo vị trí cột:
+Bạn có thể mở trực tiếp file `UserMapper$$Impl.java` trong thư mục `build/` để kiểm tra:
 
 ```java
 private static final String SQL_findById =
@@ -147,7 +147,7 @@ public User findById(long id) {
 }
 ```
 
-```java title="UserRow.java (trích đoạn)"
+```java title="UserRow.java"
 public static User read(ResultSet rs) throws SQLException {
     User u = new User();
     u.setId(rs.getLong(1));
@@ -158,16 +158,17 @@ public static User read(ResultSet rs) throws SQLException {
 }
 ```
 
-Mọi chỉ số cột và phương thức setter đều được định hình tĩnh lúc build. Hoàn toàn không phát sinh thao tác inspect kiểu dữ liệu, resolve tên property hay tra cứu registry lúc runtime.
+Mọi thứ—từ câu lệnh SQL, chỉ số cột trong `ResultSet`, cho đến kiểu dữ liệu tham số—đều được cố định sẵn từ lúc biên dịch.
 
-!!! note "Connection cố ý không đặt trong try-with-resources"
+!!! note "Lý do `Connection` không nằm trong `try`-with-resources"
 
-    Chỉ `s.release(c)` mới xác định được connection có được phép đóng hay không. Khi chạy trong transaction có quản lý (Spring hoặc LarkBatis), connection thuộc quyền kiểm soát của transaction và việc tự ý đóng kết nối là sai lầm. Cấu trúc này là một [lằn ranh thiết kế](../wiki/design-rules.md) cốt lõi.
+    Việc đóng connection được uỷ quyền cho `s.release(c)`. Khi chạy trong một transaction (Spring `@Transactional` hoặc `LarkBatisTx`), connection thuộc sở hữu của transaction đó và không được tự ý đóng lại giữa chừng.
 
-## Bước tiếp theo
+## Các chủ đề tiếp theo
 
-- Câu lệnh có điều kiện lọc tuỳ chọn → [SQL động](../usage/dynamic-sql.md)
-- `WHERE id IN (...)` và batch insert → [foreach và batch](../usage/foreach-and-batches.md)
-- Join bảng cha - con quan hệ 1-N → [Result map và join](../usage/result-maps.md)
-- Tập kết quả lớn cần đọc con trỏ → [Stream kết quả](../usage/streaming.md)
-- Sử dụng với Spring Boot → [Spring Boot](spring-boot.md)
+- Xây dựng câu truy vấn điều kiện → [Dynamic SQL](../usage/dynamic-sql.md)
+- Mệnh đề `WHERE id IN (...)` và batch insert → [foreach và Batching](../usage/foreach-and-batches.md)
+- Join dữ liệu quan hệ 1-N → [Result Maps](../usage/result-maps.md)
+- Truy vấn tập dữ liệu lớn qua con trỏ → [Streaming](../usage/streaming.md)
+- Tích hợp Spring Boot → [Spring Boot](spring-boot.md)
+

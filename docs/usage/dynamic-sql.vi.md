@@ -1,10 +1,10 @@
-# SQL động
+# Dynamic SQL (SQL động)
 
-Các thẻ `<if>`, `<choose>`, `<where>`, `<set>` và `<trim>` đều được hỗ trợ đầy đủ và không thành phần nào tồn tại dưới dạng cây AST lúc runtime. Trình biên dịch phẳng hoá (flatten) toàn bộ cấu trúc thẻ XML thành các biến điều kiện cục bộ (`condition locals`) và các lệnh nối chuỗi có điều kiện (`guarded appends`). Khi thực thi lúc runtime, chi phí tính toán duy nhất là việc đánh giá (evaluate) mỗi biểu thức `test` đúng một lần.
+Các thẻ `<if>`, `<choose>`, `<where>`, `<set>` và `<trim>` được hỗ trợ đầy đủ. Thay vì xây dựng và duyệt cây AST lúc runtime như MyBatis, LarkBatis phẳng hoá toàn bộ cấu trúc thẻ XML thành các biến điều kiện cục bộ (`condition locals`) và các lệnh nối chuỗi `StringBuilder` cố định.
 
-## Cơ chế biên dịch
+## Cơ chế biên dịch mã nguồn
 
-```xml
+```xml title="UserSearchMapper.xml"
 <select id="search" resultType="com.example.app.User">
   SELECT id, name, email, created_at FROM users
   <where>
@@ -15,7 +15,9 @@ Các thẻ `<if>`, `<choose>`, `<where>`, `<set>` và `<trim>` đều được h
 </select>
 ```
 
-```java
+Mã nguồn Java sinh ra tương ứng:
+
+```java title="UserSearchMapper$$Impl.java"
 @Override
 public List<User> search(UserQuery q) {
     boolean c0 = q.getName() != null;          // (1)!
@@ -42,16 +44,16 @@ public List<User> search(UserQuery q) {
         if (c1) {
             JdbcCodec.setInt(ps, i++, q.getMinAge());
         }
-        // ... đọc các dòng
+        // ... đọc ResultSet
     }
 }
 ```
 
-1.  Mỗi biểu thức `test` được đánh giá **đúng một lần** vào một biến cục bộ. Biến này điều khiển đồng thời cả việc ghép SQL lẫn việc gán tham số, đảm bảo hai bên luôn đồng bộ tuyệt đối.
-2.  Dung lượng của `StringBuilder` được tính toán từ lúc build dựa trên chiều dài tối đa của câu SQL.
-3.  Thẻ `<where>` được chuyển thành câu lệnh nối chuỗi có điều kiện, không quét chuỗi lúc runtime để tìm từ khoá `AND`/`OR`.
-4.  Quy tắc xử lý từ khoá `AND`/`OR` ở đầu mệnh đề được gập hằng số thành toán tử ba ngôi trên các biến boolean đã tính sẵn.
-5.  Quá trình gán tham số đi qua cùng các điều kiện theo đúng thứ tự đó, không cần bảng tra cứu trung gian.
+1.  Mỗi biểu thức `test` được đánh giá **đúng một lần** vào biến boolean cục bộ. Biến này dùng chung cho cả khâu nối chuỗi SQL lẫn khâu bind tham số JDBC.
+2.  Kích thước `StringBuilder` được tính toán trước từ lúc build.
+3.  Thẻ `<where>` được biên dịch thành lệnh `if` thông thường, không quét chuỗi để xóa `AND`/`OR` lúc runtime.
+4.  Tiền tố `AND`/`OR` được tối ưu thành toán tử ba ngôi (ternary operator) dựa trên các biến boolean.
+5.  Khâu gán tham số `PreparedStatement` đi qua cùng thứ tự điều kiện, không cần bảng tra cứu động.
 
 ## `<if>`
 
@@ -59,11 +61,11 @@ public List<User> search(UserQuery q) {
 <if test="email != null">AND email = #{email}</if>
 ```
 
-Nội dung bên trong được nối vào câu lệnh khi điều kiện đúng. Hỗ trợ lồng nhau, đặt ngang hàng, hoặc đặt bên trong thẻ `<foreach>`.
+Nối đoạn SQL khi điều kiện đúng. Hỗ trợ lồng nhau và đặt bên trong thẻ `<foreach>`.
 
-## `<choose>` / `<when>` / `<otherwise>`
+## `<choose>`, `<when>`, `<otherwise>`
 
-Đúng một nhánh được chọn, và tính loại trừ lẫn nhau được biên dịch thẳng vào mã nguồn:
+Tương đương câu lệnh `switch` / `if-else`:
 
 ```xml
 <choose>
@@ -79,7 +81,7 @@ boolean c1 = !c0;                       // <otherwise> là phủ định của n
 
 ## `<where>` và `<set>`
 
-`<where>` chỉ phát sinh từ khoá nếu phần thân có nội dung, và tự động loại bỏ `AND`/`OR` đứng đầu của nhánh đầu tiên được chọn. `<set>` hoạt động tương tự với từ khoá `SET` và dấu phẩy ở cuối:
+`<where>` chỉ chèn từ khóa `WHERE` nếu có ít nhất một điều kiện con thỏa mãn, và tự động bỏ từ khóa `AND`/`OR` ở nhánh đầu tiên. `<set>` hoạt động tương tự với từ khóa `SET` và dấu phẩy ở cuối câu:
 
 ```xml
 <update id="rename">
@@ -99,55 +101,43 @@ if (c1) sb.append(" email = ?");
 sb.append(" WHERE id = ?");
 ```
 
-Bộ sinh code xác định chính xác nhánh nào là nhánh cuối cùng của từng tổ hợp điều kiện để chỉ phát dấu phẩy khi chắc chắn còn nhánh phía sau, không cần thao tác cắt chuỗi lúc runtime.
-
 ## `<trim>`
 
-Được hỗ trợ với **thuộc tính hằng** (`prefix`, `suffix`, `prefixOverrides`, `suffixOverrides`) và được xử lý gập hằng số lúc build. `<where>` và `<set>` thực chất là các dạng đặc biệt của `<trim>` với thuộc tính cố định.
+Hỗ trợ các thuộc tính hằng số (`prefix`, `suffix`, `prefixOverrides`, `suffixOverrides`) và được tối ưu hóa lúc compile.
 
-## Ngữ pháp `test` { #the-test-grammar }
+## Ngữ pháp biểu thức `test` { #the-test-grammar }
 
-Đây là điểm khác biệt có chủ ý lớn nhất với MyBatis. Thuộc tính `test` **không** sử dụng OGNL, mà sử dụng một ngữ pháp biểu thức thu hẹp được kiểm tra kiểu tĩnh dựa trên các tham số của phương thức mapper:
+Khác với MyBatis (dùng OGNL runtime), LarkBatis sử dụng ngữ pháp kiểm tra kiểu tĩnh:
 
-| Biểu thức được chấp nhận | Ví dụ |
+| Biểu thức hỗ trợ | Ví dụ |
 |---|---|
 | Kiểm tra null | `name != null`, `probe.email == null` |
-| So sánh trên property có kiểu | `age >= 18`, `status == 'NEW'`, `id != other.id` |
-| Toán tử boolean | `and`, `or`, `not`, dấu ngoặc đơn |
-| Kích thước và kiểm tra rỗng | `ids.size() > 0`, `name.length() > 3`, `!ids.isEmpty()` |
+| So sánh giá trị | `age >= 18`, `status == 'NEW'`, `id != other.id` |
+| Toán tử logic | `and`, `or`, `not`, dấu ngoặc `()` |
+| Kiểm tra độ dài / collection | `ids.size() > 0`, `name.length() > 3`, `!ids.isEmpty()` |
 | Phương thức trả về boolean | `user.isActive()` |
-| Biến boolean thuần | `active` (với điều kiện `active` là property `boolean`/`Boolean`) |
+| Biến boolean | `active` (với `active` có kiểu `boolean` hoặc `Boolean`) |
 
-Mọi biểu thức nằm ngoài danh sách trên đều là **lỗi biên dịch nêu rõ token gây lỗi**.
+Mọi biểu thức nằm ngoài danh sách trên sẽ **báo lỗi biên dịch**.
 
-!!! failure "Không tái tạo cơ chế truthiness kiểu OGNL"
+!!! failure "Không hỗ trợ truthiness kiểu OGNL"
 
     ```xml
-    <if test="count">      <!-- lỗi biên dịch -->
-    <if test="user">       <!-- lỗi biên dịch -->
+    <if test="count">      <!-- Lỗi biên dịch -->
+    <if test="user">       <!-- Lỗi biên dịch -->
     ```
 
-    MyBatis coi giá trị khác null, khác 0, khác rỗng là true. LarkBatis yêu cầu viết tường minh: `count != 0`, `user != null`, hoặc `!list.isEmpty()`.
+    Trong LarkBatis, bạn phải viết rõ ràng: `count != 0`, `user != null`, hoặc `!list.isEmpty()`.
 
-    Đây là sự khắt khe có chủ đích: biểu thức `test="count"` trong MyBatis gây nhập nhằng giữa "count khác null" và "count khác 0", và hai trường hợp này có ý nghĩa nghiệp vụ hoàn toàn khác nhau.
-
-### Quy tắc xử lý null cố định
-
-Ngữ pháp của LarkBatis không tự động ép kiểu. Các quy tắc được xác định nhất quán:
+### Bảng so sánh xử lý giá trị null
 
 | Biểu thức | LarkBatis | MyBatis / OGNL |
 |---|---|---|
-| `a == null` / `a != null` | Lan truyền null an toàn qua các thuộc tính con | Như nhau |
-| `age <= 18` khi `age` là null | **`false`** (bất kỳ toán hạng nào là null làm phép so sánh thành false) | `true` (null bị ép kiểu thành 0) |
-| `a != b` | Tương đương `!(a == b)` | Như nhau |
-| `user.isActive()` khi `user` là null | **`false`** | Ném ngoại lệ |
+| `a == null` / `a != null` | Lan truyền null an toàn | Như nhau |
+| `age <= 18` khi `age` là `null` | **`false`** | `true` (OGNL tự ép `null` thành 0) |
+| `user.isActive()` khi `user` là `null` | **`false`** | Ném ngoại lệ `NullPointerException` |
 
-Dòng thứ hai là điểm cần lưu ý nhất khi migration: phép so sánh `null <= 18` âm thầm mang giá trị true trong MyBatis sẽ trở thành **false** trong LarkBatis. [Trình quét mã cũ](../features/migration.md) sẽ tự động gắn cờ các biểu thức này.
+## Quản lý Statement Cache cho Dynamic SQL
 
-## SQL động và statement cache
+Mỗi tổ hợp điều kiện tạo ra một chuỗi SQL riêng biệt. Với *n* thẻ `<if>` độc lập, số lượng biến thể tối đa là 2ⁿ chuỗi. LarkBatis tự động theo dõi số lượng biến thể qua `LarkBatisSql.trackVariants()` để ngăn chặn tràn bộ nhớ cache. Xem [Raw SQL & An toàn](raw-sql.md#tracking-sql-variants).
 
-Statement có nội dung SQL phụ thuộc vào điều kiện runtime sẽ sinh ra nhiều chuỗi SQL khác nhau. Với *n* thẻ `<if>` độc lập, số biến thể tối đa là 2ⁿ chuỗi (đã biết trước lúc build). Những statement chứa `${}` hoặc `<foreach>` có số phần tử thay đổi sẽ được chèn thêm lệnh `LarkBatisSql.trackVariants`. Xem [SQL thô](raw-sql.md#tracking-sql-variants).
-
-## Kiểm chứng đối chiếu với MyBatis
-
-Repository lõi tích hợp sẵn harness kiểm thử vi sai: cùng một mapper được chạy qua cả hai luồng (thông dịch của MyBatis và code sinh sẵn của LarkBatis) trên cùng một `DataSource` ghi nhận dữ liệu, sau đó so sánh từng câu SQL và từng tham số được bind. Quá trình quét toàn bộ kho mapper XML mẫu của MyBatis đảm bảo độ bao phủ thực tế của ngữ pháp.

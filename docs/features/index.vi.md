@@ -1,110 +1,109 @@
-# Các tính năng được hỗ trợ
+# Ma trận tính năng
 
-Bảng tổng hợp tính năng đầy đủ. Ký hiệu :material-check: là đã hiện thực và có test kiểm thử; :material-alert: là được thu hẹp phạm vi theo quy tắc rõ ràng; :material-close: là chủ động loại bỏ từ khâu thiết kế (trình biên dịch sẽ báo lỗi kèm theo giải pháp thay thế).
+Bảng tổng hợp chi tiết mức độ hỗ trợ các tính năng trong LarkBatis: :material-check: Đã hỗ trợ đầy đủ kèm test kiểm thử; :material-alert: Thu hẹp phạm vi theo quy tắc an toàn; :material-close: Chủ động loại bỏ (báo lỗi compile kèm giải pháp thay thế).
 
 Phiên bản hiện tại: **`0.1.0`**.
 
-## Statement
+## Khai báo Statement
 
-| | | Ghi chú |
+| Tính năng | Trạng thái | Ghi chú kỹ thuật |
 |---|---|---|
-| `@Select` `@Insert` `@Update` `@Delete` | :material-check: | Giá trị `String[]`, được nối với nhau bằng một dấu cách đơn |
-| `<select>` `<insert>` `<update>` `<delete>` trong mapper XML | :material-check: | Namespace là FQN của interface, `id` là tên phương thức. [Chi tiết](../usage/xml-mappers.md) |
-| Kết hợp cả annotation và XML trong cùng một mapper | :material-check: | Được xác định theo từng phương thức; nếu một phương thức khai báo cả hai hoặc không khai báo cái nào thì trình biên dịch sẽ báo lỗi |
-| Tham số liên kết `#{}` | :material-check: | Được resolve dựa trên kiểu tham số của phương thức ngay lúc build |
-| Chèn trực tiếp `${}` | :material-alert: | Chỉ chấp nhận `SqlFragment`, kiểu dữ liệu tập giá trị đóng, hoặc `@OrderBy`. [Chi tiết](../usage/raw-sql.md) |
-| `@Param` | :material-check: | Đặt tên rõ ràng cho tham số |
-| `@Options(useGeneratedKeys, keyProperty, keyColumn)` | :material-check: | [Chi tiết](../usage/generated-keys.md) |
-| `<selectKey>` | :material-close: | Tách thành một statement thứ hai riêng biệt |
-| Họ annotation `@SelectProvider` / `@InsertProvider` | :material-close: | SQL do phương thức Java dựng động lúc runtime là thứ bộ sinh code không thể nhìn thấy lúc build |
-| Tham số kiểu `Map` hoặc `Object` | :material-close: | Không có kiểu cụ thể để resolve `#{}`. Cần dùng parameter object hoặc đặt `@Param` cho từng tham số |
-| `RowBounds` | :material-close: | Phân trang trên bộ nhớ từ ResultSet đầy đủ gây lãng phí. Nên phân trang bằng SQL với `LIMIT`/`OFFSET` |
+| `@Select`, `@Insert`, `@Update`, `@Delete` | :material-check: | Chấp nhận mảng `String[]`, tự động nối với nhau bằng dấu cách |
+| `<select>`, `<insert>`, `<update>`, `<delete>` trong mapper XML | :material-check: | Namespace là FQN của interface, `id` khớp với tên phương thức. Xem [Mapper XML](../usage/xml-mappers.md) |
+| Kết hợp cả annotation và XML trong cùng một mapper | :material-check: | Xử lý độc lập theo từng phương thức (báo lỗi compile nếu trùng lặp hoặc thiếu định nghĩa) |
+| Tham số liên kết `#{}` | :material-check: | Xác định kiểu dữ liệu tĩnh từ tham số phương thức lúc biên dịch |
+| Chèn chuỗi động `${}` | :material-alert: | Chỉ chấp nhận `SqlFragment`, enum/primitive, hoặc `@OrderBy`. Xem [Raw SQL & An toàn](../usage/raw-sql.md) |
+| `@Param` | :material-check: | Đặt tên tham số tường minh cho câu lệnh SQL |
+| `@Options(useGeneratedKeys, keyProperty, keyColumn)` | :material-check: | Tự động gán khóa chính tự tăng sau khi insert. Xem [Generated Keys](../usage/generated-keys.md) |
+| `<selectKey>` | :material-close: | Thay thế bằng hai câu truy vấn độc lập để kiểm soát transaction rõ ràng |
+| Provider annotations (`@SelectProvider`, v.v.) | :material-close: | Chuỗi SQL dựng động qua reflection lúc runtime không thể phân tích trước lúc build |
+| Tham số kiểu `Map` hoặc `Object` không định kiểu | :material-close: | Cần định nghĩa parameter class rõ ràng hoặc gắn `@Param` cho từng tham số |
+| `RowBounds` | :material-close: | Phân trang trên bộ nhớ (in-memory) gây lãng phí RAM. Nên dùng `LIMIT`/`OFFSET` trực tiếp trong SQL |
 
-## SQL động
+## SQL Động (Dynamic SQL)
 
-| | | Ghi chú |
+| Tính năng | Trạng thái | Ghi chú kỹ thuật |
 |---|---|---|
-| `<if>` | :material-check: | Biên dịch thành biến cục bộ `boolean`, chỉ đánh giá một lần |
-| `<choose>` / `<when>` / `<otherwise>` | :material-check: | Logic loại trừ tương hỗ được biên dịch thẳng vào code |
-| `<where>` / `<set>` | :material-check: | Constant-folded lúc build, không quét chuỗi lúc runtime |
-| `<trim>` | :material-alert: | Chỉ hỗ trợ thuộc tính dạng chuỗi cố định, xử lý gập hằng số lúc build |
-| `<sql>` / `<include>` | :material-alert: | `refid` phải cố định, được inline trực tiếp lúc build |
-| `<foreach>` | :material-alert: | Collection, mảng, map phải định kiểu tĩnh. Ném exception nếu collection rỗng. [Chi tiết](../usage/foreach-and-batches.md) |
-| `@PadPow2` | :material-check: | Giới hạn số biến thể SQL trong mệnh đề `IN`. Ép theo đúng shape danh sách `IN` |
-| `<bind>` | :material-close: | Tạo biến OGNL lúc chạy. Nên tính toán giá trị trong Java rồi truyền vào qua tham số |
-| OGNL trong thuộc tính `test` | :material-close: | Thay thế bằng [ngữ pháp biểu thức thu hẹp](../usage/dynamic-sql.md#the-test-grammar); kiểm tra truthiness theo kiểu OGNL sẽ báo lỗi biên dịch |
-| `databaseId` | :material-close: | Thuộc tính `databaseId` sẽ báo lỗi biên dịch. Nên tách riêng từng interface mapper cho mỗi loại database |
+| `<if>` | :material-check: | Biên dịch thành biến `boolean` cục bộ, đánh giá điều kiện một lần duy nhất |
+| `<choose>`, `<when>`, `<otherwise>` | :material-check: | Biên dịch thành khối lệnh `if-else` trong mã Java thuần |
+| `<where>`, `<set>` | :material-check: | Constant-fold lúc biên dịch, không quét chuỗi regex lúc runtime |
+| `<trim>` | :material-alert: | Chỉ hỗ trợ chuỗi tiền tố/hậu tố cố định |
+| `<sql>`, `<include>` | :material-alert: | `refid` phải cố định, được inline trực tiếp lúc biên dịch |
+| `<foreach>` | :material-alert: | Ném exception nếu collection rỗng. Xem [foreach & Batching](../usage/foreach-and-batches.md) |
+| `@PadPow2` | :material-check: | Giới hạn số lượng biến thể prepared statement trong mệnh đề `IN` |
+| `<bind>` | :material-close: | Nên tính toán biến trong mã Java trước khi truyền vào mapper |
+| Biểu thức OGNL phức tạp trong `test` | :material-close: | Thay thế bằng [ngữ pháp biểu thức an toàn](../usage/dynamic-sql.md#the-test-grammar) |
+| `databaseId` | :material-close: | Nên tách riêng từng interface mapper cho mỗi loại database vendor |
 
-## Ánh xạ kết quả
+## Ánh xạ kết quả (Result Mapping)
 
-| | | Ghi chú |
+| Tính năng | Trạng thái | Ghi chú kỹ thuật |
 |---|---|---|
-| `resultType` theo quy ước đặt tên | :material-check: | Luôn chuyển đổi `snake_case` → `camelCase` lúc build |
-| Đọc dòng theo vị trí cột | :material-check: | Áp dụng khi parser phân tích được danh sách cột trong câu SELECT |
-| Fallback đọc theo tên cột | :material-check: | Dùng cho `SELECT *`,...; index cột chỉ được resolve một lần từ `ResultSetMetaData` |
-| Kết quả kiểu vô hướng (scalar) | :material-check: | Đọc trực tiếp `long`, `String`,... từ cột 1 |
-| Phương thức trả về `List<T>` | :material-check: | Đọc danh sách dòng vào List |
-| Phương thức trả về `Stream<T>` | :material-check: | Caller có trách nhiệm đóng stream. [Chi tiết](../usage/streaming.md) |
-| `<resultMap>` | :material-alert: | Chỉ ánh xạ tường minh các cột được khai báo, không auto-mapping |
-| `<association>` / `<collection>` | :material-alert: | Hỗ trợ tối đa **một** cấp lồng nhau qua phép join, ResultSet bắt buộc phải sắp xếp theo khoá của bảng cha |
-| Lồng `select=` trong result map | :material-close: | Đây chính là lỗi N+1 truy vấn. Cần viết tường minh bằng câu lệnh join |
-| `<discriminator>` | :material-close: | Khiến kiểu class kết quả phụ thuộc vào giá trị cột lúc runtime |
-| Constructor mapping (`<constructor>`) | :material-close: | Class kết quả được khởi tạo bằng constructor không tham số và các setter |
-| Các thuộc tính `extends`, `columnPrefix`, `autoMapping` của `resultMap` | :material-close: | Khai báo tường minh tất cả các ánh xạ cần thiết |
-| Lazy loading | :material-close: | Đòi hỏi phải bọc proxy cho từng đối tượng kết quả |
-| Type alias | :material-close: | Dùng tên class đầy đủ (FQN) |
+| Ánh xạ `resultType` theo quy ước | :material-check: | Tự động chuyển đổi `snake_case` sang `camelCase` lúc biên dịch |
+| Đọc dòng theo chỉ số vị trí cột | :material-check: | Tối ưu khi câu `SELECT` liệt kê tên cột rõ ràng |
+| Fallback đọc theo tên cột | :material-check: | Sử dụng khi câu truy vấn là `SELECT *` (phân giải index một lần qua `ResultSetMetaData`) |
+| Kết quả kiểu vô hướng (Scalar) | :material-check: | Đọc trực tiếp kiểu nguyên thủy / wrapper từ cột đầu tiên |
+| Trả về `List<T>` | :material-check: | Đọc danh sách bản ghi tuần tự |
+| Trả về `Stream<T>` | :material-check: | Stream kết nối con trỏ database, caller chịu trách nhiệm đóng stream. Xem [Streaming](../usage/streaming.md) |
+| `<resultMap>` | :material-alert: | Ánh xạ tường minh các cột được định nghĩa, không tự động auto-mapping |
+| `<association>`, `<collection>` | :material-alert: | Hỗ trợ 1 cấp join, yêu cầu câu truy vấn `ORDER BY` theo khóa của bảng cha |
+| Lồng `select="..."` trong result map | :material-close: | Tránh phát sinh lỗi N+1 truy vấn; nên viết câu `JOIN` tường minh |
+| `<discriminator>` | :material-close: | Kiểu class kết quả phải cố định từ lúc biên dịch |
+| `<constructor>` mapping | :material-close: | POJO kết quả yêu cầu constructor không tham số và setter |
+| `extends`, `columnPrefix`, `autoMapping` | :material-close: | Khai báo tường minh tất cả ánh xạ cần thiết |
+| Lazy loading | :material-close: | Tránh tạo bytecode proxy bọc quanh đối tượng kết quả |
+| Type alias | :material-close: | Sử dụng tên class đầy đủ (FQN) |
 
-## Kiểu dữ liệu
+## Kiểu dữ liệu & Type Handlers
 
-| | | Ghi chú |
+| Tính năng | Trạng thái | Ghi chú kỹ thuật |
 |---|---|---|
-| Primitive và wrapper | :material-check: | Wrapper đi qua `JdbcCodec` để xử lý null an toàn |
+| Kiểu nguyên thủy và wrapper | :material-check: | Sử dụng `JdbcCodec` để xử lý `null` an toàn |
 | `String`, `BigDecimal`, `BigInteger`, `byte[]` | :material-check: | Đọc/ghi trực tiếp qua JDBC |
-| `java.sql.Date` / `Time` / `Timestamp` | :material-check: | Hỗ trợ kiểu thời gian JDBC chuẩn |
-| `Instant`, `LocalDate`, `LocalTime`, `LocalDateTime` | :material-check: | Hỗ trợ API `java.time` chuẩn Java 8+ |
-| Enum (theo `name()`) | :material-check: | Thuộc kiểu giá trị đóng, hợp lệ khi dùng với `${}` |
-| `@Column` | :material-check: | Đặt tên cột tương ứng trên field, setter hoặc getter. [Chi tiết](annotations.md#column) |
-| TypeHandler tuỳ biến với `@Handler` | :material-check: | Khai báo trên thuộc tính, tham số hoặc trong mapper XML. [Chi tiết](../usage/types.md#custom-type-handlers) |
-| `<typeHandlers>`, một handler cho mỗi kiểu Java | :material-check: | Khai báo qua cặp `-Alarkbatis.typeHandlers` và được resolve trong quá trình `javac`. [Chi tiết](configuration.md#type-handlers-for-a-whole-build) |
-| Tự động quét TypeHandler (`<package>`, `@MappedTypes`) | :material-close: | Không quét classpath lúc chạy. Danh sách handler được khai báo tường minh lúc build |
+| `java.sql.Date`, `Time`, `Timestamp` | :material-check: | Đọc/ghi trực tiếp qua JDBC |
+| `Instant`, `LocalDate`, `LocalTime`, `LocalDateTime` | :material-check: | Hỗ trợ toàn diện API `java.time` chuẩn |
+| Enum (theo `name()`) | :material-check: | Kiểu tập đóng an toàn, được phép dùng trong `${}` |
+| `@Column` | :material-check: | Đặt tên cột thủ công trên field hoặc getter/setter. Xem [Annotations](annotations.md#column) |
+| Custom TypeHandler với `@Handler` | :material-check: | Gắn trên field, param hoặc trong XML. Xem [Kiểu dữ liệu](../usage/types.md#custom-type-handlers) |
+| `<typeHandlers>` cấp toàn cục | :material-check: | Cấu hình qua compiler option `-Alarkbatis.typeHandlers`. Xem [Cấu hình](configuration.md) |
+| Quét tự động TypeHandler (`<package>`) | :material-close: | Không quét classpath lúc runtime; cần khai báo tường minh lúc biên dịch |
 
-## Session, transaction và thực thi
+## Session & Quản lý Transaction
 
-| | | Ghi chú |
+| Tính năng | Trạng thái | Ghi chú kỹ thuật |
 |---|---|---|
-| Scope `LarkBatisTx`, lồng nhau, cơ chế vote-to-commit | :material-check: | [Chi tiết](../usage/transactions.md) |
-| `@Transactional` của Spring | :material-check: | Tích hợp qua `DataSourceUtils` |
-| Dịch mã lỗi ngoại lệ Spring | :material-check: | Mặc định sử dụng `SQLExceptionSubclassTranslator` |
-| Spring Boot auto-configuration | :material-check: | Tương thích cả Spring Boot 3 lẫn Spring Boot 4 trong cùng một jar |
-| Sinh class `@Configuration` cho Spring | :material-check: | Đặt thuộc tính `proxyBeanMethods = false` |
-| Batch insert | :material-check: | Định nghĩa qua chữ ký phương thức (tham số `List<T>`), không cần chuyển chế độ executor |
-| Chèn nhiều dòng qua `VALUES` với `<foreach>` | :material-check: | Sinh câu SQL đa dòng tối ưu |
-| Lối thoát thủ công (`query`, `queryOne`, `queryStream`, `update`) | :material-check: | Nhận `SqlFragment`, không bao giờ nhận chuỗi `String` tuỳ tiện |
-| Chế độ `ExecutorType.BATCH` / `REUSE` | :material-close: | Không có lớp executor trung gian lúc runtime |
-| Plugin / interceptor | :material-close: | 4 đối tượng mà MyBatis chặn bắt đã được thay thế hoàn toàn bằng thân phương thức sinh sẵn, không dùng JDK proxy. [Giải pháp thay thế plugin](mybatis-differences.md#what-replaces-a-plugin) |
-| Cache cấp 2 (`<cache>`, `<cache-ref>`) | :material-close: | Nên đặt cache ở tầng service phía trên mapper, nơi dễ kiểm soát việc vô hiệu hoá cache |
-| Cache cấp 1 | :material-close: | Không có đối tượng session lưu trạng thái để giữ cache |
-| Gọi `addMapper()` lúc runtime | :material-close: | Danh sách mapper được chốt cố định ngay khi biên dịch |
-| Nhiều `DataSource` trên cùng một mapper | :material-alert: | Tạm hoãn. Khai báo một session riêng cho từng `DataSource` và tự viết các phương thức `@Bean` |
-| Ghi log SQL (`log-sql`) | :material-close: | Việc ghi log SQL thuộc trách nhiệm của driver hoặc connection pool: datasource-proxy, p6spy |
+| Scope `LarkBatisTx`, cơ chế vote-to-commit | :material-check: | Hỗ trợ lồng scope transaction độc lập. Xem [Transactions](../usage/transactions.md) |
+| Spring `@Transactional` | :material-check: | Tích hợp trực tiếp qua `DataSourceUtils` |
+| Dịch mã lỗi Spring | :material-check: | Tự động chuyển đổi sang cây exception `DataAccessException` |
+| Spring Boot Starter | :material-check: | Tương thích cả Spring Boot 3 và Spring Boot 4 trong cùng một jar |
+| Sinh `@Configuration` tự động | :material-check: | Thiết lập `proxyBeanMethods = false` để tránh CGLIB proxy |
+| Batch insert | :material-check: | Hỗ trợ phương thức nhận `List<T>` gọi `addBatch()` tự động |
+| Insert nhiều bản ghi qua `VALUES (...)` | :material-check: | Sử dụng `<foreach>` để sinh câu SQL gộp tối ưu |
+| Escape hatch (`query`, `queryOne`, `update`) | :material-check: | Thực thi qua `SqlFragment`, không nhận chuỗi `String` tùy tiện |
+| `ExecutorType.BATCH` / `REUSE` | :material-close: | Không dùng executor trung gian phức tạp |
+| Plugins / Interceptors | :material-close: | Xem [Giải pháp thay thế Plugin](mybatis-differences.md#what-replaces-a-plugin) |
+| Level-2 Cache (`<cache>`, `<cache-ref>`) | :material-close: | Nên cài đặt cache ở tầng Service thay vì tầng ORM |
+| Level-1 Cache | :material-close: | `LarkBatisSession` là stateless, không lưu trữ entity cache |
+| Đăng ký `addMapper()` động lúc runtime | :material-close: | Danh sách mapper được chốt cố định lúc biên dịch |
+| Ghi log SQL (`log-sql`) | :material-close: | Sử dụng logging proxy ở tầng DataSource (như `datasource-proxy`, `p6spy`) |
 
-## Build và đóng gói
+## Build & Đóng gói
 
-| | | Ghi chú |
+| Tính năng | Trạng thái | Ghi chú kỹ thuật |
 |---|---|---|
-| Annotation processor (javac) | :material-check: | Chỉ hỗ trợ `javac`; không hỗ trợ ECJ |
-| Gradle plugin | :material-check: | [Chi tiết](../getting-started/build-plugins.md) |
-| Maven plugin | :material-check: | Cần cấu hình `<extensions>true</extensions>` |
-| JPMS module đặt tên | :material-check: | Cả 5 artifact phát hành đều có `module-info.java` chuẩn |
-| Tương thích với Lombok | :material-check: | Khai báo processor của LarkBatis chạy *sau* Lombok |
-| Build tăng dần (incremental build) | :material-alert: | Aggregating processor; cần biên dịch với cờ `-parameters` trên Gradle |
-| Mapper chỉ dùng cho test | :material-close: | Chỉ hỗ trợ source set `compile` chính |
-| GraalVM native image | :material-alert: | Đã sẵn sàng về mặt cấu trúc (không dùng reflection), nhưng **chưa qua kiểm thử thực tế trên build native** |
-| Bộ quét mapper cũ | :material-check: | Công cụ CLI `larkbatis-scan`. [Chi tiết](migration.md) |
+| Annotation processor (javac) | :material-check: | Chỉ hỗ trợ `javac`, không hỗ trợ ECJ |
+| Gradle plugin | :material-check: | Tự động cấu hình compile inputs và processor path |
+| Maven plugin | :material-check: | Yêu cầu cấu hình `<extensions>true</extensions>` |
+| JPMS (Java Module System) | :material-check: | Tất cả artifact đều có `module-info.java` chuẩn |
+| Tương thích với Lombok | :material-check: | Khai báo `larkbatis-processor` chạy sau Lombok |
+| Incremental compilation | :material-alert: | Aggregating processor; cần bật cờ `-parameters` |
+| GraalVM Native Image | :material-alert: | Sẵn sàng về mặt cấu trúc (không dùng reflection); kiểm thử quy trình build đầy đủ ở mốc M5 |
+| Quét mã nguồn cũ `larkbatis-scan` | :material-check: | Công cụ CLI phân tích mức độ tương thích. Xem [Migration](migration.md) |
 
-## Đọc tiếp
+## Tài liệu liên quan
 
-- [Khác biệt với MyBatis](mybatis-differences.md): danh sách chi tiết các tính năng bị loại bỏ hoặc thu hẹp kèm lý do kỹ thuật
-- [Annotation](annotations.md): danh mục đầy đủ các annotation và thuộc tính
-- [API runtime](runtime-api.md): các interface và class runtime công khai
-- [Cấu hình](configuration.md): tuỳ chọn processor, thuộc tính và system property
+- [Khác biệt với MyBatis](mybatis-differences.md): Chi tiết các thay đổi hành vi và hướng xử lý
+- [Danh mục Annotations](annotations.md): Chi tiết toàn bộ annotation của LarkBatis
+- [Runtime API](runtime-api.md): Bề mặt API public lúc runtime
+- [Tùy chọn cấu hình](configuration.md): Danh mục đầy đủ các compiler option và application properties
+

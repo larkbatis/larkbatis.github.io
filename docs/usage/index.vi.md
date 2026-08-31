@@ -1,106 +1,84 @@
-# Sử dụng
+# Hướng dẫn sử dụng
 
-Mọi thứ bạn viết trong LarkBatis chỉ là một trong hai thứ: một **interface mapper** có
-các phương thức mang annotation statement, hoặc một interface mapper đánh dấu `@Mapper`
-mà statement nằm trong **mapper XML**. Cả hai đều biên dịch ra cùng một lớp hiện thực;
-chúng là hai frontend cho cùng một IR, không phải hai đường code khác nhau.
+Trong LarkBatis, bạn định nghĩa các câu truy vấn qua **mapper interface** (sử dụng annotation như `@Select`, `@Insert`...) hoặc **mapper XML** (đánh dấu interface với `@Mapper`). Cả hai cách đều được processor biên dịch thành cùng một lớp Java triển khai JDBC trực tiếp.
 
-## Hình hài một project
+## Cấu trúc thư mục dự án
 
 ```text
 src/main/java/com/example/app/
-    User.java                 # lớp kết quả: constructor không tham số, các setter
-    UserMapper.java           # statement bằng annotation
-    UserSearchMapper.java     # @Mapper — statement nằm trong XML
+    User.java                 # POJO kết quả: constructor không tham số, các setter
+    UserMapper.java           # Mapper interface sử dụng annotation
+    UserSearchMapper.java     # Mapper interface sử dụng XML (gắn @Mapper)
 src/main/resources/mappers/
     UserSearchMapper.xml      # namespace = com.example.app.UserSearchMapper
 ```
 
-Lúc build, processor phát ra, vào đúng package đó:
+Khi biên dịch (`./gradlew compileJava` hoặc `mvn compile`), processor sinh ra các file Java trong cùng package:
 
 ```text
-UserMapper$$Impl.java              mỗi mapper một file
+UserMapper$$Impl.java              # Lớp triển khai JDBC cho từng mapper interface
 UserSearchMapper$$Impl.java
-UserRow.java                       mỗi lớp kết quả một file
-LarkBatisMappers.java             mỗi lần biên dịch một file
-LarkBatisMapperConfiguration.java một file, nếu Spring có trên classpath lúc build
+UserRow.java                       # Lớp đọc ResultSet cho từng POJO kết quả
+LarkBatisMappers.java             # Factory khởi tạo các mapper
+LarkBatisMapperConfiguration.java # Class @Configuration cho Spring (nếu có spring-context)
 ```
 
-## Các trang trong mục này
+## Mục lục hướng dẫn
 
 <div class="grid cards" markdown>
 
--   **[Interface mapper](mappers.md)**
+-   **[Mapper Interfaces](mappers.md)**
 
-    Annotation statement, tham số `#{}`, `@Param`, lớp kết quả và cách các cột tìm ra
-    setter của chúng.
+    Annotations truy vấn, liên kết tham số `#{}` / `${}`, `@Param`, POJO result classes và cơ chế ánh xạ cột sang setter.
 
 -   **[Mapper XML](xml-mappers.md)**
 
-    `@Mapper`, namespace, id của statement, `<sql>`/`<include>`, và cách một statement
-    được gán cho mỗi phương thức.
+    Khai báo `@Mapper`, cấu hình namespace, statement id, inlining `<sql>` / `<include>` và quy tắc ánh xạ phương thức.
 
--   **[SQL động](dynamic-sql.md)**
+-   **[Dynamic SQL](dynamic-sql.md)**
 
-    `<if>`, `<choose>`, `<where>`, `<set>`, `<trim>`, cùng cái ngữ pháp `test` hẹp thay
-    cho OGNL.
+    Các thẻ `<if>`, `<choose>`, `<where>`, `<set>`, `<trim>` và ngữ pháp kiểm tra kiểu tĩnh an toàn.
 
--   **[foreach và batch](foreach-and-batches.md)**
+-   **[foreach & Batching](foreach-and-batches.md)**
 
-    Danh sách `IN`, `VALUES` nhiều dòng, vòng lặp lồng nhau, insert bằng `addBatch()` và
-    `@PadPow2`.
+    Mệnh đề `WHERE IN`, `VALUES` nhiều dòng, JDBC batch `addBatch()`, tối ưu cache với `@PadPow2`.
 
--   **[Result map và join](result-maps.md)**
+-   **[Result Maps](result-maps.md)**
 
-    `<resultMap>`, một cấp `<association>` / `<collection>`, và quy tắc sắp xếp khiến nó
-    hoạt động.
+    Cấu hình `<resultMap>`, join 1 cấp (`<association>` / `<collection>`) và thuật toán gom nhóm single-pass.
 
 -   **[Generated Keys](generated-keys.md)**
 
-    `useGeneratedKeys`, vì sao `keyColumn` lại quan trọng, và việc đếm khoá ở chế độ
-    batch.
+    Cấu hình `useGeneratedKeys`, tầm quan trọng của `keyColumn` và lấy khóa tự tăng trong batch insert.
 
--   **[Stream kết quả](streaming.md)**
+-   **[Streaming](streaming.md)**
 
-    Kiểu trả về `Stream<T>` trên một con trỏ đang mở, và ai là người sở hữu tài nguyên.
+    Truy vấn tập dữ liệu lớn qua `Stream<T>` kết nối trực tiếp con trỏ database và quản lý tài nguyên an toàn.
 
--   **[Transaction](transactions.md)**
+-   **[Transactions](transactions.md)**
 
-    Ngữ nghĩa bỏ-phiếu-để-commit của `LarkBatisTx`, việc lồng nhau, và `@Transactional`.
+    Quản lý transaction độc lập qua `LarkBatisTx`, cơ chế vote-to-commit và tích hợp Spring `@Transactional`.
 
--   **[SQL thô và SqlFragment](raw-sql.md)**
+-   **[Raw SQL & An toàn](raw-sql.md)**
 
-    Kỷ luật `${}`, `@OrderBy`, cửa thoát hiểm, và việc theo dõi biến thể SQL.
+    Kỷ luật an toàn khi dùng `${}`, `@OrderBy`, lối thoát thủ công `SqlFragment` và theo dõi biến thể prepared statement.
 
--   **[Kiểu dữ liệu và handler](types.md)**
+-   **[Kiểu dữ liệu & Type Handlers](types.md)**
 
-    `#{}` tự gắn được những gì, `JdbcCodec`, `@Column`, `@Handler`, enum và `java.time`.
+    Hệ thống kiểu dữ liệu hỗ trợ sẵn, `JdbcCodec`, `@Column`, custom `LarkBatisTypeHandler`, enum và `java.time`.
 
 -   **[Tích hợp Spring](spring.md)**
 
-    Những gì `mybatis-spring` làm mà LarkBatis không cần, và những gì nó vẫn còn làm.
+    Cơ chế hoạt động của Spring Boot Starter, tương thích Spring Boot 3 & 4 và quản lý transaction qua `DataSourceUtils`.
 
--   **[Xử lý sự cố](troubleshooting.md)**
+-   **[Khắc phục sự cố](troubleshooting.md)**
 
-    Không sinh ra gì, tên tham số thành `arg0`, thứ tự Lombok, XML không được nhận.
+    Chẩn đoán các lỗi thường gặp: processor không sinh code, lỗi tham số `arg0`, thứ tự nạp Lombok.
 
 </div>
 
-## Hai quy tắc giải thích gần hết những điều bất ngờ
+## Hai nguyên tắc thiết kế cốt lõi
 
-**1 · Quyết định được lúc build thì quyết định luôn.** Chỉ số cột, lựa chọn type
-handler, tiền tố của `<trim>`, thân của `<include>`, việc một phép so sánh là trên `long`
-hay `String`: không thứ nào trong đó bị đem ra soi lúc chạy. Nghĩa là sai ở bất kỳ chỗ
-nào trong số đó đều là lỗi biên dịch chứ không phải một stack trace, và thông báo lỗi
-gọi đúng tên phương thức mapper.
+1. **Giải quyết mọi thứ có thể lúc biên dịch**: Chỉ số cột trong `ResultSet`, lựa chọn setter, chuỗi SQL tĩnh, inlining `<include>` đều được chốt cố định lúc build. Mọi sai sót về kiểu dữ liệu hay cú pháp đều trở thành lỗi biên dịch `javac`.
+2. **Kiểm soát chặt chẽ các giá trị runtime**: Danh sách các thành phần được đánh giá lúc runtime là cố định và đóng (tham số đầu vào, kết quả boolean của `<if>`, kích thước collection trong `<foreach>`, dữ liệu trả về từ database). Mọi chuỗi động ngoài danh sách này bắt buộc phải được bọc qua `SqlFragment` hoặc `@OrderBy`. Xem chi tiết tại [Shape vs. Value](../wiki/shape-vs-value.md).
 
-**2 · Không quyết định được thì phải nói ra tường minh.** Danh sách những thứ được resolve
-lúc chạy là ngắn và đóng: giá trị tham số, kết quả boolean của các test
-`<if>`/`<when>`, kích thước tập hợp trong `<foreach>`, các dòng trong `ResultSet`, số
-cột thật khi không phân tích được select list, và nội dung của một `SqlFragment`. Bất cứ
-thứ gì bạn muốn mà không nằm trong danh sách đó đều phải được viết rõ trong chữ ký của
-phương thức mapper. Đó là lý do một `String` bind vào `${}` là lỗi biên dịch, chứ không
-phải chuyện cho qua.
-
-Phát biểu đầy đủ về ranh giới này nằm trong wiki:
-[Shape và value](../wiki/shape-vs-value.md).

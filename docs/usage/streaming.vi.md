@@ -1,6 +1,6 @@
-# Stream kết quả
+# Stream kết quả (Streaming)
 
-Phương thức mapper có thể khai báo kiểu trả về `Stream<T>` thay vì `List<T>`. Dữ liệu được đọc tuần tự từng dòng từ con trỏ `ResultSet` đang mở, giúp xử lý các tập dữ liệu lớn mà không gây tràn bộ nhớ (Out Of Memory).
+Phương thức mapper có thể khai báo kiểu trả về `Stream<T>` thay vì `List<T>`. Dữ liệu được đọc tuần tự trực tiếp từ con trỏ `ResultSet` đang mở, giúp xử lý các tập dữ liệu lớn hàng triệu dòng mà không gây tràn bộ nhớ (Out Of Memory).
 
 ```java
 @Select("SELECT id, name, email, created_at FROM users ORDER BY id")
@@ -13,16 +13,16 @@ try (Stream<User> rows = mapper.streamAll()) {
 }
 ```
 
-## Trách nhiệm đóng tài nguyên thuộc về phía gọi
+## Bắt buộc sử dụng `try-with-resources`
 
-!!! danger "Bắt buộc sử dụng try-with-resources khi gọi Stream"
+!!! danger "Caller chịu trách nhiệm đóng Stream"
 
-    Đây là trường hợp duy nhất mà tài nguyên JDBC sống lâu hơn chính phương thức mapper mở chúng, do đó thân phương thức sinh ra **không thể có khối `finally` đóng kết nối**. Việc đóng stream (`close()`) chính là thao tác đóng `ResultSet`, `PreparedStatement` và giải phóng `Connection`.
+    Khi phương thức trả về `Stream<T>`, tài nguyên JDBC (`ResultSet`, `PreparedStatement`, `Connection`) tiếp tục tồn tại sau khi phương thức mapper kết thúc. Thao tác gọi `stream.close()` sẽ đóng toàn bộ các tài nguyên này và giải phóng connection.
 
-    - **Ngoài transaction**: nếu không đóng stream, `Connection` sẽ bị giữ vô thời hạn cho đến khi GC thu hồi đối tượng. Đây là lỗi rò rỉ connection pool nghiêm trọng.
-    - **Trong transaction**: connection được quản lý bởi transaction, nhưng stream vẫn giữ statement và con trỏ mở cho đến khi hoàn tất.
+    - **Nếu không đóng stream**: `Connection` sẽ bị chiếm dụng cho đến khi GC thu hồi đối tượng, gây rò rỉ connection pool nghiêm trọng.
+    - Luôn bọc lời gọi `Stream` trong khối `try-with-resources`.
 
-Mã nguồn sinh ra thể hiện rõ quyền sở hữu tài nguyên này:
+Mã nguồn Java sinh ra:
 
 ```java
 @Override
@@ -34,34 +34,29 @@ public Stream<Order> streamByStatus(Status status) {
         ps = c.prepareStatement(SQL_streamByStatus);
         JdbcCodec.setEnum(ps, 1, status);
         rs = ps.executeQuery();
-        return s.stream(c, ps, rs, OrderRow::read, SQL_streamByStatus);  // (1)!
+        return s.stream(c, ps, rs, OrderRow::read, SQL_streamByStatus);  // Chuyển giao tài nguyên cho Stream quản lý
     } catch (SQLException e) {
-        throw s.streamFailed(c, ps, rs, SQL_streamByStatus, e);          // (2)!
+        throw s.streamFailed(c, ps, rs, SQL_streamByStatus, e);          // Đóng tài nguyên dở dang nếu có lỗi
     }
 }
 ```
 
-1.  Chuyển giao toàn bộ ba tài nguyên cho stream; stream sẽ đóng tất cả khi gọi `close()`.
-2.  Khối catch xử lý các lỗi xảy ra *trước khi* khởi tạo stream thành công: dọn dẹp các tài nguyên đã mở dở dang và đính kèm lỗi dọn dẹp vào ngoại lệ chính (suppressed exception).
+## Stream trong LarkBatis là tuần tự (Sequential)
 
-## Vì sao Stream trong LarkBatis là tuần tự (sequential)
+`Stream` trả về luôn là tuần tự (sequential) và không hỗ trợ thực thi song song (`parallelStream`). Song song hoá một con trỏ JDBC bắt buộc phải nạp trước toàn bộ dữ liệu vào RAM, làm mất đi ý nghĩa tiết kiệm bộ nhớ của streaming.
 
-Stream trả về luôn là tuần tự và không hỗ trợ tách nhánh (`spliterator` không song song). Song song hoá một con trỏ JDBC bắt buộc phải nạp trước toàn bộ dữ liệu vào RAM — điều đi ngược lại mục đích tiết kiệm bộ nhớ của `Stream`. Nếu cần xử lý song song, hãy đọc dữ liệu theo từng batch có kích thước giới hạn rồi xử lý song song trên từng batch đó.
+## Bảng hỗ trợ Streaming
 
-## Khả năng hỗ trợ stream
-
-| Kiểu dữ liệu | Hỗ trợ | Cơ chế xử lý |
+| Kiểu dữ liệu trả về | Trạng thái hỗ trợ | Cơ chế xử lý |
 |---|---|---|
-| `Stream<User>` trên một bean | Có | Sử dụng row reader sinh sẵn |
-| `Stream<String>`, `Stream<Long>` (vô hướng) | Có | Đọc trực tiếp cột 1, không cần bean hay reader |
+| `Stream<User>` (POJO) | Có | Đọc qua `RowReader` sinh sẵn |
+| `Stream<String>`, `Stream<Long>` (Vô hướng) | Có | Đọc trực tiếp từ cột 1 |
 | `SELECT *` | Có | Đọc vị trí từ `ResultSetMetaData` ở dòng đầu tiên |
-| `<resultMap>` lồng nhau | **Không** | Lỗi biên dịch |
+| `<resultMap>` có association/collection | **Không** | Báo lỗi biên dịch (do quan hệ lồng nhau đòi hỏi phải nạp nhiều dòng để gom nhóm) |
 
-Đối tượng cha trong result map lồng nhau trải dài trên nhiều dòng và chỉ hoàn chỉnh khi dòng của đối tượng cha kế tiếp xuất hiện. Xử lý điều này trên con trỏ đọc tuần tự buộc phải đệm dữ liệu vào bộ nhớ. Với dữ liệu lồng nhau, hãy stream các dòng phẳng rồi tự gom nhóm, hoặc dùng `List` nếu kích thước dữ liệu cho phép.
+## Streaming với Lối thoát thủ công (`s.queryStream()`)
 
-## Lối thoát thủ công cũng hỗ trợ stream
-
-`LarkBatisSession.queryStream` là phiên bản stream tương ứng của `query`:
+`LarkBatisSession.queryStream` cho phép stream các câu SQL động phức tạp:
 
 ```java
 default Stream<User> streamRecent(LarkBatisSession s, int limit) {
@@ -74,29 +69,9 @@ default Stream<User> streamRecent(LarkBatisSession s, int limit) {
 }
 ```
 
-Quy tắc đóng tài nguyên không đổi: bên gọi bắt buộc phải đóng stream trong try-with-resources. Xem [SQL thô](raw-sql.md#the-escape-hatch).
+## Lưu ý về `fetchSize` của JDBC Driver
 
-## Sử dụng trong Spring
+LarkBatis không tự động can thiệp vào `fetchSize` của JDBC connection. Để streaming dữ liệu lớn hiệu quả:
+- **PostgreSQL**: Cần chạy bên trong một transaction (`@Transactional`) hoặc tắt auto-commit, và cấu hình `defaultRowFetchSize` trên DataSource.
+- **MySQL**: Driver MySQL mặc định nạp toàn bộ ResultSet vào RAM; cần cấu hình `useCursorFetch=true` hoặc `defaultFetchSize` trong JDBC URL.
 
-`@Transactional` và `Stream` hoạt động hoàn toàn tương thích với nhau:
-
-```java
-@Transactional(readOnly = true)
-public void export(Writer out) {
-    try (Stream<User> rows = users.streamAll()) {
-        rows.forEach(u -> write(out, u));
-    }
-}
-```
-
-Trong transaction, `release` là lệnh rỗng và transaction giữ connection; ngoài
-transaction, đóng stream sẽ trả nó về pool. `try`-with-resources đúng trong cả hai
-trường hợp, và đó là lý do quy tắc được phát biểu là "luôn luôn" chứ không phải "đôi
-khi".
-
-## Fetch size
-
-LarkBatis không tự đặt `setFetchSize` giúp bạn: giá trị đúng phụ thuộc vào driver và
-vào truy vấn, và một số driver (đặc biệt là PostgreSQL) còn đòi phải tắt auto-commit thì
-con trỏ mới thật sự stream thay vì nạp hết ra. Nếu bạn đang stream một kết quả lớn, hãy
-đặt nó trên connection hoặc trên pool, hoặc đọc bên trong một transaction.

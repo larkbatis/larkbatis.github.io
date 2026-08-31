@@ -1,6 +1,6 @@
 # Mapper XML
 
-Một interface chú thích `@Mapper` lấy SQL cho từng phương thức từ statement trong mapper XML có cùng id. Namespace chính là tên đầy đủ (FQN) của interface.
+Khi một mapper interface được đánh dấu bằng `@Mapper`, LarkBatis sẽ tìm kiếm các câu lệnh SQL trong file mapper XML có `namespace` trùng với FQN của interface.
 
 ```java title="UserSearchMapper.java"
 package com.example.app;
@@ -44,51 +44,52 @@ public interface UserSearchMapper {
 </mapper>
 ```
 
-Phần khai báo DTD được giữ lại để các file sẵn có vẫn parse được nguyên trạng và editor vẫn hỗ trợ gợi ý cú pháp. Khai báo này không bị tải về hay kiểm tra lúc build.
+Khai báo DTD được giữ lại để IDE hỗ trợ gợi ý cú pháp. File DTD không bị tải về qua mạng lúc build.
 
-## Vì sao cần annotation `@Mapper`
+## Vai trò của annotation `@Mapper`
 
-Mapper thuần annotation không cần đánh dấu: processor tự động nhận diện vì các phương thức mang `@Select` và các annotation statement tương ứng. Một interface chỉ dùng XML thì không có annotation statement nào trên phương thức, do đó cần `@Mapper` để processor nhận biết và đưa vào vòng xử lý.
+Mapper chỉ dùng annotation (`@Select`, v.v.) không cần gắn `@Mapper` vì processor tự nhận diện qua method annotations. Với các mapper sử dụng XML, annotation `@Mapper` trên interface là tín hiệu bắt buộc để processor phát hiện và quét file XML tương ứng.
 
-## Gán statement cho từng phương thức
+## Kết hợp Annotation và XML trong cùng một Mapper
 
-Mỗi phương thức trừu tượng lấy SQL **hoặc** từ annotation của nó **hoặc** từ XML. Khai báo cả hai, hoặc không khai báo ở đâu, đều là lỗi biên dịch nêu rõ tên phương thức. Nhờ vậy một mapper có thể kết hợp linh hoạt cả hai cách:
+Mỗi phương thức trừu tượng chỉ được định nghĩa **hoặc** qua annotation **hoặc** qua XML:
 
 ```java
 @Mapper
 public interface UserMapper {
 
     @Select("SELECT id, name FROM users WHERE id = #{id}")
-    User findById(long id);          // lấy từ annotation
+    User findById(long id);          // Định nghĩa qua Annotation
 
-    List<User> search(UserSearch q); // lấy từ UserMapper.xml
+    List<User> search(UserSearch q); // Định nghĩa trong file UserMapper.xml (id="search")
 }
 ```
 
-## Vị trí quét file XML
+Khai báo cả hai hoặc bỏ trống phương thức sẽ bị báo lỗi biên dịch `javac`.
 
-Processor quét các thư mục được cấu hình qua `-Alarkbatis.mapperDir`. Các [build plugin](../getting-started/build-plugins.md) truyền sẵn tham số này (mặc định là `src/main/resources`), đồng thời đăng ký các file XML làm đầu vào biên dịch để tự động kích hoạt sinh lại code khi XML thay đổi.
+## Thư mục quét Mapper XML
 
-Chỉ những file có **thẻ gốc là `<mapper>`** mới được xử lý, các file cấu hình Spring hay logback trong cùng thư mục đều được bỏ qua an toàn. Mapper XML có `namespace` trỏ tới interface ở module khác sẽ bị bỏ qua kèm một cảnh báo build.
+Processor quét các file XML trong các thư mục được cấu hình qua `-Alarkbatis.mapperDir`. Build plugin (Gradle/Maven) mặc định cấu hình thư mục này là `src/main/resources` và đăng ký các file XML làm compilation input để hỗ trợ incremental build.
 
-## Các thẻ XML được hỗ trợ
+Chỉ các file XML có root element là `<mapper>` mới được xử lý.
 
-| Thẻ | Mức độ hỗ trợ |
+## Bảng hỗ trợ các thẻ XML
+
+| Thẻ XML | Trạng thái hỗ trợ |
 |---|---|
 | `<select>`, `<insert>`, `<update>`, `<delete>` | Đầy đủ |
-| `<sql>`, `<include>` | Chỉ hỗ trợ `refid` tĩnh, được chèn thẳng lúc build |
-| `<if>`, `<choose>`/`<when>`/`<otherwise>` | Đầy đủ, với [ngữ pháp test thu hẹp](dynamic-sql.md#the-test-grammar) |
-| `<where>`, `<set>`, `<trim>` | Chỉ hỗ trợ thuộc tính hằng, gập hằng số lúc build |
-| `<foreach>` | Tập hợp, mảng và Map có kiểu tĩnh rõ ràng. [Xem chi tiết](foreach-and-batches.md) |
-| `<resultMap>` | Hỗ trợ 1 cấp `<association>` / `<collection>`. [Xem chi tiết](result-maps.md) |
-| `<bind>`, `<discriminator>`, `<parameterMap>`, `<cache>`, `<selectKey>` | Không hỗ trợ; xem [Khác biệt với MyBatis](../features/mybatis-differences.md) |
+| `<sql>`, `<include>` | Đầy đủ (chỉ hỗ trợ `refid` hằng số tĩnh, được inlined trực tiếp lúc build) |
+| `<if>`, `<choose>`, `<when>`, `<otherwise>` | Đầy đủ (với ngữ pháp kiểm tra kiểu tĩnh an toàn) |
+| `<where>`, `<set>`, `<trim>` | Đầy đủ (xử lý tiền tố/hậu tố bằng logic biên dịch) |
+| `<foreach>` | Đầy đủ (hỗ trợ `List`, mảng, `Map`). Xem [foreach & Batching](foreach-and-batches.md) |
+| `<resultMap>` | Hỗ trợ join 1 cấp (`<association>`, `<collection>`). Xem [Result Maps](result-maps.md) |
+| `<bind>`, `<discriminator>`, `<parameterMap>`, `<cache>`, `<selectKey>` | Không hỗ trợ. Xem [Khác biệt với MyBatis](../features/mybatis-differences.md) |
 
-`resultType` và `resultMap` nhận **tên class đầy đủ (FQN)**. Không hỗ trợ type-alias registry lúc runtime vì mọi kiểu dữ liệu đều được resolve lúc build.
+`resultType` và `resultMap` nhận **tên class đầy đủ (FQN)** (ví dụ `com.example.app.User`). Không hỗ trợ alias registry động.
 
-## `<sql>` và `<include>`
+## Inlining `<sql>` và `<include>`
 
-`refid` được tra và chèn thẳng vào lúc build, nên nó phải là hằng. Một `refid` tính toán
-ra là lỗi biên dịch.
+Thuộc tính `refid` trong `<include>` được processor resolve và inlined trực tiếp lúc build:
 
 ```xml
 <sql id="teamMemberJoin">
@@ -105,23 +106,11 @@ ra là lỗi biên dịch.
 </select>
 ```
 
-Sau khi chèn, statement không khác gì một statement viết đầy đủ ngay từ đầu, kể cả với
-việc phân tích select list, nên `<include>` không làm bạn mất khả năng đọc dòng theo vị
-trí.
+Nhờ được inlined hoàn toàn lúc build, câu truy vấn vẫn được phân tích tĩnh danh sách cột để sinh lệnh đọc theo vị trí cột (`rs.getString(1)`).
 
-## Khoảng trắng
+## Các annotations bổ sung trên Mapper XML
 
-Các mảnh được nối bằng đúng một dấu cách và kết quả được cắt hai đầu. Chính sách này cố
-định và có ghi lại, và nó không sao chép khoảng trắng tình cờ của MyBatis, vốn khác nhau
-giữa các phiên bản MyBatis ở cách xử lý `<trim>`. Nếu bạn đem so từng ký
-tự SQL sinh ra với đầu ra của MyBatis, hãy chờ đợi khoảng trắng khác nhau còn ngữ nghĩa
-thì không.
-
-## Những annotation vẫn có tác dụng
-
-Statement trong XML vẫn gắn với một phương thức Java, nên annotation ở mức phương thức
-và mức interface vẫn hoạt động: `@PadPow2` trên một statement có `<foreach>`, `@Param`
-trên các tham số, `@Options` trên một `<insert>`:
+Các annotation như `@Param`, `@Options`, `@PadPow2` vẫn hoạt động bình thường trên các phương thức ánh xạ qua XML:
 
 ```java
 @Mapper
@@ -135,3 +124,4 @@ public interface UserBatchMapper {
     int deleteByIds(@Param("ids") List<Long> ids, @Param("keepName") String keepName);
 }
 ```
+

@@ -1,86 +1,65 @@
-# Xử lý sự cố
+# Khắc phục sự cố (Troubleshooting)
 
-## Không có file nào được sinh ra
+## Processor không sinh ra bất kỳ file nào
 
-Hãy kiểm tra theo thứ tự các bước sau:
+Hãy kiểm tra theo thứ tự:
 
-1. **Annotation processor đã đặt đúng configuration chưa?** Sử dụng `annotationProcessor` trong Gradle, hoặc `<annotationProcessorPaths>` trong Maven compiler plugin (không phải `implementation` hay `<dependencies>`).
-2. **Bạn có đang biên dịch bằng javac không?** Eclipse Compiler for Java (ECJ) không được hỗ trợ. Processor dựa vào hành vi chuẩn của javac (thứ tự khai báo phần tử trong AST và khả năng resolve qua nhiều round xử lý).
-3. **Interface mapper có annotation statement hoặc `@Mapper` không?** Đây là hai điều kiện kích hoạt duy nhất. Một interface thuần XML mà thiếu `@Mapper` sẽ bị processor bỏ qua.
-4. **Sử dụng JDK 23+ với cấu hình `addProcessorPath=false`?** javac từ JDK 23 không còn tự động tìm processor từ compile classpath. Hãy thêm processor vào `annotationProcessorPaths` hoặc khai báo `<proc>full</proc>`.
+1. **Đã cấu hình đúng `annotationProcessor` chưa?** Trong Gradle dùng `annotationProcessor`, trong Maven dùng `<annotationProcessorPaths>` (không khai báo trong scope `implementation` hay `<dependencies>`).
+2. **Có đang dùng `javac` chuẩn không?** Eclipse Compiler for Java (ECJ) không được hỗ trợ. Processor phụ thuộc vào AST chuẩn của OpenJDK/javac.
+3. **Interface đã có annotation chưa?** Phải có ít nhất một method mang annotation `@Select`/`@Insert`... hoặc interface gắn `@Mapper` (nếu dùng XML).
+4. **Chạy trên JDK 23+?** JDK 23 tắt mặc định tìm kiếm processor trên compile classpath. Cần khai báo rõ ràng trong `annotationProcessorPaths` hoặc thêm flag `-proc:full`.
 
-## `#{id}` không resolve được và tham số nhận tên `arg0`, `arg1`
+## Lỗi `#{id}` không tìm thấy tham số (`arg0`, `arg1`)
 
 ```text
 error: no parameter or property named 'id' in findById(long)
 ```
 
-Quá trình biên dịch **tăng dần (incremental build)** của Gradle chạy lại các aggregating processor trên những mapper không thay đổi từ **file .class** đã biên dịch trước đó. Mặc định javac không lưu tên tham số vào bytecode, do đó processor chỉ thấy các tên tổng hợp `arg0`, `arg1`.
+**Nguyên nhân**: Gradle incremental build chạy processor trên các **file `.class`** đã biên dịch trước đó. Mặc định `javac` không lưu tên tham số vào bytecode nên processor chỉ thấy `arg0`, `arg1`.
 
-### Cờ `-parameters` có tác dụng gì { #what-the-flag-actually-does }
+**Giải pháp**:
+1. Bật cờ `-parameters` trong cấu hình biên dịch:
+   ```kotlin title="build.gradle.kts"
+   tasks.withType<JavaCompile>().configureEach {
+       options.compilerArgs.add("-parameters")
+   }
+   ```
+2. Hoặc gắn annotation `@Param("id")` tường minh trên tham số.
 
-Mặc định javac loại bỏ tên tham số khỏi bytecode để tiết kiệm dung lượng. `findById(long id)` biên dịch ra bytecode sẽ mất tên `id`. Cờ `-parameters` yêu cầu javac ghi thêm thuộc tính `MethodParameters` vào class file, giúp giữ lại tên thật của tham số trong bytecode.
+## Lỗi không tìm thấy Getter/Setter khi dùng Lombok
 
-Khi build sạch (clean build), processor đọc tên từ AST nên luôn chính xác. Nhưng khi build tăng dần, Gradle truyền lại các class file cũ, nên processor chỉ có thể lấy lại tên tham số nếu class file có attribute này.
+**Nguyên nhân**: Lombok chưa sinh xong accessor khi LarkBatis processor bắt đầu phân tích POJO.
 
-Chi phí chỉ tốn vài byte trong mỗi file .class và hoàn toàn không ảnh hưởng tới hiệu năng runtime. Các framework lớn như Spring Boot, Jackson và Micronaut đều yêu cầu cờ này.
+**Giải pháp**: Khai báo `larkbatis-processor` chạy **sau** Lombok trong dependencies:
 
-=== "Cách 1: Biên dịch kèm cờ `-parameters`"
-
-    ```kotlin title="build.gradle.kts"
-    tasks.withType<JavaCompile>().configureEach {   // (1)!
-        options.compilerArgs.add("-parameters")     // (2)!
-    }
-    ```
-
-    1.  `configureEach` áp dụng cờ cho toàn bộ các compile task trong project (kể cả test và custom source set).
-    2.  Bên Maven tương đương cấu hình `<parameters>true</parameters>` trong `maven-compiler-plugin`.
-
-=== "Cách 2: Khai báo `@Param` tường minh cho mọi tham số"
-
-    ```java
-    User findById(@Param("id") long id);
-    ```
-
-    `@Param` lưu tên tham số trực tiếp trong metadata của annotation nên luôn tồn tại trong bytecode bất kể cờ biên dịch nào.
-
-## Lỗi liên quan đến Lombok / Class kết quả không có accessor nào
-
-Lombok chèn getter và setter vào AST khi processor của chính nó chạy. Do đó, `larkbatis-processor` bắt buộc phải được cấu hình chạy **sau** Lombok trong chuỗi `annotationProcessor`:
-
-```kotlin
-annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // đặt sau Lombok
+```kotlin title="build.gradle.kts"
+dependencies {
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0") // Bắt buộc đặt sau Lombok
+}
 ```
 
-## Sửa mapper XML nhưng code không sinh lại
+## Sửa file Mapper XML nhưng mã nguồn không sinh lại
 
-Processor đọc mapper XML trực tiếp từ file hệ thống thay vì qua `Filer` của compiler, vì vậy build tool cần được cấu hình để nhận diện các file XML là đầu vào biên dịch:
+- **Gradle**: Build plugin tự động đăng ký file XML làm input của `compileJava`.
+- **Maven**: Đảm bảo đã bật `<extensions>true</extensions>` trong `larkbatis-maven-plugin`. Chạy `mvn larkbatis:check` để xác thực cấu hình.
+- **Nếu cấu hình `-Alarkbatis.mapperDir` thủ công**: Chạy `./gradlew clean compileJava` hoặc `mvn clean compile` để buộc javac sinh lại toàn bộ code.
 
-- **Khi dùng [build plugin](../getting-started/build-plugins.md)?** Gradle plugin tự động đăng ký các file XML làm input của `compileJava`; Maven plugin qua goal `larkbatis:refresh` sẽ tự động chạm (touch) các file Java tương ứng khi hash của XML thay đổi.
-- **Dùng Maven nhưng không thấy code cập nhật?** Kiểm tra xem đã bật `<extensions>true</extensions>` trong cấu hình plugin chưa. Nếu thiếu, extension lifecycle sẽ không chạy. Chạy `mvn larkbatis:check` để kiểm tra.
-- **Truyền thủ công `-Alarkbatis.mapperDir`?** Khi không dùng plugin, hãy chạy `clean` trước khi biên dịch lại sau khi sửa XML.
+## Lỗi `package javax.annotation.processing is not visible`
 
-Cũng kiểm tra xem phần tử gốc của file có phải `<mapper>` không, vì mọi thứ khác trong
-thư mục đều bị bỏ qua, và xem `namespace` của nó có gọi tên một interface **trong cùng
-module** không. Một namespace vắt qua module sẽ bị bỏ qua kèm cảnh báo build.
+Trong dự án sử dụng Java Module System (JPMS), file mã nguồn sinh ra có gắn `@Generated`. Thêm khai báo sau vào `module-info.java`:
 
-## `package javax.annotation.processing is not visible`
+```java
+requires static java.compiler;
+```
 
-Một consumer modular cần `requires static java.compiler`, bởi vì mọi file nguồn phát ra
-đều mang `@Generated`. Thông báo lỗi lại trỏ vào file *được sinh ra*, và chính điều đó
-làm nó khó hiểu. Xem [Java Module](../getting-started/jpms.md).
+## Cảnh báo `useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS`
 
-## `useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS`
+Cần khai báo tường minh `keyColumn = "id"` trong `@Options` để đảm bảo JDBC driver trả về đúng khóa chính trên các database như Oracle và PostgreSQL.
 
-Một cảnh báo build bắt buộc, và đáng để coi như lỗi: Oracle trả về `ROWID` còn PostgreSQL
-trả về mọi cột dưới cờ đó. Hãy gọi tên cột khoá tường minh. Xem
-[Generated Keys](generated-keys.md).
+## Ngoại lệ `LarkBatisEmptyForeachException` lúc runtime
 
-## `LarkBatisEmptyForeachException` lúc chạy
-
-Một tập hợp trong `<foreach>` bị rỗng. Nếu mảnh SQL đó cần biến mất khi tập hợp rỗng,
-tức đúng hành vi MyBatis, thì hãy nói ra:
+Collection truyền vào `<foreach>` rỗng. Nếu muốn bỏ qua đoạn SQL này khi collection rỗng, bọc thẻ `<foreach>` bên trong thẻ `<if>`:
 
 ```xml
 <if test="ids != null and !ids.isEmpty()">
@@ -88,40 +67,15 @@ tức đúng hành vi MyBatis, thì hãy nói ra:
 </if>
 ```
 
-Xem [foreach và batch](foreach-and-batches.md#empty-collections).
+## Lỗi biên dịch khi dùng `test="count"`
 
-## `test="count"` là lỗi biên dịch
+LarkBatis không hỗ trợ OGNL truthiness ngầm định. Bạn phải so sánh tường minh: `count != 0`, `user != null`, hoặc `!list.isEmpty()`.
 
-Tính đúng-sai kiểu OGNL cố ý không được tái tạo. Hãy viết `count != 0`, `user != null`,
-hoặc `!list.isEmpty()`. Xem [ngữ pháp test](dynamic-sql.md#the-test-grammar).
+## Lỗi biên dịch khi gắn `String` vào `${}`
 
-## Một tham số `String` gắn vào `${}` là lỗi biên dịch
+Chuỗi `${}` không nhận tham số kiểu `String` tự do để tránh SQL Injection. Hãy đổi kiểu sang `SqlFragment`, kiểu tập giá trị đóng (enum/primitive), hoặc gắn `@OrderBy(allowed = {...})`.
 
-Kỷ luật `${}` bắt buộc như vậy. Hãy dùng `@OrderBy(allowed = {...})`, một `SqlFragment`,
-hoặc một kiểu
-giá trị đóng. Xem [SQL thô](raw-sql.md).
+## Ngoại lệ `LarkBatisRollbackOnlyException` khi commit
 
-## `LarkBatisRollbackOnlyException` khi commit
+Một transaction scope con bên trong đã kết thúc mà không gọi `commit()`, khiến transaction bị đánh dấu rollback-only. Kiểm tra lại luồng logic trong code để đảm bảo tất cả các scope lồng nhau đều gọi `commit()`.
 
-Một transaction scope con bên trong đã kết thúc mà không gọi `commit()`, khiến transaction bị đánh dấu rollback-only trước khi scope ngoài cùng gọi commit. Ngoại lệ này giúp phát hiện sớm lỗi logic thay vì âm thầm rollback. Xem [Transaction](transactions.md).
-
-## `LarkBatisUnboundedVariantsException`
-
-Bạn đã đặt `fail-on-unbounded-fragment: true` (rất tốt, ở staging) và một statement sinh
-ra nhiều hơn `max-sql-variants` câu SQL khác nhau. Hãy tìm cái `${}` hoặc cái
-`<foreach>` không bị chặn rồi hoặc đóng tập giá trị lại bằng `SqlFragment.allowed(...)` /
-`@OrderBy`, hoặc chặn số phần tử bằng `@PadPow2`. Xem
-[Theo dõi biến thể SQL](raw-sql.md#tracking-sql-variants).
-
-## Một statement lùi về đọc dòng theo tên
-
-Việc này được báo lúc build. Nó nghĩa là select list không phân tích được: `SELECT *`,
-một chỗ chèn `${}` trong select list, hoặc một biểu thức không đặt alias như `1 + 1`.
-Statement đó vẫn đúng và chậm hơn ở mức đo được. Hãy đặt alias cho biểu thức, hoặc viết
-rõ các cột ra, nếu bạn muốn lấy lại phép đọc theo vị trí.
-
-## Code sinh ra không đóng Connection
-
-Việc bỏ sót đó là đúng, và các bài test của bộ phát mã khẳng định như vậy. Chỉ
-`s.release(c)` mới biết connection có thuộc về một transaction đang chạy hay không. Xem
-[Transaction](transactions.md#why-generated-code-never-closes-the-connection).

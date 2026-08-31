@@ -1,93 +1,49 @@
-# Shape và value
+# Nguyên tắc Shape vs. Value
 
-Mọi quyết định thiết kế trong LarkBatis đều bắt nguồn từ một lát cắt. Một bên: mọi thứ
-suy ra được từ **shape** của mapper, và shape thì ngừng thay đổi khi file được lưu. Bên
-kia: những **giá trị** chảy qua một lời gọi lúc chạy.
+Mọi quyết định thiết kế trong LarkBatis đều dựa trên một nguyên tắc phân tách ranh giới duy nhất:
+- **Shape (Cấu trúc tĩnh)**: Tất cả những gì có thể suy ra từ mapper interface, file XML, POJO result class và kiểu dữ liệu tham số. Shape cố định ngay khi lưu file mã nguồn và được giải quyết toàn bộ lúc build.
+- **Value (Giá trị động)**: Dữ liệu thực tế truyền qua các tham số và dòng dữ liệu trả về từ database lúc runtime.
 
-Phía shape được resolve lúc build. Phía value là phần duy nhất còn lại.
+## Danh sách đóng các phần tử đánh giá lúc Runtime
 
-## Danh sách đóng
+Dưới đây là **danh sách đóng** toàn bộ những gì LarkBatis cho phép đánh giá lúc runtime. Bất kỳ thành phần nào ngoài danh sách này đều không được phép suy diễn động lúc chạy:
 
-Danh sách dưới đây là toàn bộ những gì được phép resolve lúc chạy, và nó đóng: một danh
-sách mở sẽ âm thầm mọc lại thành một trình thông dịch.
-
-| Resolve lúc chạy | Vì sao buộc phải thế |
+| Thành phần runtime | Lý do kỹ thuật bắt buộc |
 |---|---|
-| **Giá trị** tham số | Chúng là đầu vào |
-| **Kết quả boolean** của một test `<if>` / `<when>` | Nó phụ thuộc vào giá trị tham số |
-| **Kích thước** tập hợp trong `<foreach>` | Nó phụ thuộc vào giá trị tham số |
-| Các **dòng** trong một `ResultSet` | Database sinh ra chúng |
-| **Số cột thật**, khi bộ sinh code không phân tích được select list | `SELECT *` không có câu trả lời tĩnh |
-| **Nội dung** của một `SqlFragment` | Cửa thoát hiểm, và nó được rà soát |
+| **Giá trị** của tham số phương thức | Dữ liệu đầu vào từ phía gọi |
+| **Kết quả boolean** của biểu thức `<if test>` / `<when test>` | Phụ thuộc vào giá trị tham số cụ thể |
+| **Kích thước collection** trong `<foreach>` | Số lượng phần tử do caller truyền vào |
+| **Dữ liệu dòng** trong `ResultSet` | Trả về từ database |
+| **Thứ tự cột thực tế** khi không thể phân tích tĩnh select list | `SELECT *` hoặc chèn chuỗi `${}` trong select list |
+| **Nội dung chuỗi** của một `SqlFragment` | Phục vụ các câu SQL tùy biến có kiểm soát qua lối thoát thủ công |
 
-Mọi thứ khác đều xảy ra lúc build. Không phải "thường là", không phải "khi có thể": là
-mọi thứ.
+Mọi thứ khác đều được quyết định tĩnh từ pha build (`javac`).
 
-Còn một chỗ nữa được để dành — một `databaseId` chọn một lần lúc khởi động, để
-mỗi statement có thể có biến thể riêng cho từng loại database. **Chỗ đó chưa bao giờ được
-làm.** Hiện tại, thuộc tính `databaseId` trên một statement là lỗi biên dịch, và câu trả
-lời cho hai loại database là hai interface mapper. Dòng này được nói rõ ra thay vì lặng lẽ
-bỏ đi, vì một danh sách tự nhận là đóng thì phải trung thực về những gì nằm trong nó.
+## So sánh xử lý giữa LarkBatis và MyBatis
 
-## Điều đó đổi lại được gì, từng mục một
+| Quyết định kỹ thuật | LarkBatis (Compile-Time) | MyBatis (Runtime) |
+|---|---|---|
+| Phương thức `ps.setXxx` bind tham số | Biên dịch thẳng lệnh gọi JDBC theo kiểu tĩnh | Tra cứu `TypeHandlerRegistry` theo cặp `(javaType, jdbcType)` |
+| Chỉ số cột đọc vào setter | Xác định index tĩnh (`rs.getString(1)`) | Reflection `MetaObject.setValue()` cho từng cột trên mỗi dòng |
+| Nhận diện hàm setter | Phân tích getter/setter lúc build | `Reflector` dựng HashMap ánh xạ name → `Invoker` |
+| Xóa tiền tố trong `<where>` | Gập hằng số thành biểu thức điều kiện boolean | Quét và cắt chuỗi SQL sau khi ghép |
+| Inlined nội dung `<include>` | Thay thế trực tiếp trong pha compile | Tra cứu Map trong `Configuration` lúc khởi động |
+| Đánh giá biểu thức `test` | Mã Java boolean thuần | Trình thông dịch OGNL evaluate động qua `ObjectWrapper` |
+| Khởi tạo Mapper | Khởi tạo class `Mapper$$Impl` trực tiếp | JDK `Proxy.newProxyInstance` điều phối qua `MapperMethod` |
 
-| Quyết lúc build | MyBatis làm gì lúc chạy thay cho nó |
-|---|---|
-| `ps.setXxx` nào gắn mỗi tham số | Tra `TypeHandlerRegistry` theo kiểu Java và kiểu JDBC |
-| Chỉ số cột nào nuôi mỗi setter | `MetaObject.setValue(propertyName, value)` bằng reflection cho mỗi cột trên mỗi dòng |
-| Setter đó rốt cuộc là cái nào | `Reflector` dựng một map tên → `Invoker` cho mỗi lớp |
-| `<where>` có phát từ khoá của nó không | Một lượt quét mảnh SQL đã ráp lúc chạy để tìm `AND`/`OR` đứng đầu |
-| `<include refid>` bung ra thành cái gì | Tra từ một map trong `Configuration` |
-| Biểu thức Java cho mỗi `test` | OGNL phân tích rồi đánh giá dựa trên một `ObjectWrapper` |
-| Lớp nào hiện thực mapper | `Proxy.newProxyInstance` + điều phối qua `MapperMethod` |
+## Hệ quả kỹ thuật của nguyên tắc Shape vs. Value
 
-## Những hệ quả thật sự cảm nhận được
+1. **Phát hiện lỗi kiểu dữ liệu ngay lúc build**: Một lỗi gõ sai tên thuộc tính `#{customerName}` sẽ báo lỗi compile `javac` kèm tên method mapper, thay vì ném `ReflectionException` lúc runtime ở nhánh code hiếm khi chạy tới.
+2. **Loại bỏ hoàn toàn Reflection Metadata cho Native Image**: Do không sử dụng `Proxy`, `Class.forName`, hay `setAccessible()`, ứng dụng không cần cấu hình file `reflect-config.json` cho GraalVM Native Image.
+3. **Ngăn chặn triệt để suy diễn kiểu động lúc runtime**: Do không có runtime reflection engine, hệ thống không thể vô tình mang các cơ chế tra cứu động quay trở lại.
+4. **Lý giải rõ ràng cho các tính năng bị loại bỏ**: 
+   - Thẻ `<discriminator>` chọn class kết quả dựa trên giá trị cột (nghĩa là *Shape* của đối tượng phụ thuộc vào *Value* runtime), vi phạm trực tiếp nguyên tắc Shape vs. Value.
+   - Lazy loading đòi hỏi bọc dynamic proxy trên từng entity kết quả.
+   - Plugin/Interceptor can thiệp vào dynamic pipeline vốn không tồn tại trong LarkBatis.
 
-**Lỗi kiểu dời về lúc biên dịch.** Một `#{customerName}` không tồn tại trên kiểu tham số
-là lỗi build có nêu tên phương thức. Trong MyBatis nó là một `ReflectionException` lúc
-chạy, trên đúng nhánh code xui xẻo.
+## Các đánh đổi kỹ thuật (Trade-offs)
 
-**Không có metadata nào phải viết cho native image.** Không `Proxy`, không
-`Class.forName`, không `setAccessible`, nên chẳng có gì để khai báo. Tính chất này là *hệ
-quả* của lát cắt, không phải một tính năng được thêm vào.
+1. **Biến thể prepared statement của `<foreach>`**: Số lượng phần tử trong collection là giá trị runtime, do đó câu SQL buộc phải được dựng lúc chạy. LarkBatis hạn chế số biến thể statement bằng `@PadPow2` và theo dõi qua `LarkBatisSql.trackVariants()`.
+2. **Đọc theo tên cột đối với `SELECT *`**: Khi không thể phân tích cú pháp tĩnh danh sách cột, LarkBatis fallback về đọc index cột từ `ResultSetMetaData` một lần duy nhất ở dòng đầu tiên.
+3. **Kiểm soát an toàn cho `${}`**: Để hỗ trợ các nhu cầu sắp xếp động thực tế mà không mở cổng SQL Injection, LarkBatis yêu cầu kiểu dữ liệu của `${}` phải là `SqlFragment`, kiểu tập giá trị đóng, hoặc gắn `@OrderBy(allowed = {...})`.
 
-**Không thể vô tình đưa reflection quay lại.** Chẳng có runtime nào để mà làm chuyện đó.
-Một yêu cầu tính năng cần soi kiểu lúc chạy thì không có chỗ nào để đặt, và đó là lý do
-[danh sách tính năng bị bỏ](../features/mybatis-differences.md) lại như hiện tại.
-
-**Một số tính năng MyBatis trở thành bất khả thi chứ không phải chưa hiện thực.** Phân
-biệt đó quan trọng khi đọc danh sách bị bỏ. `<discriminator>` chọn lớp kết quả từ một giá
-trị cột, nghĩa là *shape* của kết quả phụ thuộc vào một giá trị lúc chạy, nên tự thân nó
-đã nằm sai phía của lát cắt. Lazy loading cần một proxy cho mỗi đối tượng kết quả. Plugin
-móc vào một pipeline runtime vốn không tồn tại. Không cái nào trong số đó là "chưa làm".
-
-## Chỗ nào lát cắt gây khó chịu
-
-Ba chỗ, và cần thành thật rằng đó là những đánh đổi chứ không phải phần thắng miễn phí.
-
-**1 · Số phần tử của `<foreach>`.** Số placeholder đúng là một giá trị lúc chạy, nên câu
-SQL của những statement đó được ráp lúc chạy. LarkBatis biên dịch vòng lặp thay vì thông
-dịch một cái cây, nhưng câu SQL vẫn thay đổi, và đó là lý do những statement ấy có theo
-dõi biến thể cũng như lý do `@PadPow2` tồn tại.
-
-**2 · `SELECT *`.** Số cột không biết được lúc build. Riêng statement đó lùi về đọc theo
-tên, với chỉ số lấy từ `ResultSetMetaData` ở dòng đầu tiên. Vẫn đúng, chậm hơn, và được báo
-lúc build để nó là một quyết định.
-
-**3 · `${}`.** Đôi khi một định danh thật sự đến từ cấu hình. Thay vì cấm nó, lát cắt
-được cưỡng chế ở mức kiểu: chỉ `SqlFragment`, các kiểu giá trị đóng, hoặc
-`@OrderBy(allowed = {...})` mới được nối vào, và văn bản tuỳ ý có đúng một điểm vào có
-tên.
-
-## Phép thử cho mọi tính năng mới
-
-Trước khi thêm bất cứ thứ gì, câu hỏi là: *thứ này có cần một giá trị lúc chạy không nằm
-trong danh sách không?*
-
-- **Không** → nó thuộc về lúc build, và câu hỏi thiết kế duy nhất còn lại là code sinh ra
-  nên trông thế nào.
-- **Có** → hoặc danh sách phải dài thêm, và điều đó đòi một lý do rất tốt, hoặc tính năng
-  bị bỏ kèm một lỗi biên dịch nêu tên thứ thay thế.
-
-Hãy đọc [danh sách tính năng bị bỏ](../features/mybatis-differences.md) với câu hỏi đó
-trong đầu và nó sẽ thôi trông có vẻ tuỳ tiện.

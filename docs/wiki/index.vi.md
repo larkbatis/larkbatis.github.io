@@ -1,58 +1,46 @@
-# Wiki
+# Tài liệu Kiến trúc & Thiết kế (Wiki)
 
-Các trang tham khảo nói LarkBatis *làm gì*. Những trang này nói *vì sao* nó được dựng
-như vậy, và cái giá của lựa chọn đó.
+Mục tài liệu này trình bày các nguyên tắc thiết kế, kiến trúc nội bộ, cơ chế biên dịch và các đánh đổi kỹ thuật của LarkBatis.
 
 <div class="grid cards" markdown>
 
--   **[Kiến trúc](architecture.md)**
+-   **[Kiến trúc tổng thể](architecture.md)**
 
-    Hai pha, cách chia module, và pipeline từ mã nguồn mapper tới Java sinh ra.
+    Mô hình 2 pha, cấu trúc phân chia module và pipeline biên dịch từ Java/XML sang mã nguồn JDBC.
 
--   **[Shape và value](shape-vs-value.md)**
+-   **[Shape vs. Value](shape-vs-value.md)**
 
-    Lát cắt duy nhất mà cả thiết kế đi theo: danh sách đóng những thứ được phép resolve
-    lúc chạy.
+    Nguyên tắc phân tách ranh giới cốt lõi: danh sách đóng các phần tử được đánh giá lúc runtime.
 
--   **[Code sinh ra](generated-code.md)**
+-   **[Mã nguồn sinh ra](generated-code.md)**
 
-    Mỗi file phát ra trông như thế nào, và vì sao dễ đọc lại là một tính năng chứ không
-    phải một thứ trang trí.
+    Cấu trúc chi tiết của các class `Mapper$$Impl` và `RowReader` sinh ra.
 
--   **[Vòng đời một lời gọi](call-flow.md)**
+-   **[Vòng đời một lời gọi mapper](call-flow.md)**
 
-    Một lời gọi mapper, từng bước một, đặt cạnh đường đi của MyBatis mà nó thay thế.
+    So sánh chi tiết từng bước thực thi giữa luồng runtime của LarkBatis và MyBatis truyền thống.
 
--   **[Lằn ranh thiết kế](design-rules.md)**
+-   **[Nguyên tắc thiết kế](design-rules.md)**
 
-    Chín quy tắc đúng trong mọi thay đổi, và cái gì vỡ nếu nới lỏng một quy tắc.
+    9 quy tắc bất biến chi phối toàn bộ kiến trúc và các ràng buộc kỹ thuật.
 
--   **[Hiệu năng](performance.md)**
+-   **[Hiệu năng & Benchmark](performance.md)**
 
-    Những con số đã đo, những khẳng định chưa đo, và chỗ mà lợi ích thật sự không áp
-    dụng.
+    Dữ liệu đo lường JMH thực tế, phân tích mức giảm latency/RAM và các giới hạn kỹ thuật.
 
 </div>
 
-## Tiền đề gói trong một đoạn
+## Tiền đề thiết kế
 
-Một lời gọi mapper của MyBatis được resolve lúc chạy: điều phối qua proxy, OGNL đánh giá
-từng `<if test>`, tra `TypeHandler` cho mỗi tham số, `setValue` bằng reflection cho mỗi
-cột trên mỗi dòng. Không phần nào trong đó phụ thuộc vào *giá trị* chảy qua lời gọi.
-Chúng phụ thuộc vào *shape* của mapper, mà shape thì ngừng thay đổi ngay khi file được
-lưu. Vậy thì resolve shape một lần, lúc build, rồi phát ra thẳng các lời gọi JDBC. Còn
-lại lúc chạy là chừng 1.500 dòng không phụ thuộc gì ngoài JDBC, và cũng không có metadata
-reachability nào của GraalVM phải viết, vì chẳng có reflection ở đâu cả.
+Trong MyBatis truyền thống, mỗi lời gọi mapper phải trải qua: điều phối qua Dynamic Proxy, OGNL evaluate từng biểu thức `<if test>`, tra cứu `TypeHandler` theo cặp type cho mỗi tham số, và gọi setter qua Java Reflection cho từng cột trên mỗi dòng `ResultSet`.
 
-## Cái gì ở đây không mới
+Toàn bộ các thông tin này phụ thuộc vào **Shape** (cấu trúc tĩnh của câu truy vấn và Java Bean), vốn không thay đổi sau khi lưu file mã nguồn. LarkBatis phân tích toàn bộ Shape trong pha build và sinh ra các lệnh gọi JDBC trực tiếp.
 
-LarkBatis không phải một ý tưởng mới. Micronaut
-Data biên dịch truy vấn thành code lúc build mà không dùng reflection; jOOQ sinh code từ
-schema; Spring Data có một nhánh AOT. **Điều không cái nào trong số đó làm là giữ lại
-mô hình mapper của MyBatis**: mapper XML, `#{}`, `<if>`, `<foreach>`, `<resultMap>`. Hàng
-nghìn codebase ở Hàn Quốc và Nhật Bản đang chạy trên đúng mô hình đó hôm nay.
+Runtime chỉ còn khoảng 1.500 dòng code JDBC thuần, loại bỏ hoàn toàn dynamic proxy, reflection và metadata config cho GraalVM Native Image.
 
-Giá trị nằm ở con đường chuyển đổi, không nằm ở ý tưởng. Cách đóng khung ấy quyết định
-khá nhiều thứ trong thiết kế: đó là lý do frontend XML tồn tại, lý do bộ khung kiểm thử
-vi sai đem SQL sinh ra so với đầu ra thông dịch của MyBatis, và lý do mọi tính năng bị bỏ
-đều đi kèm một lỗi biên dịch nêu tên thứ thay thế thay vì im lặng.
+## Định vị kỹ thuật
+
+LarkBatis không phát minh ra khái niệm compile-time SQL generation (Micronaut Data hay jOOQ đã áp dụng các hướng tiếp cận tương tự). Điểm khác biệt mấu chốt của LarkBatis là **giữ nguyên mô hình mapper quen thuộc của MyBatis**: file XML, cú pháp `#{}` / `${}`, các thẻ `<if>`, `<foreach>`, `<resultMap>`.
+
+Mục tiêu của LarkBatis là cung cấp lộ trình chuyển đổi trực tiếp cho các hệ thống MyBatis hiện có, mang lại hiệu năng cao và an toàn kiểu tĩnh mà không đòi hỏi viết lại toàn bộ mã nguồn truy vấn.
+

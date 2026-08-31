@@ -1,8 +1,8 @@
-# Result map và join
+# Result Maps & Join
 
-Thẻ `<resultMap>` định nghĩa ánh xạ tường minh giữa cột và property, đồng thời hỗ trợ nạp dữ liệu cho **một** cấp lồng nhau (`<association>` cho quan hệ 1-1, `<collection>` cho quan hệ 1-N) từ chính câu lệnh JOIN đó.
+Thẻ `<resultMap>` định nghĩa ánh xạ tường minh giữa cột database và thuộc tính Java Bean, đồng thời hỗ trợ nạp dữ liệu cho quan hệ lồng nhau **1 cấp** (`<association>` cho 1-1, `<collection>` cho 1-N) từ câu lệnh `JOIN`.
 
-```xml
+```xml title="TeamMapper.xml"
 <resultMap id="teamWithMembers" type="com.example.app.Team">
   <id     property="id"   column="t_id"/>
   <result property="name" column="t_name"/>
@@ -21,7 +21,7 @@ Thẻ `<resultMap>` định nghĩa ánh xạ tường minh giữa cột và prop
 </select>
 ```
 
-`<association>` hoạt động tương tự cho một đối tượng con đơn lẻ:
+Tương tự cho `<association>` (quan hệ 1-1):
 
 ```xml
 <resultMap id="teamWithCoach" type="com.example.app.Team">
@@ -34,9 +34,9 @@ Thẻ `<resultMap>` định nghĩa ánh xạ tường minh giữa cột và prop
 </resultMap>
 ```
 
-## Cơ chế biên dịch
+## Thuật toán gom nhóm Single-pass
 
-Bộ sinh code phát sinh một vòng lặp gom nhóm: khởi tạo đối tượng cha mới mỗi khi giá trị cột `<id>` thay đổi, và bỏ qua đối tượng con nếu khoá của bảng con nhận giá trị `NULL` (trường hợp `LEFT JOIN` không khớp dữ liệu con):
+Mã nguồn Java sinh ra sử dụng vòng lặp gom nhóm single-pass: tạo đối tượng cha mới khi giá trị khóa `<id>` của bảng cha thay đổi, và bỏ qua đối tượng con nếu khóa con là `NULL` (trường hợp `LEFT JOIN` không có dữ liệu con):
 
 ```java
 List<Team> out = new ArrayList<>();
@@ -64,53 +64,39 @@ while (rs.next()) {
 }
 ```
 
-1.  MyBatis xử lý việc này bằng cách tạo `CacheKey` cho từng dòng: dùng reflection duyệt các cột id, băm giá trị và tra cứu đối tượng cha trong `Map`. LarkBatis lưu khoá cha trong biến cục bộ có kiểu tĩnh và so sánh trực tiếp bằng `!=`, giúp loại bỏ hoàn toàn chi phí boxing và tra map.
-2.  Phép kiểm tra khoá con khác null giúp tránh khởi tạo đối tượng con rỗng khi `LEFT JOIN` không khớp.
+1.  LarkBatis theo dõi khóa cha qua biến nguyên thủy cục bộ (`long lastKey`) và so sánh bằng toán tử `!=`, loại bỏ hoàn toàn việc tạo đối tượng `CacheKey`, reflection và `HashMap` lookup của MyBatis.
+2.  Kiểm tra null trên khóa con để tránh khởi tạo đối tượng rỗng khi `LEFT JOIN` không tìm thấy bản ghi liên kết.
 
-## Quy tắc sắp xếp { #the-ordering-rule }
+## Quy tắc bắt buộc về thứ tự sắp xếp { #the-ordering-rule }
 
-!!! warning "ResultSet bắt buộc phải sắp xếp theo khoá của bảng cha"
+!!! warning "Câu SQL bắt buộc phải có `ORDER BY` theo khóa cha"
 
-    Đây là điều kiện kỹ thuật bắt buộc để vòng lặp gom nhóm hoạt động mà không cần lưu cache map. Nếu dữ liệu của cùng một cha bị ngắt quãng bởi dòng của một cha khác, vòng lặp sẽ tạo ra hai đối tượng cha riêng biệt thay vì gộp lại.
+    Để thuật toán gom nhóm single-pass hoạt động chính xác mà không cần lưu toàn bộ dữ liệu vào bộ nhớ tạm, ResultSet bắt buộc phải được sắp xếp theo khóa của bảng cha (`ORDER BY parent.id, child.id`).
 
-    ```sql
-    ORDER BY t.id, m.jersey   -- khoá của cha luôn đứng trước
-    ```
+    Nếu câu SQL thiếu mệnh đề `ORDER BY`, compiler sẽ phát cảnh báo lúc build.
 
-    Statement dùng result map lồng nhau mà **thiếu mệnh đề `ORDER BY`** sẽ nhận một cảnh báo lúc build.
+## Nguyên tắc ánh xạ trong `<resultMap>`
 
-## Không dùng auto-mapping trong `<resultMap>`
+Trong `<resultMap>`, LarkBatis **chỉ ánh xạ các cột được khai báo tường minh**. Không có cơ chế autoMapping ngầm định.
 
-Một result map chỉ ánh xạ **đúng những gì được khai báo tường minh**. Không có `autoMapping` và không có việc khớp cột ngầm định bên trong một `<resultMap>`.
+- Cột trong `<result>` không tồn tại trong `SELECT`: Phát cảnh báo build; thuộc tính Java giữ giá trị mặc định.
+- Cột trong `<id>` không tồn tại trong `SELECT`: Báo lỗi compile (vì cột id bắt buộc phải có để thuật toán gom nhóm hoạt động).
 
-- Thẻ `<result>` có cột không xuất hiện trong danh sách SELECT là **cảnh báo build**, và property đó sẽ giữ giá trị mặc định.
-- Thẻ `<id>` có cột không xuất hiện trong danh sách SELECT là **lỗi build**, vì đây là cột bắt buộc để điều khiển vòng lặp gom nhóm.
+Nếu bạn muốn tự động ánh xạ toàn bộ cột theo quy ước `snake_case` → `camelCase`, hãy sử dụng `resultType` thay vì `<resultMap>`.
 
-Nếu muốn tự động ánh xạ cột sang property theo quy ước `snake_case` → `camelCase`, hãy sử dụng `resultType`. `resultType` dành cho "tự động ánh xạ những gì khớp", còn `resultMap` dành cho "ánh xạ chính xác những gì khai báo".
+## Các tính năng không hỗ trợ { #narrowed-on-purpose }
 
-## Vị trí cột
-
-Khi danh sách SELECT phân tích cú pháp tĩnh được, vị trí cột là hằng số. Khi không phân tích được, statement đó sẽ dùng resolver sinh riêng để đọc `ResultSetMetaData` đúng một lần ở dòng đầu tiên. Xem [Đọc theo vị trí hay theo tên](mappers.md#positional-or-name-based-reads).
-
-## Các tính năng result map không hỗ trợ { #narrowed-on-purpose }
-
-Mỗi mục dưới đây là một **lỗi biên dịch nêu rõ giải pháp thay thế**:
-
-| Không hỗ trợ | Giải pháp thay thế |
+| Tính năng bị loại bỏ | Lý do & Giải pháp thay thế |
 |---|---|
-| Lồng quá một cấp, hoặc hai ánh xạ lồng trong cùng một map | Một câu lệnh join, một khoá gom nhóm |
-| `select=` trên `<association>` / `<collection>` (nested select) | Viết câu lệnh join tường minh (nested select chính là nguyên nhân gây lỗi N+1) |
-| `resultMap=` bên trong một ánh xạ lồng | Khai báo trực tiếp `<id>`/`<result>` của con để duy trì giới hạn một cấp rõ ràng |
-| `columnPrefix` | Đặt alias cho các cột con ngay trong danh sách SELECT |
-| `extends` | Khai báo tường minh tất cả các ánh xạ |
-| `<constructor>` | Result class được khởi tạo bằng constructor không tham số và các setter |
-| `<discriminator>` | Tách thành các statement riêng biệt với kiểu kết quả tương ứng |
-| `autoMapping` | Khai báo ánh xạ tường minh, hoặc dùng `resultType` |
-| `<id column="x"/>` mà không có `property` | Ánh xạ khoá vào một property rồi đánh dấu `<id>` cho nó |
-| Type alias trong `type` / `ofType` / `javaType` | Dùng tên class đầy đủ (FQN) |
+| Lồng sâu hơn 1 cấp, hoặc 2 collection trong 1 map | Tránh bùng nổ tích Descartes (Cartesian product). Hãy join 1 cấp hoặc ghép dữ liệu trong tầng Service |
+| `select="..."` trong association/collection | Loại bỏ hoàn toàn vấn đề N+1 query. Hãy viết câu lệnh `JOIN` tường minh |
+| `resultMap="..."` lồng nhau | Khai báo trực tiếp `<id>` / `<result>` của entity con |
+| `columnPrefix` | Đặt alias cho cột con trực tiếp trong câu `SELECT` |
+| `<resultMap extends="...">` | Khai báo tường minh tất cả ánh xạ cột |
+| `<discriminator>` | Tách thành các phương thức truy vấn riêng theo từng entity con |
+| `<constructor>` mapping | POJO sử dụng constructor không tham số và setter |
 
-Đồ thị đối tượng sâu hơn hai cấp nên được ghép trong Java từ hai statement độc lập: số lượt round-trip xuống database không đổi mà logic ghép nối lại hoàn toàn minh bạch.
+## `Stream<T>` và Result Map lồng nhau
 
-## `Stream` và result map lồng nhau
+Khai báo kiểu trả về `Stream<T>` trên một `<resultMap>` có association/collection lồng nhau sẽ **bị báo lỗi biên dịch**. Do một đối tượng cha trải dài trên nhiều dòng trong ResultSet, việc gom nhóm đòi hỏi phải nạp dữ liệu trước, làm mất đi tính năng streaming tiết kiệm RAM. Xem [Streaming](streaming.md).
 
-Khai báo kiểu trả về `Stream` trên một `<resultMap>` lồng nhau là **lỗi biên dịch**. Một đối tượng cha trải trên nhiều dòng nên chỉ hoàn chỉnh khi đối tượng cha tiếp theo bắt đầu. Việc trả về `Stream` từ con trỏ đọc từng dòng đòi hỏi phải đệm dữ liệu vào bộ nhớ, làm mất đi ý nghĩa tiết kiệm RAM của `Stream`. Xem [Stream kết quả](streaming.md).

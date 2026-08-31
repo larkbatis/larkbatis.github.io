@@ -1,19 +1,19 @@
-# Chuyển đổi từ MyBatis
+# Chuyển đổi từ MyBatis (Migration)
 
-Lộ trình chuyển đổi mượt mà chính là mục tiêu cốt lõi của dự án, và là điểm khác biệt lớn nhất giữa LarkBatis với Micronaut Data hay jOOQ. Vì vậy, bộ công cụ hỗ trợ chuyển đổi được đầu tư kỹ lưỡng tương đương với bản thân bộ sinh code.
+Lộ trình chuyển đổi dễ dàng từ MyBatis là mục tiêu thiết kế hàng đầu của LarkBatis. Công cụ `larkbatis-scan` hỗ trợ quét phân tích toàn bộ codebase MyBatis hiện tại, xác định chi phí chuyển đổi và chỉ ra chính xác các dòng code cần chỉnh sửa.
 
-## Bắt đầu bằng việc quét mã nguồn
+## Quét phân tích codebase cũ với `larkbatis-scan`
 
-Công cụ `larkbatis-scan` quét trực tiếp codebase MyBatis hiện có và in ra chi phí chuyển đổi ước tính kèm số dòng và tên tệp cụ thể. Công cụ không biên dịch mã nguồn và không giải quyết dependency, vì vậy bạn có thể chạy ngay trên một service vừa checkout về mà chưa từng build, giúp trả lời nhanh câu hỏi "dự án này có phù hợp để chuyển đổi hay không".
+Công cụ `larkbatis-scan` phân tích trực tiếp các file Java mapper và XML mà không cần giải quyết dependency hay biên dịch dự án. Bạn có thể chạy ngay trên một repository vừa `git clone`:
 
-Với dự án đã tích hợp Gradle plugin, task quét mã nguồn đã được đăng ký sẵn trên thư mục dự án:
+Nếu dự án đã cài đặt Gradle plugin:
 
 ```console
 $ ./gradlew larkbatisScan
 $ ./gradlew larkbatisScan --args="--summary --min=BLOCKER src/main"
 ```
 
-Bộ scanner chạy trong một tiến trình riêng biệt với cấu hình tách rời, không ảnh hưởng đến cấu hình của ứng dụng. Để quét một dự án hoàn toàn mới chưa từng cài đặt LarkBatis, hãy build bản phân phối CLI:
+Đối với dự án chưa cài đặt LarkBatis, bạn có thể build và chạy công cụ CLI độc lập:
 
 ```console
 $ ./gradlew :larkbatis-scanner:installDist
@@ -32,84 +32,61 @@ usage: larkbatis-scan [options] <path>...
   --fail-on-blocker    exit 1 when anything is blocked on a dropped feature
 ```
 
-Công cụ tuyệt đối không tự ý ghi đè mã nguồn của bạn. Bản báo cáo là kết quả bàn giao, và việc chỉnh sửa mã nguồn thuộc quyền quyết định của bạn.
+Công cụ chỉ đọc và xuất báo cáo, **tuyệt đối không tự ý chỉnh sửa file mã nguồn**.
 
-### Sử dụng cùng frontend với trình biên dịch
+### Đồng bộ hoàn toàn với bộ biên dịch
 
-Bộ scanner phụ thuộc vào `larkbatis-processor` và sử dụng **chính bộ kiểm tra ngữ pháp và bộ phân tích cú pháp XML** mà quá trình build thực tế sử dụng. Nhờ đó, báo cáo quét không bao giờ sai lệch so với những gì trình biên dịch chấp nhận. Vị trí dòng được xác định qua quét văn bản, vì không parser XML nào trả về toạ độ dòng chính xác cho một đoạn `${}` nằm giữa một khối text.
+`larkbatis-scan` sử dụng chung parser XML và bộ phân tích ngữ pháp biểu thức từ `larkbatis-processor`. Do đó, kết quả báo cáo của scanner phản ánh chính xác 100% những gì `javac` sẽ chấp nhận hoặc từ chối lúc biên dịch.
 
-### 4 mức độ nghiêm trọng
-
-Được sắp xếp theo mức độ cần con người đánh giá và đưa ra quyết định thiết kế:
+### 4 mức độ cảnh báo
 
 | Mức độ | Ý nghĩa |
 |---|---|
-| **BLOCKER** | Không có tính năng tương đương trong LarkBatis (tính năng đã bị loại bỏ). Cần thay đổi thiết kế của mapper |
-| **EDIT** | Cần viết lại theo cú pháp rõ ràng đã định hình. Công cụ có thể chỉ ra chính xác đoạn code cần sửa |
-| **REVIEW** | Được hỗ trợ, nhưng cần lập trình viên xem xét và lựa chọn phương án xử lý |
-| **INFO** | Biên dịch được ngay; thông tin hữu ích giúp nắm bắt trước khi triển khai |
+| **BLOCKER** | Sử dụng tính năng đã bị loại bỏ trong LarkBatis. Cần thay đổi thiết kế của mapper |
+| **EDIT** | Cần sửa lại cú pháp (scanner sẽ chỉ rõ dòng code và đoạn cần sửa) |
+| **REVIEW** | Tính năng được hỗ trợ nhưng cần lập trình viên kiểm tra lại hành vi (ví dụ câu truy vấn fallback về đọc theo tên cột) |
+| **INFO** | Biên dịch thành công; thông tin bổ sung để theo dõi số lượng biến thể prepared statement |
 
-### Đơn vị đánh giá là từng statement
+## Danh mục các hạng mục được scanner phân tích
 
-Không phải theo tệp, và không phải theo từng phát hiện đơn lẻ. Việc một thẻ `<bind>` xuất hiện trong mapper có 90 statement không thể phủ nhận 89 statement còn lại, và con số "1.113 lỗi" là thứ không ai có thể xử lý ngay được. Một kết luận định lượng như *"N trên M statement biên dịch được ngay mà không cần sửa"* là cơ sở thuyết phục nhất để đưa ra đề xuất chuyển đổi.
-
-Bản báo cáo cũng hiển thị **mức độ tập trung** của các vấn đề: số lượng tệp chứa lỗi và top 5 tệp chiếm nhiều lỗi nhất. Trong kho mapper mẫu của chính MyBatis, có tới 1.003 trên tổng số 1.006 lỗi ngữ pháp chỉ nằm trong đúng 3 tệp, và 1.000 lỗi trong số đó nằm ở một tệp fixture sinh tự động duy nhất. Nếu không có cột thống kê mức độ tập trung, bạn sẽ dễ lầm tưởng toàn bộ dự án gặp vấn đề nghiêm trọng.
-
-## Các hạng mục scanner phát hiện
-
-| Hạng mục phát hiện | Mức độ | Cách khắc phục |
+| Hạng mục phát hiện | Mức độ | Hướng xử lý |
 |---|---|---|
-| Chèn trực tiếp `${}` | EDIT | Khai báo tham số kiểu `SqlFragment`, kiểu tập giá trị đóng, hoặc `@OrderBy(allowed={...})`. Tại nơi gọi hàm, chuỗi `String` được bọc thành `SqlFragment.identifier(x)` |
-| `${}` nằm trong danh sách SELECT | REVIEW | Statement này sẽ fallback về đọc theo tên cột. Cần xem xét có thể cố định danh sách cột hay không |
-| Biểu thức `test=` ngoài ngữ pháp hỗ trợ | EDIT | Viết lại biểu thức hoặc đưa logic tính toán vào Java |
-| Kiểm tra truthiness theo kiểu OGNL (`test="count"`) | EDIT | Đổi thành `count != 0`, `user != null`, `list.isEmpty()` |
-| Tham số kiểu `Map` hoặc `Object` | BLOCKER | Dùng parameter object hoặc các tham số `@Param` cụ thể |
-| Họ annotation `@SelectProvider` | BLOCKER | Đưa SQL vào mapper, hoặc dùng lối thoát thủ công |
-| Plugin / interceptor | BLOCKER | Phân trang, audit và xoá mềm chuyển thành SQL tường minh, type handler hoặc decorator. [Công thức cho từng loại plugin](mybatis-differences.md#what-replaces-a-plugin) |
-| Lazy loading | BLOCKER | Fetch sớm bằng phép join, hoặc tách thành hai statement |
-| Lồng `select=` trong result map | BLOCKER | Viết lại bằng câu lệnh join |
-| Result map lồng nhau sâu hơn một cấp | BLOCKER | Ghép dữ liệu trong Java từ hai statement riêng biệt |
-| Thẻ result map có `extends` | BLOCKER | Khai báo tường minh tất cả ánh xạ cần thiết |
-| Thẻ `<discriminator>` | BLOCKER | Tách thành các statement riêng với kiểu kết quả tương ứng |
-| Ánh xạ constructor (`<constructor>`) | BLOCKER | Dùng constructor không tham số và các setter |
-| Thẻ `<bind>` | BLOCKER | Tính toán trong Java và truyền vào qua tham số |
-| Thẻ `<parameterMap>` | BLOCKER | Dùng `#{}` với tham số định kiểu rõ ràng |
-| Cache cấp 2 | BLOCKER | Đặt cache ở tầng service phía trên mapper |
-| `RowBounds` | BLOCKER | Dùng `LIMIT` / `OFFSET` dưới dạng tham số SQL thực sự |
-| `statementType` khác `PREPARED` | BLOCKER | Gọi stored-procedure thông qua lối thoát thủ công |
-| `objectFactory` / `objectWrapperFactory` | BLOCKER | Can thiệp vào tầng reflection nay đã bị loại bỏ |
-| Thẻ `<include>` có `refid` động | BLOCKER | `refid` bắt buộc phải là hằng số cố định |
-| Thẻ `<selectKey>` | REVIEW | Dùng `useGeneratedKeys` với `keyProperty`/`keyColumn` tường minh, hoặc tách thành statement riêng |
-| TypeHandler tuỳ biến | REVIEW | Thuộc tính `typeHandler=` trong XML được đọc nguyên vẹn; viết lại class handler theo interface `LarkBatisTypeHandler` |
-| Thẻ `<script>` trong annotation | REVIEW | Vẫn được đọc, nhưng áp dụng cùng quy tắc ngữ pháp; cần kiểm tra các biểu thức bên trong |
-| Sử dụng trực tiếp `SqlSession` | REVIEW | Gọi qua mapper interface, hoặc dùng `session.query(SqlFragment, binder, GeneratedRow.READER)` |
-| Cấu hình `mapUnderscoreToCamelCase` đang tắt | REVIEW | LarkBatis áp dụng lúc build và mặc định bật. Giữ nguyên hành vi cũ với `-Alarkbatis.mapUnderscoreToCamelCase=false`, hoặc gắn `@Column` / `<resultMap>` cho các cột bị ảnh hưởng |
-| Nhiều môi trường / nhiều `DataSource` | REVIEW | Mỗi lần build hiện tại hỗ trợ một `DataSource` chính |
-| Thẻ `<foreach>` | INFO | Được hỗ trợ; thống kê để theo dõi số lượng biến thể SQL có thể sinh ra |
-| Statement động | INFO | Được biên dịch thành các biến điều kiện cục bộ (`condition locals`) và `StringBuilder` |
+| Sử dụng chuỗi `${}` tùy tiện | EDIT | Đổi kiểu tham số sang `SqlFragment`, kiểu tập đóng (enum/primitive), hoặc `@OrderBy(allowed={...})` |
+| `${}` nằm trong mệnh đề SELECT | REVIEW | Câu truy vấn sẽ fallback về đọc theo tên cột qua `ResultSetMetaData` |
+| Biểu thức `test` ngoài ngữ pháp hỗ trợ | EDIT | Viết lại biểu thức hoặc tính toán logic trong Java trước khi gọi mapper |
+| Kiểm tra truthiness kiểu OGNL (`test="count"`) | EDIT | Viết rõ điều kiện: `count != 0`, `user != null`, `!list.isEmpty()` |
+| Tham số kiểu `Map` hoặc `Object` | BLOCKER | Tạo parameter class cụ thể hoặc khai báo `@Param` cho từng tham số |
+| Provider annotations (`@SelectProvider`, v.v.) | BLOCKER | Chuyển SQL vào mapper hoặc sử dụng lối thoát thủ công `session.query(...)` |
+| Plugins / Interceptors | BLOCKER | Chuyển sang SQL tường minh, TypeHandler hoặc Spring AOP. Xem [Thay thế Plugin](mybatis-differences.md#what-replaces-a-plugin) |
+| Lazy loading | BLOCKER | Dùng phép `JOIN` để lấy dữ liệu ngay, hoặc tách thành hai câu truy vấn độc lập |
+| Lồng `select="..."` trong result map | BLOCKER | Viết lại câu truy vấn bằng mệnh đề `JOIN` tường minh |
+| Result map lồng sâu hơn 1 cấp | BLOCKER | Thực hiện join 1 cấp hoặc ghép dữ liệu trong tầng Service |
+| `<resultMap extends="...">` | BLOCKER | Khai báo tường minh tất cả ánh xạ cột cần thiết |
+| Thẻ `<discriminator>` | BLOCKER | Tách thành các phương thức truy vấn riêng biệt theo từng entity con |
+| Constructor mapping (`<constructor>`) | BLOCKER | Sử dụng constructor mặc định và các hàm setter |
+| Thẻ `<bind>` | BLOCKER | Tính toán biến trước trong mã Java |
+| Thẻ `<parameterMap>` | BLOCKER | Dùng `#{}` với tham số có kiểu rõ ràng |
+| Level-2 Cache (`<cache>`) | BLOCKER | Cài đặt cache ở tầng Service (ví dụ Spring `@Cacheable`) |
+| `RowBounds` | BLOCKER | Phân trang bằng `LIMIT` và `OFFSET` trực tiếp trong câu SQL |
+| `statementType` dạng `CALLABLE` | BLOCKER | Gọi stored procedure qua lối thoát thủ công `session.update(...)` |
+| Thẻ `<include>` có `refid` động | BLOCKER | Đổi `refid` thành hằng số cố định |
+| Thẻ `<selectKey>` | REVIEW | Dùng `@Options(useGeneratedKeys = true, keyProperty = "...", keyColumn = "...")` |
+| Custom TypeHandler | REVIEW | Triển khai lại class theo interface `LarkBatisTypeHandler` |
+| Cấu hình `mapUnderscoreToCamelCase` đang tắt | REVIEW | LarkBatis mặc định luôn bật. Có thể tắt bằng `-Alarkbatis.mapUnderscoreToCamelCase=false` |
+| Thẻ `<foreach>` | INFO | Hỗ trợ đầy đủ; xem xét thêm `@PadPow2` nếu danh sách phần tử biến động nhiều |
 
-## Thứ tự thực hiện khuyến nghị
+## Quy trình Migration khuyến nghị
 
-1. **Quét mã nguồn và đọc kỹ cột mức độ tập trung trước.** Nếu các lỗi nghiêm trọng (blocker) chỉ nằm trong một vài tệp, tính khả thi của việc chuyển đổi sẽ rất cao.
-2. **Bắt đầu thử nghiệm với một mapper đơn lẻ, chưa vội chuyển đổi cả module.** Mapper là đơn vị biên dịch độc lập.
-3. **Cấu hình thứ tự nạp annotation processor nếu dự án dùng Lombok:** khai báo `larkbatis-processor` chạy *sau* Lombok. Đây là lỗi phổ biến nhất trong ngày đầu tiên, thường xuất hiện dưới dạng "class kết quả không có getter/setter".
-4. **Sửa các điểm gọi chứa `${}` tiếp theo.** Đây là các mục mức EDIT mang tính cơ học, và việc rà soát này cũng là dịp kiểm tra lại toàn bộ các điểm chèn SQL thô trong codebase.
-5. **Chỉnh sửa các biểu thức `test=`.** Chủ yếu là lỗi truthiness: `count` → `count != 0`. Hãy đối chiếu cả [sự khác biệt khi so sánh null](mybatis-differences.md#behavioural-divergences-to-check-when-migrating).
-6. **Thảo luận thiết kế cho các mục BLOCKER.** Mỗi mục đều có giải pháp thay thế, nhưng đòi hỏi quyết định kỹ thuật cụ thể chứ không đơn thuần là sửa cú pháp.
-7. **Chạy toàn bộ test suite hiện có của dự án.** Đây là tiêu chuẩn nghiệm thu thực tế và quan trọng nhất.
+1. **Quét mã nguồn với `larkbatis-scan`**: Phân tích tổng thể và xem các lỗi BLOCKER tập trung ở những mapper nào.
+2. **Chuyển đổi từng mapper độc lập**: LarkBatis mapper có thể hoạt động song song với các mapper MyBatis cũ trong cùng dự án.
+3. **Cấu hình thứ tự Lombok**: Nếu dự án dùng Lombok, bắt buộc khai báo `larkbatis-processor` chạy **sau** Lombok trong `annotationProcessor`.
+4. **Sửa các vị trí dùng `${}` và biểu thức `test`**: Đổi sang `SqlFragment` và viết rõ điều kiện so sánh null/số học.
+5. **Xử lý các mục BLOCKER**: Đổi plugin sang Spring AOP/DataSource proxy, đổi lazy loading sang JOIN.
+6. **Chạy toàn bộ unit/integration test suite của dự án**: Đảm bảo tất cả test cases cũ đều pass 100%.
 
-## Ghi nhận thực tế
+## Thay đổi trong quy trình làm việc
 
-Một đợt chuyển đổi thử nghiệm trên bản sao của một service nội bộ thực tế đã hoàn thành và vượt qua 100% test suite. Quá trình này đã phát hiện hai lỗi mà unit test thông thường không bắt được: vấn đề **thứ tự nạp Lombok processor** và việc **đổi tên package auto-configuration trong Spring Boot 4** (khiến Spring context không khởi động được). Cả hai lỗi này hiện đã được khắc phục triệt để và bổ sung test tự động.
+- **Sửa SQL cần biên dịch lại**: Thay vì sửa XML rồi khởi động lại ứng dụng, bạn cần build project để `javac` sinh lại mã nguồn Java.
+- **Thời gian build tăng nhẹ**: Chi phí phân tích và sinh code diễn ra một lần lúc build trên máy developer hoặc CI, giúp giải phóng hoàn toàn gánh nặng cho production.
+- **Kỷ luật an toàn cho `${}`**: Mọi điểm chèn chuỗi động đều phải được kiểm soát qua kiểu dữ liệu tĩnh để loại bỏ nguy cơ SQL Injection.
 
-Hạng mục duy nhất còn lại là kiểm chứng service đã chuyển đổi vận hành liên tục trong môi trường thực tế trong một tuần.
-
-## Những thay đổi trong quy trình làm việc
-
-Có ba điểm thay đổi mà bạn và đội ngũ phát triển nên thống nhất trước khi bắt đầu:
-
-- **Sửa SQL đồng nghĩa với việc phải build lại.** Đối với đội ngũ quen sửa mapper XML rồi restart ngay, đây là một thay đổi thực sự. Đổi lại, javac sẽ bắt toàn bộ lỗi sai kiểu dữ liệu vốn trước đây chỉ lộ ra lúc runtime.
-- **Thời gian build tăng nhẹ.** Chi phí build tăng là có thật, được các kỹ sư trả một lần mỗi ngày lúc phát triển thay vì để hệ thống production phải trả giá trên từng truy vấn. Đây là việc chuyển dịch chi phí sang trái (shift-left), không phải triệt tiêu hoàn toàn.
-- **Cần cập nhật các vị trí gọi `${}`.** Khối lượng sửa đổi tỷ lệ thuận với số lượng điểm gọi `${}`, không phải số lượng mapper. Bộ scanner sẽ hỗ trợ định hình chính xác đoạn code cần sửa.
-
-Để xem đánh giá khách quan về những lợi ích nhận lại, hãy tham khảo [Hiệu năng](../wiki/performance.md), đặc biệt là phần phân tích truy vấn đơn dòng.
