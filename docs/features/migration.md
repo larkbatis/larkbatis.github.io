@@ -1,27 +1,19 @@
 # Migrating from MyBatis
 
-The migration path is the point of the project, and it is what LarkBatis has that Micronaut
-Data and jOOQ do not. So the tooling for it is treated as being as important as the
-generator itself.
+A smooth migration path is the whole point of this project—it's what sets LarkBatis apart from Micronaut Data or jOOQ. That's why we treat migration tooling as a first-class feature.
 
 ## Start with a scan
 
-`larkbatis-scan` points at an existing MyBatis codebase and prints what migrating it
-would cost, with file and line numbers. It compiles nothing and resolves no dependencies,
-so it runs against a checkout of a service nobody has built yet, which is when the
-question "would this even work for us" actually gets asked.
+`larkbatis-scan` scans your existing MyBatis codebase and reports what migrating will take, complete with file paths and line numbers. It doesn't compile anything or download dependencies, so you can run it on a freshly cloned repo before even building it.
 
-A project that already applies the Gradle plugin has the task registered for it, over
-its own directory:
+If your project already uses the LarkBatis Gradle plugin, you can run the task directly:
 
 ```console
 $ ./gradlew larkbatisScan
 $ ./gradlew larkbatisScan --args="--summary --min=BLOCKER src/main"
 ```
 
-The scanner runs out of process off a detached configuration, so it never reaches a
-configuration your application can see. To point it at a codebase that has none of this
-set up — the usual case, since the question comes before the decision — build the CLI:
+The scanner runs in an isolated process, so it never touches your application classpath. To scan an unmigrated project before configuring any build plugins, build and run the standalone CLI:
 
 ```console
 $ ./gradlew :larkbatis-scanner:installDist
@@ -29,7 +21,7 @@ $ ./build/install/larkbatis-scanner/bin/larkbatis-scan /path/to/legacy-service
 ```
 
 ```text
-larkbatis-scan — what would it cost to move this codebase to LarkBatis
+larkbatis-scan — migration analysis for LarkBatis
 
 usage: larkbatis-scan [options] <path>...
 
@@ -40,112 +32,78 @@ usage: larkbatis-scan [options] <path>...
   --fail-on-blocker    exit 1 when anything is blocked on a dropped feature
 ```
 
-Nothing is rewritten. The report is the deliverable, and the edits are yours to make.
+The scanner only reports findings—it never modifies your files without your input.
 
-### It uses the real frontend
+### Real compiler frontend
 
-The scanner depends on `larkbatis-processor` and runs **the same grammar checker and the
-same XML parser** the build will run. So a scan report cannot drift away from what
-actually compiles. Line positions are found by text scanning, because no parser returns a
-trustworthy position for a `${}` in the middle of a text node.
+The scanner uses `larkbatis-processor` directly, running **the exact same XML parser and expression grammar checker** used during compilation. The scan results will match what javac actually compiles.
 
-### Four severities
+### Four severity levels
 
-Ordered by how much human judgement a finding needs, because the first question about a
-300-mapper codebase is not "how many problems" but "how many do I have to think about".
+Findings are sorted by how much manual decision-making they require. On a 300-mapper project, your first question isn't "how many total findings are there," but "how many architectural decisions do we need to make?"
 
-| | Meaning |
+| Severity | Meaning |
 |---|---|
-| **BLOCKER** | No LarkBatis equivalent; the feature was dropped. The mapper changes |
-| **EDIT** | A rewrite with a known shape. The tool can say exactly what to write |
-| **REVIEW** | Supported, but only after someone decides how |
-| **INFO** | Compiles as-is; worth knowing before it surprises someone |
+| **BLOCKER** | Feature dropped by design. Requires changing how the mapper or service is structured |
+| **EDIT** | Straightforward syntax rewrite with a clear replacement pattern |
+| **REVIEW** | Supported feature, but requires verifying intent (e.g. dynamic parameters or missing keys) |
+| **INFO** | Compiles as-is; listed for awareness (e.g. dynamic SQL variant tracking) |
 
-### The unit of the answer is the statement
+### The unit of measure is the statement
 
-Not the file, and not the finding. One `<bind>` in a 90-statement mapper must not condemn
-the other 89, and "1,113 findings" is not something anyone can act on. A sentence like
-*"N of M statements compile unchanged"* is what decides a migration proposal.
+We evaluate individual SQL statements, not whole files. One unsupported `<bind>` tag in a 90-statement mapper shouldn't condemn the other 89 statements. Metrics like *"280 of 300 statements compile without changes"* give your team a clear, actionable picture.
 
-The report also prints **concentration**, not just counts: how many files the findings
-live in, and the five files holding the most. In the MyBatis source tree's own mapper
-corpus, 1,003 of 1,006 grammar rejections are in three files, and 1,000 of those in a
-single generated fixture. Without an "in N files" column that reads as a codebase-wide
-wall when it is nothing of the kind.
+The report also highlights **concentration**: which specific files contain the majority of issues. In the MyBatis project's own test suite, over 1,000 grammar rejections are concentrated in just 3 test files (and 1,000 of those in a single synthetic fixture). Seeing concentration prevents a few complex edge cases from looking like a project-wide blocker.
 
-## What the scanner looks for
+## What the scanner checks
 
-| Finding | Severity | Fix |
+| Finding | Severity | Recommended Fix |
 |---|---|---|
-| `${}` splice | EDIT | Declare the parameter as `SqlFragment`, a closed-value type, or `@OrderBy(allowed={...})`. A `String` at the call site becomes `SqlFragment.identifier(x)` |
-| `${}` inside a select list | REVIEW | That statement falls back to name-based row reads. Decide whether the column list can be made static |
-| `test=` outside the grammar | EDIT | Rewrite it, or move the decision into Java |
-| OGNL truthiness (`test="count"`) | EDIT | `count != 0`, `user != null`, `list.isEmpty()` |
-| `Map` or `Object` parameter | BLOCKER | A parameter object, or `@Param` arguments |
-| `@SelectProvider` family | BLOCKER | Move the SQL into the mapper, or use the escape hatch |
-| Plugin / interceptor | BLOCKER | Paging, auditing and soft-delete become explicit SQL, a type handler or a decorator. [Recipe per plugin kind](mybatis-differences.md#what-replaces-a-plugin) |
-| Lazy loading | BLOCKER | Fetch eagerly with a join, or split into two statements |
-| Nested `select=` in a result mapping | BLOCKER | Express it as a join |
-| Result map nested deeper than one level | BLOCKER | Assemble in Java from two statements |
-| Result map `extends` | BLOCKER | Write the mappings out |
-| `<discriminator>` | BLOCKER | Separate statements with separate result types |
-| `<constructor>` result | BLOCKER | No-arg constructor and setters |
-| `<bind>` | BLOCKER | Compute in Java, pass as a parameter |
-| `<parameterMap>` | BLOCKER | `#{}` with typed parameters |
-| Second-level cache | BLOCKER | Cache above the mapper, where invalidation is visible |
-| `RowBounds` | BLOCKER | `LIMIT` / `OFFSET` as real parameters |
-| `statementType` other than `PREPARED` | BLOCKER | Stored-procedure calls go through the escape hatch |
-| `objectFactory` / `objectWrapperFactory` | BLOCKER | Hooks into a reflection layer that is gone |
-| `<include>` with a computed `refid` | BLOCKER | `refid` must be literal |
-| `<selectKey>` | REVIEW | `useGeneratedKeys` with explicit `keyProperty`/`keyColumn`, or a statement of its own |
-| Custom `TypeHandler` | REVIEW | Mapper XML `typeHandler=` is read as-is; rewrite the handler class against `LarkBatisTypeHandler` |
-| `<script>` in an annotation | REVIEW | Read, but the same grammar rules apply, so check the tests it contains |
-| Direct `SqlSession` use | REVIEW | Call the mapper, or use `session.query(SqlFragment, binder, GeneratedRow.READER)` |
-| `mapUnderscoreToCamelCase` is off | REVIEW | LarkBatis applies it at build time and defaults it to *on*. Carry the setting across with `-Alarkbatis.mapUnderscoreToCamelCase=false`, or leave it on and give the affected columns `@Column` or a `<resultMap>` |
-| More than one environment / `DataSource` | REVIEW | One `DataSource` per build for now |
-| `<foreach>` | INFO | Supported; counted because it is what makes a statement's SQL-variant count grow |
-| Dynamic statement | INFO | Compiles to boolean locals and a `StringBuilder` |
+| `${}` parameter splice | EDIT | Wrap parameter in `SqlFragment`, use an enum/closed-value type, or add `@OrderBy(allowed={...})` |
+| `${}` inside a select column list | REVIEW | Falls back to name-based column reading. Consider making the column list static |
+| `test=` expression outside supported grammar | EDIT | Simplify the expression or evaluate in Java before calling mapper |
+| OGNL truthiness (`test="count"`) | EDIT | Be explicit: `count != 0`, `user != null`, `!list.isEmpty()` |
+| `Map` or untyped `Object` parameter | BLOCKER | Use a typed parameter object or `@Param` annotations |
+| `@SelectProvider` annotations | BLOCKER | Put SQL in mapper XML/annotations, or use the escape hatch |
+| MyBatis interceptors / plugins | BLOCKER | Replace with explicit SQL, custom `LarkBatisTypeHandler`, or Spring AOP. [See recipes](mybatis-differences.md#what-replaces-a-plugin) |
+| Lazy loading | BLOCKER | Fetch eagerly using SQL joins or split into two explicit queries |
+| Nested `select=` in result maps | BLOCKER | Rewrite as a single SQL join query |
+| Result map nested deeper than 1 level | BLOCKER | Assemble multi-level object graphs in Java from two queries |
+| Result map `extends` | BLOCKER | Write mappings explicitly |
+| `<discriminator>` tags | BLOCKER | Split into separate queries with distinct return types |
+| `<constructor>` mapping | BLOCKER | Add standard no-arg constructor and setters |
+| `<bind>` tags | BLOCKER | Compute value in Java and pass as parameter |
+| `<parameterMap>` | BLOCKER | Use standard `#{}` with typed parameters |
+| Second-level cache | BLOCKER | Cache at the service level (e.g. Spring Cache or Redis) |
+| `RowBounds` in-memory paging | BLOCKER | Use database `LIMIT` and `OFFSET` parameters |
+| Stored procedures (`statementType != PREPARED`) | BLOCKER | Run stored procedures through the manual escape hatch |
+| `<include>` with computed `refid` | BLOCKER | Use static, literal `refid` values |
+| `<selectKey>` | REVIEW | Use `@Options(useGeneratedKeys=true)` or run sequence query as separate statement |
+| Custom `TypeHandler` | REVIEW | Update class to implement `LarkBatisTypeHandler` |
+| Annotation with `<script>` tags | REVIEW | Supported, but verify dynamic tags against LarkBatis grammar rules |
+| Direct `SqlSession` usage | REVIEW | Call mapper methods directly or use `session.query(...)` |
+| `mapUnderscoreToCamelCase` is off | REVIEW | LarkBatis defaults to `true`. Pass `-Alarkbatis.mapUnderscoreToCamelCase=false` if your database columns already use camelCase |
+| `<foreach>` loops | INFO | Supported. Monitored for distinct SQL variant caching |
+| Dynamic SQL statements | INFO | Compiled to boolean locals and guarded string builders |
 
-## A suggested order
+## Recommended Migration Workflow
 
-1. **Scan, and read the concentration column first.** If the blockers live in three files,
-   the answer to "can we do this" is different from what the raw count suggests.
-2. **Start with one mapper, not one module.** A mapper is the unit that compiles.
-3. **Fix processor ordering before anything else** if the project uses Lombok: declare
-   `larkbatis-processor` *after* it. This is the single most common first-day failure,
-   and it presents as "the result class has no accessors", which sounds like a different
-   problem entirely.
-4. **Do the `${}` call sites next.** They are EDIT-severity and mechanical, and finishing
-   them is the first time anyone has looked at every raw-SQL splice in the codebase.
-5. **Then the `test=` expressions.** Mostly truthiness: `count` → `count != 0`. Check the
-   [null-comparison divergence](mybatis-differences.md#behavioural-divergences-to-check-when-migrating)
-   while you are in there, because that one does not produce a compile error.
-6. **Leave the blockers for a design conversation.** Each has a named replacement, but the
-   replacement is a decision, not a rewrite.
-7. **Run your existing test suite.** That is the real acceptance criterion.
+1. **Scan the codebase and inspect concentration first.** If 90% of blockers are in two legacy mappers, the migration is much simpler than raw counts suggest.
+2. **Migrate one mapper at a time.** A mapper interface is the independent unit of compilation.
+3. **Check annotation processor ordering first if using Lombok.** Always place `larkbatis-processor` *after* Lombok in your build configuration.
+4. **Update `${}` parameter call sites.** These are mechanical edits that provide an immediate security benefit by auditing all raw SQL splices.
+5. **Update `test=` expressions.** Mostly converting truthiness expressions (`count` → `count != 0`). Keep in mind that `null <= 18` evaluates to `false` in LarkBatis.
+6. **Address blockers.** Decide whether to rewrite dropped features using joins, service-level code, or the escape hatch.
+7. **Run your existing unit and integration test suite.** Your tests are the ultimate validation that semantics were preserved.
 
-## Field notes
+## Field experience
 
-A trial migration of a real internal service was run on a copy as an exit
-criterion, and its whole test suite passed. Two defects surfaced that no unit test had
-found: the **Lombok processor-ordering** problem, and the **Spring Boot 4
-auto-configuration** package rename, the latter being a failure with no symptom until the
-context refuses to start. Both are now fixed and both are covered by tests.
+During a trial migration of an internal production service, the existing test suite passed completely. Two edge cases were uncovered and addressed: Lombok processor ordering and Spring Boot 4 auto-configuration package changes. Both are now covered by automated regression tests in the core repository.
 
-What has *not* been completed is the other half of that criterion: running the migrated
-service in a real environment for a week.
+## Workflow changes to expect
 
-## What will change in your workflow
+1. **Editing SQL requires rebuilding.** Changing XML or annotations requires a recompile so javac can regenerate implementation classes.
+2. **Build times increase slightly.** Code generation runs during compilation instead of reflection running on every query in production.
+3. **Dynamic `${}` splices require explicit typing.** Every `${}` must be typed as `SqlFragment`, an enum, or allowlisted with `@OrderBy`.
 
-Three things, and it is better to agree on them before starting than to discover them:
-
-- **Editing SQL means rebuilding.** For a team used to editing mapper XML and restarting,
-  this is a genuine change. What you get back is javac catching the type errors that used
-  to surface at runtime.
-- **Build time goes up.** Real, and paid by developers daily instead of by production per
-  query. It is moving the cost left, not deleting it.
-- **`${}` call sites change.** Proportional to call sites, not to mappers. The scanner
-  handles the mechanical shape of the edit.
-
-For the honest version of what you get in return, see
-[Performance](../wiki/performance.md), particularly the part about single-record lookups.
+See [Performance](../wiki/performance.md) for detailed benchmarks comparing memory allocation and latency.

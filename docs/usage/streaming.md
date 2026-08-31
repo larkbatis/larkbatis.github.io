@@ -1,8 +1,6 @@
 # Streaming Results
 
-A mapper method may return `Stream<T>` instead of `List<T>`. The rows then arrive one at
-a time off an open cursor, which is the point: a result set too big to hold in memory
-never becomes a list.
+A mapper method can return `Stream<T>` instead of `List<T>`. Rows are read one by one from an open database cursor, allowing you to process massive result sets without blowing up the heap.
 
 ```java
 @Select("SELECT id, name, email, created_at FROM users ORDER BY id")
@@ -15,20 +13,16 @@ try (Stream<User> rows = mapper.streamAll()) {
 }
 ```
 
-## The caller owns the resources
+## The caller owns resource cleanup
 
-!!! danger "`try`-with-resources is not optional here"
+!!! danger "Always use `try`-with-resources with `Stream<T>`"
 
-    This is the one generated shape whose JDBC resources outlive the method that opened
-    them, so the generated body has **no `finally`**. Closing the stream is what closes
-    the `ResultSet` and the `PreparedStatement` and releases the `Connection`.
+    Streaming queries are the only methods where underlying JDBC resources outlive the mapper method call. Closing the `Stream` closes the `ResultSet` and `PreparedStatement`, and releases the `Connection`.
 
-    - **Outside a transaction**, a stream that is never closed holds a pooled
-      `Connection` for as long as it is reachable. That is a pool leak.
-    - **Inside a transaction**, the transaction still owns the connection, and the stream
-      holds the statement and cursor until it ends.
+    - **Outside transactions**: Leaving a stream unclosed leaks a connection from your connection pool.
+    - **Inside transactions**: The connection is managed by the transaction, but leaving the stream open leaves the cursor and statement active until the transaction completes.
 
-The generated body makes the ownership visible:
+Generated streaming methods make resource ownership clear:
 
 ```java
 @Override
@@ -47,33 +41,27 @@ public Stream<Order> streamByStatus(Status status) {
 }
 ```
 
-1.  Hands the three resources to the stream, which releases them on `close()`.
-2.  The failure path, meaning anything that throws *before* the stream exists, undoes all
-    of it by hand, with a cleanup failure suppressed into the real one, never replacing it.
+1.  Passes the three JDBC resources to the stream wrapper, which closes them when `stream.close()` is called.
+2.  If an exception occurs *before* the stream is created, cleanup runs immediately and any secondary cleanup errors are suppressed into the root exception.
 
-## Why the stream is sequential
+## Why streams are sequential
 
-The returned stream is sequential and does not split. Parallelising a cursor means
-reading ahead into memory, which is exactly what a `Stream` return was chosen to avoid.
-If you want parallelism, collect a bounded chunk and parallelise that.
+The returned stream is strictly sequential and does not support parallel splitting. Splitting database cursors in parallel would require buffering rows into memory, defeating the whole purpose of streaming. If you need parallel processing, read bounded batches and parallelize the batch processing.
 
-## What can be streamed
+## Supported stream types
 
-| | |
-|---|---|
-| `Stream<User>` over a bean | Yes, uses the generated row reader |
-| `Stream<String>`, `Stream<Long>` (scalars) | Yes, reads column 1, no bean, no reader |
-| `SELECT *` | Yes, indexes resolve from `ResultSetMetaData` before the first row |
-| A nested `<resultMap>` | **Compile error** |
+| Return Type | Support | Notes |
+|---|---|---|
+| `Stream<User>` | Supported | Uses generated `RowReader` |
+| `Stream<String>`, `Stream<Long>` | Supported | Reads column 1 directly |
+| `SELECT *` queries | Supported | Column indexes resolved once from metadata |
+| Nested `<resultMap>` | **Compile error** | Requires buffering multi-row parents |
 
-The last one is worth understanding before you work around it. A parent spans several
-rows, so it is only complete once the *next* parent starts. Answering that from a
-one-row-at-a-time cursor means buffering, which defeats the purpose. Stream the flat
-rows and group them yourself, or use `List` and accept the memory.
+Why nested `<resultMap>` is rejected: parent objects in a join span multiple rows, so a parent object is only complete when the *next* parent ID is encountered. Streaming one row at a time would require buffering the parent graph in memory. To stream relationships, stream flat rows and group them in memory, or use `List<T>` returns.
 
-## The escape hatch also streams
+## Streaming via the escape hatch
 
-`LarkBatisSession.queryStream` is the streaming counterpart of `query`:
+`LarkBatisSession.queryStream` provides streaming for custom dynamic queries:
 
 ```java
 default Stream<User> streamRecent(LarkBatisSession s, int limit) {
@@ -86,11 +74,11 @@ default Stream<User> streamRecent(LarkBatisSession s, int limit) {
 }
 ```
 
-Same ownership rule: the caller closes it. See [Raw SQL](raw-sql.md#the-escape-hatch).
+The caller must close the stream in a `try`-with-resources block. See [Raw SQL](raw-sql.md#the-escape-hatch).
 
-## Under Spring
+## Spring `@Transactional` with Streams
 
-`@Transactional` and streams compose, with the ownership rule unchanged:
+Streams work cleanly with Spring's `@Transactional`:
 
 ```java
 @Transactional(readOnly = true)
@@ -101,14 +89,6 @@ public void export(Writer out) {
 }
 ```
 
-Inside a transaction, `release` is a no-op and the transaction keeps the connection;
-outside one, closing the stream returns it to the pool. `try`-with-resources is right
-either way, which is why the rule is stated as "always" and not "sometimes".
+## JDBC fetch size considerations
 
-## Fetch size
-
-LarkBatis does not set `setFetchSize` for you: the right value is driver- and
-query-specific, and some drivers (PostgreSQL in particular) additionally require auto-commit
-to be off, or the driver materialises the whole result instead of streaming it. If you are
-streaming a large result, set it on the connection or the pool, or read inside a
-transaction.
+LarkBatis does not force a default `fetchSize`. The optimal fetch size depends on your database driver and available memory. Note that some drivers (such as PostgreSQL) require auto-commit to be turned off for cursor streaming to work; otherwise, the driver buffers the entire result set on the client. For large streams, wrap the call in `@Transactional(readOnly = true)`.

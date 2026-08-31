@@ -1,9 +1,6 @@
 # Mapper Interfaces
 
-A mapper is an ordinary Java interface. There is no base type, no marker on the methods
-beyond the statement annotation, and no runtime proxy. The build emits a
-`final class UserMapper$$Impl implements UserMapper` with a public constructor taking a
-`LarkBatisSession`.
+A mapper is just a plain Java interface. You don't need base interfaces, special marker annotations on methods beyond statement annotations, or runtime proxies. The compiler generates `final class UserMapper$$Impl implements UserMapper` with a public constructor accepting a `LarkBatisSession`.
 
 ## Statement annotations
 
@@ -14,8 +11,7 @@ beyond the statement annotation, and no runtime proxy. The build emits a
 | `@Update` | `UPDATE` |
 | `@Delete` | `DELETE` |
 
-Each takes `String[]`, so a long statement can be written as several lines that are
-joined with a single space:
+Each takes `String[]`, so long SQL statements can be split cleanly across multiple lines and are joined with a single space:
 
 ```java
 @Select({
@@ -26,18 +22,15 @@ joined with a single space:
 User findByEmail(String email);
 ```
 
-An interface carrying at least one statement annotation is discovered on its own. Add
-[`@Mapper`](../features/annotations.md#mapper) only when the statements live in
-[XML](xml-mappers.md).
+Any interface containing statement annotations is discovered automatically. You only need [`@Mapper`](../features/annotations.md#mapper) if the interface statements live entirely in [mapper XML](xml-mappers.md).
 
 ## Parameters and `#{}`
 
-`#{name}` becomes a `?` in the prepared statement and a `ps.setXxx` call at the matching
-position. What `name` resolves against depends on the method signature:
+`#{name}` becomes a `?` in the prepared statement and an indexed `ps.setXxx` call in generated code. How `name` is resolved depends on your method signature:
 
-=== "One parameter"
+=== "Single parameter"
 
-    The name is the parameter name, or a property path into it.
+    The name matches the parameter name or a property path on the parameter object:
 
     ```java
     @Select("SELECT id, name, email, created_at FROM users WHERE id = #{id}")
@@ -47,9 +40,9 @@ position. What `name` resolves against depends on the method signature:
     int insert(User u);          // #{name} -> u.getName()
     ```
 
-=== "Several parameters"
+=== "Multiple parameters"
 
-    Every parameter needs a name the SQL can use: the declared name, or `@Param`.
+    Parameters need names for SQL binding—either from compiled parameter names or `@Param`:
 
     ```java
     @Select("SELECT id, name FROM users WHERE name LIKE #{pattern} AND id > #{after}")
@@ -58,36 +51,31 @@ position. What `name` resolves against depends on the method signature:
 
 === "Property paths"
 
-    Dotted paths walk getters, and are resolved and type-checked at build time.
+    Dotted paths navigate getters and are strictly type-checked at build time:
 
     ```java
     @Select("SELECT id FROM users WHERE email = #{probe.email}")
     List<User> byProbe(@Param("probe") User probe);
     ```
 
-!!! warning "Name your parameters, or compile with `-parameters`"
+!!! warning "Compile with `-parameters` or use `@Param`"
 
-    Gradle's incremental compilation can re-run the processor against **class files**,
-    where parameter names survive only if the class was compiled with `-parameters`.
-    Without either, `#{id}` has nothing to resolve against. See
-    [Troubleshooting](troubleshooting.md).
+    Gradle incremental builds can pass compiled class files to the processor where parameter names are stripped unless compiled with `-parameters`. Without it, parameters appear as `arg0`, `arg1`, breaking `#{id}` resolution. See [Troubleshooting](troubleshooting.md).
 
-A name that does not resolve is a **compile error** naming the method and the offending
-expression. There is no `Map` or `Object` parameter: there would be no type to resolve
-`#{}` against, and the whole point is that there always is one.
+Unresolvable parameter names trigger a **compile error** showing the method and invalid expression. Untyped `Map` or `Object` parameters are not supported because the compiler requires concrete types to generate parameter bindings.
 
 ## Return types
 
-| Signature | Generated body |
+| Signature | Generated method body |
 |---|---|
 | `User findById(long)` | `rs.next() ? UserRow.read(rs) : null` |
 | `List<User> findAll()` | `while (rs.next()) out.add(UserRow.read(rs))` |
-| `Stream<User> streamAll()` | An open cursor; the caller closes it. See [Streaming](streaming.md) |
-| `long countByName(String)` | Column 1, read as a `long` |
+| `Stream<User> streamAll()` | Returns cursor stream; caller closes it. See [Streaming](streaming.md) |
+| `long countByName(String)` | Reads column 1 directly as `long` |
 | `int insert(User)` | `ps.executeUpdate()` |
-| `void delete(long)` | `ps.executeUpdate()`, result discarded |
+| `void delete(long)` | `ps.executeUpdate()` (result discarded) |
 
-Scalar results read column 1 directly, with no bean and no reader:
+Scalar queries read column 1 directly without allocating bean objects or row readers:
 
 ```java
 @Select("SELECT COUNT(*) FROM users WHERE name LIKE #{pattern}")
@@ -96,58 +84,39 @@ long countByName(@Param("pattern") String pattern);
 
 ## Result classes
 
-A result class needs a no-arg constructor and setters, and nothing further: no
-annotations, no interface, no registration.
+A result class needs a no-arg constructor and standard getters/setters:
 
 ```java
 public class User {
     private long id;
     private String name;
     private Instant createdAt;
-    // getters and setters
+    // standard getters and setters
 }
 ```
 
-Columns find properties by `snake_case` → `camelCase`, **applied at build time**:
-`created_at` → `setCreatedAt`. It is on by default — MyBatis defaults it off — and
-`-Alarkbatis.mapUnderscoreToCamelCase=false` carries that default across. The choice is
-baked into the generated reader; there is no runtime setting either way. See
-[Configuration](../features/configuration.md#column-naming).
+Columns are mapped to properties using `snake_case` → `camelCase` **at build time**: `created_at` maps to `setCreatedAt`. This is enabled by default. To preserve legacy MyBatis behavior (where underscore mapping was off by default), pass `-Alarkbatis.mapUnderscoreToCamelCase=false`. See [Configuration](../features/configuration.md#column-naming).
 
-Where the convention is not enough, name the column on the property with
-[`@Column`](../features/annotations.md#column) on the field, the setter or the getter,
-alias it in the select list, or declare a [`<resultMap>`](result-maps.md). See
-[Types and Handlers](types.md#column-naming).
+To override mapping for specific columns, use [`@Column`](../features/annotations.md#column) on the field/getter/setter, alias the column in your SQL, or define a [`<resultMap>`](result-maps.md). See [Types and Handlers](types.md#column-naming).
 
-### Positional or name-based reads
+### Positional vs Name-Based Reads
 
-When the generator can parse the select list, column indexes are constants:
+When the generator can parse your select list, column indexes are hardcoded as constants:
 
 ```java
 u.setId(rs.getLong(1));
 u.setName(rs.getString(2));
 ```
 
-When it cannot parse the list, that one statement falls back to a name-based reader that
-resolves indexes from `ResultSetMetaData` **once, on the first row**, and then reads
-positionally for the rest. Three things stop it parsing: `SELECT *`, a `${}` splice inside
-the select list, and an unaliased expression. The fallback is correct and measurably slower,
-and the build tells you which statement took it. See [Generated
-Code](../wiki/generated-code.md#row-readers).
+If the generator cannot parse the select list, that statement falls back to a name-based reader. It resolves column indexes from `ResultSetMetaData` **once on the first row** and reads by index for the rest. Three things trigger this fallback: `SELECT *`, a `${}` splice in the select list, or an unaliased expression. The fallback is fully correct but slightly slower, and javac outputs a build note when it happens. See [Generated Code](../wiki/generated-code.md#row-readers).
 
 !!! note "`@LarkBatisRow`"
 
-    A class that never appears as a statement's `resultType`, such as one used only by
-    the [escape hatch](raw-sql.md#the-escape-hatch), has nothing to trigger a reader.
-    Mark it [`@LarkBatisRow`](../features/annotations.md#larkbatisrow) and it gets one
-    anyway. Its declaration order is the canonical column order, there being no select
-    list to take an order from.
+    If a class is never used as a statement's `resultType` (for example, ad-hoc queries run via the [escape hatch](raw-sql.md#the-escape-hatch)), annotate it with [`@LarkBatisRow`](../features/annotations.md#larkbatisrow) to generate a row reader for it.
 
 ## Default methods
 
-A `default` method on a mapper interface is left alone: it is compiled into the
-interface like any other, and the generated implementation inherits it. This is where
-hand-assembled SQL lives:
+`default` methods on mapper interfaces remain intact and are inherited by generated implementation classes. This is the recommended place for hand-assembled dynamic queries:
 
 ```java
 default List<User> recent(LarkBatisSession s, int limit) {
@@ -160,22 +129,16 @@ default List<User> recent(LarkBatisSession s, int limit) {
 }
 ```
 
-Note what stays type-safe even here: the rows are read by the **generated** `UserRow`
-reader, so there is still no reflection and the result type is still checked by javac.
-See [Raw SQL and SqlFragment](raw-sql.md).
+Notice that row reading remains completely type-safe: rows are read by the generated `UserRow.READER` with zero reflection. See [Raw SQL and SqlFragment](raw-sql.md).
 
 ## The generated registry
 
-Every mapper in the compilation appears in one `LarkBatisMappers` class:
+Every mapper in a compilation module is registered in a static `LarkBatisMappers` factory:
 
 ```java
 UserMapper mapper = LarkBatisMappers.userMapper(session);
 ```
 
-`LarkBatisMappers` is a static factory over a closed set known at compile time. No
-`addMapper()` and no runtime registration, because there is nothing to register. Under
-Spring you never touch it: the generated `@Configuration` declares the same
-constructors as beans.
+`LarkBatisMappers` is a static factory over a fixed set of mappers known at compile time. In Spring applications, you don't need to call this directly because the generated `@Configuration` exposes each mapper as a Spring bean automatically.
 
-By default the registry lands in the common package prefix of all mappers; override with
-`-Alarkbatis.registryPackage=com.example.app`.
+By default, the registry is generated in the common package prefix of all mappers. You can customize this with `-Alarkbatis.registryPackage=com.example.app`.

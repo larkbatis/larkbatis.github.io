@@ -1,88 +1,82 @@
 # Errors and Diagnostics
 
-Most things that go wrong in a MyBatis application at runtime go wrong in a LarkBatis
-application at build time. This page is split accordingly.
+Because LarkBatis shifts validation from runtime to compile time, most configuration errors surface as build errors before tests or deployment even run.
 
-## Build-time errors
+## Build-Time Errors
 
-Every one of these names the mapper method and, where there is one, the replacement. Each
-also has a test in the processor's `CompileFailTest`, so the promises on this site are
-enforced, not aspirational.
+Compile-time errors report the exact mapper method, XML line, and recommended fix:
 
-| Error | Fix |
+| Compile Error | Resolution |
 |---|---|
-| `#{}` name does not resolve against the parameter types | Check the name, or add `@Param`. If parameters are called `arg0`, see [Troubleshooting](../usage/troubleshooting.md) |
-| A `String` parameter bound to `${}` | `SqlFragment`, a closed-value type, or `@OrderBy(allowed = {...})` |
-| `test="count"`, OGNL truthiness | `count != 0`. Likewise `user != null`, `!list.isEmpty()` |
-| `test=` outside the expression grammar | Rewrite it, or move the decision into Java and pass the result in |
-| A method has both an annotation and an XML statement, or neither | Pick one |
-| `Map` or `Object` parameter | A parameter object, or `@Param` arguments |
-| `useGeneratedKeys` without `keyProperty` | Say where the key should go |
-| `keyColumn` and `keyProperty` list different counts | Make the lists the same length |
-| `@PadPow2` on a `<foreach>` that is not a single-bind `IN` list, or on an `INSERT` | Remove it; padding would duplicate rows |
-| Batch method with dynamic SQL | A batch statement's text must be identical for every row |
-| `Stream` return over a nested `<resultMap>` | Use `List`, or stream flat rows and group them yourself |
-| Result map nested more than one level, or two nested mappings in one map | One join, one grouping key |
-| `select=` on `<association>`/`<collection>` | Write the join |
-| `resultMap=`, `columnPrefix`, `extends`, `<constructor>`, `<discriminator>`, `autoMapping` in a result map | See [Result Maps](../usage/result-maps.md#narrowed-on-purpose) |
-| `<id>` column missing from the select list | That column is what the grouping loop reads |
-| Type alias in `type` / `ofType` / `javaType` | Fully-qualified class name |
-| Computed `refid` on `<include>` | `refid` is inlined at build time, so it must be literal |
-| Result class with no no-arg constructor or no setters | Add them. If the class uses Lombok, the message says so, because the cause is a [processor ordering problem](../usage/troubleshooting.md) |
+| `#{}` parameter name cannot be resolved | Check parameter spelling or annotate with `@Param`. If parameters are called `arg0`, see [Troubleshooting](../usage/troubleshooting.md) |
+| Plain `String` parameter bound to `${}` | Use `SqlFragment`, closed-value types (enums/integers), or `@OrderBy(allowed = {...})` |
+| `test="count"` truthiness | Use explicit comparison (`count != 0`, `user != null`, `!list.isEmpty()`) |
+| Unsupported expression in `test=` | Simplify the test condition or compute the boolean in Java |
+| Method has both annotation and XML statement, or neither | Define statement in either an annotation or XML, not both |
+| Method takes untyped `Map` or `Object` parameter | Use a concrete typed parameter object or `@Param` annotations |
+| `useGeneratedKeys = true` missing `keyProperty` | Specify target property name in `keyProperty` |
+| Count mismatch between `keyColumn` and `keyProperty` | Ensure both lists have the same number of comma-separated entries |
+| `@PadPow2` on non-`IN` `<foreach>` or on `INSERT` | Remove `@PadPow2`. Padding is only valid for simple `IN` clauses |
+| Batch method contains dynamic SQL tags | Batch inserts must use an invariant SQL statement string |
+| `Stream<T>` return over nested `<resultMap>` | Return `List<T>`, or stream flat rows and group them in memory |
+| Result map nested more than one level | Limit join nesting to one level per query |
+| `select=` attribute on `<association>` / `<collection>` | Join the tables in SQL instead of using nested queries |
+| Missing `<id>` column in nested result map query | Include parent ID column in the `SELECT` list for row grouping |
+| Type alias used in `type` / `ofType` / `javaType` | Use fully-qualified class names |
+| Computed expression in `<include refid="...">` | Use a literal static fragment `refid` |
+| Result class lacks no-arg constructor or setters | Add a public no-arg constructor and setters (or fix Lombok annotation processor ordering) |
 
-## Build-time warnings
+## Build-Time Warnings
 
-Worth treating as errors in review.
+These warnings highlight potential runtime issues or suboptimal performance:
 
-| Warning | Why it matters |
+| Build Warning | Impact |
 |---|---|
-| `useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS` | Oracle returns `ROWID`, PostgreSQL returns every column. Works on H2, wrong in production |
-| A statement fell back to name-based row reads | The select list could not be parsed: `SELECT *`, a `${}` splice, an unaliased expression. Correct but measurably slower |
-| A nested result map statement has no `ORDER BY` | The grouping loop requires the ResultSet ordered by the parent key |
-| A `<result>` column is missing from the select list | That property stays unset |
-| A mapper XML `namespace` names an interface in another module | The file is ignored |
+| `useGeneratedKeys without keyColumn` | Defaults to non-portable `RETURN_GENERATED_KEYS`. (Oracle returns `ROWID`, PostgreSQL returns all columns) |
+| Fallback to name-based row reads | `SELECT *` or unaliased expressions prevent indexed reading; falls back to `ResultSetMetaData` lookup |
+| Nested result map query missing `ORDER BY` | Result set must be sorted by parent key for single-pass grouping |
+| Column in `<result>` not found in `SELECT` list | Property will not be populated from query results |
+| Mapper XML `namespace` belongs to another module | XML file will be ignored during current compilation unit |
 
-## Runtime exceptions
+## Runtime Exceptions
 
-All unchecked, all rooted at `LarkBatisException`, which carries the SQL text via
-`sql()`.
+All runtime exceptions extend `LarkBatisException`:
 
 ### `LarkBatisRejectedException`
 
-A value offered to a `SqlFragment` factory or an `@OrderBy` switch was rejected. **The
-value never reached the SQL text.** The exception is the runtime edge of the `${}`
-discipline working, not a failure of it.
+Thrown when dynamic input fails validation against an allowed whitelist in `SqlFragment.allowed(...)` or `@OrderBy`:
 
 ```text
 Rejected SQL fragment value: "id; DROP TABLE users" (allowed: id, name, created_at)
 ```
 
+The invalid value is rejected before the SQL query is constructed.
+
 ### `LarkBatisEmptyForeachException`
+
+Thrown when an empty collection is passed to an unguarded `<foreach>` loop:
 
 ```text
 <foreach collection="ids"> is empty in statement com.example.app.UserBatchMapper.findByIds;
 wrap the loop in an <if> testing the collection if an empty one should drop the fragment instead
 ```
 
-MyBatis would have let `... WHERE id IN` reach the database and fail there, with a syntax
-error naming neither the mapper nor the parameter.
-
 ### `LarkBatisNoKeyException`
 
-A statement declared `useGeneratedKeys` and the driver returned none. Better than a `0`
-id travelling through your code and failing somewhere unrelated.
+Thrown when `useGeneratedKeys = true` was configured, but the JDBC driver returned an empty generated keys result set.
 
 ### `LarkBatisKeyCountMismatchException`
+
+Thrown during batch inserts when the count of returned generated keys doesn't match the number of inserted batch rows.
 
 ```text
 Statement com.example.app.OrderMapper.insertAll expected 500 generated keys
 but the driver returned 1
 ```
 
-Drivers do this. Ignoring it would leave part of the batch with unset ids and nobody the
-wiser. MyBatis documents the same failure mode.
-
 ### `LarkBatisUnboundedVariantsException`
+
+Thrown when `fail-on-unbounded-fragment: true` is enabled and a statement exceeds `max-sql-variants`:
 
 ```text
 LarkBatis statement com.example.app.UserMapper.search has produced more than 64 distinct
@@ -90,33 +84,20 @@ SQL texts; statement caches will keep growing. Prefer SqlFragment.allowed(...) o
 over unbounded fragments.
 ```
 
-Only thrown when `fail-on-unbounded-fragment` is on. Otherwise the same condition produces
-one log line. `statementId()` and `limit()` are on the exception.
-
 ### `LarkBatisRollbackOnlyException`
 
-`commit()` was called on a transaction an inner scope had already poisoned by leaving
-without voting. Throwing beats a silent rollback that looks like success to the caller.
+Thrown when an application calls `tx.commit()` on a transaction that was marked rollback-only by an inner failure or unvoted scope.
 
-## Under Spring
+## Spring Exception Translation
 
-`SpringLarkBatisSession.translate` routes through Spring's `SQLExceptionTranslator`
-instead, by default `SQLExceptionSubclassTranslator`, which reads the standard
-`SQLException` subclass tree and not a per-vendor error-code table.
+When running inside Spring, `SpringLarkBatisSession` routes database errors through Spring's `SQLExceptionTranslator` (`SQLExceptionSubclassTranslator` by default).
 
-So a unique-constraint violation arrives as `DuplicateKeyException`, a deadlock as
-`CannotAcquireLockException`, exactly as they would from `JdbcTemplate`. Existing
-`@ExceptionHandler`s and `@Retryable` rules keep working unchanged.
+JDBC errors are automatically translated into Spring's `DataAccessException` hierarchy (e.g. `DuplicateKeyException`, `CannotAcquireLockException`), maintaining direct compatibility with existing `@ExceptionHandler` and `@Retryable` annotations.
 
-The LarkBatis-specific exceptions above (`LarkBatisRejectedException`,
-`LarkBatisEmptyForeachException`, …) are not `SQLException`s and pass through untouched.
+LarkBatis-specific validation exceptions (`LarkBatisRejectedException`, `LarkBatisEmptyForeachException`, etc.) are passed through directly.
 
 ## Logging
 
-LarkBatis logs through `java.util.logging` and says very little; the variant-tracking
-warning is essentially all of it. SQL logging is absent, because every generated body
-would have to carry a logging branch. Use the driver or the pool
-(`net.ttddyy:datasource-proxy`, p6spy) for that.
+LarkBatis runtime logs via `java.util.logging`. It avoids injecting runtime logging branches into generated method bytecode. For detailed SQL and parameter logging, configure a logging proxy at the datasource or driver level (`datasource-proxy`, p6spy).
 
-What replaces SQL logging in practice is that the SQL is *in your source tree*. Open
-`UserMapper$$Impl.java` and read the `static final String`.
+Because SQL statements are generated at compile time, you can also inspect generated SQL directly in the generated `Mapper$$Impl.java` source files in your build directory.

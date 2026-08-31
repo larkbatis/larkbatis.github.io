@@ -1,7 +1,6 @@
 # Generated Keys
 
-`@Options(useGeneratedKeys = true, ...)` asks the driver for the key an `INSERT`
-produced and assigns it to a property of the parameter object.
+`@Options(useGeneratedKeys = true, ...)` retrieves database-generated primary keys after an `INSERT` and sets them directly on your parameter object.
 
 ```java
 @Insert("INSERT INTO users (name, email, created_at) VALUES (#{name}, #{email}, #{createdAt})")
@@ -34,48 +33,31 @@ public int insert(User u) {
 }
 ```
 
-1.  Explicit key **column names**, because `RETURN_GENERATED_KEYS` means different
-    things on different databases. See below.
-2.  The setter and the accessor are both chosen at build time from `keyProperty` and the
-    property's declared type.
+1.  Explicit key **column names**: `RETURN_GENERATED_KEYS` behaves inconsistently across database drivers (see below).
+2.  The property accessor is chosen at build time based on `keyProperty` and its declared Java type.
 
-## Always name the key columns
+## Always name `keyColumn`
 
-!!! warning "`keyColumn` is optional in the annotation and effectively mandatory in practice"
+!!! warning "`keyColumn` is practically mandatory in production"
 
-    `prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)` is not portable:
+    Using `prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)` is not portable across drivers:
 
-    - **Oracle** returns `ROWID`, not your sequence value.
-    - **PostgreSQL** returns *every* column of the inserted row.
+    - **Oracle** returns the database `ROWID`, not sequence IDs.
+    - **PostgreSQL** returns *all* columns of the inserted row.
 
-    Passing an explicit `String[]` of column names is the only form that means the same
-    thing everywhere. When `keyColumn` is present the generator emits
-    `prepareStatement(sql, String[])`. When it is missing it has no names to put in the
-    array, so it falls back to `RETURN_GENERATED_KEYS` and raises a **mandatory build
-    warning**:
+    Specifying explicit column names with `keyColumn` is the only way to get consistent behavior across all databases. If `keyColumn` is omitted, the generator falls back to `RETURN_GENERATED_KEYS` and prints a compiler warning.
 
-    ```text
-    warning: useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS,
-    which returns ROWID on Oracle and all columns on PostgreSQL. Name the key column(s)
-    explicitly.
-    ```
+`keyProperty` is **mandatory**: omitting it is a compile error because the generator must know where to store the returned key.
 
-    Treat that warning as an error in review. It is the difference between working on H2
-    and working in production.
-
-`keyProperty`, by contrast, is **required**: `useGeneratedKeys` without it is a compile
-error asking where the key should go.
-
-Composite keys are comma-separated on both attributes, and the two lists must be the
-same length, and a mismatch is a compile error naming both counts:
+For composite keys, provide comma-separated lists of matching length:
 
 ```java
 @Options(useGeneratedKeys = true, keyProperty = "tenantId,id", keyColumn = "tenant_id,id")
 ```
 
-## `keyProperty` with several parameters
+## `keyProperty` with multiple parameters
 
-With more than one method parameter, `keyProperty` must name the parameter as well:
+When a method accepts multiple arguments, prefix `keyProperty` with the parameter name:
 
 ```java
 @Insert("INSERT INTO users (name) VALUES (#{u.name})")
@@ -83,12 +65,11 @@ With more than one method parameter, `keyProperty` must name the parameter as we
 int insert(@Param("u") User u, @Param("audit") String audit);
 ```
 
-A wrong name is a **compile-time error**, not a runtime `ReflectionException`.
+Invalid property paths are caught as **compile-time errors**.
 
-## Batch inserts
+## Batch inserts and generated keys
 
-An `@Insert` taking a `List<T>` compiles to `addBatch()` / `executeBatch()`, and the keys
-come back as one `ResultSet` that has to line up with the list:
+Batch inserts taking a `List<T>` compile to JDBC `addBatch()` / `executeBatch()` calls:
 
 ```java
 int n = LarkBatisSql.sum(ps.executeBatch());
@@ -104,17 +85,11 @@ try (ResultSet gk = ps.getGeneratedKeys()) {
 }
 ```
 
-The count check is not defensive programming for its own sake: drivers exist that return
-fewer keys than rows, and MyBatis documents the same failure mode. Silently accepting it
-would leave part of your batch with unset ids and nobody the wiser, so
-`LarkBatisKeyCountMismatchException` names the statement, the expected count and the
-actual one.
+Some database drivers return fewer generated keys than inserted rows. Instead of silently leaving trailing list elements with null or zero IDs, LarkBatis throws `LarkBatisKeyCountMismatchException` immediately.
 
 ## `<selectKey>` is not supported
 
-Databases without generated-key support (or workflows that read a sequence *before* the
-insert) used `<selectKey>` in MyBatis. It is not implemented, because it is a second
-statement wearing the costume of an option. Write the second statement:
+MyBatis used `<selectKey>` to fetch sequence values before running an insert. In LarkBatis, write the two statements explicitly:
 
 ```java
 @Select("SELECT user_seq.NEXTVAL FROM dual")
@@ -132,11 +107,6 @@ try (LarkBatisTx tx = session.begin()) {
 }
 ```
 
-The [migration scanner](../features/migration.md) reports every `<selectKey>` it finds
-with this as the fix.
+## When no key is returned
 
-## When no key comes back
-
-If a statement declares `useGeneratedKeys` and the driver returns nothing,
-`LarkBatisNoKeyException` is thrown naming the statement, instead of leaving a `0` id to
-travel through your code and fail somewhere unrelated.
+If a statement declares `useGeneratedKeys = true` but the driver returns an empty `ResultSet`, LarkBatis throws `LarkBatisNoKeyException` to prevent uninitialized default IDs from propagating silently.

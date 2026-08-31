@@ -1,13 +1,10 @@
 # Quick Start
 
-Five minutes from an empty project to a working mapper, on the plain-JDBC path: no
-Spring, no XML. Everything here comes from the `larkbatis-sample` module of the core
-repository, which is also the native-image smoke-test subject.
+Here is how to go from an empty project to a working mapper in five minutes using plain JDBC—no Spring, no XML. Everything here comes straight from the `larkbatis-sample` module in the core repository.
 
 ## 1 · A result class
 
-An ordinary Java bean: a no-arg constructor and setters. There is no base class, no
-annotation, and no interface to implement.
+An ordinary Java bean with a no-arg constructor and standard getters/setters. No base class, no special annotations, and no interfaces to implement:
 
 ```java title="User.java"
 package com.example.app;
@@ -35,9 +32,7 @@ public class User {
 }
 ```
 
-Column names map to properties with `snake_case` → `camelCase`, applied **at build time**,
-always. `created_at` finds `setCreatedAt`. Where that convention is not enough, alias the
-column in the select list or declare a [`<resultMap>`](../usage/result-maps.md).
+Column names map to properties using `snake_case` → `camelCase`, and this happens **at build time**, every time. `created_at` matches `setCreatedAt`. If that convention doesn't fit, alias the column in your SQL or define a [`<resultMap>`](../usage/result-maps.md).
 
 ## 2 · A mapper interface
 
@@ -67,10 +62,7 @@ public interface UserMapper {
 }
 ```
 
-No `@Mapper` marker is needed: an interface with statement annotations is found by the
-processor on its own. The marker exists for interfaces whose statements live entirely in
-[mapper XML](../usage/xml-mappers.md), which would otherwise never reach a processing
-round at all.
+You don't need a `@Mapper` annotation here: the processor picks up any interface with statement annotations on its own. `@Mapper` is only needed when an interface has all its statements in [mapper XML](../usage/xml-mappers.md), since javac wouldn't otherwise pass it to the processor.
 
 ## 3 · Compile
 
@@ -78,27 +70,23 @@ round at all.
 $ ./gradlew compileJava
 ```
 
-Three files appear next to your sources, in the same package:
+Three source files are generated next to your code in the same package:
 
 | Generated | What it is |
 |---|---|
 | `UserMapper$$Impl` | The implementation. Plain JDBC, one method per statement |
-| `UserRow` | The row reader for `User`. One per result class, shared by every statement returning it |
-| `LarkBatisMappers` | A static factory for every mapper in the compilation |
+| `UserRow` | Row reader for `User`. One per result class, shared by every query returning it |
+| `LarkBatisMappers` | Static factory for all mappers in the compilation |
 
-They are real source files, and reading them is part of the design. See
-[Generated Code](../wiki/generated-code.md).
+These are real Java source files, and stepping through them in your IDE is encouraged. See [Generated Code](../wiki/generated-code.md).
 
 !!! tip "If nothing is generated"
 
-    Check that `larkbatis-processor` is on `annotationProcessor` (not `implementation`),
-    and that you are compiling with javac. See [Troubleshooting](../usage/troubleshooting.md).
+    Check that `larkbatis-processor` is configured under `annotationProcessor` (not `implementation`), and make sure you are compiling with javac. See [Troubleshooting](../usage/troubleshooting.md).
 
 ## 4 · Wire it up and run
 
-`LarkBatisSession` is the only thing a generated mapper needs: a way to borrow a
-`Connection`, a way to give it back, and exception translation. The standalone
-implementation takes a `DataSource`.
+`LarkBatisSession` is the only dependency a generated mapper needs: it borrows a `Connection`, returns it, and translates SQLExceptions. The standalone version takes a `DataSource`:
 
 ```java title="SampleApp.java"
 package com.example.app;
@@ -111,7 +99,7 @@ import javax.sql.DataSource;
 public class SampleApp {
 
     public static void main(String[] args) {
-        DataSource ds = /* HikariCP, H2, whatever you already use */;
+        DataSource ds = /* HikariCP, H2, or whatever pool you use */;
 
         JdbcLarkBatisSession session = new JdbcLarkBatisSession(ds);
         UserMapper mapper = LarkBatisMappers.userMapper(session);
@@ -126,23 +114,18 @@ public class SampleApp {
             tx.commit();
         }
 
-        System.out.println(u.getId());              // filled in by useGeneratedKeys
+        System.out.println(u.getId());              // populated by useGeneratedKeys
         System.out.println(mapper.findById(u.getId()));
         System.out.println(mapper.countByName("A%"));
     }
 }
 ```
 
-`session.begin()` opens a transaction scope meant for try-with-resources. `commit()` is
-a **vote**: the actual commit happens when the outermost scope closes, and leaving any
-scope without voting marks the whole transaction rollback-only. See
-[Transactions](../usage/transactions.md).
+`session.begin()` opens a transaction scope designed for try-with-resources. Calling `commit()` is a **vote**: the real commit happens when the outermost block closes. If any scope exits without voting to commit, the whole transaction rolls back. See [Transactions](../usage/transactions.md).
 
-## 5 · Read what was generated
+## 5 · Inspect what was generated
 
-Open `UserMapper$$Impl.java` in your IDE. The SQL is a `static final String` with `?`
-where `#{}` was, the parameters are bound in order, and the row is read positionally
-because the generator could parse the select list:
+Open `UserMapper$$Impl.java` in your IDE. The SQL statement is a `static final String` where `#{}` has been replaced with `?`, parameters are bound by index, and rows are read positionally because the generator parsed the column list:
 
 ```java
 private static final String SQL_findById =
@@ -175,21 +158,16 @@ public static User read(ResultSet rs) throws SQLException {
 }
 ```
 
-Every column index and every accessor was chosen at build time. Nothing here inspects a
-type, resolves a property name or consults a registry.
+Every column index and getter/setter call was determined at build time. Nothing here inspects types at runtime, resolves property names, or looks up registries.
 
-!!! note "The Connection is deliberately not in try-with-resources"
+!!! note "Why Connection is not in try-with-resources"
 
-    Only `s.release(c)` knows whether the connection may really be closed. Under a
-    managed transaction, Spring's or LarkBatis's own, the connection belongs to that
-    transaction and closing it would be wrong.
-    [Transactions](../usage/transactions.md#why-generated-code-never-closes-the-connection)
-    has the full rule.
+    Only `s.release(c)` knows whether the connection can actually be closed. If you're inside an active transaction (Spring or LarkBatis), the connection belongs to that transaction and closing it would break it. See [Transactions](../usage/transactions.md#why-generated-code-never-closes-the-connection) for details.
 
-## Where to go next
+## Next steps
 
 - Statements with optional filters → [Dynamic SQL](../usage/dynamic-sql.md)
 - `WHERE id IN (...)` and batch inserts → [foreach and Batches](../usage/foreach-and-batches.md)
-- Joining a parent and its children → [Result Maps and Joins](../usage/result-maps.md)
-- A result set too big for a `List` → [Streaming Results](../usage/streaming.md)
-- Spring Boot instead of `main()` → [Spring Boot](spring-boot.md)
+- Joining parent and child entities → [Result Maps and Joins](../usage/result-maps.md)
+- Large result sets without memory bloat → [Streaming Results](../usage/streaming.md)
+- Using Spring Boot instead of `main()` → [Spring Boot](spring-boot.md)

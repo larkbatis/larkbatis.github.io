@@ -1,43 +1,38 @@
 # Raw SQL and SqlFragment
 
-`#{}` is a bind parameter. `${}` splices text straight into the SQL, and that is where
-SQL injection lives. LarkBatis does not ban `${}`, because sorting by a user-chosen
-column is a real requirement. It makes every splice go through a type the compiler can
-check and a name you can `grep` for.
+`#{}` creates a JDBC bind parameter (`?`). `${}` splices text directly into raw SQL—which is where SQL injection risks come from. LarkBatis does not ban `${}` outright because dynamic sorting or schema targeting are legitimate requirements. Instead, it forces every splice through types the compiler can verify and you can easily `grep` for.
 
-## The rule
+## The Rule
 
-!!! failure "A `String` parameter bound to `${}` is a compile error"
+!!! failure "Binding a plain `String` to `${}` is a compile error"
 
     ```java
     @Select("SELECT id, name FROM users ORDER BY ${sort}")
     List<User> all(String sort);        // compile error
     ```
 
-    The error names the parameter and lists the three accepted forms.
+    The compiler rejects this and lists the supported types.
 
-| Accepted for `${}` | Why it is safe |
+| Type for `${}` | Why it is safe |
 |---|---|
-| `SqlFragment` | Constructed through a factory that validated the value, or through `unsafeRawSql`, the one audit point |
-| Closed-value types: `int`, `long`, `short`, `byte`, `boolean`, enums | Their entire value space is already SQL-safe |
-| `String` annotated `@OrderBy(allowed = {...})` | Compiled to a `switch` over the literal list |
+| `SqlFragment` | Created via audited factory methods (`allowed`, `identifier`, `unsafeRawSql`) |
+| Closed-value types (`int`, `long`, `boolean`, `enum`) | Finite value ranges that cannot introduce SQL injection |
+| `String` with `@OrderBy(allowed = {...})` | Compiled to a strict Java `switch` statement over string literals |
 
 ## `@OrderBy`
 
-The common case, and the one that needs no ceremony at the call site:
+The most common use case for dynamic SQL text is column sorting. You can declare allowed column names directly:
 
 ```java
 @Select("SELECT id, name, email, created_at FROM users ORDER BY ${sort}")
 List<User> all(@OrderBy(allowed = {"id", "name", "created_at"}) String sort);
 ```
 
-The generator emits a `switch` over the three literals. A value outside the list is
-rejected with `LarkBatisRejectedException` naming the value and the allowed set. The
-value never reaches the SQL text.
+The generator emits a `switch` statement validating the input against this list. Any unrecognized string throws a `LarkBatisRejectedException` immediately, preventing invalid input from ever touching the database.
 
 ## `SqlFragment`
 
-Three factories, and the difference between them is the whole point:
+When building dynamic SQL fragments in Java, use `SqlFragment` factories:
 
 ```java
 SqlFragment.allowed(value, "created_at", "name")   // (1)!
@@ -45,80 +40,56 @@ SqlFragment.identifier(value)                      // (2)!
 SqlFragment.unsafeRawSql(value)                    // (3)!
 ```
 
-1.  A closed allow-list. Anything else throws `LarkBatisRejectedException`. **Prefer
-    this.**
-2.  Accepts a plain SQL identifier (letters, digits, underscore, optionally
-    dot-qualified) and rejects everything else. For column and table names that genuinely
-    come from configuration.
-3.  Accepts anything. The single audit point for arbitrary SQL text in the entire
-    codebase.
+1.  **`SqlFragment.allowed(...)`**: Validates against a static whitelist. (Recommended).
+2.  **`SqlFragment.identifier(...)`**: Validates that the input is a valid SQL identifier (alphanumeric and underscores only). Ideal for dynamic table or schema names.
+3.  **`SqlFragment.unsafeRawSql(...)`**: Slices arbitrary text into SQL without checks. This serves as the single searchable audit point for unescaped SQL across your entire codebase.
 
 ```java
 @Select("SELECT id, name FROM users WHERE ${predicate} ORDER BY id")
 List<User> where(SqlFragment predicate);
 ```
 
-### Why `unsafeRawSql` has that name
+### Auditing raw SQL with `grep`
 
-The name carries the warning because the method is the one place arbitrary text becomes
-SQL. Auditing raw-SQL insertion in a LarkBatis codebase is:
+Because raw SQL creation is channeled through `unsafeRawSql`, security audits are straightforward:
 
 ```console
 $ grep -rn 'unsafeRawSql' src/
 ```
 
-MyBatis has no equivalent convergence point. `${}` is scattered through XML,
-`@SelectProvider` bodies are scattered through Java, and finding all of them means reading
-every mapper.
+In standard MyBatis, `${}` expressions and `@SelectProvider` methods are scattered across XML files and Java classes, requiring full codebase reviews to detect vulnerabilities.
 
 ## Tracking SQL variants
 
-Statement caches, both the driver's and the database's, are keyed by the **SQL text**. A
-fragment whose value set is not bounded grows them without limit, and you find out about
-it as a memory or a latency incident rather than as a bug.
+Both database engines and JDBC drivers cache execution plans by query text. Unbounded `${}` splices or fluctuating `<foreach>` sizes can flood statement caches with thousands of distinct query strings.
 
-Two kinds of statement have text that is not fixed at build time: a `${}` splice, and a
-`<foreach>`, whose element count changes the text just as much. Both get a generated call:
+LarkBatis automatically monitors statements with dynamic SQL:
 
 ```java
 LarkBatisSql.trackVariants(STMT_findByIds, sql);
 ```
 
-It counts distinct SQL texts per statement. Past the threshold you get **one** log line
-naming the statement, and the counter stops retaining texts.
+If a statement exceeds the configured variant threshold, LarkBatis logs a warning:
 
 ```yaml title="application.yml"
 larkbatis:
-  max-sql-variants: 64                # default
+  max-sql-variants: 64                # default threshold
   fail-on-unbounded-fragment: false   # default
 ```
 
-Outside Spring the same settings are system properties
-(`-Dlarkbatis.maxSqlVariants=64`, `-Dlarkbatis.failOnUnboundedVariants=true`) or the
-static methods `LarkBatisSql.maxSqlVariants(int)` and
-`LarkBatisSql.failOnUnboundedVariants(boolean)`.
+!!! tip "Enable `fail-on-unbounded-fragment` in CI/testing"
 
-!!! tip "Turn `fail-on-unbounded-fragment` on in staging"
+    Set `larkbatis.fail-on-unbounded-fragment: true` in your test environment to catch unbounded query generation before deploying to production.
 
-    A production system should not start throwing because of a log-worthy trend, which is
-    why the default is a warning. A test or staging profile that throws
-    `LarkBatisUnboundedVariantsException` finds the unbounded fragment before it ships.
+To structurally bound `<foreach>` variants, use `@PadPow2`. See [foreach and Batches](foreach-and-batches.md#padpow2-bounding-the-sql-variants).
 
-`@PadPow2` is the other half of this story for `<foreach>`: it bounds the variants
-structurally instead of reporting on them. See
-[foreach and Batches](foreach-and-batches.md#padpow2-bounding-the-sql-variants).
+## Dynamic columns in select lists
 
-## `${}` in a select list
+Using `${}` inside a `SELECT` column list prevents the compiler from predicting column positions. The statement automatically falls back to reading columns by name from `ResultSetMetaData` on the first row. The build outputs a note whenever this fallback occurs.
 
-A `${}` inside the select list means the generator cannot parse the columns, so that one
-statement falls back to a name-based row reader resolved from `ResultSetMetaData` on the
-first row. Correct, measurably slower, and **reported at build time**, so the trade-off is
-visible when you make it.
+## The manual escape hatch
 
-## The escape hatch
-
-Sometimes the SQL genuinely has to be assembled in Java. A `default` method on the mapper
-interface is where that goes, and it keeps two properties that matter:
+When you need to construct complex queries dynamically in Java, write a `default` method on your mapper interface:
 
 ```java
 default List<User> recent(LarkBatisSession s, int limit) {
@@ -131,32 +102,26 @@ default List<User> recent(LarkBatisSession s, int limit) {
 }
 ```
 
-1.  A `StatementBinder`, a lambda over the `PreparedStatement`. Bind your `?` here;
-    prefer this over splicing values into the text.
-2.  The **generated** row reader. No reflection, and the result type is checked by javac.
+1.  **`StatementBinder` lambda**: Bind JDBC parameters safely using `ps.setXxx` rather than string concatenation.
+2.  **Generated `UserRow.READER`**: Reads rows positionally with zero reflection.
 
-The entry points:
+Core execution methods:
 
-| Method | Returns |
+| Method | Return Type |
 |---|---|
 | `s.query(SqlFragment, StatementBinder, RowReader<T>)` | `List<T>` |
-| `s.queryOne(SqlFragment, StatementBinder, RowReader<T>)` | `T` or `null` |
-| `s.queryStream(SqlFragment, StatementBinder, RowReader<T>)` | `Stream<T>`, caller closes |
-| `s.update(SqlFragment, StatementBinder)` | `int` |
+| `s.queryOne(SqlFragment, StatementBinder, RowReader<T>)` | `T` (or `null`) |
+| `s.queryStream(SqlFragment, StatementBinder, RowReader<T>)` | `Stream<T>` (caller closes) |
+| `s.update(SqlFragment, StatementBinder)` | `int` (affected rows) |
 
-Note what the signature refuses: there is no `String` overload. Even here, arbitrary SQL
-text enters through the same audited gate.
-
-A reader exists for every class used as a statement's `resultType`. A class used *only*
-here has no statement to trigger one, so mark it
-[`@LarkBatisRow`](../features/annotations.md#larkbatisrow):
+If you need a row reader for a class that isn't referenced in any mapper statement, annotate it with [`@LarkBatisRow`](../features/annotations.md#larkbatisrow):
 
 ```java
 @LarkBatisRow
 public class DomainCount {
     private String domain;
     private long total;
-    // no-arg constructor + setters
+    // standard getters and setters
 }
 ```
 
@@ -170,11 +135,9 @@ default List<DomainCount> countByDomain(LarkBatisSession s, int minimum) {
 }
 ```
 
-`READER` reads **positionally, in the class's declaration order**, because there was no
-select list at build time to check the order against. Where hand-assembled SQL cannot
-promise that order, resolve by name instead:
+`DomainCountRow.READER` reads columns positionally based on property declaration order. If your custom SQL returns columns in a different order, use name-based reading:
 
 ```java
-int[] c = DomainCountRow.columns(rs);   // once, from ResultSetMetaData
-DomainCount row = DomainCountRow.read(rs, c);
+int[] columns = DomainCountRow.columns(rs);   // resolved once from metadata
+DomainCount row = DomainCountRow.read(rs, columns);
 ```

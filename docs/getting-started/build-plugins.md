@@ -1,18 +1,12 @@
 # Build Plugins
 
-You need a build plugin **only if some of your statements live in mapper XML**. A purely
-annotation-based project works with the annotation processor alone.
+You only need a build plugin **if some of your statements live in mapper XML**. If your project uses annotations only, the annotation processor alone is enough.
 
-## Why a plugin at all
+## Why a plugin?
 
-`Filer.getResource` has no specified way to reach files under `src/main/resources`, and
-the implementations that get there disagree on how. The processor therefore reads mapper
-XML with plain `java.io`, taking a directory path as an option.
+`Filer.getResource` in Java annotation processing has no standard way to load files from `src/main/resources`, and compilers handle it inconsistently. That's why the processor reads mapper XML directly from the filesystem using plain `java.io`, taking directory paths as compiler options.
 
-Supplying that path is half the job. The other half is registering the XML files as compile
-inputs, without which an XML-only edit triggers no regeneration at all. Both plugins exist
-to do those two things. Neither generates code itself, and neither adds anything to the
-application's runtime classpath.
+Passing those paths is only half the job. The other half is telling your build tool that XML files are compilation inputs. Without that, editing an XML file won't trigger a recompile. That's all these plugins do: they configure compiler options and track XML files as inputs. They don't generate code themselves, and they add nothing to your runtime classpath.
 
 ## Gradle
 
@@ -25,31 +19,26 @@ plugins {
 dependencies {
     implementation("io.github.larkbatis:larkbatis-runtime:0.1.0")
     implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
-    // larkbatis-processor lands on annotationProcessor automatically
+    // larkbatis-processor is added to annotationProcessor automatically
 }
 ```
 
-What it does, and all it does:
+What the plugin does:
 
-- passes `-Alarkbatis.mapperDir=<dirs>` to `compileJava` (default `src/main/resources`;
-  only files whose root element is `<mapper>` are read, so other XML in the same tree is
-  ignored),
-- registers the mapper XML files as inputs of `compileJava`, so editing a mapper
-  recompiles the mappers,
-- adds `io.github.larkbatis:larkbatis-processor` to the `annotationProcessor`
-  configuration.
+- Passes `-Alarkbatis.mapperDir=<dirs>` to `compileJava` (defaults to `src/main/resources`; it only parses XML files whose root element is `<mapper>`, ignoring other XML files).
+- Registers mapper XML files as task inputs for `compileJava`, so editing XML triggers recompilation.
+- Adds `io.github.larkbatis:larkbatis-processor` to `annotationProcessor`.
 
 ```kotlin title="Configuration"
 larkbatis {
     mapperDir = layout.projectDirectory.dir("src/main/mappers")
-    mapperDirs.from("src/main/legacy-mappers")   // as many more as the module has
-    addProcessorDependency = false               // manage the processor version yourself
-    addParametersFlag = false                    // only with @Param on every parameter
+    mapperDirs.from("src/main/legacy-mappers")   // add as many extra directories as needed
+    addProcessorDependency = false               // manage processor version manually
+    addParametersFlag = false                    // disable automatic -parameters flag (requires @Param on all parameters)
 }
 ```
 
-It also registers `larkbatisScan`, the [migration report](../features/migration.md), over
-this project:
+It also registers the `larkbatisScan` task to generate a [migration report](../features/migration.md):
 
 ```console
 ./gradlew larkbatisScan
@@ -74,7 +63,7 @@ this project:
 ```xml title="Configuration (all optional)"
 <configuration>
   <mapperDir>src/main/mappers</mapperDir>     <!-- default: src/main/resources -->
-  <mapperDirs>                                <!-- as many more as the module has -->
+  <mapperDirs>                                <!-- extra directories -->
     <mapperDir>src/main/legacy-mappers</mapperDir>
   </mapperDirs>
   <addProcessorPath>false</addProcessorPath>  <!-- default: true -->
@@ -82,77 +71,49 @@ this project:
 </configuration>
 ```
 
-### `<extensions>true</extensions>` is not optional
+### `<extensions>true</extensions>` is required
 
-Maven finalizes every mojo's configuration **before the first mojo of a project runs**, so
-a mojo bound to an early phase cannot add compiler arguments to the `compile` execution.
-The plugin therefore works as a build extension (`AbstractMavenLifecycleParticipant`),
-which runs before execution plans are calculated. For each project declaring it, the
-extension:
+Maven freezes plugin configurations before any build tasks run. Because of that, a regular plugin running in an early phase cannot inject arguments into `maven-compiler-plugin`.
 
-- injects `-Alarkbatis.mapperDir=<dirs>` into `maven-compiler-plugin`'s `<compilerArgs>`
-  (skipped where that option is already passed by hand),
-- appends `larkbatis-processor` to `<annotationProcessorPaths>`, creating the element
-  when absent,
-- binds `larkbatis:refresh` at `generate-sources`,
-- sets the `larkbatis.mapperDir` project property.
+To solve this, the LarkBatis plugin runs as a Maven build extension (`AbstractMavenLifecycleParticipant`), executing before the build plan is constructed. For each module, it:
 
-Both injections target **every `compile`-bound execution** of the compiler plugin, not
-just its plugin-level `<configuration>`. Maven copies plugin-level configuration into those
-executions while the project is being read, before any extension runs, and the plan uses
-the execution's own configuration.
+- Injects `-Alarkbatis.mapperDir=<dirs>` into `maven-compiler-plugin`'s `<compilerArgs>`.
+- Appends `larkbatis-processor` to `<annotationProcessorPaths>` (creating the element if missing).
+- Binds `larkbatis:refresh` to the `generate-sources` phase.
+- Sets the `larkbatis.mapperDir` project property.
 
-Without `<extensions>true</extensions>` none of this happens, **silently**. Run
-`mvn larkbatis:check` to diagnose that case.
+Without `<extensions>true</extensions>`, none of this runs, and Maven will fail **silently** without errors. Run `mvn larkbatis:check` to verify your configuration.
 
 ### The `refresh` goal
 
-`maven-compiler-plugin` recompiles on stale `.java` files only, so an XML-only edit would
-otherwise change nothing. `larkbatis:refresh` touches the mapper interface source whose
-XML content changed since the last build. Change detection is by **content hash**, recorded
-in `target/larkbatis/mapper-xml.properties`, so neither a future-dated file nor a coarse
-filesystem clock can mislead it the way timestamps would. The goal is best-effort: IO
-problems become warnings, never a failed build.
+`maven-compiler-plugin` only recompiles when `.java` source files change. To ensure XML edits trigger recompilation, `larkbatis:refresh` touches the corresponding Java mapper interface whenever its XML content changes.
 
-### Three things worth knowing
+Change detection uses a **content hash** stored in `target/larkbatis/mapper-xml.properties`, making it immune to filesystem timestamp inaccuracies. If IO issues occur during hash checking, it outputs a warning rather than failing the build.
+
+### Good to know
 
 !!! warning "Other annotation processors"
 
-    If `<annotationProcessorPaths>` did not exist before, creating it switches javac from
-    classpath processor discovery to explicit paths only. Add your other processors
-    (Lombok, MapStruct, …) to it, or set `<addProcessorPath>false</addProcessorPath>` and
-    manage the paths yourself.
+    If `<annotationProcessorPaths>` didn't exist previously, creating it stops javac from automatically scanning the compilation classpath for processors. Make sure to add your other processors (Lombok, MapStruct, etc.) to `<annotationProcessorPaths>` as well, or set `<addProcessorPath>false</addProcessorPath>` and manage them yourself.
 
 !!! warning "`addProcessorPath=false` on JDK 23+"
 
-    javac no longer discovers processors from the compile classpath, and
-    `-Alarkbatis.mapperDir` does not count as asking for annotation processing either.
-    If you opt out and put `larkbatis-processor` on the classpath instead, add it to
-    `<annotationProcessorPaths>` or set `<proc>full</proc>` yourself. The failure mode
-    otherwise is no generated mappers and no error.
+    Starting with JDK 23, javac no longer discovers processors from the compile classpath by default. If you disable `addProcessorPath`, you must either list `larkbatis-processor` in `<annotationProcessorPaths>` or pass `<proc>full</proc>`. Otherwise, no mappers will be generated.
 
 !!! danger "Do not set `<useIncrementalCompilation>false</useIncrementalCompilation>`"
 
-    The processor is *aggregating*: it writes one `LarkBatisMappers` registry listing
-    every mapper in the compilation. The compiler plugin's default behaviour recompiles
-    all sources once any of them is stale, which is what makes that registry whole.
-    Compiling only the stale sources would regenerate it from a partial view.
+    LarkBatis is an aggregating processor: it generates a single `LarkBatisMappers` registry listing every mapper in the compilation. Incremental compilation ensures all sources recompile when any mapper changes, keeping the registry complete.
 
-## Limits shared by both plugins
+## Common limitations
 
 | | |
 |---|---|
-| Test-scoped mappers | Not supported. Only `compileJava` / the `compile` execution is wired. Mapper interfaces belong in `src/main/java`; test sources use them as ordinary classes |
-| Multi-module builds | Everything is per-project. A mapper XML must live in the same module as the interface its `namespace` names; one pointing elsewhere is ignored with a build warning |
-| `mapperDir` containing a comma | Not supported. The processor treats commas as separators between directories |
-| A mapper directory in another module | Allowed but pointless: a namespace has to name an interface compiled in the same module, and a file matching none is reported and ignored |
+| Test-scoped mappers | Not supported. Only main compilation source sets are wired. Put mapper interfaces in `src/main/java`; tests can call them as normal classes |
+| Multi-module builds | Configuration is per-module. XML files must live in the same module as the mapper interface named in their `namespace` |
+| Commas in `mapperDir` | Not supported (commas are treated as path separators) |
 
-Several directories at once — and the rules for combining them with the singular
-setting — are in [Configuration](../features/configuration.md#mapper-xml-in-more-than-one-directory).
+See [Configuration](../features/configuration.md#mapper-xml-in-more-than-one-directory) for details on multi-directory setups.
 
-## Doing it without a plugin
+## Working without a plugin
 
-Passing `-Alarkbatis.mapperDir` by hand works and generates correct code. What you lose
-is the input registration: editing only an XML file may not regenerate anything, so you
-have to `clean` first. [Configuration](../features/configuration.md) has the full option
-list.
+You can pass `-Alarkbatis.mapperDir` manually without any plugin. The only downside is that XML edits won't be automatically tracked as build inputs, so you'll need to run `./gradlew clean` or `mvn clean` after modifying XML files. See [Configuration](../features/configuration.md) for all compiler options.

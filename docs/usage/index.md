@@ -1,103 +1,86 @@
 # Usage
 
-Everything you write in LarkBatis is one of two things: a **mapper interface** whose
-methods carry statement annotations, or a mapper interface marked `@Mapper` whose
-statements live in **mapper XML**. Both compile to the same generated implementation.
-They are two frontends onto one intermediate representation, not two code paths.
+In LarkBatis, you write SQL mappers in one of two ways: a **mapper interface** with statement annotations, or an interface marked `@Mapper` whose statements live in **mapper XML**. Both compile to identical Java implementations. They are simply two ways to feed the same compiler pipeline.
 
-## The shape of a project
+## Project Structure
 
 ```text
 src/main/java/com/example/app/
-    User.java                 # result class: no-arg constructor, setters
-    UserMapper.java           # annotation statements
-    UserSearchMapper.java     # @Mapper — statements in XML
+    User.java                 # result class: standard no-arg constructor + getters/setters
+    UserMapper.java           # annotation-based mapper
+    UserSearchMapper.java     # @Mapper — statements defined in XML
 src/main/resources/mappers/
     UserSearchMapper.xml      # namespace = com.example.app.UserSearchMapper
 ```
 
-At build time the processor emits, into the same package:
+During compilation, the processor generates the following classes in the same package:
 
 ```text
-UserMapper$$Impl.java              one per mapper
+UserMapper$$Impl.java              one per mapper interface
 UserSearchMapper$$Impl.java
-UserRow.java                       one per result class
-LarkBatisMappers.java             one per compilation
-LarkBatisMapperConfiguration.java one, if Spring is on the build classpath
+UserRow.java                       one per result class (shared across mappers)
+LarkBatisMappers.java             one per compilation module (static factory)
+LarkBatisMapperConfiguration.java generated when Spring is on the classpath
 ```
 
-## Pages in this section
+## Documentation Sections
 
 <div class="grid cards" markdown>
 
 -   **[Mapper Interfaces](mappers.md)**
 
-    Statement annotations, `#{}` parameters, `@Param`, result classes and how columns
-    find their setters.
+    Statement annotations, `#{}` parameters, `@Param`, result classes, and automatic column-to-setter mapping.
 
 -   **[Mapper XML](xml-mappers.md)**
 
-    `@Mapper`, namespaces, statement ids, `<sql>`/`<include>`, and how a statement is
-    resolved per method.
+    `@Mapper`, namespaces, statement IDs, `<sql>`/`<include>`, and statement resolution.
 
 -   **[Dynamic SQL](dynamic-sql.md)**
 
-    `<if>`, `<choose>`, `<where>`, `<set>`, `<trim>`, and the narrow `test` grammar that
-    replaces OGNL.
+    `<if>`, `<choose>`, `<where>`, `<set>`, `<trim>`, and the type-checked `test` grammar.
 
 -   **[foreach and Batches](foreach-and-batches.md)**
 
-    `IN` lists, multi-row `VALUES`, nested loops, `addBatch()` inserts and `@PadPow2`.
+    `IN` lists, multi-row `VALUES`, nested loops, JDBC `addBatch()` inserts, and `@PadPow2`.
 
 -   **[Result Maps and Joins](result-maps.md)**
 
-    `<resultMap>`, one level of `<association>` / `<collection>`, and the ordering rule
-    that makes it work.
+    `<resultMap>`, 1-level `<association>` / `<collection>` joins, and parent-key ordering rules.
 
 -   **[Generated Keys](generated-keys.md)**
 
-    `useGeneratedKeys`, why `keyColumn` matters, and key counting in batch mode.
+    `useGeneratedKeys`, why naming `keyColumn` matters, and batch key handling.
 
 -   **[Streaming Results](streaming.md)**
 
-    `Stream<T>` returns over an open cursor, and who owns the resources.
+    `Stream<T>` returns over open database cursors, and resource lifecycle management.
 
 -   **[Transactions](transactions.md)**
 
-    `LarkBatisTx` vote-to-commit semantics, nesting, and `@Transactional`.
+    `LarkBatisTx` vote-to-commit scopes, nesting, and Spring `@Transactional` integration.
 
 -   **[Raw SQL and SqlFragment](raw-sql.md)**
 
-    The `${}` discipline, `@OrderBy`, the escape hatch, and SQL-variant tracking.
+    Safe `${}` usage, `@OrderBy` allowlists, manual escape hatches, and SQL-variant tracking.
 
 -   **[Types and Handlers](types.md)**
 
-    What `#{}` binds without help, `JdbcCodec`, `@Column`, `@Handler`, enums and
-    `java.time`.
+    Default `#{}` mappings, `JdbcCodec`, `@Column`, `@Handler`, enums, and `java.time` support.
 
 -   **[Spring Integration](spring.md)**
 
-    What `mybatis-spring` does that LarkBatis does not need, and what it still does.
+    How LarkBatis integrates with Spring Boot without proxies or runtime scanning.
 
 -   **[Troubleshooting](troubleshooting.md)**
 
-    Nothing generated, `arg0` parameter names, Lombok ordering, XML not picked up.
+    Common build issues: missing generated files, `arg0` parameter names, and Lombok processor ordering.
 
 </div>
 
-## Two rules that explain most surprises
+## Two guiding design rules
 
-**1 · If it can be decided at build time, it is.** Column indexes, type-handler choices,
-`<trim>` prefixes, `<include>` bodies, whether a comparison is on a `long` or a `String`:
-none of it is inspected at runtime. A mistake in any of them surfaces as a compile error
-naming the mapper method, not as a stack trace.
+**1. If something can be decided at build time, it is.** Column indexes, type handler choices, `<trim>` prefixes, `<include>` inlining, and type comparisons: none of this is inspected at runtime. Any mistakes fail the build with a clear error pointing to the exact mapper method.
 
-**2 · If it cannot, it must be explicit.** The list of things resolved at runtime is short
-and closed: parameter values, the boolean results of `<if>`/`<when>` tests, the size of a
-`<foreach>` collection, the rows in a `ResultSet`, the actual column count when the select
-list could not be parsed, and the contents of a `SqlFragment`. Anything not on that list
-has to be spelled out in the mapper signature, which is why binding a `String` to `${}`
-fails the build instead of passing quietly.
+**2. If something cannot be decided at build time, it must be explicit.** The list of runtime operations is strictly limited: parameter values, boolean evaluation of `<if>`/`<when>` tests, `<foreach>` collection sizes, reading `ResultSet` rows, and `SqlFragment` contents. Anything beyond this must be declared explicitly in the method signature (which is why passing a raw `String` to `${}` fails compilation).
 
-The full statement of that boundary is in the wiki:
-[Shape vs Value](../wiki/shape-vs-value.md).
+See [Shape vs Value](../wiki/shape-vs-value.md) for the full architectural breakdown.

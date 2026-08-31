@@ -1,9 +1,8 @@
 # Transactions
 
-Outside Spring, `LarkBatisTx` is the transaction scope. Inside Spring, you use
-`@Transactional` and LarkBatis stays out of the way entirely.
+In standalone Java applications, `LarkBatisTx` manages transaction scopes. In Spring applications, you use standard `@Transactional` annotations and LarkBatis handles connection binding automatically.
 
-## `LarkBatisTx`
+## `LarkBatisTx` (Standalone Java)
 
 ```java
 try (LarkBatisTx tx = session.begin()) {
@@ -13,32 +12,26 @@ try (LarkBatisTx tx = session.begin()) {
 }
 ```
 
-Three rules, and they are all about making the safe outcome the default one:
+Key rules:
 
-**1 · `commit()` is a vote, not the commit.** The actual commit happens when the
-outermost scope closes. That is what lets scopes nest without an inner one committing
-work the outer one has not finished.
+**1. `commit()` votes to commit.** The actual database commit executes only when the outermost transaction scope closes. This allows nested scopes without premature commits.
 
-**2 · Leaving a scope without voting marks the whole transaction rollback-only.** An
-early `return`, a thrown exception, a forgotten `commit()`: all of them roll back. You
-never get half the work persisted because a path out of the block was overlooked.
+**2. Exiting without voting marks the transaction rollback-only.** Any unhandled exception, early `return`, or missing `commit()` call triggers an automatic rollback when the try-with-resources block exits.
 
-**3 · Committing a poisoned transaction throws.** If an inner scope left without voting
-and the outer one then calls `commit()`, you get `LarkBatisRollbackOnlyException` rather
-than a silent rollback that looks like a successful commit to the caller.
+**3. Committing a poisoned transaction throws an exception.** If an inner scope exits without voting and the outer scope calls `commit()`, LarkBatis throws `LarkBatisRollbackOnlyException` rather than silently rolling back.
 
 ```java
 try (LarkBatisTx outer = session.begin()) {
-    try (LarkBatisTx inner = session.begin()) {  // joins the outer transaction
+    try (LarkBatisTx inner = session.begin()) {  // joins outer transaction
         mapper.insert(a);
-        inner.commit();                          // votes
+        inner.commit();                          // records vote
     }
     mapper.insert(b);
-    outer.commit();                              // votes; the outermost close commits
+    outer.commit();                              // records vote; outermost close executes commit
 }
 ```
 
-### Read-only
+### Read-only scopes
 
 ```java
 try (LarkBatisTx tx = session.begin(true)) {
@@ -46,15 +39,13 @@ try (LarkBatisTx tx = session.begin(true)) {
 }
 ```
 
-### Checking
+### Active transaction checks
 
-`session.hasActiveTransaction()` reports whether the calling thread is inside a scope.
-The method exists for diagnostics and for code that must behave differently in and out of
-a transaction, never as something generated code consults.
+`session.hasActiveTransaction()` checks whether the calling thread is inside an active transaction.
 
-## Under Spring
+## Spring Integration
 
-Do not use `LarkBatisTx` in a Spring application. Use `@Transactional`:
+In Spring applications, do not use `LarkBatisTx`. Use standard `@Transactional` annotations:
 
 ```java
 @Service
@@ -78,21 +69,18 @@ public class AccountService {
 }
 ```
 
-This works because `SpringLarkBatisSession.conn()` asks `DataSourceUtils`, which hands
-back the connection already bound to the running transaction and opens a fresh one only
-when there is none. `release()` is its mirror: a no-op inside a transaction, a real close
-outside one.
+This works because `SpringLarkBatisSession.conn()` delegates to Spring's `DataSourceUtils`, obtaining the connection bound to the active transaction. `release()` is a no-op during active transactions and closes the connection only outside transactions.
 
-| Scenario | | Why |
-|---|---|---|
-| `@Transactional` on a service, mapper called inside | works | `DataSourceUtils` returns the transaction's connection |
-| `REQUIRES_NEW`, `NESTED`, rollback rules | works | Spring handles all of it; LarkBatis only asks for a connection |
-| `readOnly = true` | works | Spring sets the flag on that connection |
-| Mapper called outside any transaction | works | Auto-commit; the connection is closed immediately on release |
-| Sharing a transaction with `JdbcTemplate` or JPA | works | Same `DataSourceUtils`, same `DataSourceTransactionManager` |
-| A `Stream`-returning method | works | Inside a transaction `release` is a no-op and the transaction keeps the connection; `try (Stream<T> …)` either way |
+| Scenario | Behavior |
+|---|---|
+| `@Transactional` on services | `DataSourceUtils` returns the transaction's connection |
+| Propagation rules (`REQUIRES_NEW`, `NESTED`) | Managed entirely by Spring Transaction Manager |
+| `readOnly = true` | Handled by Spring on the connection |
+| Outside transactions | Standard auto-commit per statement |
+| Interop with `JdbcTemplate` / JPA | Shares identical transaction context via `DataSourceTransactionManager` |
+| `Stream<T>` query methods | Transaction manages connection lifecycle; caller closes the stream |
 
-## Why generated code never closes the Connection
+## Why generated code never closes Connections directly
 
 ```java
 Connection c = s.conn();
@@ -103,25 +91,16 @@ try (PreparedStatement ps = c.prepareStatement(SQL)) {   // (1)!
 }
 ```
 
-1.  The **statement** is in try-with-resources. The **connection** is not.
-2.  Only `release` knows whether this connection may really be closed.
+1.  **Statements** are managed with try-with-resources.
+2.  **Connections** are released via `s.release(c)`.
 
-Putting the `Connection` in try-with-resources would close a connection that belongs to
-a running transaction, which is wrong under Spring and wrong under `LarkBatisTx`. This
-is a [design red line](../wiki/design-rules.md): every generated body takes this shape,
-and the emitter tests assert it.
+Closing a `Connection` directly inside try-with-resources would break active Spring or `LarkBatisTx` transactions. This is a core architectural rule: all generated methods use `s.release(c)`.
 
 ## Exception translation
 
-`s.translate(e, sql)` turns a checked `SQLException` into the unchecked tree, carrying
-the SQL text (or a pseudo-statement id such as `tx:commit`) that was executing.
+`s.translate(e, sql)` converts checked `SQLException`s into runtime exception trees:
 
-- **Standalone:** `LarkBatisException` and its subclasses. `e.sql()` gives you the
-  statement text.
-- **Spring:** Spring's `SQLExceptionTranslator`, by default
-  `SQLExceptionSubclassTranslator`, which reads the standard `SQLException` subclass tree
-  and not a per-vendor error-code table. So a unique-constraint violation arrives as
-  `DuplicateKeyException`, exactly as it would from `JdbcTemplate`, and your existing
-  `@ExceptionHandler`s keep working.
+- **Standalone**: `LarkBatisException` and its subclasses. `e.sql()` provides the failed SQL query.
+- **Spring**: Spring's `SQLExceptionTranslator` translates errors into Spring's `DataAccessException` hierarchy (e.g. `DuplicateKeyException`), matching `JdbcTemplate` behavior.
 
-See [Errors and Diagnostics](../features/errors.md) for the full exception list.
+See [Errors and Diagnostics](../features/errors.md) for the complete list.

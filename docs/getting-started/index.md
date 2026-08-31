@@ -1,13 +1,12 @@
 # Installation
 
-LarkBatis is three artifacts on your build: two small runtime jars, and one annotation
-processor that never reaches the application classpath.
+LarkBatis needs just three artifacts in your build: two small runtime jars, and one annotation processor that never touches your runtime classpath.
 
 | Artifact | Scope | What it is |
 |---|---|---|
-| `io.github.larkbatis:larkbatis-annotations` | `implementation` | The mapper annotations. No logic, `CLASS` retention |
+| `io.github.larkbatis:larkbatis-annotations` | `implementation` | Mapper annotations. No logic, `CLASS` retention |
 | `io.github.larkbatis:larkbatis-runtime` | `implementation` | `LarkBatisSession`, `LarkBatisTx`, `JdbcCodec`, `SqlFragment`. Zero dependencies beyond JDBC |
-| `io.github.larkbatis:larkbatis-processor` | `annotationProcessor` | The generator. Build-only: it must never appear on a runtime classpath |
+| `io.github.larkbatis:larkbatis-processor` | `annotationProcessor` | The code generator. Build-only: never include on runtime classpath |
 
 Current version: **`0.1.0`**.
 
@@ -15,10 +14,10 @@ Current version: **`0.1.0`**.
 
 | | |
 |---|---|
-| Java | 17 or newer (the project itself builds on a Java 17 toolchain) |
-| Compiler | **javac only.** The processor depends on javac behaviour: declaration order of elements, and multi-round resolution of generated types. ECJ / Eclipse batch compilation is not supported |
-| Build tool | Gradle or Maven. A build-tool plugin is required only if you use mapper XML |
-| Database | Anything with a JDBC driver |
+| Java | 17 or newer (the project builds on Java 17 toolchains) |
+| Compiler | **javac only.** The processor depends on javac behavior (declaration order of elements and multi-round resolution). ECJ / Eclipse batch compiler is not supported |
+| Build tool | Gradle or Maven. You only need a build plugin if you use mapper XML |
+| Database | Any database with a standard JDBC driver |
 
 ## Gradle
 
@@ -42,12 +41,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 ```
 
-1.  The flag makes javac keep real parameter names in the class file. Without it, an
-    incremental Gradle build can hand the processor a mapper method whose parameters are
-    called `arg0`, `arg1`, leaving `#{id}` nothing to resolve against. Annotating every
-    parameter with `@Param("...")` works too.
-    [Troubleshooting](../usage/troubleshooting.md#what-the-flag-actually-does) explains
-    why clean builds hide the problem.
+1.  This flag tells javac to preserve parameter names in class files. Without it, Gradle incremental builds can pass compiled classes to the processor with parameters named `arg0`, `arg1`, breaking `#{id}` parameter binding. Alternatively, you can annotate every parameter with `@Param("...")`. See [Troubleshooting](../usage/troubleshooting.md#what-the-flag-actually-does) for why clean builds mask this issue.
 
 ## Maven
 
@@ -87,7 +81,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 ## Spring Boot
 
-One starter replaces the three declarations above, and there is no `@MapperScan`:
+A single starter replaces the runtime dependencies above, and you don't need `@MapperScan`:
 
 ```kotlin
 dependencies {
@@ -97,15 +91,11 @@ dependencies {
 }
 ```
 
-[Spring Boot](spring-boot.md) has the full setup, and
-[Spring Integration](../usage/spring.md) covers what happens under it.
+See [Spring Boot](spring-boot.md) for full setup instructions, and [Spring Integration](../usage/spring.md) for how transactions and connections work under the hood.
 
 ## Mapper XML
 
-If any of your statements live in mapper XML rather than in annotations, add the
-[build plugin](build-plugins.md) for your build tool. It passes the mapper directory to the
-processor and registers those XML files as compile inputs, without which an XML-only edit
-regenerates nothing.
+If any of your SQL statements live in mapper XML files instead of annotations, add the [build plugin](build-plugins.md) for your build tool. It passes your XML directory to the processor and registers those XML files as compilation inputs, ensuring XML edits trigger code regeneration.
 
 === "Gradle"
 
@@ -127,20 +117,16 @@ regenerates nothing.
     </plugin>
     ```
 
-## Using Lombok as well
+## Using Lombok
 
-Declare `larkbatis-processor` **after** `org.projectlombok:lombok`. Lombok writes its
-getters and setters into the AST when its own processor runs, and javac runs discovered
-processors in classpath order. Declared first, LarkBatis sees a result class with no
-accessors at all.
+Always declare `larkbatis-processor` **after** `org.projectlombok:lombok`. Lombok generates getters and setters into the AST during its own processor pass, and javac runs discovered processors in classpath order. If LarkBatis runs first, it sees a result class with no accessors.
 
 ```kotlin
 annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // after
+annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // after lombok
 ```
 
-The build error names the problem when it spots a Lombok annotation on the class. The fix
-is that one line of ordering.
+The compiler error explicitly warns you if it spots Lombok annotations on a class missing accessors. Reordering the dependencies fixes it.
 
 ## Next
 

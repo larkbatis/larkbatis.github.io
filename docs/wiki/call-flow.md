@@ -1,12 +1,12 @@
-# Life of a Call
+# Call Lifecycle
 
-One mapper call, both ways. Same interface, same SQL, same result.
+Let's trace a single mapper call under standard MyBatis versus LarkBatis. Both use the identical Java interface, SQL statement, and result class:
 
 ```java
 User u = mapper.findById(42);
 ```
 
-## MyBatis
+## MyBatis Execution Flow
 
 ```mermaid
 sequenceDiagram
@@ -35,11 +35,9 @@ sequenceDiagram
     Res-->>App: User
 ```
 
-Four groups of reflective work on that path: `createCacheKey`, `getBoundSql` (OGNL when
-the statement is dynamic), `setParameters`, and `handleResultSets`. The last one is the
-expensive one, because it runs per column per row.
+MyBatis performs multiple layers of reflection and runtime lookups: `createCacheKey`, `getBoundSql` (runtime OGNL evaluation for dynamic SQL), `TypeHandler` parameter lookups, and `handleResultSets`. The result set mapping is by far the most expensive step because it runs for every single column of every single row.
 
-## LarkBatis
+## LarkBatis Execution Flow
 
 ```mermaid
 sequenceDiagram
@@ -62,67 +60,54 @@ sequenceDiagram
     Impl-->>App: User
 ```
 
-No proxy, no lookup, no evaluation. The steps that disappeared did not move somewhere
-else. They were performed at build time, and their answers are literals in the source.
+In LarkBatis, there is no dynamic proxy, no statement map lookup, and no runtime expression interpreter. The column positions, parameter types, and setter calls were fixed during compilation.
 
-## The column assignment, side by side
+## Column Assignment: Under the Hood
 
-The measured difference lives here. For **every column of every row**, MyBatis does:
+The performance difference between the two approaches is most visible in result set processing.
+
+For **every single column of every row**, MyBatis executes:
 
 ```java
 metaObject.setValue("userName", v)
-//  ① new PropertyTokenizer(name)        allocation + indexOf + substring
-//  ② BeanWrapper.set(prop, value)
-//  ③ metaClass.getSetInvoker(name)      HashMap lookup by String
-//  ④ Object[] params = { value }        allocation
-//  ⑤ method.invoke(obj, params)         reflective call
+//  1. new PropertyTokenizer(name)        allocation + string parsing
+//  2. BeanWrapper.set(prop, value)
+//  3. metaClass.getSetInvoker(name)      HashMap lookup by String
+//  4. Object[] params = { value }        allocation
+//  5. method.invoke(obj, params)         reflective method invocation
 ```
 
-LarkBatis does:
+LarkBatis executes direct, hardcoded bytecode:
 
 ```java
 u.setUserName(rs.getString(4));
-// the property name disappeared at build time
-// the column index 4 was chosen at build time
-// what is left is a putfield
 ```
 
-For a 10-column × 1,000-row result, that is **10,000 `PropertyTokenizer` allocations +
-10,000 `Object[]` allocations + 10,000 map lookups + 10,000 `Method.invoke` calls**, to
-perform 10,000 assignments that are fundamentally a `putfield`.
+For a query returning 1,000 rows with 10 columns:
 
-!!! note "The interesting part is not ⑤"
+- **MyBatis**: 10,000 `PropertyTokenizer` allocations + 10,000 `Object[]` arrays + 10,000 map lookups + 10,000 reflective `Method.invoke()` calls.
+- **LarkBatis**: 10,000 direct setter calls reading directly from indexed columns.
 
-    Since JDK 18, core reflection is built on method handles and a hot `Method.invoke` is
-    very close to a direct call. The reliable saving is in ①③④, the work that exists
-    *only* because the property name is a string that has to be resolved at runtime.
+The JIT compiler cannot eliminate MyBatis's allocations via escape analysis because the `setValue → BeanWrapper → Invoker` call chain is too deep.
 
-    This also predicts something the measurements confirmed: escape analysis does not
-    clean this up. The `setValue → BeanWrapper → Invoker` chain is too deep for the JIT to
-    scalar-replace those allocations. See [Performance](performance.md).
+## What Actually Runs at Runtime
 
-## What still happens at runtime
+To be transparent about runtime execution:
 
-Being precise about this matters, because "no runtime work" would be a lie:
-
-| Still at runtime | |
+| Operation | Execution Details |
 |---|---|
-| `s.conn()` / `s.release(c)` | Borrowing from the pool or the transaction |
-| `ps.setLong(1, 42)` | Binding the value, which is the point |
-| `ps.executeQuery()` | The database round trip, which dominates a single-row query |
-| `rs.getString(2)` | The driver's own work |
-| For dynamic statements: evaluating each `test` once, and appending to a `StringBuilder` | |
-| For `<foreach>`: one loop for placeholders, one for values | |
-| For `${}` / `<foreach>`: one `trackVariants` call | A `ConcurrentHashMap` lookup |
+| `s.conn()` / `s.release(c)` | Obtains/returns connection from datasource or active transaction |
+| `ps.setLong(1, 42)` | Positional JDBC parameter binding |
+| `ps.executeQuery()` | Database query execution and network round-trip |
+| `rs.getString(2)` | JDBC driver column decoding |
+| Dynamic SQL generation | Evaluates `<if>` booleans once and appends to a local `StringBuilder` |
+| `<foreach>` loops | Two loops: one generates placeholder strings (`?, ?`), one binds values |
+| SQL variant monitoring | One `ConcurrentHashMap` variant count check for dynamic queries |
 
-What is gone is everything *between* the call and those operations.
+LarkBatis removes the intermediate abstraction layers between your application and JDBC.
 
-## Which is why the benefit scales with rows
+## Where Performance Gains Matter Most
 
-A `findById` returning one row does the reflective column work 4 times. A report query
-returning 10,000 rows does it 40,000 times, and that is where a 3.0 ms query becomes a
-0.8 ms one. Same code, same design; the multiplier is the row count.
+For a simple `findById` query returning a single row, the database network latency dominates total execution time—LarkBatis saves a few microseconds of CPU time.
 
-To put it bluntly: **LarkBatis is an investment for
-report queries, exports, batches and list screens. It changes almost nothing for
-single-record lookups.**
+However, for report queries, batch processing, exports, and multi-row list queries returning thousands of rows, eliminating per-row reflection and intermediate object allocations reduces query processing overhead significantly.

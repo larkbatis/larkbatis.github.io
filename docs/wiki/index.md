@@ -1,57 +1,47 @@
-# Wiki
+# Architecture & Design Wiki
 
-The reference pages tell you *what* LarkBatis does. These tell you *why* it is built the
-way it is, and what that costs.
+The reference sections explain *how* to use LarkBatis. This wiki explains *why* LarkBatis is built the way it is, along with the technical trade-offs behind each design decision.
 
 <div class="grid cards" markdown>
 
 -   **[Architecture](architecture.md)**
 
-    Two phases, the module split, and the pipeline from mapper source to generated Java.
+    The two-phase compile/runtime model, module breakdown, and internal pipeline from AST to emitted Java source.
 
 -   **[Shape vs Value](shape-vs-value.md)**
 
-    The single cut that the whole design follows: the closed list of things allowed to be
-    resolved at runtime.
+    The core architectural principle: separating compile-time structural decisions from runtime value evaluation.
 
 -   **[Generated Code](generated-code.md)**
 
-    What each emitted file looks like, and why readability counts as a feature.
+    Anatomy of generated Java files and why readable generated code is a primary design goal.
 
--   **[Life of a Call](call-flow.md)**
+-   **[Call Lifecycle](call-flow.md)**
 
-    One mapper call, step by step, against the MyBatis path that it replaces.
+    Tracing a single database query through LarkBatis versus the standard MyBatis call stack.
 
--   **[Design Red Lines](design-rules.md)**
+-   **[Design Rules](design-rules.md)**
 
-    Nine rules that hold in every change, and what breaks if one is relaxed.
+    Nine non-negotiable architectural constraints that govern all LarkBatis code changes.
 
--   **[Performance](performance.md)**
+-   **[Performance & Benchmarks](performance.md)**
 
-    The measured numbers, the unmeasured claims, and where the benefit genuinely does not
-    apply.
+    Microbenchmark results, realistic database latency comparisons, and scenarios where build-time compilation helps most.
 
 </div>
 
-## The premise in one paragraph
+## The Core Concept
 
-A MyBatis mapper call is resolved at runtime: the proxy dispatch, the OGNL evaluation of
-every `<if test>`, the `TypeHandler` lookup per parameter, the reflective `setValue` per
-column per row. None of that depends on the *values* flowing through the call. It depends
-on the *shape* of the mapper, which stopped changing the moment you saved the file. So
-resolve the shape once, at build time, and emit the JDBC calls directly. What remains at
-runtime is roughly 1,500 lines with no dependencies beyond JDBC, and no GraalVM
-reachability metadata to write, because there is no reflection anywhere.
+In standard MyBatis, every query execution involves runtime overhead: dynamic JDK proxy dispatch, runtime OGNL expression evaluation for `<if>` tags, runtime `TypeHandler` registry lookups, and reflective bean setter calls for every single result row.
 
-## What is not novel here
+None of that structural work actually depends on runtime data. The query shape and data model are completely fixed once you save your code.
 
-LarkBatis is not a new idea. Micronaut Data compiles
-queries into code at build time with no reflection; jOOQ generates from a schema; Spring
-Data has an AOT branch. **What none of them do is keep the MyBatis mapper model**:
-mapper XML, `#{}`, `<if>`, `<foreach>` and `<resultMap>`, which thousands of codebases in
-Korea and Japan run on today.
+LarkBatis shifts that entire resolution phase into `javac`. It analyzes mapper interfaces and XML during compilation and emits plain, readable JDBC code. The runtime footprint is approximately 1,500 lines of code with zero reflection, zero bytecode manipulation, and native GraalVM compatibility out of the box.
 
-The value is in the migration path, not in the idea. That framing decides a lot of the
-design: it is why the XML frontend exists at all, why the differential test harness
-compares generated SQL against MyBatis's interpreted output, and why every dropped feature
-comes with a compile error naming the replacement, never silence.
+## The Problem We Solve
+
+Ahead-of-time compilation for database queries isn't new—frameworks like Micronaut Data and jOOQ have taken similar approaches.
+
+However, existing tools require rewriting your entire query layer into their custom DSLs or query methods. They don't support existing MyBatis XML mappers, dynamic SQL tags (`<if>`, `<where>`, `<foreach>`), and `#{}` / `${}` parameter bindings that vast enterprise codebases rely on.
+
+LarkBatis provides a direct upgrade path for MyBatis codebases: keep your existing mapper XML and SQL patterns, but replace runtime interpretation with compile-time generated code.

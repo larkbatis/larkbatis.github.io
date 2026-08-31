@@ -1,9 +1,6 @@
 # foreach and Batches
 
-`<foreach>` is the hardest case in dynamic SQL, because the number of placeholders is
-the one thing about the SQL text that genuinely is not known until runtime. LarkBatis
-compiles it to **two loops that walk the same elements in the same order**: one appends
-placeholders, one binds values.
+`<foreach>` requires dynamic SQL generation because the number of parameter placeholders is only known at runtime. LarkBatis compiles `<foreach>` into **two parallel loops**: the first generates the placeholder string (`?, ?, ?`), and the second binds the typed values.
 
 ```xml
 <select id="findByIds" resultType="com.example.app.User">
@@ -39,23 +36,21 @@ public List<User> findByIds(List<Long> ids) {
 }
 ```
 
-1.  See [Empty collections](#empty-collections) below.
-2.  Cardinality changes the SQL text, so this statement is tracked like a `${}` splice.
-3.  The second loop. No `__frch_id_0` naming layer routes values through, because the
-    loop index already connects placeholder *k* to value *k*.
+1.  Throws immediately on empty collections (see below).
+2.  Monitors generated SQL variants to prevent unbounded query cache growth.
+3.  Direct iteration binds values positionally with zero intermediate map lookups.
 
-## What can be iterated
+## Supported collection types
 
-| Collection type | `item` | `index` |
+| Collection Type | `item` | `index` |
 |---|---|---|
-| `List<T>`, any `Collection<T>` | the element | the position |
-| `T[]` | the element | the position |
-| `Map<K, V>` | the **value** | the **key** |
+| `List<T>`, `Collection<T>` | Element value | Zero-based index integer |
+| `T[]` (arrays) | Element value | Zero-based index integer |
+| `Map<K, V>` | Entry **value** | Entry **key** |
 
-All of them must be **statically typed**: `List<Long>`, not `List`. The element type is
-what chooses `ps.setLong` over `ps.setString` at build time.
+Collections must have **concrete generic types** (e.g. `List<Long>`, not raw `List`). The element type determines the typed `ps.setXxx` call generated at compile time.
 
-Loops nest, and the outer `item` can be the inner loop's `collection`:
+Nested loops are fully supported:
 
 ```xml
 <select id="findByIdGroups" resultType="com.example.app.User">
@@ -72,12 +67,9 @@ Loops nest, and the outer `item` can be the inner loop's `collection`:
 List<User> findByIdGroups(List<List<Long>> groups);
 ```
 
-Sibling loops may reuse the same `index` name; the generator renames them apart.
-
 ## Using `index`
 
-`index` is the position (or the map key), and it binds like any other value. The standard
-"preserve the input order" trick:
+`index` represents the item's index (or map key) and can be bound like any parameter. For example, preserving custom ordering:
 
 ```xml
 <select id="findByIdsOrdered" resultType="com.example.app.User">
@@ -91,7 +83,7 @@ Sibling loops may reuse the same `index` name; the generator renames them apart.
 </select>
 ```
 
-With a `Map`, `index` is the key and `item` is the value:
+When iterating over a `Map`, `index` binds the key and `item` binds the value:
 
 ```xml
 <foreach collection="filters" item="value" index="column" separator=" OR ">
@@ -99,17 +91,17 @@ With a `Map`, `index` is the key and `item` is the value:
 </foreach>
 ```
 
-## Binding a property of the element
+## Binding nested properties
 
-The body does not have to bind the element itself:
+You can bind properties on collection items directly:
 
 ```xml
 <foreach collection="probes" item="p" open="(" separator="," close=")">#{p.email}</foreach>
 ```
 
-## Empty collections
+## Empty collections throw immediately
 
-!!! danger "An empty `<foreach>` throws"
+!!! danger "An empty `<foreach>` throws `LarkBatisEmptyForeachException`"
 
     ```text
     LarkBatisEmptyForeachException:
@@ -117,28 +109,22 @@ The body does not have to bind the element itself:
       wrap the loop in an <if> testing the collection if an empty one should drop the fragment instead
     ```
 
-MyBatis contributes *nothing* for an empty collection, not even `open` and `close`. That
-leaves `... WHERE id IN` to reach the database and fail there, with a syntax error that
-names neither the mapper nor the parameter. Failing here instead names both, at the call
-site that owns the empty list.
+    In MyBatis, an empty collection generates an empty string (omitting `open` and `close`), leaving `WHERE id IN` to fail at the database with a vague syntax error. LarkBatis catches this early with a clear exception naming the mapper and parameter.
 
-If you genuinely want the fragment to disappear, say so, and you keep MyBatis's
-behaviour exactly:
+    If you want the SQL clause omitted entirely when a collection is empty, wrap it in an `<if>` condition:
 
-```xml
-<if test="ids != null and !ids.isEmpty()">
-  AND id IN
-  <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
-</if>
-```
+    ```xml
+    <if test="ids != null and !ids.isEmpty()">
+      AND id IN
+      <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </if>
+    ```
 
-## `@PadPow2`: bounding the SQL variants { #padpow2-bounding-the-sql-variants }
+## `@PadPow2`: Bounding SQL variants { #padpow2-bounding-the-sql-variants }
 
-The SQL text of a `<foreach>` statement changes with the number of elements, so the
-driver's and the database's statement caches grow with **every cardinality ever seen**.
-`@PadPow2` rounds the placeholder count up to the next power of two, repeating the last
-element, which bounds that at log₂(n) variants instead of n. Hibernate calls the same
-trick `in_clause_parameter_padding`.
+Because `<foreach>` generates dynamic SQL strings based on collection length, variable collection sizes can flood statement caches.
+
+`@PadPow2` rounds the parameter count up to the nearest power of two by repeating the last element, bounding the number of distinct SQL variants to $\log_2(N)$ instead of $N$ (similar to Hibernate's parameter padding).
 
 ```java
 @PadPow2
@@ -147,29 +133,24 @@ List<User> findByIdsPadded(List<Long> ids);
 
 ```java
 int p0 = LarkBatisSql.padPow2(n0);
-// ... p0 placeholders emitted
+// ... emits p0 placeholders (?, ?, ?, ?)
 Long last0 = null;
 for (Long id : ids) {
     JdbcCodec.setLong(ps, i++, id);
     last0 = id;
 }
 for (int k0 = n0; k0 < p0; k0++) {
-    JdbcCodec.setLong(ps, i++, last0);      // repeat the last element
+    JdbcCodec.setLong(ps, i++, last0);      // pads remaining positions with the last element
 }
 ```
 
-On an interface it applies to every statement; on a method, to that one.
+!!! warning "Padding rules"
 
-!!! warning "Opt-in, and enforced"
+    Repeating elements is only safe where duplicate arguments don't affect query semantics (e.g. `IN` clauses). The compiler enforces this: `@PadPow2` is only permitted on `SELECT`/`UPDATE`/`DELETE` queries with simple `#{}` binds, and is rejected on `INSERT` statements.
 
-    Repeating the last element is invisible only where duplicates cannot change the
-    result, which means an `IN` list. The generator enforces that: the `<foreach>` body
-    must be a single `#{}` bind and the statement must not be an `INSERT`. Outside those
-    limits padding is a **compile error**, never silently duplicated rows.
+## Multi-row `VALUES` inserts
 
-## Multi-row `VALUES`
-
-A `<foreach>` in an `INSERT` builds one statement with many value tuples:
+Use `<foreach>` in `<insert>` statements to insert multiple rows in a single SQL statement:
 
 ```xml
 <insert id="insertAll">
@@ -180,11 +161,9 @@ A `<foreach>` in an `INSERT` builds one statement with many value tuples:
 </insert>
 ```
 
-## JDBC batches
+## JDBC batch inserts
 
-Batching is not an executor mode you configure, because there is no executor. It is a
-**method signature**: an `@Insert` whose parameter is a `List<T>` compiles to `addBatch()` /
-`executeBatch()`.
+Batching in LarkBatis is declared via **method signatures**: an `@Insert` taking a `List<T>` compiles directly to JDBC `addBatch()` / `executeBatch()` calls:
 
 ```java
 @Insert("INSERT INTO orders (status, total, placed_at) VALUES (#{status}, #{total}, #{placedAt})")
@@ -225,13 +204,9 @@ public int insertAll(List<Order> orders) {
 }
 ```
 
-1.  An empty batch is a no-op returning 0. Unlike an empty `<foreach>`, it produces no
-    malformed SQL to protect you from.
-2.  Drivers exist that return fewer keys than rows. Ignoring that would leave part of the
-    batch with null ids and nobody the wiser. See [Generated Keys](generated-keys.md).
+1.  An empty list returns `0` immediately without touching the database.
+2.  Validates that returned generated key counts match the batch size. See [Generated Keys](generated-keys.md).
 
-!!! note "Batch and dynamic SQL do not combine"
+!!! note "Batch methods cannot contain dynamic SQL"
 
-    A batch statement's SQL text must be the same for every row, which is what makes it
-    one prepared statement. A batch method whose statement contains dynamic tags is a
-    compile error.
+    JDBC batching requires a single, invariant SQL statement string. Statements containing dynamic tags (`<if>`, `<choose>`, etc.) cannot be used with batch execution and trigger a compile error.

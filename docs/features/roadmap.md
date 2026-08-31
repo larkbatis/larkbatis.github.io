@@ -1,75 +1,56 @@
 # Roadmap
 
-Milestones were ordered by one criterion: **lowest semantic risk first, provable benefit
-earliest.**
+We ordered our milestones around one rule: **tackle the biggest semantic risks first and prove real performance gains as early as possible.**
 
-## Status
+## Milestone Status
 
-| | Scope | |
+| Milestone | Scope | Status |
 |---|---|---|
-| **M0** | Benchmark groundwork: an `ObjectWrapperFactory` experiment on mybatis-3 itself, to test the central claim before writing any LarkBatis code | :material-check: |
-| **M1** | Runtime core; annotation-only processor for static SQL and `#{}`; `$$Impl` + row readers; `useGeneratedKeys`; `SqlFragment` | :material-check: |
-| **M2** | Gradle plugin; mapper XML; dynamic tags; the expression grammar. *The highest semantic risk in the project*, hence the differential harness against MyBatis | :material-check: |
-| **M3** | `<foreach>`, power-of-two padding, batch insert | :material-check: |
-| **M4** | One-level join `<resultMap>`, `Stream` returns, transactions, Spring integration | :material-check: |
-| **M5** | Extended benchmarks, legacy-mapper scanner, design revision | :material-check: except the native-image smoke test |
+| **M0** | Proof of concept: an `ObjectWrapperFactory` experiment on stock MyBatis to test the core thesis before writing any LarkBatis code | :material-check: |
+| **M1** | Runtime core: annotation-based processor for static SQL and `#{}`; `$$Impl` + row readers; `useGeneratedKeys`; `SqlFragment` | :material-check: |
+| **M2** | Gradle plugin: mapper XML; dynamic tags; expression grammar parser; differential test harness against MyBatis | :material-check: |
+| **M3** | `<foreach>`, power-of-two padding (`@PadPow2`), batch inserts | :material-check: |
+| **M4** | 1-level join `<resultMap>`, `Stream` returns, transaction scopes, Spring Boot integration | :material-check: |
+| **M5** | Extended JMH benchmarks, legacy-mapper scanner CLI, design documentation | :material-check: (except native-image smoke test) |
 
-Also landed alongside these: the Maven plugin, JPMS descriptors for all five published
-artifacts, and Spring Boot 3 / Boot 4 compatibility from one jar.
+Completed alongside these: Maven build plugin, JPMS named module descriptors for all published artifacts, and unified Spring Boot 3 / Boot 4 compatibility.
 
-## M0: the cheapest possible falsification
+## M0: Proving the thesis cheaply
 
-Worth describing because of what it says about the project's method. MyBatis already has
-an `ObjectWrapperFactory` SPI, so you can generate an `ObjectWrapper` per result class and
-plug it into `Configuration` **without patching MyBatis at all**. If removing `Reflector`
-and `MetaObject` from the row-read path measurably improved things, LarkBatis's central
-claim was proven on a real codebase for a few hundred lines of experiment. If it did not,
-several months were saved.
+This milestone was about validating our core assumption with minimal effort. MyBatis has an `ObjectWrapperFactory` SPI, which lets you plug in a generated `ObjectWrapper` per result class without modifying MyBatis itself. If eliminating `Reflector` and `MetaObject` on the row-reading path made a measurable difference, our thesis was validated with just a few hundred lines of test code. If not, we could walk away before investing months of effort.
 
-It improved things, and by a wide margin. See
-[Performance](../wiki/performance.md).
+It proved the thesis decisively. See [Performance](../wiki/performance.md).
 
-## M5: what is actually left
+## M5: Remaining items
 
-| | Status |
+| Task | Status |
 |---|---|
-| `larkbatis-benchmarks` (JMH; pinned sessions; STATEMENT-scope cache; H2 over TCP; JDK 17 vs 21; 50-bean megamorphic experiment) | Done. [Results](../wiki/performance.md#measured-on-larkbatis-itself) |
-| `larkbatis-scanner` (`larkbatis-scan`) | Implemented. [Details](migration.md) |
-| **Native-image smoke test** | **Not run.** The development machine has no GraalVM |
-| A migrated service running in a real environment for a week | Not done. The trial migration passed its whole test suite on a copy |
-| The design revision, rewritten around what the benchmarks and the trial migration showed | Done |
+| `larkbatis-benchmarks` (JMH; pinned sessions; STATEMENT-scope cache; H2 over TCP; JDK 17 vs 21; 50-bean megamorphic benchmark) | Done. [Results](../wiki/performance.md#measured-on-larkbatis-itself) |
+| `larkbatis-scanner` (`larkbatis-scan` CLI) | Done. [Details](migration.md) |
+| **Native-image smoke test** | **Not yet run.** Development environment lacks GraalVM setup |
+| Extended 1-week production soak test of migrated service | Pending. (The initial trial migration passed 100% of its test suite) |
+| Architecture documentation revision | Done |
 
-!!! warning "The native-image promise is unverified"
+!!! warning "Native image verification status"
 
-    Zero reflection is the project's strongest qualitative claim, and it is structural:
-    no `Proxy`, no `Class.forName`, no `setAccessible` to declare, and you can check that
-    by reading the code. But **no real native-image build has been done**. It should not be
-    presented as a result until there is one.
+    Zero runtime reflection is a structural guarantee: there are no dynamic proxies, no `Class.forName`, and no `setAccessible` calls in runtime or generated code. However, **an end-to-end native-image build has not been executed yet**. We treat this as an architectural design property rather than a benchmarked claim until that smoke test runs.
 
 ## Deliberately deferred
 
-| | Why |
+| Feature | Reason |
 |---|---|
-| **Multiple `DataSource`s** (`@LarkBatisDataSource`) | No design without a real service that needs it. Today: one `SpringLarkBatisSession` per `DataSource`, mapper `@Bean` methods written by hand |
-| **Test-scoped mappers** | Only the `compile` source set is wired, in both build plugins |
-| **`log-sql`** | Every generated body would need a logging branch. Driver- or pool-level logging instead |
-| **Maven plugin functional tests** | Blocked on the artifacts being publishable to a local repository, the same status as the Gradle plugin's TestKit tests |
+| **Multiple `DataSource`s** (`@LarkBatisDataSource`) | We want real production usage before locking in an API. Today: define one `SpringLarkBatisSession` per `DataSource` and wire mapper `@Bean` methods manually |
+| **Test-scoped mappers** | Build plugins only configure main source sets |
+| **`log-sql`** | Handled more cleanly at the JDBC pool or driver level (`datasource-proxy`, p6spy) |
 
-## What will not be added
+## Features that will not be added
 
-None of those are backlog items. Each sits on the wrong side of the
-[shape/value cut](../wiki/shape-vs-value.md), and adding one would mean adding back a
-runtime that can inspect types.
+These are not backlog items. Each sits on the wrong side of our [shape vs value boundary](../wiki/shape-vs-value.md), and adding them would re-introduce runtime reflection and interpretation:
 
-Full OGNL · `<bind>` · the `@SelectProvider` family · lazy loading · plugins and
-interceptors · `Object`/`Map` parameters · `<discriminator>` · nested selects in
-`<collection>` · second-level cache · runtime `addMapper()` · `RowBounds` · TypeHandler
-discovery by scan · `ExecutorType`.
+Full OGNL expressions · `<bind>` · `@SelectProvider` annotations · Lazy loading · Interceptor plugins · Untyped `Object`/`Map` parameters · `<discriminator>` · Nested `select=` queries in `<collection>` · Second-level caches · Dynamic runtime `addMapper()` · `RowBounds` · Runtime classpath scanning · `ExecutorType`.
 
-Each already has a compile error naming its replacement. See
-[MyBatis Differences](mybatis-differences.md).
+Each unsupported feature produces a clear compile-time error with its recommended alternative. See [MyBatis Differences](mybatis-differences.md).
 
 ## Versioning
 
-Documentation is versioned alongside releases. The version selector in the header switches
-between them, and `latest` always points at the most recent release.
+Documentation is versioned alongside releases. Use the version selector in the header to view documentation for specific releases.

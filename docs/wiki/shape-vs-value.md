@@ -1,92 +1,53 @@
-# Shape vs Value
+# Shape vs. Value
 
-Every design decision in LarkBatis follows from one cut. On one side: everything
-derivable from the **shape** of a mapper, which stopped changing when you saved the file.
-On the other: the **values** that flow through a call at runtime.
+Every architectural decision in LarkBatis stems from a single design rule: separating the **static structure (shape)** of a query from the **dynamic values** passed at runtime.
 
-The shape side is resolved at build time. The value side is the only thing left.
+The structure of a query—its SQL template, parameter types, column mappings, and target bean setters—is completely fixed the moment you write the code. Only dynamic values should be evaluated when the query executes.
 
-## The closed list
+## The Closed Runtime List
 
-The list below is the whole of what may be resolved at runtime, and it is closed: an open
-one would quietly grow back into an interpreter.
+To prevent the gradual creep of runtime interpreters and reflection, LarkBatis strictly limits what may be evaluated at runtime to this closed list:
 
-| Resolved at runtime | Why it has to be |
+| Runtime Evaluation | Technical Reason |
 |---|---|
-| Parameter **values** | They are the input |
-| The **boolean result** of an `<if>` / `<when>` test | It depends on parameter values |
-| The **size** of a `<foreach>` collection | It depends on parameter values |
-| The **rows** in a `ResultSet` | The database produced them |
-| The **actual column count**, when the generator could not parse the select list | `SELECT *` has no static answer |
-| The **contents** of a `SqlFragment` | The escape hatch, and it is audited |
+| Method parameter **values** | Dynamic inputs provided by caller |
+| Evaluated **boolean result** of `<if>` / `<when>` | Depends on runtime parameter values |
+| Element **count** of `<foreach>` collections | Depends on collection size passed at runtime |
+| Returned **data rows** from a `ResultSet` | Data returned by the database |
+| Dynamic **column positions** for `SELECT *` | Only used when query columns cannot be parsed statically |
+| Dynamic text in `SqlFragment` | Explicitly audited dynamic SQL fragments |
 
-Everything else happens at build time. Not "usually", not "when possible": everything.
+Everything else—parameter setter selection, property-to-column mappings, SQL inlining, and bean instantiation—is resolved at compile time during `javac`.
 
-One more slot is reserved — a `databaseId` chosen once at startup, so a statement could
-have a per-vendor variant. **It was never built.** A `databaseId` attribute on a
-statement is a compile error today, and the answer to two vendors is two mapper
-interfaces. The row is called out here rather than quietly left off, because a list that
-claims to be closed has to be honest about what is on it.
+## What Compile-Time Resolution Replaces
 
-## What that buys, item by item
-
-| Decided at build time | What MyBatis does at runtime instead |
+| Compile-Time Resolution (LarkBatis) | Runtime Interpretation (MyBatis) |
 |---|---|
-| Which `ps.setXxx` binds each parameter | `TypeHandlerRegistry` lookup by Java type and JDBC type |
-| Which column index feeds each setter | Reflective `MetaObject.setValue(propertyName, value)` per column per row |
-| Which setter that even is | `Reflector` builds a name → `Invoker` map per class |
-| Whether `<where>` emits its keyword | A runtime scan of the assembled fragment for a leading `AND`/`OR` |
-| What `<include refid>` expands to | Resolved from a `Configuration` map |
-| The Java expression for each `test` | OGNL parses and evaluates against an `ObjectWrapper` |
-| Which class implements the mapper | `Proxy.newProxyInstance` + `MapperMethod` dispatch |
+| Hardcodes typed `ps.setXxx` calls | `TypeHandlerRegistry` map lookup per parameter |
+| Hardcodes positional `rs.getXxx(index)` calls | Reflective `MetaObject.setValue()` per column per row |
+| Hardcodes direct bean setter invocations | `Reflector` property name-to-method invocation lookup |
+| Constant-folds `<where>` and `<set>` into booleans | Runtime substring scanning and string trimming |
+| Inlines static `<include refid="...">` fragments | Runtime XML DOM tree node resolution |
+| Compiles `<if test="...">` to plain Java booleans | Runtime OGNL expression parsing and reflection |
+| Generates concrete `Mapper$$Impl` classes | `Proxy.newProxyInstance()` dynamic JDK proxies |
 
-## The consequences you actually feel
+## Practical Architectural Benefits
 
-**Type errors move to compile time.** A `#{customerName}` that does not exist on the
-parameter type is a build error naming the method. In MyBatis it is a runtime
-`ReflectionException` on the unlucky code path.
+- **Compile-Time Type Safety**: Referencing a non-existent parameter like `#{customerName}` fails compilation with a clear error pointing to the method. In standard MyBatis, this only fails at runtime when that specific query executes.
+- **Zero GraalVM Native Image Metadata**: Without `Proxy`, `Class.forName()`, or `setAccessible()`, there is no reflection reachability configuration to write or maintain.
+- **Guaranteed No-Reflection Architecture**: Because there is no runtime reflection engine, new features cannot accidentally introduce runtime reflection overhead.
 
-**There is no metadata to write for native image.** No `Proxy`, no `Class.forName`, no
-`setAccessible`, so nothing to declare. The property is a *consequence* of the cut, not a
-feature that was added.
+## Where the Boundary Requires Trade-offs
 
-**Reflection cannot be reintroduced accidentally.** There is no runtime that could do it.
-A feature request that needs runtime type inspection has no place to put it, which is why
-the [dropped feature list](../features/mybatis-differences.md) is what it is.
+Being honest about architectural trade-offs:
 
-**Some MyBatis features become impossible rather than unimplemented.** That distinction
-matters when reading the dropped list. `<discriminator>` chooses a result class from a
-column value, so the *shape* of the result depends on a runtime value and it lands on the
-wrong side of the cut by construction. Lazy loading needs a proxy per result object. Plugins
-hook a runtime pipeline that does not exist. None of these are "not yet".
+1. **`<foreach>` Parameter Counts**: Because collection size is only known at runtime, dynamic query strings must be assembled for `<foreach>` queries. LarkBatis compiles this into efficient loops and provides `@PadPow2` to bound statement cache variants.
+2. **`SELECT *` Queries**: If column names cannot be parsed at compile time, LarkBatis resolves column indexes once from `ResultSetMetaData` on the first row, then reads subsequent rows positionally.
+3. **Dynamic Identifiers via `${}`**: When table or column names must vary dynamically, LarkBatis enforces type-safe validation using `@OrderBy(allowed = {...})` or audited `SqlFragment` wrappers.
 
-## Where the cut is uncomfortable
+## The Guiding Rule for New Features
 
-Three places, and it is worth being honest that they are trade-offs and not free wins.
+When evaluating any proposed feature, we ask a single question: *Does this feature require runtime information not on the closed list?*
 
-**1 · `<foreach>` cardinality.** The number of placeholders genuinely is a runtime value,
-so the SQL text is assembled at runtime for those statements. LarkBatis compiles the loop
-instead of interpreting a tree, but the text still varies, which is why those statements
-get variant tracking and why `@PadPow2` exists.
-
-**2 · `SELECT *`.** The column count is not knowable at build time. That one statement
-falls back to name-based reads resolved from `ResultSetMetaData` on the first row. Correct,
-slower, and reported at build time so it is a decision.
-
-**3 · `${}`.** Sometimes an identifier really does come from configuration. Instead of a
-ban, the cut is enforced at the type level: only `SqlFragment`, closed-value types, or
-`@OrderBy(allowed = {...})` may be spliced, and arbitrary text has exactly one named entry
-point.
-
-## The test for any new feature
-
-Before adding anything, the question is: *does this need a runtime value that is not on
-the list?*
-
-- **No** → it belongs at build time, and the only question left is what the generated
-  code should look like.
-- **Yes** → either the list grows, which requires a very good reason, or the feature is
-  dropped with a compile error naming the replacement.
-
-Read the [dropped feature list](../features/mybatis-differences.md) with that question in
-hand and it stops looking arbitrary.
+- **If No**: It must be resolved at compile time.
+- **If Yes**: The feature is either modeled as an explicit `SqlFragment` or rejected with a compile error pointing to a safer alternative.

@@ -1,25 +1,23 @@
 # Generated Code
 
-Generated code is a **feature**, not an implementation detail. It is meant to be opened,
-read, and stepped through in a debugger. A stack trace should point at a real Java line
-in your package, not at `MapperProxy.invoke → MapperMethod.execute → …`.
+Generated code in LarkBatis is designed to be clean, readable, and easy to debug. When something goes wrong, you get a clean stack trace pointing directly to a line of Java code in your project package—not a deep labyrinth of dynamic proxy invocations like `MapperProxy.invoke() → MapperMethod.execute()`.
 
-For a codebase with 300 mapper methods, that debuggability is worth more day to day than
-a few microseconds per query.
+## Generated Artifacts
 
-## What gets emitted
+During compilation, LarkBatis generates four types of source files:
 
-| File | Cardinality | Contents |
+| Emitted Class | Scope | Purpose |
 |---|---|---|
-| `UserMapper$$Impl` | one per mapper | The implementation. One method per statement |
-| `UserRow` | one per result class | Three reads and a column resolver. Shared by every statement returning `User` |
-| `LarkBatisMappers` | one per compilation | Static factory over the closed set of mappers |
-| `LarkBatisMapperConfiguration` | one per compilation, if Spring is present | `@Bean` per mapper |
+| `UserMapper$$Impl` | One per mapper interface | Concrete class implementing the mapper methods using direct JDBC calls |
+| `UserRow` | One per result class | Static row reader methods shared by all queries returning `User` |
+| `LarkBatisMappers` | One per compilation unit | Static factory registry for instantiating mappers |
+| `LarkBatisMapperConfiguration` | One per compilation (if Spring is on classpath) | Spring `@Configuration` defining mapper `@Bean`s |
 
-Everything lands in your own package, next to the interface. Under JPMS that means nothing
-has to be exported for it.
+All generated files are placed in the same package as their corresponding mapper interface.
 
-## The mapper implementation
+## Anatomy of a Generated Mapper
+
+Here is what a generated `Mapper$$Impl` class looks like:
 
 ```java
 @Generated("io.github.larkbatis.processor.LarkBatisProcessor")
@@ -52,21 +50,17 @@ public final class UserMapper$$Impl implements UserMapper {
 }
 ```
 
-1.  Static SQL is a `static final String`, allocated once, interned, and the same object
-    every call. `#{}` already became `?` at build time.
-2.  Explicit key columns for `useGeneratedKeys`, so `prepareStatement(sql, String[])` can
-    be used instead of the non-portable `RETURN_GENERATED_KEYS`.
-3.  A public constructor taking the session. That is what makes it an ordinary Spring bean
-    with no `FactoryBean` in sight.
-4.  Borrowed, not opened. Under a transaction this is the transaction's connection.
-5.  `setLong`, not `setObject`, chosen at build time from the parameter's declared type.
-6.  Translation carries the SQL text into the exception.
-7.  `release`, in `finally`. The connection is **not** in try-with-resources.
+1. **Static SQL constant**: Static queries are compiled into `static final String` constants. Parameter placeholders `#{}` are converted into JDBC `?` markers at compile time.
+2. **Explicit generated keys**: Passes key column names directly to `prepareStatement(sql, String[])`.
+3. **Public constructor**: Accepts `LarkBatisSession`, making mapper beans standard Spring components without requiring factory beans or dynamic proxies.
+4. **Transaction-aware connection**: `s.conn()` checks out the connection from Spring's active `@Transactional` context or opens a standalone auto-commit connection.
+5. **Typed parameter setters**: Calls `ps.setLong()` directly instead of reflecting or calling `setObject()`.
+6. **Exception translation**: Automatically translates JDBC exceptions into Spring's exception hierarchy (or `LarkBatisException`).
+7. **Connection release**: Released via `s.release(c)` in a `finally` block to preserve Spring transaction ownership.
 
-## Dynamic statements
+## Anatomy of Dynamic SQL Statements
 
-Conditions are evaluated **once**, into locals, and the same locals drive both SQL
-assembly and parameter binding:
+Dynamic SQL tags (`<if>`, `<where>`, `<choose>`) compile into boolean flags and a pre-sized `StringBuilder`:
 
 ```java
 boolean c0 = q.getName() != null;
@@ -83,22 +77,17 @@ try (PreparedStatement ps = c.prepareStatement(sql)) {
     int i = 1;
     if (c0) ps.setString(i++, q.getName());     // (4)!
     if (c1) JdbcCodec.setInt(ps, i++, q.getMinAge());
-    ...
+    // ...
 ```
 
-1.  Capacity computed at build time from the longest possible text, so no `StringBuilder`
-    growth.
-2.  `<where>` folded into a guarded literal. `|` rather than `||` because both operands are
-    already-computed locals; there is nothing to short-circuit.
-3.  The leading-`AND` rule, constant-folded into a ternary over known locals, never a
-    runtime substring search of the assembled fragment.
-4.  Binding walks the **same** conditions in the **same** order. That is why the SQL and
-    the parameters can never disagree: there is no name-to-position map between them, just
-    one shared set of booleans.
+1. **Calculated buffer capacity**: Initial `StringBuilder` capacity is calculated at compile time based on the longest potential query string.
+2. **Constant-folded `<where>` clause**: Replaces runtime string trimming with boolean checks (`c0 | c1`).
+3. **Leading `AND`/`OR` handling**: Inlines prefix decisions using ternary conditions based on active flags.
+4. **Synchronized parameter binding**: Uses the exact same boolean flags (`c0`, `c1`) to bind parameters, guaranteeing that bound parameters always match query placeholders.
 
-## Row readers
+## Anatomy of Generated Row Readers
 
-One class per result class, with three entry points:
+Each result bean gets a dedicated `RowReader` class with three read strategies:
 
 ```java
 public final class UserRow {
@@ -117,7 +106,7 @@ public final class UserRow {
     public static User read(ResultSet rs, int[] c) throws SQLException {   // (3)!
         User u = new User();
         if (c[0] != 0) u.setId(rs.getLong(c[0]));
-        ...
+        // ...
     }
 
     public static int[] columns(ResultSet rs) throws SQLException {        // (4)!
@@ -127,7 +116,7 @@ public final class UserRow {
             switch (md.getColumnLabel(i).replace("_", "").toLowerCase(Locale.ROOT)) {
                 case "id" -> c[0] = i;
                 case "name" -> c[1] = i;
-                ...
+                // ...
             }
         }
         return c;
@@ -135,43 +124,31 @@ public final class UserRow {
 }
 ```
 
-1.  The escape hatch reuses this, so hand-assembled SQL still reads rows without
-    reflection.
-2.  **Positional read**, used when the generator parsed the select list. Every index is a
-    literal.
-3.  **Indexed read**: `c[k]` is the ResultSet position of property *k*, `0` meaning "not
-    selected". A property whose column is absent stays unset, never null.
-4.  **Column resolver**, run once on the first row when the select list could not be
-    parsed. Unmatched columns are ignored, matching MyBatis auto-mapping. The
-    `replace("_","").toLowerCase()` is the `snake_case` convention, applied here for the
-    same reason it is applied at build time elsewhere.
+1. **Static `READER` constant**: Reusable functional interface instance used by escape-hatch dynamic queries.
+2. **Positional reader**: Hardcoded column indexes for queries with parsed select lists (fastest path).
+3. **Indexed reader**: Maps column positions dynamically when query column order cannot be determined at compile time.
+4. **Column resolver**: Parses `ResultSetMetaData` once on the first result row, computing column index positions to avoid repeated string lookups on subsequent rows.
 
-This three-entry shape is why `SELECT *` costs one metadata pass and then reads
-positionally, with no name lookup per column per row.
+## Anatomy of Nested `<resultMap>` Join Mappings
 
-## Result maps
-
-A nested `<resultMap>` becomes a grouping loop, not a `CacheKey` map:
+Nested collections compile into single-pass grouping loops:
 
 ```java
 long key = rs.getLong(1);
-if (!has || key != lastKey) {          // new parent
+if (!has || key != lastKey) {          // new parent object
     parent = new Team();
-    ...
+    // populate parent properties...
 }
-if (rs.getObject(3) != null) {         // LEFT JOIN miss
+if (rs.getObject(3) != null) {         // check for null child in LEFT JOIN
     Member m = new Member();
-    ...
+    // populate child properties...
     parent.getMembers().add(m);
 }
 ```
 
-MyBatis does the same job by building a `CacheKey` per row: reflect over the id columns,
-read each through a `TypeHandler`, hash, look the parent up in a map. Here the key is a
-typed local compared with `!=`, so a `long` key costs no boxing per row. The price is the
-[ordering requirement](../usage/result-maps.md#the-ordering-rule).
+This single-pass algorithm avoids allocating intermediate map lookup keys and boxing primitives. It requires queries to be sorted by parent key (`ORDER BY team.id`).
 
-## The registry and the Spring configuration
+## Spring Configuration & Factory Registry
 
 ```java
 public final class LarkBatisMappers {
@@ -179,9 +156,7 @@ public final class LarkBatisMappers {
         return new UserMapper$$Impl(s);
     }
 }
-```
 
-```java
 @Configuration(proxyBeanMethods = false)
 public class LarkBatisMapperConfiguration {
     @Bean
@@ -191,20 +166,4 @@ public class LarkBatisMapperConfiguration {
 }
 ```
 
-Both are the same three lines twice, and that is the point: a mapper is a class with a
-constructor, so registering one is ordinary. `proxyBeanMethods = false` avoids the runtime
-CGLIB subclass Spring would otherwise build, which is the exact runtime bytecode
-generation this project exists to remove.
-
-## Reading the diff
-
-Generated output is not free-form. Golden snapshots of it are committed to the core
-repository, so any emitter change shows up as a reviewed diff:
-
-```console
-$ ./gradlew test -Pupdate-golden
-$ git diff larkbatis-processor/src/test/resources/golden/
-```
-
-If a change to an emitter produces no golden diff, it changed nothing. If it produces one
-nobody can explain, that is the review catching it.
+Because mappers are standard classes with public constructors, Spring instantiates them as direct beans without runtime JDK dynamic proxies or CGLIB subclassing.

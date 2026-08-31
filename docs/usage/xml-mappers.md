@@ -1,7 +1,6 @@
 # Mapper XML
 
-An interface annotated `@Mapper` takes each method's SQL from the mapper XML statement
-with the same id. The namespace is the interface's fully-qualified name.
+An interface annotated with `@Mapper` pairs each method with the mapper XML statement having the matching `id`. The XML `namespace` must match the fully-qualified name of the interface.
 
 ```java title="UserSearchMapper.java"
 package com.example.app;
@@ -45,63 +44,50 @@ public interface UserSearchMapper {
 </mapper>
 ```
 
-The DTD reference is kept so existing files parse unchanged and editors keep completing.
-The build neither fetches it nor validates against it.
+The DTD declaration is preserved so existing XML files parse without edits and IDE autocomplete keeps working. The build does not make network calls to fetch or validate the DTD.
 
-## Why `@Mapper` is needed here
+## Why `@Mapper` is required here
 
-Purely annotation-based mappers do not need the marker: the processor finds them because
-their methods carry `@Select` and friends. An XML-only interface has no annotation
-anywhere, so without `@Mapper` it would never reach a processing round at all. That is
-the marker's whole job.
+Purely annotation-based mappers don't need `@Mapper`: javac discovers them because their methods carry `@Select`, `@Insert`, etc. However, an XML-only interface has no annotations at all, so without `@Mapper`, javac wouldn't pass it to the annotation processor. That is the annotation's only purpose.
 
-## Statement resolution is per method
+## Statement resolution per method
 
-Each abstract method takes its SQL from **either** its annotation **or** the XML.
-Having both, or having neither, is a compile error naming the method. So a mapper can mix
-freely:
+Each method must have its SQL defined in **either** an annotation **or** XML. Having both or neither is a compile error. You can freely mix annotations and XML within the same interface:
 
 ```java
 @Mapper
 public interface UserMapper {
 
     @Select("SELECT id, name FROM users WHERE id = #{id}")
-    User findById(long id);          // from the annotation
+    User findById(long id);          // from annotation
 
     List<User> search(UserSearch q); // from UserMapper.xml
 }
 ```
 
-## Where the XML is found
+## Locating XML files
 
-The processor scans the directories given by `-Alarkbatis.mapperDir`. The
-[build plugins](../getting-started/build-plugins.md) pass it for you, defaulting to
-`src/main/resources`, and register the files as compile inputs so an XML edit
-regenerates.
+The processor scans directories configured via `-Alarkbatis.mapperDir`. The [build plugins](../getting-started/build-plugins.md) configure this for you (defaulting to `src/main/resources`) and track XML files as compilation inputs.
 
-Only files whose **root element is `<mapper>`** are read, so Spring configuration,
-logback settings and anything else in the same tree is ignored. A mapper XML whose
-`namespace` names an interface in another module is skipped with a build warning.
+The processor only parses XML files whose **root tag is `<mapper>`**, automatically skipping Spring configs, logback files, or other resources. If an XML file has a `namespace` matching an interface in a different module, it is skipped with a build warning.
 
-## Supported elements
+## Supported XML elements
 
 | Element | Support |
 |---|---|
-| `<select>` `<insert>` `<update>` `<delete>` | Full |
-| `<sql>` / `<include>` | Static `refid` only, inlined at build time |
-| `<if>` `<choose>`/`<when>`/`<otherwise>` | Full, with the [narrow test grammar](dynamic-sql.md#the-test-grammar) |
-| `<where>` `<set>` `<trim>` | Literal attributes only, constant-folded at build time |
-| `<foreach>` | Statically-typed collections, arrays and maps. [See here](foreach-and-batches.md) |
-| `<resultMap>` | One level of `<association>` / `<collection>`. [See here](result-maps.md) |
-| `<bind>` `<discriminator>` `<parameterMap>` `<cache>` `<selectKey>` | Not supported; see [MyBatis Differences](../features/mybatis-differences.md) |
+| `<select>` `<insert>` `<update>` `<delete>` | Full support |
+| `<sql>` / `<include>` | Static `refid` only (inlined at compile time) |
+| `<if>` `<choose>`/`<when>`/`<otherwise>` | Full support using the [type-checked test grammar](dynamic-sql.md#the-test-grammar) |
+| `<where>` `<set>` `<trim>` | Literal attributes only (constant-folded at build time) |
+| `<foreach>` | Statically-typed collections, arrays, and maps. [Details](foreach-and-batches.md) |
+| `<resultMap>` | 1-level `<association>` / `<collection>` joins. [Details](result-maps.md) |
+| `<bind>` `<discriminator>` `<parameterMap>` `<cache>` `<selectKey>` | Not supported. [See differences](../features/mybatis-differences.md) |
 
-`resultType` and `resultMap` take **fully-qualified class names**. There is no type-alias
-registry: an alias is a runtime lookup table, and this is a build.
+`resultType` and `resultMap` require **fully-qualified class names**. Type aliases are not supported because they depend on runtime registries.
 
-## `<sql>` and `<include>`
+## Reusable SQL with `<sql>` and `<include>`
 
-`refid` is resolved and inlined at build time, so it must be a literal. A computed
-`refid` is a compile error.
+`<include refid="...">` tags are inlined directly at compile time. The `refid` must be a literal string:
 
 ```xml
 <sql id="teamMemberJoin">
@@ -118,23 +104,15 @@ registry: an alias is a runtime lookup table, and this is a build.
 </select>
 ```
 
-After inlining, the statement is indistinguishable from one written out in full,
-including for select-list parsing, so `<include>` does not cost you positional row
-reads.
+Because `<include>` is inlined during AST construction, the resulting query is parsed just like a full query string, preserving fast positional column reads.
 
-## Whitespace
+## Whitespace handling
 
-Fragments are joined with exactly one space and the result is trimmed. The policy is
-documented and fixed, and it does not reproduce MyBatis's incidental whitespace, which
-differs between MyBatis versions in `<trim>` handling. If you are comparing generated SQL
-against MyBatis output character by character, expect whitespace to differ and semantics not
-to.
+SQL fragments are joined with a single space and trimmed. This behavior is consistent across builds. If you compare LarkBatis SQL output character-by-character with MyBatis, whitespace may differ slightly, but SQL semantics are identical.
 
-## Annotations that still apply
+## Method annotations with XML statements
 
-XML statements are still bound to a Java method, so method-level and interface-level
-annotations still work: `@PadPow2` on a `<foreach>` statement, `@Param` on the
-parameters, `@Options` on an `<insert>`:
+Because XML statements are bound directly to Java methods, method-level annotations work as expected: `@PadPow2` for `<foreach>` padding, `@Param` for parameter naming, and `@Options` for generated keys:
 
 ```java
 @Mapper

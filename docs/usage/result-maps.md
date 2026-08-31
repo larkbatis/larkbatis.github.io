@@ -1,7 +1,6 @@
 # Result Maps and Joins
 
-A `<resultMap>` declares the column each property comes from, and may fill **one** nested
-`<association>` (a single child object) or `<collection>` (a `List`) from the same join.
+A `<resultMap>` explicitly maps SQL columns to Java properties and can populate **one** nested `<association>` (a 1-to-1 child object) or `<collection>` (a `List`) from a SQL join query.
 
 ```xml
 <resultMap id="teamWithMembers" type="com.example.app.Team">
@@ -22,7 +21,7 @@ A `<resultMap>` declares the column each property comes from, and may fill **one
 </select>
 ```
 
-An `<association>` works the same way for a single child:
+`<association>` works the exact same way for single child relationships:
 
 ```xml
 <resultMap id="teamWithCoach" type="com.example.app.Team">
@@ -37,8 +36,7 @@ An `<association>` works the same way for a single child:
 
 ## What it compiles to
 
-A loop that starts a new parent where the `<id>` column changes, and skips the child when
-its `<id>` column is `NULL`, which is a `LEFT JOIN` miss:
+A generated loop instantiates a new parent object whenever the parent `<id>` column value changes. It ignores child properties when the child `<id>` is `NULL` (a `LEFT JOIN` miss):
 
 ```java
 List<Team> out = new ArrayList<>();
@@ -66,71 +64,52 @@ while (rs.next()) {
 }
 ```
 
-1.  MyBatis does this job by building a `CacheKey` per row: reflect over the id columns,
-    read each through a `TypeHandler`, hash, look the parent up in a map. Here the key is
-    a typed local compared with `!=`, so a `long` key costs no boxing per row.
-2.  The `LEFT JOIN` miss test. Without it, an unmatched parent would gain a child of all
-    nulls.
+1.  MyBatis manages join grouping by creating a `CacheKey` per row: reflecting over ID columns, converting them via `TypeHandler`s, hashing, and performing HashMap lookups. LarkBatis compares typed primitives directly using `!=`, avoiding object allocations and boxing entirely.
+2.  Handles `LEFT JOIN` misses. Without this check, unmatched parent rows would create child instances filled with `null`s.
 
 ## The ordering rule
 
-!!! warning "The ResultSet must be ordered by the parent key"
+!!! warning "The query ResultSet MUST be ordered by parent ID"
 
-    That is the price of not keeping a map. Rows that revisit a key **after another
-    parent's rows** produce a second parent object instead of merging into the first.
+    This is the trade-off for zero heap allocations: rows must group parent keys sequentially. If rows for a given parent ID appear out of order later in the ResultSet, a duplicate parent instance will be created rather than merged into the previous one.
 
     ```sql
-    ORDER BY t.id, m.jersey   -- parent key first
+    ORDER BY t.id, m.jersey   -- parent key must be ordered first
     ```
 
-    A statement using a nested result map with **no `ORDER BY` at all** gets a build-time
-    note. A wrong `ORDER BY` cannot be detected at build time, so that one is on you.
+    Queries using nested result maps without an `ORDER BY` clause will produce a build warning.
 
-## No auto-mapping
+## No implicit auto-mapping in `<resultMap>`
 
-A result map maps **exactly what it declares**. There is no `autoMapping` and no implicit
-column matching inside a `<resultMap>`.
+A `<resultMap>` maps **only the columns you explicitly declare**. There is no implicit runtime column guessing:
 
-- A `<result>` whose column is missing from the select list is a **build warning**, and
-  leaves that property unset.
-- An `<id>` whose column is missing is a **build error**, because that column is what the
-  loop reads.
+- A `<result>` mapping referencing a column missing from the `SELECT` list produces a **build warning**, leaving that property unset.
+- An `<id>` mapping referencing a missing column causes a **compile error** because the loop requires it for row grouping.
 
-If you want columns matched to property names by convention, use `resultType` instead.
-That path *does* apply `snake_case` → `camelCase`, at build time. The two are different
-tools: `resultType` for "map what matches", `resultMap` for "map what I say".
+If you want automatic camelCase property mapping based on column names, use `resultType` instead. Use `resultType` for standard convention mapping and `<resultMap>` when you need explicit column-to-property control or SQL join mapping.
 
-## Column positions
+## Column indexes
 
-When the select list parses, positions are constants. When it does not, that statement
-gets its own generated resolver that reads `ResultSetMetaData` once on the first row and
-matches the column names the map declared. Correct either way, and the build tells you
-which happened. See
-[Positional or name-based reads](mappers.md#positional-or-name-based-reads).
+When the `SELECT` list can be parsed, column indexes are hardcoded as static constants. If the query uses `SELECT *` or dynamic column splices, a lightweight resolver determines column positions once on the first row and reads by index thereafter.
 
-## What a result map cannot do { #narrowed-on-purpose }
+## Intentional limitations { #narrowed-on-purpose }
 
-Each of these is a **compile error naming the replacement**:
+The following features produce explicit **compile errors** with recommended alternatives:
 
-| Not supported | Instead |
+| Unsupported Feature | Recommended Alternative |
 |---|---|
-| More than one level of nesting, or two nested mappings in one map | One join, one grouping key |
-| `select=` on `<association>` / `<collection>` (nested select) | Write the join; the nested select *is* the N+1 it avoids |
-| `resultMap=` inside a nested mapping | Spell the child's `<id>`/`<result>` out, which keeps the one-level limit visible |
-| `columnPrefix` | Alias the child columns in the select list |
-| `extends` | Spell the mappings out |
-| `<constructor>` | Result classes are built with a no-arg constructor and setters |
-| `<discriminator>` | Separate statements with separate result types |
-| `autoMapping` | Declare the mappings, or use `resultType` |
-| `<id column="x"/>` with no `property` | Map the key to a property and mark that `<id>` |
-| A type alias in `type` / `ofType` / `javaType` | The fully-qualified class name |
+| Nesting deeper than 1 level, or multiple collections | Use a single SQL join, or query relationships separately |
+| `select=` on `<association>` / `<collection>` | Write a SQL join (nested `select=` causes N+1 queries) |
+| Nested `resultMap=` references | Declare child `<id>`/`<result>` mappings inline |
+| `columnPrefix` attribute | Alias child columns in the `SELECT` query |
+| `extends` attribute | Declare property mappings explicitly |
+| `<constructor>` results | Provide a standard no-arg constructor and setters |
+| `<discriminator>` tags | Split into separate queries with distinct return types |
+| `autoMapping="true"` | Declare mappings explicitly or use `resultType` |
+| Type aliases in `type`/`javaType`/`ofType` | Use fully-qualified class names |
 
-Deeper object graphs are assembled in Java from two statements: the same number of round
-trips, with the assembly visible in code you can read.
+For multi-level hierarchies, execute two targeted queries and assemble the object graph in Java. It uses the same number of database round trips and keeps your assembly logic clear and testable.
 
-## `Stream` and nested result maps
+## Streams and nested result maps
 
-A `Stream` return over a nested `<resultMap>` is a **compile error**. A parent spans
-several rows, so it is only complete once the next parent starts; answering that from a
-one-row-at-a-time cursor means buffering the whole result, which is exactly what the
-`Stream` return was chosen to avoid. See [Streaming Results](streaming.md).
+Returning a `Stream<T>` with a nested `<resultMap>` is a **compile error**. Because parent objects span multiple rows in a join ResultSet, a parent is only complete when the next parent ID is encountered. Streaming one row at a time would require buffering the entire ResultSet in memory, defeating the purpose of streaming. See [Streaming Results](streaming.md).

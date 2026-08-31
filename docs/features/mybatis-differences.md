@@ -1,131 +1,101 @@
 # MyBatis Differences
 
-Every entry here has a reason, and the reasons fall into three groups. Reading them in
-that order makes the list look much less arbitrary than reading it alphabetically.
+Every item here has a specific reason behind it, falling into three distinct groups. Looking at them this way makes the design decisions clear.
 
-## Group 1: dropped outright
+## Group 1: Dropped by design
 
-These need something that no longer exists: a runtime type model, a proxy, or an
-interpreter.
+These features require something that no longer exists in LarkBatis: a runtime type model, dynamic proxies, or an expression interpreter.
 
-| Feature | Why it cannot come back | What to do instead |
+| Feature | Why it cannot return | What to do instead |
 |---|---|---|
-| **Full OGNL in `test`** | An expression evaluator over a runtime object model is precisely the interpreter being removed | The [narrow grammar](../usage/dynamic-sql.md#the-test-grammar) |
-| **`<bind>`** | Introduces an OGNL variable | Compute the value in Java and pass it as a parameter |
-| **`@SelectProvider` family** | SQL assembled by a Java method at runtime is invisible to the generator | Put the SQL in the mapper, or use the [escape hatch](../usage/raw-sql.md#the-escape-hatch) |
-| **Lazy loading** | Needs a proxy per result object | Fetch eagerly with a join, or split into two statements |
-| **Plugins / interceptors** | There is nothing to wrap: the four objects MyBatis intercepts are what a generated method body replaces | [Recipes below](#what-replaces-a-plugin) |
-| **`Object` / `Map` parameters** | There is no type to resolve `#{}` against | A parameter object, or `@Param` arguments |
-| **`<discriminator>`** | The result *class* would depend on a runtime column value | Separate statements with separate result types |
-| **Nested `select=` in `<collection>`/`<association>`** | Issues N+1 queries through a runtime | Express it as a join |
-| **Second-level cache** | No equivalent, and invalidation was always the hard part | Cache above the mapper, in the service, where invalidation is visible |
-| **Runtime `addMapper()`** | The mapper set is closed at compile time | Nothing to do; it is closed because it can be |
-| **`RowBounds`** | In-memory paging over a full ResultSet | Page in SQL with `LIMIT` and `OFFSET` as real parameters |
-| **`<selectKey>`** | A second statement wearing the costume of an option | Write the second statement. [Example](../usage/generated-keys.md#selectkey-is-not-supported) |
-| **`<constructor>` results** | Result classes are built with a no-arg constructor and setters | Setters |
-| **`<parameterMap>`** | Deprecated in MyBatis too | `#{}` with typed parameters |
-| **`objectFactory` / `objectWrapperFactory`** | Hooks into the reflection layer that no longer exists | |
-| **Type aliases** | An alias is a runtime lookup table; this is a build | Fully-qualified class names |
-| **First-level cache** | There is no session to hold one | |
-| **`ExecutorType.BATCH` / `REUSE`** | There is no executor | Batch is a [method signature](../usage/foreach-and-batches.md#jdbc-batches) |
+| **Full OGNL in `test`** | Evaluating arbitrary runtime expressions requires the exact interpreter we removed | Use the [narrow test grammar](../usage/dynamic-sql.md#the-test-grammar) |
+| **`<bind>`** | Declares an OGNL variable | Compute the value in Java and pass it as a parameter |
+| **`@SelectProvider` family** | SQL assembled by custom Java methods at runtime is invisible to the compiler | Put the SQL in mapper XML / annotations, or use the [escape hatch](../usage/raw-sql.md#the-escape-hatch) |
+| **Lazy loading** | Requires a proxy per result object | Fetch eagerly with a SQL join, or run two queries explicitly |
+| **Plugins / interceptors** | There is nothing to wrap: the four objects MyBatis intercepts are what generated methods replace | [See recipes below](#what-replaces-a-plugin) |
+| **`Object` / `Map` parameters** | There is no concrete type to resolve `#{}` against | Use typed parameter objects or `@Param` annotations |
+| **`<discriminator>`** | The result *class* would depend on a runtime column value | Use separate queries with distinct result types |
+| **Nested `select=` in `<collection>`/`<association>`** | Causes N+1 queries at runtime | Write a SQL join |
+| **Second-level cache** | Cache invalidation is hard without application context | Cache above the mapper layer (e.g. in your service layer or Redis) |
+| **Runtime `addMapper()`** | The mapper set is closed at compile time | No action needed; all mappers are discovered at build time |
+| **`RowBounds`** | Memory-heavy paging over a full ResultSet | Page in SQL using `LIMIT` and `OFFSET` parameters |
+| **`<selectKey>`** | A second statement disguised as an option | Write the second query explicitly. [See example](../usage/generated-keys.md#selectkey-is-not-supported) |
+| **`<constructor>` results** | Result classes are built with no-arg constructors and setters | Use standard getters and setters |
+| **`<parameterMap>`** | Deprecated in MyBatis itself | Use `#{}` with typed parameters |
+| **`objectFactory` / `objectWrapperFactory`** | Hooks into the removed reflection engine | Direct constructor and setter calls in generated readers |
+| **Type aliases** | Type aliases are runtime lookup tables | Use fully-qualified class names in XML |
+| **First-level cache** | There is no stateful session object | Connections are returned to the pool immediately |
+| **`ExecutorType.BATCH` / `REUSE`** | There is no executor object | Batching is a [method signature](../usage/foreach-and-batches.md#jdbc-batches) |
 
-### What replaces a plugin
+### What replaces a plugin?
 
-The most common blocker in a real migration, and the one worth spelling out, because
-almost every long-lived MyBatis codebase has at least a paging plugin.
+This is the most common blocker in real-world migrations. Almost every existing MyBatis codebase uses at least a paging plugin.
 
-MyBatis applies an `Interceptor` to exactly four objects — `Executor`, `StatementHandler`,
-`ParameterHandler` and `ResultSetHandler` — each built through a `Configuration` factory
-method that ends in `interceptorChain.pluginAll(...)`, and each wrapped by
-`Plugin.wrap` with a `Proxy.newProxyInstance`.
+MyBatis applies interceptors to four objects (`Executor`, `StatementHandler`, `ParameterHandler`, and `ResultSetHandler`) by wrapping each in `Proxy.newProxyInstance`.
 
-Both halves of that are gone here, and not by omission:
+Both parts of that design are gone in LarkBatis:
 
-- **The four objects do not exist.** They are precisely what a generated method body
-  replaces. A generated body borrows a `Connection`, calls `prepareStatement` on a
-  constant SQL string, binds with typed `ps.setXxx` calls chosen at build time, and reads
-  rows through a generated `RowReader`. There is no executor between the mapper call and
-  JDBC to slip anything into.
-- **The mechanism is `Proxy.newProxyInstance`**, the one call the runtime and generated
-  code do not make. Keeping plugins would mean keeping the proxy, and the native-image
-  promise is checkable exactly because there is none.
+- **The four objects do not exist.** They are replaced entirely by generated method bodies. A generated method borrows a `Connection`, prepares the SQL, binds parameters with indexed `ps.setXxx` calls, and reads rows with a generated `RowReader`. There is no intermediate executor layer.
+- **No dynamic proxies.** Avoiding `Proxy.newProxyInstance` is what keeps the runtime lightweight and GraalVM native-image ready out of the box.
 
-What each kind of plugin becomes:
+Here is how common plugin use cases map to LarkBatis:
 
 | Plugin | What replaces it |
 |---|---|
-| Paging (PageHelper and friends) | `LIMIT` / `OFFSET` as ordinary `#{}` parameters, and a count statement of its own. The page size stops being ambient thread state, which is also the bug that class of plugin is famous for |
-| Auditing — `created_at`, `updated_by` | Set the fields in the service before the call, or give the column a database default, or put the columns in a [`<sql>` fragment](../usage/xml-mappers.md) the inserts include |
-| Soft delete | `AND deleted = false` in the statement, or a `<sql>` fragment every select includes. Explicit, greppable, and it cannot be forgotten by a query that bypassed the interceptor |
-| Column encryption or masking | A [`LarkBatisTypeHandler`](../usage/types.md#custom-type-handlers), registered once for the type with [`-Alarkbatis.typeHandlers`](configuration.md#type-handlers-for-a-whole-build). This is the case that maps across almost exactly |
-| SQL logging | The driver or the pool: `net.ttddyy:datasource-proxy`, p6spy |
-| Multi-tenancy, dynamic table or schema names | A [`SqlFragment`](../usage/raw-sql.md) through `${}`, which is the one audited gate for SQL text |
-| Timing, metrics, tracing | A decorator around the mapper bean, or Spring AOP on it |
+| Paging (PageHelper, etc.) | Pass `LIMIT` and `OFFSET` as regular `#{}` parameters, and write a separate count query. Page numbers stop being ambient thread-local state |
+| Auditing (`created_at`, `updated_by`) | Set auditing fields in the service before calling the mapper, use database defaults, or include a reusable [`<sql>` fragment](../usage/xml-mappers.md) in your inserts |
+| Soft delete | Add `AND deleted = false` to your queries or `<sql>` fragments. Explicit, searchable in code, and impossible to bypass accidentally |
+| Column encryption / masking | A [`LarkBatisTypeHandler`](../usage/types.md#custom-type-handlers), registered globally with [`-Alarkbatis.typeHandlers`](configuration.md#type-handlers-for-a-whole-build). This maps almost 1:1 with MyBatis |
+| SQL logging | Configure logging at the connection pool or driver level (e.g. `datasource-proxy`, p6spy) |
+| Multi-tenancy / dynamic tables | Pass a [`SqlFragment`](../usage/raw-sql.md) via `${}`—the single audited path for dynamic SQL |
+| Metrics & tracing | Wrap mapper beans with standard decorators or use Spring AOP |
 
-!!! tip "A mapper bean is an ordinary object here"
+!!! tip "Mapper beans are standard Java objects"
 
-    In MyBatis the mapper *is* a JDK proxy, which is a large part of why people reach for
-    an interceptor to wrap behaviour around it. A LarkBatis mapper is a generated class
-    (`UserMapper$$Impl`) registered as a normal bean, so Spring AOP applies to it, and a
-    hand-written decorator implementing the same interface is a class anyone can read.
+    In MyBatis, mappers are JDK dynamic proxies, which often forced developers to write interceptors for simple cross-cutting concerns. In LarkBatis, mappers are normal classes (`UserMapper$$Impl`) registered as regular Spring beans. You can apply Spring AOP to them or wrap them in plain decorator classes that anyone can read and debug.
 
-## Group 2: kept, but narrowed
+## Group 2: Kept, but narrowed
 
-These still work. The narrowing is what makes them compilable.
+These features work, but with strict compile-time boundaries:
 
-| Feature | Narrowed to | Why |
+| Feature | How it's narrowed | Why |
 |---|---|---|
-| **`<where>` / `<set>` / `<trim>`** | Literal attributes, constant-folded at build | The attributes never varied per call anyway |
-| **`<foreach>`** | Statically-typed collections, arrays and `Map`. Empty collection throws. Optional `@PadPow2` | The element type is what picks `setLong` over `setString`. [Details](../usage/foreach-and-batches.md) |
-| **`<sql>` / `<include>`** | Static `refid`, inlined at build | A computed `refid` is a runtime lookup |
-| **Nested `<resultMap>`** | One level, via join, ResultSet ordered by parent key | Replaces a per-row `CacheKey` and a map with a typed comparison. [Details](../usage/result-maps.md) |
-| **Custom TypeHandlers** | `@Handler` or `typeHandler=` at the site, or `-Alarkbatis.typeHandlers` per Java type; written out, never discovered | Discovery is a registry scan resolved per column read. Which handler runs is a build-time fact either way |
-| **`${}`** | `SqlFragment`, closed-value types, or `@OrderBy(allowed = {...})` | Makes every raw-SQL splice type-checked and greppable. [Details](../usage/raw-sql.md) |
-| **Multiple `DataSource`s** | Deferred; one session per `DataSource`, written by hand | No design without a real service that needs it |
+| **`<where>` / `<set>` / `<trim>`** | Literal attributes only, constant-folded at compile time | Prefix/suffix rules don't need runtime evaluation |
+| **`<foreach>`** | Statically-typed collections, arrays, and `Map`. Throws on empty collections unless guarded. Optional `@PadPow2` | Element types determine JDBC setter calls at compile time. [Details](../usage/foreach-and-batches.md) |
+| **`<sql>` / `<include>`** | Static `refid` only, inlined at build time | Computed `refid` values require runtime lookups |
+| **Nested `<resultMap>`** | One level deep via SQL join; ResultSet must be ordered by parent key | Replaces per-row `CacheKey` allocations with direct primitive comparisons. [Details](../usage/result-maps.md) |
+| **Custom TypeHandlers** | Declared with `@Handler` or `typeHandler=` in XML, or configured globally via `-Alarkbatis.typeHandlers` | No runtime classpath scanning. Handlers are wired at compile time |
+| **`${}` splices** | Requires `SqlFragment`, closed-value types, or `@OrderBy(allowed = {...})` | Prevents SQL injection at compile time and makes all splices easily searchable. [Details](../usage/raw-sql.md) |
+| **Multiple `DataSource`s** | One session per `DataSource`, configured manually | Handled via standard Spring bean configuration |
 
-## Group 3: moved to build time, losing nothing
+## Group 3: Moved to build time (zero runtime overhead)
 
-You do not configure these any more because there is nothing left to configure.
+These features work without runtime configuration because they are fully resolved during compilation:
 
-| MyBatis concept | What replaced it |
+| MyBatis concept | How LarkBatis handles it |
 |---|---|
-| `TypeHandlerRegistry` lookup per parameter and per column | The `ps.setXxx` / `rs.getXxx` call is chosen at build time |
-| `Reflector` / `MetaObject` / `BeanWrapper` | Direct setter calls in a generated row reader |
-| `<typeHandlers>` registry | Registered per Java type at build time with `-Alarkbatis.typeHandlers`, or named at the site with `@Handler` / `typeHandler`. No package scan, no `@MappedTypes`, no `jdbcType` qualifier, no runtime lookup |
-| `mapUnderscoreToCamelCase` setting | Applied at build time, and defaulted to *on* rather than off. `-Alarkbatis.mapUnderscoreToCamelCase=false` carries the MyBatis default across |
-| `MapperProxy` + `MapperMethod` dispatch | A real class with a real method |
-| `ResolverUtil` classpath scanning for mappers | The compilation already knows every mapper |
-| XPath parse + DTD validation of every mapper at startup | Parsed once, at build |
-| `SqlSourceBuilder` producing `ParameterMapping`s | `?` placeholders and positional binds, emitted |
-| `@MapperScan` + `MapperFactoryBean` | A generated `@Configuration` with plain `@Bean` methods |
+| `TypeHandlerRegistry` lookups per parameter/column | `ps.setXxx` / `rs.getXxx` calls are generated directly |
+| `Reflector` / `MetaObject` / `BeanWrapper` | Direct setter calls in generated row readers |
+| `<typeHandlers>` package scans | Configured at compile time via `-Alarkbatis.typeHandlers` or per-field annotations |
+| `mapUnderscoreToCamelCase` setting | Baked into generated readers at compile time (defaults to `true`) |
+| `MapperProxy` + `MapperMethod` dispatch | Concrete classes and direct method calls |
+| `ResolverUtil` classpath scanning for mappers | Handled directly by javac during compilation |
+| XML parsing and DTD validation at startup | Parsed once during the build |
+| `SqlSourceBuilder` runtime parameter mapping | Replaced with static `?` placeholders and generated bindings |
+| `@MapperScan` + `MapperFactoryBean` | Generated `@Configuration` with standard `@Bean` methods |
 
-## Behavioural divergences to check when migrating
+## Behavioral differences when migrating
 
-Four places where LarkBatis *runs* but does something different from MyBatis. These are
-the ones that will not announce themselves as compile errors.
+Here are four cases where LarkBatis compiles fine but behaves slightly differently from MyBatis at runtime:
 
-**1 · An empty `<foreach>` throws.** MyBatis contributes nothing at all, not even `open`
-and `close`, which leaves `... WHERE id IN` to fail at the database. LarkBatis throws
-`LarkBatisEmptyForeachException` naming the mapper and the parameter. To keep MyBatis's
-behaviour, wrap the loop in `<if test="ids != null and !ids.isEmpty()">`.
+**1. An empty `<foreach>` throws an exception.** MyBatis outputs nothing at all (not even `(` or `)`), leaving `WHERE id IN` to crash at the database with a syntax error. LarkBatis throws `LarkBatisEmptyForeachException` immediately, naming the mapper and parameter. To omit the clause when a list is empty, wrap it in `<if test="ids != null and !ids.isEmpty()">`.
 
-**2 · Null comparisons are false, not zero.** OGNL coerces null to zero, so
-`test="age <= 18"` is *true* in MyBatis when `age` is null. In LarkBatis a null anywhere
-along either operand makes the comparison **false**. `== null` / `!= null` behave
-identically in both.
+**2. Null comparisons evaluate to false, not zero.** OGNL coerces `null` to zero, meaning `test="age <= 18"` evaluates to *true* in MyBatis if `age` is null. In LarkBatis, any `null` operand makes the comparison `false`. (`== null` and `!= null` work identically in both).
 
-**3 · A method call on a null receiver is false, not an exception.** `user.isActive()`
-with a null `user` evaluates to `false`. MyBatis throws.
+**3. Calling methods on null receivers returns false.** `user.isActive()` evaluates to `false` if `user` is null. MyBatis throws a runtime exception.
 
-**4 · Whitespace in assembled SQL differs.** Fragments are joined with exactly one space
-and trimmed. MyBatis's incidental whitespace differs between its own versions in `<trim>`
-handling. Semantics match; character-by-character comparison will not.
+**4. Whitespace formatting in assembled SQL.** LarkBatis joins fragments with a single space and trims the output. MyBatis whitespace handling varies across its own versions in `<trim>` tags. The SQL semantics match, but exact character-for-character whitespace may differ.
 
-## What is checked, and how
+## Verification and testing
 
-The differential test harness runs the same mapper through MyBatis's interpreted path and
-through the generated code against a recording `DataSource`, comparing SQL text and
-parameter bindings. A sweep over the mapper XML corpus in the MyBatis source tree is how
-the expression grammar's real-world coverage was measured, not guessed. The scanner runs
-on that same frontend, so a [scan report](migration.md) cannot drift away from what
-actually compiles.
+Our differential test harness executes mappers through both MyBatis's interpreted engine and LarkBatis's generated code against a recording `DataSource`, comparing generated SQL text and parameter bindings. We tested the expression grammar against the entire mapper XML corpus in the MyBatis repository to ensure real-world compatibility. See [Migration](migration.md) for automated migration scanning tools.

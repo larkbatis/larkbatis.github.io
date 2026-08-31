@@ -5,15 +5,11 @@ hide:
 
 # LarkBatis
 
-**An ahead-of-time MyBatis.** The SQL text, the parameter positions, the type-handler
-choices, the column-to-setter mapping, the dynamic-SQL tree: everything derivable from the
-*shape* of a mapper is resolved at build time by a code generator. What ships at runtime is
-generated plain-Java mapper implementations plus a thin JDBC layer, roughly 1,500 lines with
-no dependencies beyond JDBC, no reflection, no proxies and no OGNL.
+# LarkBatis
 
-You keep the MyBatis programming model you already have: mapper interfaces, `#{}`
-parameters, mapper XML, `<if>`/`<where>`/`<foreach>`, `<resultMap>`. What you lose is the
-interpreter underneath it.
+**An ahead-of-time MyBatis.** SQL text, parameter positions, type handlers, column-to-setter mappings, and dynamic SQL trees: everything about a mapper's *shape* is resolved at build time. What ships at runtime is plain generated Java mapper code plus a thin JDBC layer—roughly 1,500 lines with zero extra dependencies, no reflection, no proxies, and no OGNL.
+
+You keep the MyBatis programming model you already know: mapper interfaces, `#{}` parameters, mapper XML, `<if>`/`<where>`/`<foreach>`, and `<resultMap>`. What you lose is the runtime interpreter underneath.
 
 ```java
 public interface UserMapper {
@@ -23,7 +19,7 @@ public interface UserMapper {
 }
 ```
 
-The build emits `UserMapper$$Impl`, and it is code you can read and set a breakpoint in:
+The build emits `UserMapper$$Impl`, and it's plain Java you can read, debug, and set breakpoints in:
 
 ```java
 @Override
@@ -46,74 +42,50 @@ public User findById(long id) {
 
 -   :material-rocket-launch: **[Getting Started](getting-started/index.md)**
 
-    Install the annotations, the runtime and the annotation processor, then write your
-    first mapper.
+    Add the dependencies, configure the annotation processor, and write your first mapper.
 
 -   :material-book-open-variant: **[Usage](usage/index.md)**
 
-    Mapper interfaces, mapper XML, dynamic SQL, `<foreach>`, result maps, generated
-    keys, streams, transactions.
+    Mapper interfaces, mapper XML, dynamic SQL, `<foreach>`, result maps, generated keys, streams, and transactions.
 
 -   :material-sitemap: **[Wiki](wiki/index.md)**
 
-    How the two-phase architecture works, what the generated code looks like, and why
-    each design line is drawn where it is.
+    How the two-phase build works, what the generated code looks like, and why we drew each architectural line where we did.
 
 -   :material-checkbox-multiple-marked: **[Features](features/index.md)**
 
-    The support matrix: what LarkBatis does, what it narrows, and what it drops on
-    purpose.
+    Support matrix: what LarkBatis supports, what it restricts, and what it drops on purpose.
 
 </div>
 
 ## Why
 
-MyBatis resolves a mapper call at runtime. Every query goes through a JDK proxy, an OGNL
-evaluation of every `<if test>`, and a `TypeHandler` lookup per parameter. Then comes the
-expensive part: one reflective `setValue` per column per row, each allocating a
-`PropertyTokenizer` and an `Object[]` before it reaches what is really a `putfield`.
+MyBatis resolves mapper calls at runtime. Every query goes through a JDK dynamic proxy, evaluates OGNL for each `<if test>`, and looks up a `TypeHandler` for every parameter. Then comes the expensive part: reflective `setValue` calls for each column in every row, allocating a `PropertyTokenizer` and an `Object[]` before finally doing what is fundamentally a `putfield`.
 
-None of that depends on the values. It depends on the *shape* of the mapper, which is fixed
-the moment you save the file. LarkBatis resolves the shape once, at build time, and emits
-the JDBC calls directly.
+None of that actually depends on runtime values. It depends on the *shape* of the mapper, which is fixed the moment you write the code. LarkBatis resolves that shape once at compile time and emits direct JDBC calls.
 
 | | MyBatis | LarkBatis |
 |---|---|---|
-| Lines on the runtime classpath | ~40,000 | ~1,500 |
-| Runtime dependencies | ognl, javassist | none beyond JDBC |
-| Reflection on the hot query path | 4 groups of call sites | none |
-| Reflective operations per row | 1 per column | none |
-| Hand-written `native-image` metadata | required | none needed[^1] |
-| Wrong parameter type caught at | runtime | compile time |
-| Auditing raw SQL splices | read every mapper | one `grep` for `unsafeRawSql` |
+| Lines on runtime classpath | ~40,000 | ~1,500 |
+| Runtime dependencies | ognl, javassist | None beyond JDBC |
+| Reflection on hot query path | 4 groups of call sites | None |
+| Reflective operations per row | 1 per column | None |
+| Hand-written `native-image` metadata | Required | None needed[^1] |
+| Parameter type mismatches caught at | Runtime | Compile time |
+| Auditing raw SQL splices | Read every mapper | A single `grep` for `unsafeRawSql` |
 
-[^1]: Structural: there is no reflection to declare. A native-image build has not been run
-    yet; see [Performance](wiki/performance.md#native-image).
+[^1]: Structural: there is no reflection to declare. An actual native-image build has not been run yet; see [Performance](wiki/performance.md#native-image).
 
-The performance case is real but narrow, and it is worth being blunt about where it
-applies. Measured against MyBatis 3.5.19 on JDK 21, reading 10,000 rows of 12 columns goes
-from **3.38 ms and 10.2 MB of allocation to 0.54 ms and 1.88 MB**. Per row, 338 ns and
-1,018 B become 54 ns and 188 B. Cold start to the first row drops from 61.8 ms to 6.3 ms.
+Let's be upfront about performance: the gains are real, but they apply where you have rows to process. Measured against MyBatis 3.5.19 on JDK 21, reading 10,000 rows with 12 columns drops from **3.38 ms and 10.2 MB of allocations to 0.54 ms and 1.88 MB**. Per row, that's 338 ns and 1,018 B down to 54 ns and 188 B. Cold start to first row drops from 61.8 ms to 6.3 ms.
 
-The other half was measured over a real socket rather than assumed. A `findById` returning
-one row costs **94.2 µs on MyBatis and 89.2 µs on LarkBatis**: five percent, over loopback
-TCP, which is the cheapest round trip there is. A real database only shrinks the
-difference. **LarkBatis pays for reporting queries, exports, batches and list screens. It
-changes almost nothing for single-record lookups.** [Performance](wiki/performance.md) has
-the full tables, the method, and the two results that cut against the obvious guess.
+We also measured over a real network socket. A single-row `findById` lookup costs **94.2 µs on MyBatis and 89.2 µs on LarkBatis**—about a 5% difference over loopback TCP (the fastest round trip there is). Over a real network to a remote database, that difference shrinks even further. **LarkBatis pays off on reporting queries, data exports, batches, and list views. It won't noticeably speed up single-record lookups.** See [Performance](wiki/performance.md) for full benchmarks and methodology.
 
-## What it costs
+## Honest Trade-offs
 
-Three honest trade-offs, in the order teams actually hit them:
+Here are the three real trade-offs you'll hit:
 
-1. **Changing SQL means rebuilding.** If your workflow is "edit mapper XML, restart", this
-   is a real change to how you work. What you get back is javac catching the type errors
-   that used to surface as a runtime exception.
-2. **Build time moves left.** Generation is not free. Developers pay for it on every build
-   instead of production paying on every query.
-3. **`${}` call sites have to change.** A `String` parameter bound to `${}` is a compile
-   error. It becomes a [`SqlFragment`](usage/raw-sql.md), a closed-value type, or an
-   `@OrderBy(allowed = {...})` switch. That migration is the first time anyone actually
-   looks at every raw-SQL splice in the codebase.
+1. **Changing SQL requires recompilation.** If your current workflow relies on editing mapper XML and immediately restarting without compiling, this changes how you work. In return, javac catches SQL type errors before they reach production.
+2. **Build times increase slightly.** Code generation isn't free. You pay that small compile-time cost up front instead of paying reflection overhead on every query in production.
+3. **`${}` call sites need updates.** Binding a raw `String` parameter to `${}` is a compile error. You'll need to wrap it in [`SqlFragment`](usage/raw-sql.md), use an enum/closed-value type, or add an `@OrderBy(allowed = {...})` allowlist. Migrating these is usually the first time a team actually audits every dynamic SQL splice in their codebase.
 
 

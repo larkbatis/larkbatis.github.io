@@ -1,131 +1,99 @@
 # Architecture
 
-Two phases and one intermediate representation. Everything in the build phase is thrown
-away before the application runs; everything in the runtime phase is code you can read.
+LarkBatis splits its work into two distinct stages: a compile-time build phase and a lightweight runtime phase. Everything in the build phase is discarded once `javac` finishes; only clean, standard Java bytecode is packaged into your application.
 
 ```mermaid
 flowchart LR
-    subgraph build["Build time — nothing ships"]
+    subgraph build["Build time (annotation processing)"]
         A["Mapper interface<br/>@Select / @Insert"] --> F
         B["Mapper XML<br/>&lt;select&gt; &lt;if&gt; &lt;foreach&gt;"] --> F
-        F["Frontend<br/>parse · type-check · fold"] --> IR["MapperModel<br/>(IR)"]
+        F["Frontend<br/>Parse, Type-check, Constant-fold"] --> IR["MapperModel<br/>(Intermediate Representation)"]
         IR --> E["Emitters<br/>JavaPoet"]
     end
-    subgraph run["Runtime — ~1,500 lines, zero deps"]
+    subgraph run["Runtime (~1,500 lines, zero reflection)"]
         E --> G1["UserMapper$$Impl"]
         E --> G2["UserRow"]
         E --> G3["LarkBatisMappers"]
         E --> G4["LarkBatisMapperConfiguration"]
-        G1 --> RT["larkbatis-runtime<br/>LarkBatisSession · JdbcCodec · SqlFragment"]
-        RT --> JDBC[("JDBC driver")]
+        G1 --> RT["larkbatis-runtime<br/>LarkBatisSession, JdbcCodec, SqlFragment"]
+        RT --> JDBC[("JDBC Driver")]
     end
 ```
 
-## The repositories
+## Repository & Module Structure
 
-Four independent repositories, because they have different lifecycles and different
-answers to "does this reach an application's runtime classpath".
+The project is divided across four repositories based on lifecycle boundaries:
 
-| Repository | Modules | Scope |
+| Repository | Modules | Role |
 |---|---|---|
-| `larkbatis` | `larkbatis-annotations` | runtime: annotations only, no logic |
-| | `larkbatis-runtime` | runtime: zero dependencies beyond JDBC |
-| | `larkbatis-processor` | **build-only**: the generator |
-| `larkbatis-gradle-plugin` | | build-only: plugin id `io.github.larkbatis` |
-| `larkbatis-maven-plugin` | | build-only: same job for Maven |
-| `larkbatis-spring` | `larkbatis-spring`, `-spring-boot-autoconfigure`, `-spring-boot-starter` | runtime: transactions, Boot auto-config |
+| `larkbatis` | `larkbatis-annotations` | Compile-time annotations only (no runtime logic) |
+| | `larkbatis-runtime` | Core runtime (zero dependencies beyond standard JDBC) |
+| | `larkbatis-processor` | Build-only annotation processor (`javac`) |
+| `larkbatis-gradle-plugin` | | Build-only Gradle plugin (`io.github.larkbatis`) |
+| `larkbatis-maven-plugin` | | Build-only Maven plugin |
+| `larkbatis-spring` | `larkbatis-spring`, `-autoconfigure`, `-starter` | Spring transaction integration and Spring Boot auto-configuration |
 
-The rule that keeps this honest: **build-only modules must never leak onto an
-application's runtime classpath.** The generator is a compile-time tool; if it can be
-reached at runtime, someone will eventually reach for it, and LarkBatis's central claim
-stops being checkable.
+**Key architectural rule**: Build-only modules (`larkbatis-processor`, Gradle/Maven plugins) are never included on an application's runtime classpath.
 
-## The build phase
+## The Build Phase
 
-### Frontend
+### Frontend Parsing
 
-Two frontends, one output. The annotation path runs as a plain
-`javax.annotation.processing.Processor`. The XML path parses mapper files handed to it as
-directory paths by the build plugin. Both produce the same IR. One set of emitters, one
-set of semantics, and no second code path to drift.
+LarkBatis provides two frontends that feed into the same intermediate model:
 
-The frontend does all the work that "resolving the shape" means:
+1. **Annotation frontend**: Analyzes Java mapper interfaces using standard `javax.annotation.processing.Processor` APIs.
+2. **XML frontend**: Parses XML mapper files from directories provided by the build plugin.
 
-- parse the SQL text, turning `#{}` into positional binds and `${}` into checked splices
-- resolve every `#{}` name against the method's parameter types, walking property paths
-- parse the select list, when it parses, to fix column positions
-- choose the read and write helper for every value from its declared Java type
-- compile every `<if test>` into a Java boolean expression, or reject it
-- constant-fold `<where>`, `<set>`, `<trim>` into guarded literal appends
-- inline `<sql>`/`<include>`
-- lower `<foreach>` into a placeholder loop and a binding loop
+Both frontends perform static analysis:
 
-Anything it cannot decide is a compile error naming the mapper method, never a runtime
-fallback.
+- Convert `#{}` parameter references into typed positional JDBC bind parameters.
+- Validate parameter names against method signatures and object property paths at compile time.
+- Parse `SELECT` column lists to hardcode indexed column reading.
+- Select typed `JdbcCodec` read and write helpers based on declared Java types.
+- Compile `<if test="...">` conditions into plain Java boolean expressions.
+- Constant-fold `<where>`, `<set>`, and `<trim>` clauses into guarded string appends.
+- Inline static `<sql>` / `<include>` fragments.
+- Compile `<foreach>` loops into placeholder generator and parameter binding loops.
 
-### The IR
+If any query shape or binding cannot be resolved at compile time, `javac` fails immediately with a clear error pointing to the method or XML line.
 
-`MapperModel` is the boundary. It carries statements, parameters, result shapes, dynamic
-nodes, key models and reader access strategies, and its shape follows neither frontend.
-Golden snapshots of the IR are part of the test suite, so a frontend change that alters
-meaning shows up as an IR diff before it becomes a generated-code diff.
+### Intermediate Representation (IR)
 
-### Emitters
+`MapperModel` acts as the compiler boundary. It models statements, parameters, result column mappings, dynamic AST nodes, and generated key configurations. Golden snapshot tests verify the IR directly, ensuring frontend parsing changes are caught before bytecode emission.
 
-JavaPoet, one emitter per artefact:
+### Code Emitters
 
-| Emitter | Output |
-|---|---|
-| `MapperImplEmitter` | `UserMapper$$Impl`, one per mapper |
-| `RowReaderEmitter` | `UserRow`, one per result class |
-| `RegistryEmitter` | `LarkBatisMappers`, one per compilation |
-| `SpringConfigurationEmitter` | `LarkBatisMapperConfiguration`, when spring-context is on the build classpath |
+LarkBatis uses JavaPoet to emit clean Java source files:
 
-The registry emitter is why the processor is **aggregating**: it needs every mapper in the
-compilation to write one complete registry. The same requirement is what breaks Maven
-builds under `useIncrementalCompilation=false`, where recompiling only stale sources would
-regenerate the registry from a partial view.
+| Emitter | Emitted Class | Description |
+|---|---|---|
+| `MapperImplEmitter` | `UserMapper$$Impl` | Concrete mapper implementation executing JDBC calls |
+| `RowReaderEmitter` | `UserRow` | Static row reader for result mapping |
+| `RegistryEmitter` | `LarkBatisMappers` | Central mapper factory registry |
+| `SpringConfigurationEmitter` | `LarkBatisMapperConfiguration` | Spring `@Configuration` with `@Bean` definitions |
 
-## The runtime phase
+## The Runtime Phase
 
-`larkbatis-runtime` is small enough to list:
+`larkbatis-runtime` is intentionally tiny (~1,500 lines) and contains only essential abstractions:
 
-| Type | Job |
-|---|---|
-| `LarkBatisSession` | Borrow a `Connection`, give it back, translate exceptions. The whole environment a generated mapper needs |
-| `JdbcLarkBatisSession` | The standalone implementation, plus `LarkBatisTx` |
-| `SpringLarkBatisSession` | The Spring one: `DataSourceUtils` instead of `dataSource.getConnection()` |
-| `JdbcCodec` | Null-aware and converting read/write helpers. The inlined remains of the `TypeHandler` layer |
-| `SqlFragment` | The one gate arbitrary SQL text passes through |
-| `LarkBatisSql` | Static helpers referenced by generated code: `trackVariants`, `padPow2`, `sum` |
-| `RowReader`, `StatementBinder` | Two functional interfaces the escape hatch takes |
-| `ResultSetStream` | Cursor-backed `Stream` with resource ownership |
-| `LarkBatisException` + subclasses | The unchecked exception tree |
+- **`LarkBatisSession`**: Acquires and releases database connections and translates JDBC exceptions.
+- **`JdbcLarkBatisSession`**: Standalone session implementation managing `LarkBatisTx` transactions.
+- **`SpringLarkBatisSession`**: Spring integration delegating to `DataSourceUtils` and Spring exception translators.
+- **`JdbcCodec`**: Static, inlined read/write helpers with null handling for primitives, dates, and enums.
+- **`SqlFragment`**: Safe wrapper for dynamic SQL text.
+- **`LarkBatisSql`**: Utility helpers for query variant tracking and batch update calculations.
+- **`RowReader<T>` & `StatementBinder`**: Functional interfaces used by the dynamic SQL escape hatch.
+- **`LarkBatisException`**: Root unchecked exception hierarchy.
 
-Nothing in that list inspects a type, resolves a name, or consults a registry. That all
-happened at build time.
+## Why Build Plugins Are Used
 
-## Why a build-tool plugin exists at all
+Annotation processors cannot discover mapper XML files located in arbitrary directory structures via standard `Filer` APIs. Gradle and Maven plugins register mapper XML directories as compilation inputs and pass them cleanly to javac via `-Alarkbatis.mapperDir`. All code generation remains strictly inside `javac`. See [Build Plugins](../getting-started/build-plugins.md).
 
-The processor cannot reach mapper XML through `Filer.getResource`, so it takes a directory
-path as an option and something has to supply that path. Both build plugins exist for that
-one job. Neither generates code; all generation stays inside javac.
-[Build Plugins](../getting-started/build-plugins.md) has the full reasoning.
+## Verification & Testing
 
-## Verification strategy
+LarkBatis employs a three-tier test suite to guarantee correctness:
 
-Three layers, because "the generated code compiles" proves very little:
-
-1. **A hand-written emitter spec.** Before the emitters existed, the target shape of
-   generated code was written out by hand as compiling, tested Java. The emitters are
-   measured against it.
-2. **Golden snapshots.** Generated output for a corpus of mappers is committed and
-   diffed. An intended emitter change is a reviewed diff, not an invisible one.
-3. **Differential tests.** The same mapper runs through MyBatis's interpreted path and
-   through the generated code against a recording `DataSource`; the SQL text and the
-   parameter bindings are compared. A sweep over the mapper XML corpus in the MyBatis
-   source tree is how the expression grammar's real-world coverage was measured rather
-   than guessed.
-
-Plus a `CompileFailTest` for every "this is a compile error" promise the documentation
-makes, including the ones on this site.
+1. **Emitter Specifications**: Reference implementations written by hand to define expected generated code patterns.
+2. **Golden Snapshots**: Emitted code across a broad test suite is committed and diffed on changes.
+3. **Differential Test Suite**: Executes mappers against both standard MyBatis (runtime interpreter) and LarkBatis (generated code) using a recording JDBC `DataSource`, verifying that generated SQL queries, parameter binds, and result mappings match identically.
+4. **Compile-Fail Test Suite**: Validates that invalid XML tags, unsupported OGNL expressions, and unsafe `${}` splices produce expected compile-time errors.
