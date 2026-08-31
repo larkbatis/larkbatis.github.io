@@ -1,0 +1,44 @@
+/* Target path: docs/stylesheets/extra.css
+
+   Brand palette. Material only ships a fixed set of named colors, so the two
+   brand hexes are wired in through the `custom` escape hatch: mkdocs.yml sets
+   `primary: custom` / `accent: custom`, which stamps
+   `data-md-color-primary="custom"` on <html>, and the rules below fill in the
+   variables the theme would otherwise get from its own palette stylesheet.
+
+   Brand:
+     primary  #0D6E78  teal   hsl(186, 80%, 26%)   5.97:1 on white
+     accent   #A85426  rust   hsl( 21, 63%, 40%)   5.08:1 on white
+
+   Both clear WCAG AA (4.5:1) for body text on white, so they are safe as link
+   colors in the light scheme. Neither is safe on the slate background
+   (2.7:1 and 3.2:1), so the slate block re-tints the *text* uses to lighter
+   variants of the same two hues while the header keeps the full-strength
+   brand color — a large filled surface, not text. */
+
+[data-md-color-primary=custom] {
+  --md-primary-fg-color:        #0D6E78;
+  --md-primary-fg-color--light: #118E9C;
+  --md-primary-fg-color--dark:  #0A4F57;
+  --md-primary-bg-color:        #fff;
+  --md-primary-bg-color--light: #ffffffb3;
+}
+
+[data-md-color-accent=custom] {
+  --md-accent-fg-color:             #A85426;
+  --md-accent-fg-color--transparent: #A854261a;
+  --md-accent-bg-color:             #fff;
+  --md-accent-bg-color--light:      #ffffffb3;
+}
+
+/* Slate: 8.4:1 and 6.8:1 on the dark background, matching how the theme
+   lightens its own named colors for the dark scheme. */
+[data-md-color-scheme=slate][data-md-color-primary=custom] {
+  --md-typeset-a-color: #69C9D3;
+}
+
+[data-md-color-scheme=slate][data-md-color-accent=custom] {
+  --md-accent-fg-color:              #E99567;
+  --md-accent-fg-color--transparent: #E995671a;
+  --md-accent-bg-color:              #1F2229;
+}
