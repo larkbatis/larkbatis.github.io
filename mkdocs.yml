@@ -6,7 +6,7 @@ site_url: https://larkbatis.github.io/
 site_description: >-
   An ahead-of-time MyBatis: mappers and SQL are compiled into plain Java at build time — no proxies, no reflection, no OGNL at runtime.
 site_author: LarkBatis contributors
-copyright: Copyright &copy; 2026 LarkBatis contributors
+copyright: Copyright &copy; 2026 LarkBatis contributors. Released under the Apache-2.0 License.
 
 # repo_url points at the CODE repo (that is what the header icon should link to),
 # while the edit button has to point into the DOCS repo — hence the explicit
@@ -130,6 +130,7 @@ plugins:
             Errors and Diagnostics: Lỗi và chẩn đoán
             Migrating from MyBatis: Chuyển từ MyBatis sang
             Roadmap: Lộ trình
+            License: Giấy phép
 
   - mike:
       # `symlink` is mike's default and is the wrong choice here: this site is
@@ -227,3 +228,4 @@ nav:
       - Errors and Diagnostics: features/errors.md
       - Migrating from MyBatis: features/migration.md
       - Roadmap: features/roadmap.md
+  - License: license.md
