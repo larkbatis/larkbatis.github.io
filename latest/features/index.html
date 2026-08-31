@@ -98,18 +98,6 @@
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
-          <aside class="md-banner md-banner--warning">
-            <div class="md-banner__inner md-grid md-typeset">
-              
-  You are reading the documentation for an older version.
-  <a href="../..">
-    <strong>Go to the latest version.</strong>
-  </a>
-
-            </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
-          </aside>
-        
       </div>
     
     
@@ -2025,12 +2013,17 @@ progress.</p>
 <tr>
 <td><code>@Handler</code> custom handlers</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Named on the property, the parameter, or in mapper XML. No discovery. <a href="../usage/types/#custom-type-handlers">Details</a></td>
+<td>Named on the property, the parameter, or in mapper XML. <a href="../usage/types/#custom-type-handlers">Details</a></td>
 </tr>
 <tr>
-<td>TypeHandler discovery / registry</td>
+<td><code>&lt;typeHandlers&gt;</code>, one handler per Java type</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+<td>Written out as <code>-Alarkbatis.typeHandlers</code> pairs and resolved during <code>javac</code>. <a href="configuration/#type-handlers-for-a-whole-build">Details</a></td>
+</tr>
+<tr>
+<td>TypeHandler discovery (<code>&lt;package&gt;</code>, <code>@MappedTypes</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>There is no registry to discover into</td>
+<td>Nothing is scanned. The list is written out, which is also what makes it readable</td>
 </tr>
 </tbody>
 </table>
@@ -2092,7 +2085,7 @@ progress.</p>
 <tr>
 <td>Plugins / interceptors</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Hook a runtime pipeline that does not exist. Spring AOP on a mapper bean still works</td>
+<td>The four objects MyBatis intercepts are what a generated body replaces, and the mechanism is a JDK proxy. <a href="mybatis-differences/#what-replaces-a-plugin">What replaces a plugin</a></td>
 </tr>
 <tr>
 <td>Second-level cache (<code>&lt;cache&gt;</code>, <code>&lt;cache-ref&gt;</code>)</td>

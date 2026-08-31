@@ -1497,6 +1497,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Group 1: dropped outright">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-replaces-a-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What replaces a plugin
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1762,6 +1779,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Group 1: dropped outright">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-replaces-a-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What replaces a plugin
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1870,8 +1904,8 @@ interpreter.</p>
 </tr>
 <tr>
 <td><strong>Plugins / interceptors</strong></td>
-<td>Hook a runtime pipeline that does not exist</td>
-<td>Explicit SQL, or a decorator around the mapper bean. Spring AOP on the bean works</td>
+<td>There is nothing to wrap: the four objects MyBatis intercepts are what a generated method body replaces</td>
+<td><a href="#what-replaces-a-plugin">Recipes below</a></td>
 </tr>
 <tr>
 <td><strong><code>Object</code> / <code>Map</code> parameters</strong></td>
@@ -1940,6 +1974,70 @@ interpreter.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="what-replaces-a-plugin">What replaces a plugin<a class="headerlink" href="#what-replaces-a-plugin" title="Permanent link">&para;</a></h3>
+<p>The most common blocker in a real migration, and the one worth spelling out, because
+almost every long-lived MyBatis codebase has at least a paging plugin.</p>
+<p>MyBatis applies an <code>Interceptor</code> to exactly four objects — <code>Executor</code>, <code>StatementHandler</code>,
+<code>ParameterHandler</code> and <code>ResultSetHandler</code> — each built through a <code>Configuration</code> factory
+method that ends in <code>interceptorChain.pluginAll(...)</code>, and each wrapped by
+<code>Plugin.wrap</code> with a <code>Proxy.newProxyInstance</code>.</p>
+<p>Both halves of that are gone here, and not by omission:</p>
+<ul>
+<li><strong>The four objects do not exist.</strong> They are precisely what a generated method body
+  replaces. A generated body borrows a <code>Connection</code>, calls <code>prepareStatement</code> on a
+  constant SQL string, binds with typed <code>ps.setXxx</code> calls chosen at build time, and reads
+  rows through a generated <code>RowReader</code>. There is no executor between the mapper call and
+  JDBC to slip anything into.</li>
+<li><strong>The mechanism is <code>Proxy.newProxyInstance</code></strong>, the one call the runtime and generated
+  code do not make. Keeping plugins would mean keeping the proxy, and the native-image
+  promise is checkable exactly because there is none.</li>
+</ul>
+<p>What each kind of plugin becomes:</p>
+<table>
+<thead>
+<tr>
+<th>Plugin</th>
+<th>What replaces it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Paging (PageHelper and friends)</td>
+<td><code>LIMIT</code> / <code>OFFSET</code> as ordinary <code>#{}</code> parameters, and a count statement of its own. The page size stops being ambient thread state, which is also the bug that class of plugin is famous for</td>
+</tr>
+<tr>
+<td>Auditing — <code>created_at</code>, <code>updated_by</code></td>
+<td>Set the fields in the service before the call, or give the column a database default, or put the columns in a <a href="../../usage/xml-mappers/"><code>&lt;sql&gt;</code> fragment</a> the inserts include</td>
+</tr>
+<tr>
+<td>Soft delete</td>
+<td><code>AND deleted = false</code> in the statement, or a <code>&lt;sql&gt;</code> fragment every select includes. Explicit, greppable, and it cannot be forgotten by a query that bypassed the interceptor</td>
+</tr>
+<tr>
+<td>Column encryption or masking</td>
+<td>A <a href="../../usage/types/#custom-type-handlers"><code>LarkBatisTypeHandler</code></a>, registered once for the type with <a href="../configuration/#type-handlers-for-a-whole-build"><code>-Alarkbatis.typeHandlers</code></a>. This is the case that maps across almost exactly</td>
+</tr>
+<tr>
+<td>SQL logging</td>
+<td>The driver or the pool: <code>net.ttddyy:datasource-proxy</code>, p6spy</td>
+</tr>
+<tr>
+<td>Multi-tenancy, dynamic table or schema names</td>
+<td>A <a href="../../usage/raw-sql/"><code>SqlFragment</code></a> through <code>${}</code>, which is the one audited gate for SQL text</td>
+</tr>
+<tr>
+<td>Timing, metrics, tracing</td>
+<td>A decorator around the mapper bean, or Spring AOP on it</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">A mapper bean is an ordinary object here</p>
+<p>In MyBatis the mapper <em>is</em> a JDK proxy, which is a large part of why people reach for
+an interceptor to wrap behaviour around it. A LarkBatis mapper is a generated class
+(<code>UserMapper$$Impl</code>) registered as a normal bean, so Spring AOP applies to it, and a
+hand-written decorator implementing the same interface is a class anyone can read.</p>
+</div>
 <h2 id="group-2-kept-but-narrowed">Group 2: kept, but narrowed<a class="headerlink" href="#group-2-kept-but-narrowed" title="Permanent link">&para;</a></h2>
 <p>These still work. The narrowing is what makes them compilable.</p>
 <table>
@@ -1973,8 +2071,8 @@ interpreter.</p>
 </tr>
 <tr>
 <td><strong>Custom TypeHandlers</strong></td>
-<td>Explicit <code>@Handler</code>, or <code>typeHandler=</code> in mapper XML; no discovery</td>
-<td>Discovery is a registry scan resolved per column read. Naming the class is a build-time fact</td>
+<td><code>@Handler</code> or <code>typeHandler=</code> at the site, or <code>-Alarkbatis.typeHandlers</code> per Java type; written out, never discovered</td>
+<td>Discovery is a registry scan resolved per column read. Which handler runs is a build-time fact either way</td>
 </tr>
 <tr>
 <td><strong><code>${}</code></strong></td>
@@ -2007,8 +2105,12 @@ interpreter.</p>
 <td>Direct setter calls in a generated row reader</td>
 </tr>
 <tr>
+<td><code>&lt;typeHandlers&gt;</code> registry</td>
+<td>Registered per Java type at build time with <code>-Alarkbatis.typeHandlers</code>, or named at the site with <code>@Handler</code> / <code>typeHandler</code>. No package scan, no <code>@MappedTypes</code>, no <code>jdbcType</code> qualifier, no runtime lookup</td>
+</tr>
+<tr>
 <td><code>mapUnderscoreToCamelCase</code> setting</td>
-<td>Applied at build time, always</td>
+<td>Applied at build time, and defaulted to <em>on</em> rather than off. <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> carries the MyBatis default across</td>
 </tr>
 <tr>
 <td><code>MapperProxy</code> + <code>MapperMethod</code> dispatch</td>

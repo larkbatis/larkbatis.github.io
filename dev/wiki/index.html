@@ -1740,7 +1740,7 @@ resolve the shape once, at build time, and emit the JDBC calls directly. What re
 runtime is roughly 1,500 lines with no dependencies beyond JDBC, and no GraalVM
 reachability metadata to write, because there is no reflection anywhere.</p>
 <h2 id="what-is-not-novel-here">What is not novel here<a class="headerlink" href="#what-is-not-novel-here" title="Permanent link">&para;</a></h2>
-<p>LarkBatis is not a new idea, and the design says so plainly. Micronaut Data compiles
+<p>LarkBatis is not a new idea. Micronaut Data compiles
 queries into code at build time with no reflection; jOOQ generates from a schema; Spring
 Data has an AOT branch. <strong>What none of them do is keep the MyBatis mapper model</strong>:
 mapper XML, <code>#{}</code>, <code>&lt;if&gt;</code>, <code>&lt;foreach&gt;</code> and <code>&lt;resultMap&gt;</code>, which thousands of codebases in

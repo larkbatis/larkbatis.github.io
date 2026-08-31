@@ -2092,8 +2092,12 @@ different columns for one property is a compile error, because there is no corre
 pick between them.</p>
 <p>The name replaces the property name everywhere a column is matched: the positional reader
 when the select list parses, and the name-based <code>switch</code> when it does not. Matching stays
-case-insensitive with underscores ignored, so <code>@Column("usr_email")</code> also matches a
-<code>USR_EMAIL</code> label.</p>
+case-insensitive, and underscores are ignored on both sides by default, so
+<code>@Column("usr_email")</code> also matches a <code>USR_EMAIL</code> or <code>usrEmail</code> label. Under
+<a href="../configuration/#column-naming"><code>-Alarkbatis.mapUnderscoreToCamelCase=false</code></a> the
+underscores are significant: the same annotation then matches <code>USR_EMAIL</code> but not
+<code>usrEmail</code>, which is also what makes <code>@Column</code> the way to keep one column mapped in a
+build that turned the convention off.</p>
 <div class="admonition warning">
 <p class="admonition-title">One column, one property</p>
 <p>Two properties resolving to the same column is a compile error naming both, and that
@@ -2144,6 +2148,10 @@ either way.</p>
 explicitly, called directly from generated code, with no registry lookup and no discovery
 scan. It also lifts the <a href="../../usage/types/">type whitelist</a> for the value it moves, which
 is usually the reason to reach for it.</p>
+<p>For a type that always moves the same way, registering it once for the whole build with
+<a href="../configuration/#type-handlers-for-a-whole-build"><code>-Alarkbatis.typeHandlers</code></a> says the
+same thing without an annotation per site. This annotation still wins wherever it
+appears.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Wallet</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
 </span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>

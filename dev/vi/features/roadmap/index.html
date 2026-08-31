@@ -1907,7 +1907,7 @@ plug it into <code>Configuration</code> <strong>without patching MyBatis at all<
 and <code>MetaObject</code> from the row-read path measurably improved things, LarkBatis's central
 claim was proven on a real codebase for a few hundred lines of experiment. If it did not,
 several months were saved.</p>
-<p>It improved things, by more than the design expected. See
+<p>It improved things, and by a wide margin. See
 <a href="../../wiki/performance/">Performance</a>.</p>
 <h2 id="m5-what-is-actually-left">M5: what is actually left<a class="headerlink" href="#m5-what-is-actually-left" title="Permanent link">&para;</a></h2>
 <table>
@@ -1920,7 +1920,7 @@ several months were saved.</p>
 <tbody>
 <tr>
 <td><code>larkbatis-benchmarks</code> (JMH; pinned sessions; STATEMENT-scope cache; H2 over TCP; JDK 17 vs 21; 50-bean megamorphic experiment)</td>
-<td>Done. <a href="../../wiki/performance/#measured-on-larkbatis-itself">Results</a>, including two findings that contradict the design</td>
+<td>Done. <a href="../../wiki/performance/#measured-on-larkbatis-itself">Results</a></td>
 </tr>
 <tr>
 <td><code>larkbatis-scanner</code> (<code>larkbatis-scan</code>)</td>
@@ -1935,8 +1935,8 @@ several months were saved.</p>
 <td>Not done. The trial migration passed its whole test suite on a copy</td>
 </tr>
 <tr>
-<td>The design revision, rewritten around what was learned</td>
-<td>Done, alongside a workspace-wide removal of section-number references, whose numbering was never a stable thing for code comments and error messages to point at</td>
+<td>The design revision, rewritten around what the benchmarks and the trial migration showed</td>
+<td>Done</td>
 </tr>
 </tbody>
 </table>
@@ -1981,7 +1981,7 @@ runtime that can inspect types.</p>
 <p>Full OGNL · <code>&lt;bind&gt;</code> · the <code>@SelectProvider</code> family · lazy loading · plugins and
 interceptors · <code>Object</code>/<code>Map</code> parameters · <code>&lt;discriminator&gt;</code> · nested selects in
 <code>&lt;collection&gt;</code> · second-level cache · runtime <code>addMapper()</code> · <code>RowBounds</code> · TypeHandler
-discovery · <code>ExecutorType</code>.</p>
+discovery by scan · <code>ExecutorType</code>.</p>
 <p>Each already has a compile error naming its replacement. See
 <a href="../mybatis-differences/">MyBatis Differences</a>.</p>
 <h2 id="versioning">Versioning<a class="headerlink" href="#versioning" title="Permanent link">&para;</a></h2>

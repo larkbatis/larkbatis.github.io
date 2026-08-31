@@ -1741,7 +1741,7 @@ lưu. Vậy thì resolve shape một lần, lúc build, rồi phát ra thẳng c
 lại lúc chạy là chừng 1.500 dòng không phụ thuộc gì ngoài JDBC, và cũng không có metadata
 reachability nào của GraalVM phải viết, vì chẳng có reflection ở đâu cả.</p>
 <h2 id="cai-gi-o-ay-khong-moi">Cái gì ở đây không mới<a class="headerlink" href="#cai-gi-o-ay-khong-moi" title="Permanent link">&para;</a></h2>
-<p>LarkBatis không phải một ý tưởng mới, và tài liệu thiết kế nói thẳng điều đó. Micronaut
+<p>LarkBatis không phải một ý tưởng mới. Micronaut
 Data biên dịch truy vấn thành code lúc build mà không dùng reflection; jOOQ sinh code từ
 schema; Spring Data có một nhánh AOT. <strong>Điều không cái nào trong số đó làm là giữ lại
 mô hình mapper của MyBatis</strong>: mapper XML, <code>#{}</code>, <code>&lt;if&gt;</code>, <code>&lt;foreach&gt;</code>, <code>&lt;resultMap&gt;</code>. Hàng

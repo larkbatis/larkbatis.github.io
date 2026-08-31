@@ -2020,9 +2020,11 @@ không annotation, không interface, không đăng ký.</p>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="c1">// getter và setter</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Cột tìm ra property theo <code>snake_case</code> → <code>camelCase</code>, <strong>áp dụng lúc build, luôn luôn</strong>:
-<code>created_at</code> → <code>setCreatedAt</code>. Không có tuỳ chọn <code>mapUnderscoreToCamelCase</code>, bởi vì
-chẳng có runtime nào để mà bật tắt nó.</p>
+<p>Cột tìm ra property theo <code>snake_case</code> → <code>camelCase</code>, <strong>áp dụng lúc build</strong>:
+<code>created_at</code> → <code>setCreatedAt</code>. Mặc định là bật — MyBatis thì mặc định tắt — và
+<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> mang mặc định của MyBatis sang. Lựa chọn
+này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
+Xem <a href="../../features/configuration/#column-naming">Cấu hình</a>.</p>
 <p>Chỗ nào quy ước đó không đủ thì đặt tên cột ngay trên property bằng
 <a href="../../features/annotations/#column"><code>@Column</code></a> trên field, setter hoặc getter, hoặc đặt
 alias cho cột trong select list, hoặc khai báo một

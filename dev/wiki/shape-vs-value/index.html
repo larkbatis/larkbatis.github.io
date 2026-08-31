@@ -1876,8 +1876,8 @@ one would quietly grow back into an interpreter.</p>
 </tbody>
 </table>
 <p>Everything else happens at build time. Not "usually", not "when possible": everything.</p>
-<p>The design reserved one more slot — a <code>databaseId</code> chosen once at startup, so a statement
-could have a per-vendor variant. <strong>It was never built.</strong> A <code>databaseId</code> attribute on a
+<p>One more slot is reserved — a <code>databaseId</code> chosen once at startup, so a statement could
+have a per-vendor variant. <strong>It was never built.</strong> A <code>databaseId</code> attribute on a
 statement is a compile error today, and the answer to two vendors is two mapper
 interfaces. The row is called out here rather than quietly left off, because a list that
 claims to be closed has to be honest about what is on it.</p>
@@ -1952,7 +1952,7 @@ point.</p>
 <p>Before adding anything, the question is: <em>does this need a runtime value that is not on
 the list?</em></p>
 <ul>
-<li><strong>No</strong> → it belongs at build time, and the design question is only what the generated
+<li><strong>No</strong> → it belongs at build time, and the only question left is what the generated
   code should look like.</li>
 <li><strong>Yes</strong> → either the list grows, which requires a very good reason, or the feature is
   dropped with a compile error naming the replacement.</li>

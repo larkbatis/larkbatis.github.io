@@ -98,18 +98,6 @@
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
-          <aside class="md-banner md-banner--warning">
-            <div class="md-banner__inner md-grid md-typeset">
-              
-  You are reading the documentation for an older version.
-  <a href="../../..">
-    <strong>Go to the latest version.</strong>
-  </a>
-
-            </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
-          </aside>
-        
       </div>
     
     
@@ -1970,7 +1958,7 @@ scalar-replace those allocations. See <a href="../performance/">Performance</a>.
 <p>A <code>findById</code> returning one row does the reflective column work 4 times. A report query
 returning 10,000 rows does it 40,000 times, and that is where a 3.0 ms query becomes a
 0.8 ms one. Same code, same design; the multiplier is the row count.</p>
-<p>Stated as bluntly as the design document states it: <strong>LarkBatis is an investment for
+<p>To put it bluntly: <strong>LarkBatis is an investment for
 report queries, exports, batches and list screens. It changes almost nothing for
 single-record lookups.</strong></p>
 

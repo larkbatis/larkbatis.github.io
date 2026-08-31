@@ -98,18 +98,6 @@
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
-          <aside class="md-banner md-banner--warning">
-            <div class="md-banner__inner md-grid md-typeset">
-              
-  You are reading the documentation for an older version.
-  <a href="../../..">
-    <strong>Go to the latest version.</strong>
-  </a>
-
-            </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
-          </aside>
-        
       </div>
     
     
@@ -2020,7 +2008,7 @@ existing <code>DuplicateKeyException</code> handlers keep working unchanged.</p>
 <tr>
 <td>MyBatis plugins / interceptors</td>
 <td>absent</td>
-<td>Dropped; they hook a runtime pipeline that does not exist</td>
+<td>Dropped: the four objects they wrap are what a generated body replaces. Spring AOP on the mapper bean works, and <a href="../../features/mybatis-differences/#what-replaces-a-plugin">there is a recipe per plugin kind</a></td>
 </tr>
 </tbody>
 </table>
@@ -2034,8 +2022,8 @@ a fragment whose value set is not bounded grows them without limit. See
 <a href="../raw-sql/#tracking-sql-variants">Raw SQL</a>.</p>
 <div class="admonition note">
 <p class="admonition-title"><code>log-sql</code> is not implemented</p>
-<p>It appears in the design document's property list and is not implemented. Every
-generated body would have to carry a logging branch, and the generated shape has none.
+<p>Every generated body would have to carry a logging branch, and the generated shape
+has none.
 SQL logging belongs to the driver or the pool (<code>net.ttddyy:datasource-proxy</code>, p6spy)
 until there is a reason to change that.</p>
 </div>

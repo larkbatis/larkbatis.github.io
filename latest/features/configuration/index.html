@@ -98,18 +98,6 @@
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
-          <aside class="md-banner md-banner--warning">
-            <div class="md-banner__inner md-grid md-typeset">
-              
-  You are reading the documentation for an older version.
-  <a href="../../..">
-    <strong>Go to the latest version.</strong>
-  </a>
-
-            </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
-          </aside>
-        
       </div>
     
     
@@ -1593,6 +1581,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Processor options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#column-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Column naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-handlers-for-a-whole-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type handlers for a whole build
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1614,6 +1630,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Build plugin settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mapper-xml-in-more-than-one-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapper XML in more than one directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1785,6 +1818,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Processor options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#column-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Column naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-handlers-for-a-whole-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type handlers for a whole build
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1806,6 +1867,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Build plugin settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mapper-xml-in-more-than-one-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapper XML in more than one directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1889,8 +1967,18 @@ plugin settings in between.</p>
 </tr>
 <tr>
 <td><code>larkbatis.mapperDir</code></td>
-<td>Directories of mapper XML, comma- or path-separator-separated. Only files whose root element is <code>&lt;mapper&gt;</code> are read</td>
+<td>Directories of mapper XML, comma- or path-separator-separated — one option however many directories, since a repeated <code>-A</code> of the same name is the last one javac reads, not the union. Only files whose root element is <code>&lt;mapper&gt;</code> are read</td>
 <td>Set by the build plugin to <code>src/main/resources</code></td>
+</tr>
+<tr>
+<td><code>larkbatis.mapUnderscoreToCamelCase</code></td>
+<td><code>false</code> makes underscores significant when a column label is matched to a property — MyBatis's own default. Anything that is not <code>true</code> or <code>false</code> is a build error</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>larkbatis.typeHandlers</code></td>
+<td>A default handler per Java type, <code>javaType:handlerClass</code> pairs separated by commas — the build-time answer to a <code>&lt;typeHandlers&gt;</code> block</td>
+<td>none</td>
 </tr>
 <tr>
 <td><code>larkbatis.springConfig</code></td>
@@ -1928,6 +2016,97 @@ plugin settings in between.</p>
 inputs, so an XML-only edit may not regenerate. Run <code>clean</code> first, or use a
 <a href="../../getting-started/build-plugins/">build plugin</a>.</p>
 </div>
+<h3 id="column-naming">Column naming<a class="headerlink" href="#column-naming" title="Permanent link">&para;</a></h3>
+<p><code>created_at</code> reaches <code>setCreatedAt</code> by default, and the decision is baked into the
+generated reader rather than read from a setting at runtime. Turning it off is how a
+build keeps the semantics it had under MyBatis, whose own default is <em>off</em>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>-Alarkbatis.mapUnderscoreToCamelCase=false
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>On (default)</th>
+<th>Off</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_name</code> → <code>userName</code></td>
+<td>mapped</td>
+<td><strong>not mapped</strong>, the property keeps its default</td>
+</tr>
+<tr>
+<td><code>@Column("zip_code")</code> → label <code>zip_code</code></td>
+<td>mapped</td>
+<td>mapped</td>
+</tr>
+<tr>
+<td><code>@Column("zip_code")</code> → label <code>zipCode</code></td>
+<td>mapped</td>
+<td>not mapped</td>
+</tr>
+<tr>
+<td>Generated resolver</td>
+<td><code>getColumnLabel(i).replace("_", "").toLowerCase(…)</code></td>
+<td><code>getColumnLabel(i).toLowerCase(…)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Leaving it on is a behaviour change for a codebase migrating from a MyBatis config that
+never set it: columns MyBatis left unmapped start being read. Switching it off makes the
+build <strong>name every column that stops reaching a property</strong>, and the property it stops
+reaching — MyBatis leaves that silent, and a null in production is a bad place to find
+out:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>UserMapper.all: mapUnderscoreToCamelCase is off, so these columns reach no property and
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>their properties keep their defaults — user_name → userName. Alias the column in the SQL,
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>or name it with @Column.
+</span></code></pre></div>
+<p>Unlike MyBatis, the convention applies to <strong>both</strong> sides: with it on, a property or
+<code>@Column</code> spelled <code>usr_email</code> still matches a label spelled <code>usrEmail</code>. MyBatis strips
+underscores only from the label, so that one pairing misses there.</p>
+<h3 id="type-handlers-for-a-whole-build">Type handlers for a whole build<a class="headerlink" href="#type-handlers-for-a-whole-build" title="Permanent link">&para;</a></h3>
+<p>A <code>mybatis-config.xml</code> <code>&lt;typeHandlers&gt;</code> block registers a handler once and every property
+of that type picks it up. The same thing, decided during <code>javac</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>-Alarkbatis.typeHandlers=com.example.Money:com.example.MoneyHandler,\
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>                         com.example.Json:com.example.JsonHandler
+</span></code></pre></div>
+<p>Each entry applies to every property and every <code>#{}</code> of that type that does not name a
+handler of its own. <code>@Handler</code> and a <code>typeHandler</code> attribute both still win, because
+naming it at the site is the more specific answer.</p>
+<p>Every entry is checked while the build runs — the java type and the handler class must
+both be on the compilation classpath, and the handler must implement
+<code>LarkBatisTypeHandler&lt;ThatType&gt;</code>, be public and concrete, and have a public no-argument
+constructor. What it produces is the same generated shape <code>@Handler</code> produces: one
+<code>static final</code> field of the handler's own class, called directly.</p>
+<div class="admonition tip">
+<p class="admonition-title">An entry that moves nothing is a build warning</p>
+<p>A registered type that no property or <code>#{}</code> in the compilation has is exactly what a
+typo in the java-type half looks like — no property changes, no error, no handler.
+That entry is named in a warning rather than left silent.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Not carried across</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;package name="…"/&gt;</code> scanning, <code>@MappedTypes</code></td>
+<td>Nothing is scanned. Each pair is written out, which is also what makes the list readable</td>
+</tr>
+<tr>
+<td>The <code>jdbcType</code> half of MyBatis's <code>(javaType, jdbcType)</code> registry</td>
+<td>The generated reader knows the one column it is reading, so there is nothing to disambiguate</td>
+</tr>
+<tr>
+<td>A runtime registry</td>
+<td>The handler that wins is compiled in. There is no lookup left to do</td>
+</tr>
+</tbody>
+</table>
 <h2 id="compiler-flags-that-matter">Compiler flags that matter<a class="headerlink" href="#compiler-flags-that-matter" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1947,43 +2126,142 @@ inputs, so an XML-only edit may not regenerate. Run <code>clean</code> first, or
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Gradle</label><label for="__tabbed_2_2">Maven</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">larkbatis</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">mapperDir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">layout</span><span class="p">.</span><span class="na">projectDirectory</span><span class="p">.</span><span class="na">dir</span><span class="p">(</span><span class="s">"src/main/mappers"</span><span class="p">)</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">addProcessorDependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">   </span><span class="c1">// manage the processor version yourself</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">larkbatis</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">mapperDir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">layout</span><span class="p">.</span><span class="na">projectDirectory</span><span class="p">.</span><span class="na">dir</span><span class="p">(</span><span class="s">"src/main/mappers"</span><span class="p">)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">addProcessorDependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">   </span><span class="c1">// manage the processor version yourself</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">addParametersFlag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">        </span><span class="c1">// you already pass -parameters, or use @Param everywhere</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;configuration&gt;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&lt;mapperDir&gt;</span>src/main/mappers<span class="nt">&lt;/mapperDir&gt;</span><span class="w">     </span><span class="cm">&lt;!-- default: src/main/resources --&gt;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&lt;addProcessorPath&gt;</span>false<span class="nt">&lt;/addProcessorPath&gt;</span><span class="w">  </span><span class="cm">&lt;!-- default: true --&gt;</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nt">&lt;/configuration&gt;</span>
+<div class="language-xml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&lt;configuration&gt;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&lt;mapperDir&gt;</span>src/main/mappers<span class="nt">&lt;/mapperDir&gt;</span><span class="w">     </span><span class="cm">&lt;!-- default: src/main/resources --&gt;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&lt;addProcessorPath&gt;</span>false<span class="nt">&lt;/addProcessorPath&gt;</span><span class="w">  </span><span class="cm">&lt;!-- default: true --&gt;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&lt;addParameters&gt;</span>false<span class="nt">&lt;/addParameters&gt;</span><span class="w">        </span><span class="cm">&lt;!-- default: true --&gt;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nt">&lt;/configuration&gt;</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Default</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mapperDir</code> / <code>&lt;mapperDir&gt;</code></td>
+<td><code>src/main/resources</code></td>
+<td>One directory of mapper XML</td>
+</tr>
+<tr>
+<td><code>mapperDirs</code> / <code>&lt;mapperDirs&gt;</code></td>
+<td>empty</td>
+<td>More of them, see below</td>
+</tr>
+<tr>
+<td><code>addProcessorDependency</code> / <code>&lt;addProcessorPath&gt;</code></td>
+<td><code>true</code></td>
+<td>Whether <code>larkbatis-processor</code> is put on the annotation processor path</td>
+</tr>
+<tr>
+<td><code>addParametersFlag</code> / <code>&lt;addParameters&gt;</code></td>
+<td><code>true</code></td>
+<td>Whether <code>-parameters</code> is turned on. Switching it off needs <code>@Param</code> on every mapper parameter — see the next section for why. Maven honours an explicit <code>&lt;parameters&gt;false&lt;/parameters&gt;</code> and warns instead of overriding it</td>
+</tr>
+</tbody>
+</table>
 <p>Maven additionally requires <code>&lt;extensions&gt;true&lt;/extensions&gt;</code> on the plugin declaration.
 Without it nothing happens, and nothing says so. See <a href="../../getting-started/build-plugins/">Build
 Plugins</a>.</p>
+<h3 id="mapper-xml-in-more-than-one-directory">Mapper XML in more than one directory<a class="headerlink" href="#mapper-xml-in-more-than-one-directory" title="Permanent link">&para;</a></h3>
+<p>The closest thing here to MyBatis's <code>&lt;mappers&gt;</code> block or
+<code>mybatis.mapper-locations</code>. Directories rather than Ant patterns, because the
+scan happens at build time against the filesystem, not at startup against the
+classpath:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Gradle</label><label for="__tabbed_3_2">Maven</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">larkbatis</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="n">mapperDirs</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">"src/main/mappers"</span><span class="p">,</span><span class="w"> </span><span class="s">"src/main/legacy-mappers"</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">}</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-xml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">&lt;configuration&gt;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&lt;mapperDirs&gt;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&lt;mapperDir&gt;</span>src/main/mappers<span class="nt">&lt;/mapperDir&gt;</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="nt">&lt;mapperDir&gt;</span>src/main/legacy-mappers<span class="nt">&lt;/mapperDir&gt;</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="nt">&lt;/mapperDirs&gt;</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>Each directory is scanned recursively, its XML is registered as a compile input, and
+all of them reach javac in one <code>-Alarkbatis.mapperDir</code> option.</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Both settings together</td>
+<td><code>mapperDir</code> is scanned first, then the list</td>
+</tr>
+<tr>
+<td>A directory named twice</td>
+<td>Scanned once — a second walk reports every namespace in it as declared by two files</td>
+</tr>
+<tr>
+<td>The <code>src/main/resources</code> default</td>
+<td>Applies only when the build names neither, so listing mapper trees does not quietly add a resources directory nobody mentioned</td>
+</tr>
+<tr>
+<td>One namespace in two directories</td>
+<td>A compile error, not a last-one-wins merge. The two files disagree about one mapper and nothing in the build can say which was meant</td>
+</tr>
+<tr>
+<td>A directory that does not exist</td>
+<td>A build warning naming it. <code>mvn larkbatis:check</code> lists every resolved directory and marks the missing ones</td>
+</tr>
+<tr>
+<td>A directory outside the module</td>
+<td>Allowed, and rarely useful: every namespace found still has to name a mapper interface compiled <em>here</em>, and a file matching none is reported and ignored</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Mapper XML inside a dependency jar has no equivalent</p>
+<p><code>classpath*:</code> patterns are a startup-time idea. A mapper interface shipped in a jar
+was already generated against its own XML when that jar was built, so there is
+nothing left for a consuming build to scan.</p>
+</div>
 <h2 id="runtime-settings">Runtime settings<a class="headerlink" href="#runtime-settings" title="Permanent link">&para;</a></h2>
 <p>Only two, and both are about the operational cost of <code>${}</code>: statement caches are keyed by
 SQL text, so a fragment whose value set is not bounded grows them without limit.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Spring Boot</label><label for="__tabbed_3_2">System properties</label><label for="__tabbed_3_3">Programmatic</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Spring Boot</label><label for="__tabbed_4_2">System properties</label><label for="__tabbed_4_3">Programmatic</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-yaml highlight"><span class="filename">application.yml</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">larkbatis</span><span class="p">:</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<div class="language-yaml highlight"><span class="filename">application.yml</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">larkbatis</span><span class="p">:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-console highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">-Dlarkbatis.maxSqlVariants=64</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="go">-Dlarkbatis.failOnUnboundedVariants=true</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="go">-Dlarkbatis.maxSqlVariants=64</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="go">-Dlarkbatis.failOnUnboundedVariants=true</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">maxSqlVariants</span><span class="p">(</span><span class="mi">64</span><span class="p">);</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">failOnUnboundedVariants</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">maxSqlVariants</span><span class="p">(</span><span class="mi">64</span><span class="p">);</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">failOnUnboundedVariants</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -2009,6 +2287,9 @@ SQL text, so a fragment whose value set is not bounded grows them without limit.
 </tr>
 </tbody>
 </table>
+<p>Both are described in <code>META-INF/spring-configuration-metadata.json</code>, shipped in
+<code>larkbatis-spring-boot-autoconfigure</code>, so an IDE completes them in <code>application.yml</code>
+with their defaults and marks a misspelt key.</p>
 <p>The threshold fires <strong>exactly once per statement</strong>: past it, the counter stops retaining
 texts, so the throwing mode does not keep growing a set it has already given up on.</p>
 <div class="admonition tip">
@@ -2029,11 +2310,7 @@ profile is the intended use.</p>
 <tbody>
 <tr>
 <td><code>log-sql</code></td>
-<td>Appears in the design document's property list and is absent here. Every generated body would have to carry a logging branch. SQL logging belongs to the driver or the pool: <code>net.ttddyy:datasource-proxy</code>, p6spy</td>
-</tr>
-<tr>
-<td><code>mapUnderscoreToCamelCase</code></td>
-<td>Applied at build time, always. There is no runtime to switch it in</td>
+<td>Every generated body would have to carry a logging branch. SQL logging belongs to the driver or the pool: <code>net.ttddyy:datasource-proxy</code>, p6spy</td>
 </tr>
 <tr>
 <td><code>ExecutorType</code>, cache settings, <code>defaultStatementTimeout</code>, <code>lazyLoadingEnabled</code>, …</td>

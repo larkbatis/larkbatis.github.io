@@ -98,18 +98,6 @@
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
-          <aside class="md-banner md-banner--warning">
-            <div class="md-banner__inner md-grid md-typeset">
-              
-  You are reading the documentation for an older version.
-  <a href="../../..">
-    <strong>Go to the latest version.</strong>
-  </a>
-
-            </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
-          </aside>
-        
       </div>
     
     
@@ -2032,9 +2020,11 @@ annotations, no interface, no registration.</p>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="c1">// getters and setters</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Columns find properties by <code>snake_case</code> → <code>camelCase</code>, <strong>applied at build time,
-always</strong>: <code>created_at</code> → <code>setCreatedAt</code>. There is no <code>mapUnderscoreToCamelCase</code> switch,
-because there is no runtime to switch it in.</p>
+<p>Columns find properties by <code>snake_case</code> → <code>camelCase</code>, <strong>applied at build time</strong>:
+<code>created_at</code> → <code>setCreatedAt</code>. It is on by default — MyBatis defaults it off — and
+<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> carries that default across. The choice is
+baked into the generated reader; there is no runtime setting either way. See
+<a href="../../features/configuration/#column-naming">Configuration</a>.</p>
 <p>Where the convention is not enough, name the column on the property with
 <a href="../../features/annotations/#column"><code>@Column</code></a> on the field, the setter or the getter,
 alias it in the select list, or declare a <a href="../result-maps/"><code>&lt;resultMap&gt;</code></a>. See

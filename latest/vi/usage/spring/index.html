@@ -98,18 +98,6 @@
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
-          <aside class="md-banner md-banner--warning">
-            <div class="md-banner__inner md-grid md-typeset">
-              
-  You are reading the documentation for an older version.
-  <a href="../../../..">
-    <strong>Go to the latest version.</strong>
-  </a>
-
-            </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
-          </aside>
-        
       </div>
     
     
@@ -2020,7 +2008,7 @@ vậy các handler <code>DuplicateKeyException</code> sẵn có của bạn vẫ
 <tr>
 <td>Plugin / interceptor của MyBatis</td>
 <td>không có</td>
-<td>Bỏ theo thiết kế</td>
+<td>Đã bỏ: bốn đối tượng mà chúng bọc chính là thứ mà thân phương thức sinh ra thay thế. Spring AOP trên bean mapper vẫn chạy, và <a href="../../features/mybatis-differences/#what-replaces-a-plugin">có công thức thay thế cho từng loại plugin</a></td>
 </tr>
 </tbody>
 </table>
@@ -2034,9 +2022,8 @@ bản SQL, nên một fragment có tập giá trị không bị chặn sẽ làm
 <a href="../raw-sql/#tracking-sql-variants">SQL thô</a>.</p>
 <div class="admonition note">
 <p class="admonition-title"><code>log-sql</code> chưa được hiện thực</p>
-<p>Nó xuất hiện trong danh sách property của tài liệu thiết kế nhưng không được hiện
-thực. Mọi thân phương thức sinh ra sẽ phải mang thêm một nhánh ghi log, mà hình dạng
-sinh ra thì không có nhánh nào như vậy. Việc ghi log SQL thuộc về driver hoặc pool
+<p>Mọi thân phương thức sinh ra sẽ phải mang thêm một nhánh ghi log, mà hình dạng sinh
+ra thì không có nhánh nào như vậy. Việc ghi log SQL thuộc về driver hoặc pool
 (<code>net.ttddyy:datasource-proxy</code>, p6spy) cho tới khi có lý do đổi điều đó.</p>
 </div>
 <h2 id="khi-mac-inh-khong-vua">Khi mặc định không vừa<a class="headerlink" href="#khi-mac-inh-khong-vua" title="Permanent link">&para;</a></h2>

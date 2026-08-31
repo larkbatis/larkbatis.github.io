@@ -2038,9 +2038,11 @@ absolute and the JVM default time zone does not enter into it.</p>
 zone to carry, so the conversion needs a decision that belongs to your application.
 Store <code>Instant</code>, and convert at the edge of the mapper.</p>
 <h2 id="column-naming">Column naming<a class="headerlink" href="#column-naming" title="Permanent link">&para;</a></h2>
-<p>Columns find properties by <code>snake_case</code> → <code>camelCase</code>, applied at build time, always:
-<code>created_at</code> → <code>setCreatedAt</code>. There is no <code>mapUnderscoreToCamelCase</code> switch to turn off,
-because there is no runtime to switch it in.</p>
+<p>Columns find properties by <code>snake_case</code> → <code>camelCase</code>, applied at build time:
+<code>created_at</code> → <code>setCreatedAt</code>. It is on by default — MyBatis defaults it off — and
+<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> carries that default across. The choice is
+baked into the generated reader; there is no runtime setting either way. See
+<a href="../../features/configuration/#column-naming">Configuration</a>.</p>
 <p>Where the convention is not enough, a <code>&lt;resultMap&gt;</code> names the column explicitly:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"userMap"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">    </span><span class="na">column=</span><span class="s">"id"</span><span class="nt">/&gt;</span>
@@ -2060,8 +2062,9 @@ because there is no runtime to switch it in.</p>
 put it on. Two of them naming different columns for one property is a compile error, and
 so is two properties landing on the same column. See
 <a href="../../features/annotations/#column"><code>@Column</code></a>.</p>
-<p>A codebase that relied on <code>mapUnderscoreToCamelCase</code> being <em>off</em> needs <code>@Column</code> or a
-<code>&lt;resultMap&gt;</code>, and the <a href="../../features/migration/">migration scanner</a> reports the case.</p>
+<p>A codebase that relied on <code>mapUnderscoreToCamelCase</code> being <em>off</em> either carries the
+setting across or gives the affected columns <code>@Column</code> or a <code>&lt;resultMap&gt;</code>; the
+<a href="../../features/migration/">migration scanner</a> reports the case either way.</p>
 <h2 id="custom-type-handlers">Custom type handlers<a class="headerlink" href="#custom-type-handlers" title="Permanent link">&para;</a></h2>
 <p>Types the table above does not cover (your own <code>Money</code>, a JSON column, an enum stored as
 an ordinal) move through a handler you write:</p>
@@ -2122,10 +2125,13 @@ bean needs no annotation at all:</p>
 <p>A handler also lifts the type whitelist for the value it moves: <code>Money</code> is not in the
 table above, and these compile anyway.</p>
 <h3 id="what-is-still-not-there">What is still not there<a class="headerlink" href="#what-is-still-not-there" title="Permanent link">&para;</a></h3>
-<p><strong>No discovery.</strong> No <code>&lt;typeHandlers&gt;</code> registry, no <code>@MappedTypes</code> scan, no
-<code>(Type, JdbcType)</code> lookup. Being explicit is the trade: you lose "declare it once and it
-applies everywhere", and you gain a generated call site that javac type-checks and you
-can navigate to in the IDE.</p>
+<p><strong>No discovery.</strong> No <code>@MappedTypes</code> scan, no package scan, no <code>(Type, JdbcType)</code> lookup.
+"Declare it once and it applies everywhere" is available, but written out rather than
+found: <code>-Alarkbatis.typeHandlers=com.example.Money:com.example.MoneyHandler</code> registers a
+default handler per Java type for the whole build, checked during <code>javac</code>. See
+<a href="../../features/configuration/#type-handlers-for-a-whole-build">Configuration</a>. What you
+get either way is a generated call site that javac type-checks and you can navigate to in
+the IDE.</p>
 <p><strong>One reading per result class.</strong> One row reader is generated per class, so a property
 has one handler. Two statements naming different handlers for the same property is a
 build error, because two readings would mean two result classes.</p>

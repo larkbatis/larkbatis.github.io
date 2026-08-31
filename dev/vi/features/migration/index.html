@@ -1920,18 +1920,26 @@ generator itself.</p>
 would cost, with file and line numbers. It compiles nothing and resolves no dependencies,
 so it runs against a checkout of a service nobody has built yet, which is when the
 question "would this even work for us" actually gets asked.</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>:larkbatis-scanner:installDist
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">$ </span>./build/install/larkbatis-scanner/bin/larkbatis-scan<span class="w"> </span>/path/to/legacy-service
+<p>A project that already applies the Gradle plugin has the task registered for it, over
+its own directory:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>larkbatisScan
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>larkbatisScan<span class="w"> </span>--args<span class="o">=</span><span class="s2">"--summary --min=BLOCKER src/main"</span>
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>larkbatis-scan — what would it cost to move this codebase to LarkBatis
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>usage: larkbatis-scan [options] &lt;path&gt;...
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  --summary            counts only, no per-line detail
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  --min=LEVEL          detail level: BLOCKER, EDIT, REVIEW, INFO (default REVIEW)
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  --limit=N            most findings listed per file (default 40)
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  --out=FILE           also write the report to FILE
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  --fail-on-blocker    exit 1 when anything is blocked on a dropped feature
+<p>The scanner runs out of process off a detached configuration, so it never reaches a
+configuration your application can see. To point it at a codebase that has none of this
+set up — the usual case, since the question comes before the decision — build the CLI:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>:larkbatis-scanner:installDist
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="gp">$ </span>./build/install/larkbatis-scanner/bin/larkbatis-scan<span class="w"> </span>/path/to/legacy-service
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>larkbatis-scan — what would it cost to move this codebase to LarkBatis
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>usage: larkbatis-scan [options] &lt;path&gt;...
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  --summary            counts only, no per-line detail
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  --min=LEVEL          detail level: BLOCKER, EDIT, REVIEW, INFO (default REVIEW)
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  --limit=N            most findings listed per file (default 40)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  --out=FILE           also write the report to FILE
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  --fail-on-blocker    exit 1 when anything is blocked on a dropped feature
 </span></code></pre></div>
 <p>Nothing is rewritten. The report is the deliverable, and the edits are yours to make.</p>
 <h3 id="it-uses-the-real-frontend">It uses the real frontend<a class="headerlink" href="#it-uses-the-real-frontend" title="Permanent link">&para;</a></h3>
@@ -1952,7 +1960,7 @@ trustworthy position for a <code>${}</code> in the middle of a text node.</p>
 <tbody>
 <tr>
 <td><strong>BLOCKER</strong></td>
-<td>No LarkBatis equivalent; the design dropped it. The mapper changes</td>
+<td>No LarkBatis equivalent; the feature was dropped. The mapper changes</td>
 </tr>
 <tr>
 <td><strong>EDIT</strong></td>
@@ -2020,7 +2028,7 @@ wall when it is nothing of the kind.</p>
 <tr>
 <td>Plugin / interceptor</td>
 <td>BLOCKER</td>
-<td>Paging, auditing and soft-delete plugins become explicit SQL or a decorator</td>
+<td>Paging, auditing and soft-delete become explicit SQL, a type handler or a decorator. <a href="../mybatis-differences/#what-replaces-a-plugin">Recipe per plugin kind</a></td>
 </tr>
 <tr>
 <td>Lazy loading</td>
@@ -2110,7 +2118,7 @@ wall when it is nothing of the kind.</p>
 <tr>
 <td><code>mapUnderscoreToCamelCase</code> is off</td>
 <td>REVIEW</td>
-<td>LarkBatis applies it at build time, always. Affected columns need <code>@Column</code> on the property, or a <code>&lt;resultMap&gt;</code></td>
+<td>LarkBatis applies it at build time and defaults it to <em>on</em>. Carry the setting across with <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code>, or leave it on and give the affected columns <code>@Column</code> or a <code>&lt;resultMap&gt;</code></td>
 </tr>
 <tr>
 <td>More than one environment / <code>DataSource</code></td>

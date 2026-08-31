@@ -2039,9 +2039,11 @@ và múi giờ mặc định của JVM không xen vào.</p>
 cột thì chẳng có múi giờ nào để mang, nên phép chuyển đổi cần một quyết định vốn thuộc về
 ứng dụng của bạn. Hãy lưu <code>Instant</code>, và chuyển đổi ở rìa của mapper.</p>
 <h2 id="column-naming">Đặt tên cột<a class="headerlink" href="#column-naming" title="Permanent link">&para;</a></h2>
-<p>Cột tìm ra property theo <code>snake_case</code> → <code>camelCase</code>, áp dụng lúc build, luôn luôn:
-<code>created_at</code> → <code>setCreatedAt</code>. Không có tuỳ chọn <code>mapUnderscoreToCamelCase</code> nào để tắt
-đi, bởi vì chẳng có runtime nào để mà tắt nó trong đó.</p>
+<p>Cột tìm ra property theo <code>snake_case</code> → <code>camelCase</code>, áp dụng lúc build:
+<code>created_at</code> → <code>setCreatedAt</code>. Mặc định là bật — MyBatis thì mặc định tắt — và
+<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> mang mặc định của MyBatis sang. Lựa chọn
+này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
+Xem <a href="../../features/configuration/#column-naming">Cấu hình</a>.</p>
 <p>Chỗ nào quy ước không đủ thì một <code>&lt;resultMap&gt;</code> gọi tên cột tường minh:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"userMap"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">    </span><span class="na">column=</span><span class="s">"id"</span><span class="nt">/&gt;</span>
@@ -2061,8 +2063,9 @@ cột thì chẳng có múi giờ nào để mang, nên phép chuyển đổi c�
 trong số đó ghi hai tên cột khác nhau cho cùng một property là lỗi biên dịch, và hai
 property rơi vào cùng một cột cũng vậy. Xem
 <a href="../../features/annotations/#column"><code>@Column</code></a>.</p>
-<p>Một codebase từng dựa vào việc <code>mapUnderscoreToCamelCase</code> bị <em>tắt</em> sẽ cần <code>@Column</code> hoặc
-<code>&lt;resultMap&gt;</code>, và <a href="../../features/migration/">trình quét mã cũ</a> có báo cáo trường hợp này.</p>
+<p>Một codebase từng dựa vào việc <code>mapUnderscoreToCamelCase</code> bị <em>tắt</em> thì hoặc mang luôn
+tuỳ chọn đó sang, hoặc gắn <code>@Column</code> / <code>&lt;resultMap&gt;</code> cho những cột bị ảnh hưởng; dù chọn
+cách nào thì <a href="../../features/migration/">trình quét mã cũ</a> cũng báo cáo trường hợp này.</p>
 <h2 id="custom-type-handlers">Type handler tuỳ biến<a class="headerlink" href="#custom-type-handlers" title="Permanent link">&para;</a></h2>
 <p>Những kiểu không có trong bảng trên (<code>Money</code> của riêng bạn, một cột JSON, một enum lưu
 dạng ordinal) đi qua handler do bạn viết:</p>
@@ -2123,10 +2126,12 @@ không cần thêm annotation nào:</p>
 <p>Handler cũng mở khoá danh sách kiểu cho giá trị nó chuyển: <code>Money</code> không có trong bảng
 trên, mà những đoạn trên vẫn biên dịch được.</p>
 <h3 id="nhung-gi-van-khong-co">Những gì vẫn không có<a class="headerlink" href="#nhung-gi-van-khong-co" title="Permanent link">&para;</a></h3>
-<p><strong>Không tự tìm handler.</strong> Không có registry <code>&lt;typeHandlers&gt;</code>, không quét <code>@MappedTypes</code>,
-không tra <code>(Type, JdbcType)</code>. Tường minh là cái giá phải trả: bạn mất đi "khai báo một
-lần rồi áp dụng khắp nơi", và bạn được một chỗ gọi sinh ra mà javac kiểm tra kiểu được,
-còn IDE thì nhảy tới được.</p>
+<p><strong>Không tự tìm handler.</strong> Không quét <code>@MappedTypes</code>, không quét package, không tra
+<code>(Type, JdbcType)</code>. "Khai báo một lần rồi áp dụng khắp nơi" thì vẫn có, nhưng phải viết
+ra chứ không được dò tìm: <code>-Alarkbatis.typeHandlers=com.example.Money:com.example.MoneyHandler</code>
+đăng ký handler mặc định theo kiểu Java cho cả build, kiểm tra ngay lúc <code>javac</code>. Xem
+<a href="../../features/configuration/#type-handlers-for-a-whole-build">Cấu hình</a>. Đằng nào bạn
+cũng được một chỗ gọi sinh ra mà javac kiểm tra kiểu được, còn IDE thì nhảy tới được.</p>
 <p><strong>Một cách đọc cho mỗi lớp kết quả.</strong> Mỗi lớp chỉ sinh một row reader, nên mỗi property
 chỉ có một handler. Hai statement gọi tên hai handler khác nhau cho cùng một property là
 lỗi biên dịch, vì muốn hai cách đọc thì phải có hai lớp kết quả.</p>
