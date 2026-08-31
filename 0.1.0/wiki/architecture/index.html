@@ -1252,10 +1252,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-repositories" class="md-nav__link">
+  <a href="#repository-module-structure" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The repositories
+        Repository &amp; Module Structure
       
     </span>
   </a>
@@ -1266,19 +1266,19 @@
   <a href="#the-build-phase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The build phase
+        The Build Phase
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The build phase">
+    <nav class="md-nav" aria-label="The Build Phase">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#frontend" class="md-nav__link">
+  <a href="#frontend-parsing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Frontend
+        Frontend Parsing
       
     </span>
   </a>
@@ -1286,10 +1286,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-ir" class="md-nav__link">
+  <a href="#intermediate-representation-ir" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The IR
+        Intermediate Representation (IR)
       
     </span>
   </a>
@@ -1297,10 +1297,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#emitters" class="md-nav__link">
+  <a href="#code-emitters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Emitters
+        Code Emitters
       
     </span>
   </a>
@@ -1316,7 +1316,7 @@
   <a href="#the-runtime-phase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The runtime phase
+        The Runtime Phase
       
     </span>
   </a>
@@ -1324,10 +1324,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-a-build-tool-plugin-exists-at-all" class="md-nav__link">
+  <a href="#why-build-plugins-are-used" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why a build-tool plugin exists at all
+        Why Build Plugins Are Used
       
     </span>
   </a>
@@ -1335,10 +1335,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verification-strategy" class="md-nav__link">
+  <a href="#verification-testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verification strategy
+        Verification &amp; Testing
       
     </span>
   </a>
@@ -1839,10 +1839,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-repositories" class="md-nav__link">
+  <a href="#repository-module-structure" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The repositories
+        Repository &amp; Module Structure
       
     </span>
   </a>
@@ -1853,19 +1853,19 @@
   <a href="#the-build-phase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The build phase
+        The Build Phase
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The build phase">
+    <nav class="md-nav" aria-label="The Build Phase">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#frontend" class="md-nav__link">
+  <a href="#frontend-parsing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Frontend
+        Frontend Parsing
       
     </span>
   </a>
@@ -1873,10 +1873,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-ir" class="md-nav__link">
+  <a href="#intermediate-representation-ir" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The IR
+        Intermediate Representation (IR)
       
     </span>
   </a>
@@ -1884,10 +1884,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#emitters" class="md-nav__link">
+  <a href="#code-emitters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Emitters
+        Code Emitters
       
     </span>
   </a>
@@ -1903,7 +1903,7 @@
   <a href="#the-runtime-phase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The runtime phase
+        The Runtime Phase
       
     </span>
   </a>
@@ -1911,10 +1911,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-a-build-tool-plugin-exists-at-all" class="md-nav__link">
+  <a href="#why-build-plugins-are-used" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why a build-tool plugin exists at all
+        Why Build Plugins Are Used
       
     </span>
   </a>
@@ -1922,10 +1922,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verification-strategy" class="md-nav__link">
+  <a href="#verification-testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verification strategy
+        Verification &amp; Testing
       
     </span>
   </a>
@@ -1958,198 +1958,142 @@
 
 
 <h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
-<p>Two phases and one intermediate representation. Everything in the build phase is thrown
-away before the application runs; everything in the runtime phase is code you can read.</p>
+<p>LarkBatis splits its work into two distinct stages: a compile-time build phase and a lightweight runtime phase. Everything in the build phase is discarded once <code>javac</code> finishes; only clean, standard Java bytecode is packaged into your application.</p>
 <pre class="mermaid"><code>flowchart LR
-    subgraph build["Build time — nothing ships"]
+    subgraph build["Build time (annotation processing)"]
         A["Mapper interface&lt;br/&gt;@Select / @Insert"] --&gt; F
         B["Mapper XML&lt;br/&gt;&amp;lt;select&amp;gt; &amp;lt;if&amp;gt; &amp;lt;foreach&amp;gt;"] --&gt; F
-        F["Frontend&lt;br/&gt;parse · type-check · fold"] --&gt; IR["MapperModel&lt;br/&gt;(IR)"]
+        F["Frontend&lt;br/&gt;Parse, Type-check, Constant-fold"] --&gt; IR["MapperModel&lt;br/&gt;(Intermediate Representation)"]
         IR --&gt; E["Emitters&lt;br/&gt;JavaPoet"]
     end
-    subgraph run["Runtime — ~1,500 lines, zero deps"]
+    subgraph run["Runtime (~1,500 lines, zero reflection)"]
         E --&gt; G1["UserMapper$$Impl"]
         E --&gt; G2["UserRow"]
         E --&gt; G3["LarkBatisMappers"]
         E --&gt; G4["LarkBatisMapperConfiguration"]
-        G1 --&gt; RT["larkbatis-runtime&lt;br/&gt;LarkBatisSession · JdbcCodec · SqlFragment"]
-        RT --&gt; JDBC[("JDBC driver")]
+        G1 --&gt; RT["larkbatis-runtime&lt;br/&gt;LarkBatisSession, JdbcCodec, SqlFragment"]
+        RT --&gt; JDBC[("JDBC Driver")]
     end</code></pre>
-<h2 id="the-repositories">The repositories<a class="headerlink" href="#the-repositories" title="Permanent link">&para;</a></h2>
-<p>Four independent repositories, because they have different lifecycles and different
-answers to "does this reach an application's runtime classpath".</p>
+<h2 id="repository-module-structure">Repository &amp; Module Structure<a class="headerlink" href="#repository-module-structure" title="Permanent link">&para;</a></h2>
+<p>The project is divided across four repositories based on lifecycle boundaries:</p>
 <table>
 <thead>
 <tr>
 <th>Repository</th>
 <th>Modules</th>
-<th>Scope</th>
+<th>Role</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>larkbatis</code></td>
 <td><code>larkbatis-annotations</code></td>
-<td>runtime: annotations only, no logic</td>
+<td>Compile-time annotations only (no runtime logic)</td>
 </tr>
 <tr>
 <td></td>
 <td><code>larkbatis-runtime</code></td>
-<td>runtime: zero dependencies beyond JDBC</td>
+<td>Core runtime (zero dependencies beyond standard JDBC)</td>
 </tr>
 <tr>
 <td></td>
 <td><code>larkbatis-processor</code></td>
-<td><strong>build-only</strong>: the generator</td>
+<td>Build-only annotation processor (<code>javac</code>)</td>
 </tr>
 <tr>
 <td><code>larkbatis-gradle-plugin</code></td>
 <td></td>
-<td>build-only: plugin id <code>io.github.larkbatis</code></td>
+<td>Build-only Gradle plugin (<code>io.github.larkbatis</code>)</td>
 </tr>
 <tr>
 <td><code>larkbatis-maven-plugin</code></td>
 <td></td>
-<td>build-only: same job for Maven</td>
+<td>Build-only Maven plugin</td>
 </tr>
 <tr>
 <td><code>larkbatis-spring</code></td>
-<td><code>larkbatis-spring</code>, <code>-spring-boot-autoconfigure</code>, <code>-spring-boot-starter</code></td>
-<td>runtime: transactions, Boot auto-config</td>
+<td><code>larkbatis-spring</code>, <code>-autoconfigure</code>, <code>-starter</code></td>
+<td>Spring transaction integration and Spring Boot auto-configuration</td>
 </tr>
 </tbody>
 </table>
-<p>The rule that keeps this honest: <strong>build-only modules must never leak onto an
-application's runtime classpath.</strong> The generator is a compile-time tool; if it can be
-reached at runtime, someone will eventually reach for it, and LarkBatis's central claim
-stops being checkable.</p>
-<h2 id="the-build-phase">The build phase<a class="headerlink" href="#the-build-phase" title="Permanent link">&para;</a></h2>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>Two frontends, one output. The annotation path runs as a plain
-<code>javax.annotation.processing.Processor</code>. The XML path parses mapper files handed to it as
-directory paths by the build plugin. Both produce the same IR. One set of emitters, one
-set of semantics, and no second code path to drift.</p>
-<p>The frontend does all the work that "resolving the shape" means:</p>
+<p><strong>Key architectural rule</strong>: Build-only modules (<code>larkbatis-processor</code>, Gradle/Maven plugins) are never included on an application's runtime classpath.</p>
+<h2 id="the-build-phase">The Build Phase<a class="headerlink" href="#the-build-phase" title="Permanent link">&para;</a></h2>
+<h3 id="frontend-parsing">Frontend Parsing<a class="headerlink" href="#frontend-parsing" title="Permanent link">&para;</a></h3>
+<p>LarkBatis provides two frontends that feed into the same intermediate model:</p>
+<ol>
+<li><strong>Annotation frontend</strong>: Analyzes Java mapper interfaces using standard <code>javax.annotation.processing.Processor</code> APIs.</li>
+<li><strong>XML frontend</strong>: Parses XML mapper files from directories provided by the build plugin.</li>
+</ol>
+<p>Both frontends perform static analysis:</p>
 <ul>
-<li>parse the SQL text, turning <code>#{}</code> into positional binds and <code>${}</code> into checked splices</li>
-<li>resolve every <code>#{}</code> name against the method's parameter types, walking property paths</li>
-<li>parse the select list, when it parses, to fix column positions</li>
-<li>choose the read and write helper for every value from its declared Java type</li>
-<li>compile every <code>&lt;if test&gt;</code> into a Java boolean expression, or reject it</li>
-<li>constant-fold <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code>, <code>&lt;trim&gt;</code> into guarded literal appends</li>
-<li>inline <code>&lt;sql&gt;</code>/<code>&lt;include&gt;</code></li>
-<li>lower <code>&lt;foreach&gt;</code> into a placeholder loop and a binding loop</li>
+<li>Convert <code>#{}</code> parameter references into typed positional JDBC bind parameters.</li>
+<li>Validate parameter names against method signatures and object property paths at compile time.</li>
+<li>Parse <code>SELECT</code> column lists to hardcode indexed column reading.</li>
+<li>Select typed <code>JdbcCodec</code> read and write helpers based on declared Java types.</li>
+<li>Compile <code>&lt;if test="..."&gt;</code> conditions into plain Java boolean expressions.</li>
+<li>Constant-fold <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code>, and <code>&lt;trim&gt;</code> clauses into guarded string appends.</li>
+<li>Inline static <code>&lt;sql&gt;</code> / <code>&lt;include&gt;</code> fragments.</li>
+<li>Compile <code>&lt;foreach&gt;</code> loops into placeholder generator and parameter binding loops.</li>
 </ul>
-<p>Anything it cannot decide is a compile error naming the mapper method, never a runtime
-fallback.</p>
-<h3 id="the-ir">The IR<a class="headerlink" href="#the-ir" title="Permanent link">&para;</a></h3>
-<p><code>MapperModel</code> is the boundary. It carries statements, parameters, result shapes, dynamic
-nodes, key models and reader access strategies, and its shape follows neither frontend.
-Golden snapshots of the IR are part of the test suite, so a frontend change that alters
-meaning shows up as an IR diff before it becomes a generated-code diff.</p>
-<h3 id="emitters">Emitters<a class="headerlink" href="#emitters" title="Permanent link">&para;</a></h3>
-<p>JavaPoet, one emitter per artefact:</p>
+<p>If any query shape or binding cannot be resolved at compile time, <code>javac</code> fails immediately with a clear error pointing to the method or XML line.</p>
+<h3 id="intermediate-representation-ir">Intermediate Representation (IR)<a class="headerlink" href="#intermediate-representation-ir" title="Permanent link">&para;</a></h3>
+<p><code>MapperModel</code> acts as the compiler boundary. It models statements, parameters, result column mappings, dynamic AST nodes, and generated key configurations. Golden snapshot tests verify the IR directly, ensuring frontend parsing changes are caught before bytecode emission.</p>
+<h3 id="code-emitters">Code Emitters<a class="headerlink" href="#code-emitters" title="Permanent link">&para;</a></h3>
+<p>LarkBatis uses JavaPoet to emit clean Java source files:</p>
 <table>
 <thead>
 <tr>
 <th>Emitter</th>
-<th>Output</th>
+<th>Emitted Class</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>MapperImplEmitter</code></td>
-<td><code>UserMapper$$Impl</code>, one per mapper</td>
+<td><code>UserMapper$$Impl</code></td>
+<td>Concrete mapper implementation executing JDBC calls</td>
 </tr>
 <tr>
 <td><code>RowReaderEmitter</code></td>
-<td><code>UserRow</code>, one per result class</td>
+<td><code>UserRow</code></td>
+<td>Static row reader for result mapping</td>
 </tr>
 <tr>
 <td><code>RegistryEmitter</code></td>
-<td><code>LarkBatisMappers</code>, one per compilation</td>
+<td><code>LarkBatisMappers</code></td>
+<td>Central mapper factory registry</td>
 </tr>
 <tr>
 <td><code>SpringConfigurationEmitter</code></td>
-<td><code>LarkBatisMapperConfiguration</code>, when spring-context is on the build classpath</td>
+<td><code>LarkBatisMapperConfiguration</code></td>
+<td>Spring <code>@Configuration</code> with <code>@Bean</code> definitions</td>
 </tr>
 </tbody>
 </table>
-<p>The registry emitter is why the processor is <strong>aggregating</strong>: it needs every mapper in the
-compilation to write one complete registry. The same requirement is what breaks Maven
-builds under <code>useIncrementalCompilation=false</code>, where recompiling only stale sources would
-regenerate the registry from a partial view.</p>
-<h2 id="the-runtime-phase">The runtime phase<a class="headerlink" href="#the-runtime-phase" title="Permanent link">&para;</a></h2>
-<p><code>larkbatis-runtime</code> is small enough to list:</p>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Job</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>LarkBatisSession</code></td>
-<td>Borrow a <code>Connection</code>, give it back, translate exceptions. The whole environment a generated mapper needs</td>
-</tr>
-<tr>
-<td><code>JdbcLarkBatisSession</code></td>
-<td>The standalone implementation, plus <code>LarkBatisTx</code></td>
-</tr>
-<tr>
-<td><code>SpringLarkBatisSession</code></td>
-<td>The Spring one: <code>DataSourceUtils</code> instead of <code>dataSource.getConnection()</code></td>
-</tr>
-<tr>
-<td><code>JdbcCodec</code></td>
-<td>Null-aware and converting read/write helpers. The inlined remains of the <code>TypeHandler</code> layer</td>
-</tr>
-<tr>
-<td><code>SqlFragment</code></td>
-<td>The one gate arbitrary SQL text passes through</td>
-</tr>
-<tr>
-<td><code>LarkBatisSql</code></td>
-<td>Static helpers referenced by generated code: <code>trackVariants</code>, <code>padPow2</code>, <code>sum</code></td>
-</tr>
-<tr>
-<td><code>RowReader</code>, <code>StatementBinder</code></td>
-<td>Two functional interfaces the escape hatch takes</td>
-</tr>
-<tr>
-<td><code>ResultSetStream</code></td>
-<td>Cursor-backed <code>Stream</code> with resource ownership</td>
-</tr>
-<tr>
-<td><code>LarkBatisException</code> + subclasses</td>
-<td>The unchecked exception tree</td>
-</tr>
-</tbody>
-</table>
-<p>Nothing in that list inspects a type, resolves a name, or consults a registry. That all
-happened at build time.</p>
-<h2 id="why-a-build-tool-plugin-exists-at-all">Why a build-tool plugin exists at all<a class="headerlink" href="#why-a-build-tool-plugin-exists-at-all" title="Permanent link">&para;</a></h2>
-<p>The processor cannot reach mapper XML through <code>Filer.getResource</code>, so it takes a directory
-path as an option and something has to supply that path. Both build plugins exist for that
-one job. Neither generates code; all generation stays inside javac.
-<a href="../../getting-started/build-plugins/">Build Plugins</a> has the full reasoning.</p>
-<h2 id="verification-strategy">Verification strategy<a class="headerlink" href="#verification-strategy" title="Permanent link">&para;</a></h2>
-<p>Three layers, because "the generated code compiles" proves very little:</p>
+<h2 id="the-runtime-phase">The Runtime Phase<a class="headerlink" href="#the-runtime-phase" title="Permanent link">&para;</a></h2>
+<p><code>larkbatis-runtime</code> is intentionally tiny (~1,500 lines) and contains only essential abstractions:</p>
+<ul>
+<li><strong><code>LarkBatisSession</code></strong>: Acquires and releases database connections and translates JDBC exceptions.</li>
+<li><strong><code>JdbcLarkBatisSession</code></strong>: Standalone session implementation managing <code>LarkBatisTx</code> transactions.</li>
+<li><strong><code>SpringLarkBatisSession</code></strong>: Spring integration delegating to <code>DataSourceUtils</code> and Spring exception translators.</li>
+<li><strong><code>JdbcCodec</code></strong>: Static, inlined read/write helpers with null handling for primitives, dates, and enums.</li>
+<li><strong><code>SqlFragment</code></strong>: Safe wrapper for dynamic SQL text.</li>
+<li><strong><code>LarkBatisSql</code></strong>: Utility helpers for query variant tracking and batch update calculations.</li>
+<li><strong><code>RowReader&lt;T&gt;</code> &amp; <code>StatementBinder</code></strong>: Functional interfaces used by the dynamic SQL escape hatch.</li>
+<li><strong><code>LarkBatisException</code></strong>: Root unchecked exception hierarchy.</li>
+</ul>
+<h2 id="why-build-plugins-are-used">Why Build Plugins Are Used<a class="headerlink" href="#why-build-plugins-are-used" title="Permanent link">&para;</a></h2>
+<p>Annotation processors cannot discover mapper XML files located in arbitrary directory structures via standard <code>Filer</code> APIs. Gradle and Maven plugins register mapper XML directories as compilation inputs and pass them cleanly to javac via <code>-Alarkbatis.mapperDir</code>. All code generation remains strictly inside <code>javac</code>. See <a href="../../getting-started/build-plugins/">Build Plugins</a>.</p>
+<h2 id="verification-testing">Verification &amp; Testing<a class="headerlink" href="#verification-testing" title="Permanent link">&para;</a></h2>
+<p>LarkBatis employs a three-tier test suite to guarantee correctness:</p>
 <ol>
-<li><strong>A hand-written emitter spec.</strong> Before the emitters existed, the target shape of
-   generated code was written out by hand as compiling, tested Java. The emitters are
-   measured against it.</li>
-<li><strong>Golden snapshots.</strong> Generated output for a corpus of mappers is committed and
-   diffed. An intended emitter change is a reviewed diff, not an invisible one.</li>
-<li><strong>Differential tests.</strong> The same mapper runs through MyBatis's interpreted path and
-   through the generated code against a recording <code>DataSource</code>; the SQL text and the
-   parameter bindings are compared. A sweep over the mapper XML corpus in the MyBatis
-   source tree is how the expression grammar's real-world coverage was measured rather
-   than guessed.</li>
+<li><strong>Emitter Specifications</strong>: Reference implementations written by hand to define expected generated code patterns.</li>
+<li><strong>Golden Snapshots</strong>: Emitted code across a broad test suite is committed and diffed on changes.</li>
+<li><strong>Differential Test Suite</strong>: Executes mappers against both standard MyBatis (runtime interpreter) and LarkBatis (generated code) using a recording JDBC <code>DataSource</code>, verifying that generated SQL queries, parameter binds, and result mappings match identically.</li>
+<li><strong>Compile-Fail Test Suite</strong>: Validates that invalid XML tags, unsupported OGNL expressions, and unsafe <code>${}</code> splices produce expected compile-time errors.</li>
 </ol>
-<p>Plus a <code>CompileFailTest</code> for every "this is a compile error" promise the documentation
-makes, including the ones on this site.</p>
 
 
 
@@ -2187,7 +2131,7 @@ makes, including the ones on this site.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Wiki">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Architecture &amp;amp; Design Wiki">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2197,7 +2141,7 @@ makes, including the ones on this site.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Wiki
+                Architecture &amp; Design Wiki
               </div>
             </div>
           </a>

@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#result-map-va-join" class="md-skip">
+        <a href="#result-maps-join" class="md-skip">
           Bỏ qua
         </a>
       
@@ -942,10 +942,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#co-che-bien-dich" class="md-nav__link">
+  <a href="#thuat-toan-gom-nhom-single-pass" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cơ chế biên dịch
+        Thuật toán gom nhóm Single-pass
       
     </span>
   </a>
@@ -956,7 +956,7 @@
   <a href="#the-ordering-rule" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quy tắc sắp xếp
+        Quy tắc bắt buộc về thứ tự sắp xếp
       
     </span>
   </a>
@@ -964,21 +964,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khong-dung-auto-mapping-trong-resultmap" class="md-nav__link">
+  <a href="#nguyen-tac-anh-xa-trong-resultmap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Không dùng auto-mapping trong &lt;resultMap&gt;
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vi-tri-cot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vị trí cột
+        Nguyên tắc ánh xạ trong &lt;resultMap&gt;
       
     </span>
   </a>
@@ -989,7 +978,7 @@
   <a href="#narrowed-on-purpose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các tính năng result map không hỗ trợ
+        Các tính năng không hỗ trợ
       
     </span>
   </a>
@@ -997,10 +986,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stream-va-result-map-long-nhau" class="md-nav__link">
+  <a href="#streamt-va-result-map-long-nhau" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stream và result map lồng nhau
+        Stream&lt;T&gt; và Result Map lồng nhau
       
     </span>
   </a>
@@ -1811,10 +1800,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#co-che-bien-dich" class="md-nav__link">
+  <a href="#thuat-toan-gom-nhom-single-pass" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cơ chế biên dịch
+        Thuật toán gom nhóm Single-pass
       
     </span>
   </a>
@@ -1825,7 +1814,7 @@
   <a href="#the-ordering-rule" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quy tắc sắp xếp
+        Quy tắc bắt buộc về thứ tự sắp xếp
       
     </span>
   </a>
@@ -1833,21 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khong-dung-auto-mapping-trong-resultmap" class="md-nav__link">
+  <a href="#nguyen-tac-anh-xa-trong-resultmap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Không dùng auto-mapping trong &lt;resultMap&gt;
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vi-tri-cot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vị trí cột
+        Nguyên tắc ánh xạ trong &lt;resultMap&gt;
       
     </span>
   </a>
@@ -1858,7 +1836,7 @@
   <a href="#narrowed-on-purpose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các tính năng result map không hỗ trợ
+        Các tính năng không hỗ trợ
       
     </span>
   </a>
@@ -1866,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stream-va-result-map-long-nhau" class="md-nav__link">
+  <a href="#streamt-va-result-map-long-nhau" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stream và result map lồng nhau
+        Stream&lt;T&gt; và Result Map lồng nhau
       
     </span>
   </a>
@@ -1901,9 +1879,9 @@
   
 
 
-<h1 id="result-map-va-join">Result map và join<a class="headerlink" href="#result-map-va-join" title="Permanent link">&para;</a></h1>
-<p>Thẻ <code>&lt;resultMap&gt;</code> định nghĩa ánh xạ tường minh giữa cột và property, đồng thời hỗ trợ nạp dữ liệu cho <strong>một</strong> cấp lồng nhau (<code>&lt;association&gt;</code> cho quan hệ 1-1, <code>&lt;collection&gt;</code> cho quan hệ 1-N) từ chính câu lệnh JOIN đó.</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"teamWithMembers"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.Team"</span><span class="nt">&gt;</span>
+<h1 id="result-maps-join">Result Maps &amp; Join<a class="headerlink" href="#result-maps-join" title="Permanent link">&para;</a></h1>
+<p>Thẻ <code>&lt;resultMap&gt;</code> định nghĩa ánh xạ tường minh giữa cột database và thuộc tính Java Bean, đồng thời hỗ trợ nạp dữ liệu cho quan hệ lồng nhau <strong>1 cấp</strong> (<code>&lt;association&gt;</code> cho 1-1, <code>&lt;collection&gt;</code> cho 1-N) từ câu lệnh <code>JOIN</code>.</p>
+<div class="language-xml highlight"><span class="filename">TeamMapper.xml</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"teamWithMembers"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.Team"</span><span class="nt">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">   </span><span class="na">column=</span><span class="s">"t_id"</span><span class="nt">/&gt;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&lt;result</span><span class="w"> </span><span class="na">property=</span><span class="s">"name"</span><span class="w"> </span><span class="na">column=</span><span class="s">"t_name"</span><span class="nt">/&gt;</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&lt;collection</span><span class="w"> </span><span class="na">property=</span><span class="s">"members"</span><span class="w"> </span><span class="na">ofType=</span><span class="s">"com.example.app.Member"</span><span class="nt">&gt;</span>
@@ -1920,7 +1898,7 @@
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span>ORDER<span class="w"> </span>BY<span class="w"> </span>t.id,<span class="w"> </span>m.jersey
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="nt">&lt;/select&gt;</span>
 </span></code></pre></div>
-<p><code>&lt;association&gt;</code> hoạt động tương tự cho một đối tượng con đơn lẻ:</p>
+<p>Tương tự cho <code>&lt;association&gt;</code> (quan hệ 1-1):</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"teamWithCoach"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.Team"</span><span class="nt">&gt;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">   </span><span class="na">column=</span><span class="s">"t_id"</span><span class="nt">/&gt;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&lt;result</span><span class="w"> </span><span class="na">property=</span><span class="s">"name"</span><span class="w"> </span><span class="na">column=</span><span class="s">"t_name"</span><span class="nt">/&gt;</span>
@@ -1930,8 +1908,8 @@
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">&lt;/association&gt;</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nt">&lt;/resultMap&gt;</span>
 </span></code></pre></div>
-<h2 id="co-che-bien-dich">Cơ chế biên dịch<a class="headerlink" href="#co-che-bien-dich" title="Permanent link">&para;</a></h2>
-<p>Bộ sinh code phát sinh một vòng lặp gom nhóm: khởi tạo đối tượng cha mới mỗi khi giá trị cột <code>&lt;id&gt;</code> thay đổi, và bỏ qua đối tượng con nếu khoá của bảng con nhận giá trị <code>NULL</code> (trường hợp <code>LEFT JOIN</code> không khớp dữ liệu con):</p>
+<h2 id="thuat-toan-gom-nhom-single-pass">Thuật toán gom nhóm Single-pass<a class="headerlink" href="#thuat-toan-gom-nhom-single-pass" title="Permanent link">&para;</a></h2>
+<p>Mã nguồn Java sinh ra sử dụng vòng lặp gom nhóm single-pass: tạo đối tượng cha mới khi giá trị khóa <code>&lt;id&gt;</code> của bảng cha thay đổi, và bỏ qua đối tượng con nếu khóa con là <code>NULL</code> (trường hợp <code>LEFT JOIN</code> không có dữ liệu con):</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Team</span><span class="o">&gt;</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">Team</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kt">long</span><span class="w"> </span><span class="n">lastKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -1957,81 +1935,63 @@
 </span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>MyBatis xử lý việc này bằng cách tạo <code>CacheKey</code> cho từng dòng: dùng reflection duyệt các cột id, băm giá trị và tra cứu đối tượng cha trong <code>Map</code>. LarkBatis lưu khoá cha trong biến cục bộ có kiểu tĩnh và so sánh trực tiếp bằng <code>!=</code>, giúp loại bỏ hoàn toàn chi phí boxing và tra map.</li>
-<li>Phép kiểm tra khoá con khác null giúp tránh khởi tạo đối tượng con rỗng khi <code>LEFT JOIN</code> không khớp.</li>
+<li>LarkBatis theo dõi khóa cha qua biến nguyên thủy cục bộ (<code>long lastKey</code>) và so sánh bằng toán tử <code>!=</code>, loại bỏ hoàn toàn việc tạo đối tượng <code>CacheKey</code>, reflection và <code>HashMap</code> lookup của MyBatis.</li>
+<li>Kiểm tra null trên khóa con để tránh khởi tạo đối tượng rỗng khi <code>LEFT JOIN</code> không tìm thấy bản ghi liên kết.</li>
 </ol>
-<h2 id="the-ordering-rule">Quy tắc sắp xếp<a class="headerlink" href="#the-ordering-rule" title="Permanent link">&para;</a></h2>
+<h2 id="the-ordering-rule">Quy tắc bắt buộc về thứ tự sắp xếp<a class="headerlink" href="#the-ordering-rule" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
-<p class="admonition-title">ResultSet bắt buộc phải sắp xếp theo khoá của bảng cha</p>
-<p>Đây là điều kiện kỹ thuật bắt buộc để vòng lặp gom nhóm hoạt động mà không cần lưu cache map. Nếu dữ liệu của cùng một cha bị ngắt quãng bởi dòng của một cha khác, vòng lặp sẽ tạo ra hai đối tượng cha riêng biệt thay vì gộp lại.</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">jersey</span><span class="w">   </span><span class="c1">-- khoá của cha luôn đứng trước</span>
-</span></code></pre></div>
-<p>Statement dùng result map lồng nhau mà <strong>thiếu mệnh đề <code>ORDER BY</code></strong> sẽ nhận một cảnh báo lúc build.</p>
+<p class="admonition-title">Câu SQL bắt buộc phải có <code>ORDER BY</code> theo khóa cha</p>
+<p>Để thuật toán gom nhóm single-pass hoạt động chính xác mà không cần lưu toàn bộ dữ liệu vào bộ nhớ tạm, ResultSet bắt buộc phải được sắp xếp theo khóa của bảng cha (<code>ORDER BY parent.id, child.id</code>).</p>
+<p>Nếu câu SQL thiếu mệnh đề <code>ORDER BY</code>, compiler sẽ phát cảnh báo lúc build.</p>
 </div>
-<h2 id="khong-dung-auto-mapping-trong-resultmap">Không dùng auto-mapping trong <code>&lt;resultMap&gt;</code><a class="headerlink" href="#khong-dung-auto-mapping-trong-resultmap" title="Permanent link">&para;</a></h2>
-<p>Một result map chỉ ánh xạ <strong>đúng những gì được khai báo tường minh</strong>. Không có <code>autoMapping</code> và không có việc khớp cột ngầm định bên trong một <code>&lt;resultMap&gt;</code>.</p>
+<h2 id="nguyen-tac-anh-xa-trong-resultmap">Nguyên tắc ánh xạ trong <code>&lt;resultMap&gt;</code><a class="headerlink" href="#nguyen-tac-anh-xa-trong-resultmap" title="Permanent link">&para;</a></h2>
+<p>Trong <code>&lt;resultMap&gt;</code>, LarkBatis <strong>chỉ ánh xạ các cột được khai báo tường minh</strong>. Không có cơ chế autoMapping ngầm định.</p>
 <ul>
-<li>Thẻ <code>&lt;result&gt;</code> có cột không xuất hiện trong danh sách SELECT là <strong>cảnh báo build</strong>, và property đó sẽ giữ giá trị mặc định.</li>
-<li>Thẻ <code>&lt;id&gt;</code> có cột không xuất hiện trong danh sách SELECT là <strong>lỗi build</strong>, vì đây là cột bắt buộc để điều khiển vòng lặp gom nhóm.</li>
+<li>Cột trong <code>&lt;result&gt;</code> không tồn tại trong <code>SELECT</code>: Phát cảnh báo build; thuộc tính Java giữ giá trị mặc định.</li>
+<li>Cột trong <code>&lt;id&gt;</code> không tồn tại trong <code>SELECT</code>: Báo lỗi compile (vì cột id bắt buộc phải có để thuật toán gom nhóm hoạt động).</li>
 </ul>
-<p>Nếu muốn tự động ánh xạ cột sang property theo quy ước <code>snake_case</code> → <code>camelCase</code>, hãy sử dụng <code>resultType</code>. <code>resultType</code> dành cho "tự động ánh xạ những gì khớp", còn <code>resultMap</code> dành cho "ánh xạ chính xác những gì khai báo".</p>
-<h2 id="vi-tri-cot">Vị trí cột<a class="headerlink" href="#vi-tri-cot" title="Permanent link">&para;</a></h2>
-<p>Khi danh sách SELECT phân tích cú pháp tĩnh được, vị trí cột là hằng số. Khi không phân tích được, statement đó sẽ dùng resolver sinh riêng để đọc <code>ResultSetMetaData</code> đúng một lần ở dòng đầu tiên. Xem <a href="../mappers/#positional-or-name-based-reads">Đọc theo vị trí hay theo tên</a>.</p>
-<h2 id="narrowed-on-purpose">Các tính năng result map không hỗ trợ<a class="headerlink" href="#narrowed-on-purpose" title="Permanent link">&para;</a></h2>
-<p>Mỗi mục dưới đây là một <strong>lỗi biên dịch nêu rõ giải pháp thay thế</strong>:</p>
+<p>Nếu bạn muốn tự động ánh xạ toàn bộ cột theo quy ước <code>snake_case</code> → <code>camelCase</code>, hãy sử dụng <code>resultType</code> thay vì <code>&lt;resultMap&gt;</code>.</p>
+<h2 id="narrowed-on-purpose">Các tính năng không hỗ trợ<a class="headerlink" href="#narrowed-on-purpose" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Không hỗ trợ</th>
-<th>Giải pháp thay thế</th>
+<th>Tính năng bị loại bỏ</th>
+<th>Lý do &amp; Giải pháp thay thế</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Lồng quá một cấp, hoặc hai ánh xạ lồng trong cùng một map</td>
-<td>Một câu lệnh join, một khoá gom nhóm</td>
+<td>Lồng sâu hơn 1 cấp, hoặc 2 collection trong 1 map</td>
+<td>Tránh bùng nổ tích Descartes (Cartesian product). Hãy join 1 cấp hoặc ghép dữ liệu trong tầng Service</td>
 </tr>
 <tr>
-<td><code>select=</code> trên <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code> (nested select)</td>
-<td>Viết câu lệnh join tường minh (nested select chính là nguyên nhân gây lỗi N+1)</td>
+<td><code>select="..."</code> trong association/collection</td>
+<td>Loại bỏ hoàn toàn vấn đề N+1 query. Hãy viết câu lệnh <code>JOIN</code> tường minh</td>
 </tr>
 <tr>
-<td><code>resultMap=</code> bên trong một ánh xạ lồng</td>
-<td>Khai báo trực tiếp <code>&lt;id&gt;</code>/<code>&lt;result&gt;</code> của con để duy trì giới hạn một cấp rõ ràng</td>
+<td><code>resultMap="..."</code> lồng nhau</td>
+<td>Khai báo trực tiếp <code>&lt;id&gt;</code> / <code>&lt;result&gt;</code> của entity con</td>
 </tr>
 <tr>
 <td><code>columnPrefix</code></td>
-<td>Đặt alias cho các cột con ngay trong danh sách SELECT</td>
+<td>Đặt alias cho cột con trực tiếp trong câu <code>SELECT</code></td>
 </tr>
 <tr>
-<td><code>extends</code></td>
-<td>Khai báo tường minh tất cả các ánh xạ</td>
-</tr>
-<tr>
-<td><code>&lt;constructor&gt;</code></td>
-<td>Result class được khởi tạo bằng constructor không tham số và các setter</td>
+<td><code>&lt;resultMap extends="..."&gt;</code></td>
+<td>Khai báo tường minh tất cả ánh xạ cột</td>
 </tr>
 <tr>
 <td><code>&lt;discriminator&gt;</code></td>
-<td>Tách thành các statement riêng biệt với kiểu kết quả tương ứng</td>
+<td>Tách thành các phương thức truy vấn riêng theo từng entity con</td>
 </tr>
 <tr>
-<td><code>autoMapping</code></td>
-<td>Khai báo ánh xạ tường minh, hoặc dùng <code>resultType</code></td>
-</tr>
-<tr>
-<td><code>&lt;id column="x"/&gt;</code> mà không có <code>property</code></td>
-<td>Ánh xạ khoá vào một property rồi đánh dấu <code>&lt;id&gt;</code> cho nó</td>
-</tr>
-<tr>
-<td>Type alias trong <code>type</code> / <code>ofType</code> / <code>javaType</code></td>
-<td>Dùng tên class đầy đủ (FQN)</td>
+<td><code>&lt;constructor&gt;</code> mapping</td>
+<td>POJO sử dụng constructor không tham số và setter</td>
 </tr>
 </tbody>
 </table>
-<p>Đồ thị đối tượng sâu hơn hai cấp nên được ghép trong Java từ hai statement độc lập: số lượt round-trip xuống database không đổi mà logic ghép nối lại hoàn toàn minh bạch.</p>
-<h2 id="stream-va-result-map-long-nhau"><code>Stream</code> và result map lồng nhau<a class="headerlink" href="#stream-va-result-map-long-nhau" title="Permanent link">&para;</a></h2>
-<p>Khai báo kiểu trả về <code>Stream</code> trên một <code>&lt;resultMap&gt;</code> lồng nhau là <strong>lỗi biên dịch</strong>. Một đối tượng cha trải trên nhiều dòng nên chỉ hoàn chỉnh khi đối tượng cha tiếp theo bắt đầu. Việc trả về <code>Stream</code> từ con trỏ đọc từng dòng đòi hỏi phải đệm dữ liệu vào bộ nhớ, làm mất đi ý nghĩa tiết kiệm RAM của <code>Stream</code>. Xem <a href="../streaming/">Stream kết quả</a>.</p>
+<h2 id="streamt-va-result-map-long-nhau"><code>Stream&lt;T&gt;</code> và Result Map lồng nhau<a class="headerlink" href="#streamt-va-result-map-long-nhau" title="Permanent link">&para;</a></h2>
+<p>Khai báo kiểu trả về <code>Stream&lt;T&gt;</code> trên một <code>&lt;resultMap&gt;</code> có association/collection lồng nhau sẽ <strong>bị báo lỗi biên dịch</strong>. Do một đối tượng cha trải dài trên nhiều dòng trong ResultSet, việc gom nhóm đòi hỏi phải nạp dữ liệu trước, làm mất đi tính năng streaming tiết kiệm RAM. Xem <a href="../streaming/">Streaming</a>.</p>
 
 
 

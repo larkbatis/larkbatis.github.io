@@ -1720,10 +1720,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#results" class="md-nav__link">
+  <a href="#results-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Results
+        Results &amp; Mapping
       
     </span>
   </a>
@@ -1731,10 +1731,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#types" class="md-nav__link">
+  <a href="#types-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Types
+        Types &amp; Handlers
       
     </span>
   </a>
@@ -1745,7 +1745,7 @@
   <a href="#sessions-transactions-execution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sessions, transactions, execution
+        Sessions, Transactions &amp; Execution
       
     </span>
   </a>
@@ -1753,10 +1753,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#build-and-packaging" class="md-nav__link">
+  <a href="#build-tooling" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build and packaging
+        Build &amp; Tooling
       
     </span>
   </a>
@@ -1764,10 +1764,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#read-next" class="md-nav__link">
+  <a href="#related-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Read next
+        Related Documentation
       
     </span>
   </a>
@@ -1800,16 +1800,19 @@
 
 
 <h1 id="supported-features">Supported Features<a class="headerlink" href="#supported-features" title="Permanent link">&para;</a></h1>
-<p>The complete matrix. <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span> means implemented and tested;
-<span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span> means narrowed with a documented rule; <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span> means dropped by
-design, with a compile error naming the replacement.</p>
+<p>Here is the complete feature matrix for LarkBatis.</p>
+<ul>
+<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span> <strong>Supported</strong>: Implemented, optimized, and fully tested.</li>
+<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span> <strong>Narrowed</strong>: Supported with specific compile-time constraints.</li>
+<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span> <strong>Dropped</strong>: Omitted by design to eliminate reflection and runtime interpretation. Produces a clear compile error naming the alternative.</li>
+</ul>
 <p>Version <strong><code>0.1.0</code></strong>.</p>
 <h2 id="statements">Statements<a class="headerlink" href="#statements" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Feature</th>
+<th>Status</th>
 <th>Notes</th>
 </tr>
 </thead>
@@ -1817,32 +1820,32 @@ design, with a compile error naming the replacement.</p>
 <tr>
 <td><code>@Select</code> <code>@Insert</code> <code>@Update</code> <code>@Delete</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><code>String[]</code> value, joined with a single space</td>
+<td>Accepts <code>String[]</code> (lines joined with a single space)</td>
 </tr>
 <tr>
 <td><code>&lt;select&gt;</code> <code>&lt;insert&gt;</code> <code>&lt;update&gt;</code> <code>&lt;delete&gt;</code> in mapper XML</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Namespace = the interface FQN, <code>id</code> = the method name. <a href="../usage/xml-mappers/">Details</a></td>
+<td>Namespace matches interface FQN; <code>id</code> matches method name. <a href="../usage/xml-mappers/">Details</a></td>
 </tr>
 <tr>
 <td>Mixing annotations and XML in one mapper</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Resolved per method; having both or neither for a method is a compile error</td>
+<td>Resolved per method; having both or neither is a compile error</td>
 </tr>
 <tr>
 <td><code>#{}</code> bind parameters</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Resolved against the method's parameter types at build time</td>
+<td>Resolved against method parameter types at compile time</td>
 </tr>
 <tr>
-<td><code>${}</code> splices</td>
+<td><code>${}</code> raw splices</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Only <code>SqlFragment</code>, closed-value types, or <code>@OrderBy</code>. <a href="../usage/raw-sql/">Details</a></td>
+<td>Strictly restricted to <code>SqlFragment</code>, closed-value types, or <code>@OrderBy</code>. <a href="../usage/raw-sql/">Details</a></td>
 </tr>
 <tr>
-<td><code>@Param</code></td>
+<td><code>@Param</code> annotations</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td></td>
+<td>Explicit parameter naming</td>
 </tr>
 <tr>
 <td><code>@Options(useGeneratedKeys, keyProperty, keyColumn)</code></td>
@@ -1852,22 +1855,22 @@ design, with a compile error naming the replacement.</p>
 <tr>
 <td><code>&lt;selectKey&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Write it as a second statement</td>
+<td>Write sequence lookup as an explicit query</td>
 </tr>
 <tr>
-<td><code>@SelectProvider</code> / <code>@InsertProvider</code> family</td>
+<td><code>@SelectProvider</code> / <code>@InsertProvider</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>SQL built by a Java method at runtime is exactly what the generator cannot see</td>
+<td>Runtime SQL generation methods are invisible to the compiler. Use XML or the escape hatch</td>
 </tr>
 <tr>
-<td><code>Map</code> or <code>Object</code> parameters</td>
+<td>Untyped <code>Map</code> or <code>Object</code> parameters</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Nothing to resolve <code>#{}</code> against. Use a parameter object or <code>@Param</code> arguments</td>
+<td>Compiler requires concrete types to generate parameter setters. Use typed objects or <code>@Param</code></td>
 </tr>
 <tr>
-<td><code>RowBounds</code></td>
+<td><code>RowBounds</code> in-memory paging</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>In-memory paging over a full ResultSet. Page in SQL with <code>LIMIT</code>/<code>OFFSET</code></td>
+<td>Page in SQL using <code>LIMIT</code> and <code>OFFSET</code> parameters</td>
 </tr>
 </tbody>
 </table>
@@ -1875,8 +1878,8 @@ design, with a compile error naming the replacement.</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Feature</th>
+<th>Status</th>
 <th>Notes</th>
 </tr>
 </thead>
@@ -1884,129 +1887,129 @@ design, with a compile error naming the replacement.</p>
 <tr>
 <td><code>&lt;if&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Compiled to a <code>boolean</code> local, evaluated once</td>
+<td>Compiled to boolean locals and evaluated once</td>
 </tr>
 <tr>
 <td><code>&lt;choose&gt;</code> / <code>&lt;when&gt;</code> / <code>&lt;otherwise&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Mutual exclusion compiled in</td>
+<td>Mutual exclusion baked into generated bytecode</td>
 </tr>
 <tr>
 <td><code>&lt;where&gt;</code> / <code>&lt;set&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Constant-folded, not a runtime string scan</td>
+<td>Constant-folded without runtime string scans</td>
 </tr>
 <tr>
 <td><code>&lt;trim&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Literal attributes only, folded at build time</td>
+<td>Literal attributes only, folded at compile time</td>
 </tr>
 <tr>
 <td><code>&lt;sql&gt;</code> / <code>&lt;include&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Static <code>refid</code>, inlined at build time</td>
+<td>Static <code>refid</code> only, inlined at compile time</td>
 </tr>
 <tr>
 <td><code>&lt;foreach&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Statically-typed collections, arrays, maps. Empty collection throws. <a href="../usage/foreach-and-batches/">Details</a></td>
+<td>Statically-typed collections/arrays/maps. Throws on empty collections. <a href="../usage/foreach-and-batches/">Details</a></td>
 </tr>
 <tr>
 <td><code>@PadPow2</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Bounds <code>IN</code>-list SQL variants. Enforced to <code>IN</code>-list shape</td>
+<td>Bounds dynamic <code>IN</code> clause SQL variants to power-of-two lengths</td>
 </tr>
 <tr>
 <td><code>&lt;bind&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Introduces an OGNL variable. Compute it in Java and pass it in</td>
+<td>Compute values in Java and pass as parameters</td>
 </tr>
 <tr>
-<td>OGNL in <code>test</code></td>
+<td>Full OGNL in <code>test</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Replaced by a <a href="../usage/dynamic-sql/#the-test-grammar">narrow grammar</a>; truthiness is a compile error</td>
+<td>Replaced by a <a href="../usage/dynamic-sql/#the-test-grammar">type-checked test grammar</a></td>
 </tr>
 <tr>
-<td><code>databaseId</code></td>
+<td><code>databaseId</code> attribute</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>A <code>databaseId</code> attribute is a compile error. Give each database its own mapper interface</td>
+<td>Use dedicated mapper interfaces per database vendor</td>
 </tr>
 </tbody>
 </table>
-<h2 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
+<h2 id="results-mapping">Results &amp; Mapping<a class="headerlink" href="#results-mapping" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Feature</th>
+<th>Status</th>
 <th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>resultType</code> with convention mapping</td>
+<td><code>resultType</code> convention mapping</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><code>snake_case</code> → <code>camelCase</code>, at build time, always</td>
+<td><code>snake_case</code> → <code>camelCase</code> applied at compile time</td>
 </tr>
 <tr>
-<td>Positional row reads</td>
+<td>Positional column reads</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>When the select list parses</td>
+<td>Hardcoded column indexes for parsed select lists</td>
 </tr>
 <tr>
-<td>Name-based fallback</td>
+<td>Name-based metadata fallback</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><code>SELECT *</code> etc.; indexes resolved once from <code>ResultSetMetaData</code></td>
+<td>Used for <code>SELECT *</code> or dynamic splices; resolved once from metadata</td>
 </tr>
 <tr>
-<td>Scalar results</td>
+<td>Scalar returns</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><code>long</code>, <code>String</code>, … read from column 1</td>
+<td><code>long</code>, <code>String</code>, etc. read column 1 directly without bean allocation</td>
 </tr>
 <tr>
 <td><code>List&lt;T&gt;</code> returns</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td></td>
+<td>Standard collection return</td>
 </tr>
 <tr>
 <td><code>Stream&lt;T&gt;</code> returns</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Caller closes. <a href="../usage/streaming/">Details</a></td>
+<td>Stream rows over open cursor; caller closes. <a href="../usage/streaming/">Details</a></td>
 </tr>
 <tr>
 <td><code>&lt;resultMap&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Explicit mappings only, no auto-mapping</td>
+<td>Explicit column-to-property mapping (no implicit guessing)</td>
 </tr>
 <tr>
 <td><code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td><strong>One</strong> level, via join, ResultSet ordered by parent key</td>
+<td>Single-level nesting via SQL join; query must be ordered by parent ID</td>
 </tr>
 <tr>
-<td>Nested <code>select=</code> in a result mapping</td>
+<td>Nested <code>select=</code> in result maps</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>That <em>is</em> the N+1 it claims to avoid. Write the join</td>
+<td>Causes N+1 queries. Use SQL joins instead</td>
 </tr>
 <tr>
 <td><code>&lt;discriminator&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>The result class would depend on a runtime value</td>
+<td>Use separate queries with distinct return types</td>
 </tr>
 <tr>
 <td><code>&lt;constructor&gt;</code> results</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Result classes are built with a no-arg constructor and setters</td>
+<td>Provide standard no-arg constructor and setters</td>
 </tr>
 <tr>
-<td><code>resultMap</code> <code>extends</code>, <code>columnPrefix</code>, <code>autoMapping</code></td>
+<td>Result map <code>extends</code>, <code>columnPrefix</code>, <code>autoMapping</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Spell the mappings out</td>
+<td>Declare mappings explicitly or use <code>resultType</code></td>
 </tr>
 <tr>
 <td>Lazy loading</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Needs a proxy per result object</td>
+<td>Requires dynamic proxy per object. Use joins or explicit second query</td>
 </tr>
 <tr>
 <td>Type aliases</td>
@@ -2015,156 +2018,156 @@ design, with a compile error naming the replacement.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="types">Types<a class="headerlink" href="#types" title="Permanent link">&para;</a></h2>
+<h2 id="types-handlers">Types &amp; Handlers<a class="headerlink" href="#types-handlers" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Feature</th>
+<th>Status</th>
 <th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Primitives and wrappers</td>
+<td>Primitives and boxed wrappers</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Wrappers go through <code>JdbcCodec</code> for null handling</td>
+<td>Boxed wrappers use <code>JdbcCodec</code> for proper null handling</td>
 </tr>
 <tr>
 <td><code>String</code>, <code>BigDecimal</code>, <code>BigInteger</code>, <code>byte[]</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td></td>
+<td>Built-in direct JDBC mapping</td>
 </tr>
 <tr>
-<td><code>java.sql.Date</code> / <code>Time</code> / <code>Timestamp</code></td>
+<td><code>java.sql.Date</code>, <code>Time</code>, <code>Timestamp</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td></td>
+<td>Built-in direct JDBC mapping</td>
 </tr>
 <tr>
 <td><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code>, <code>LocalDateTime</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td></td>
+<td>Built-in conversion via <code>JdbcCodec</code></td>
 </tr>
 <tr>
-<td>Enums (by <code>name()</code>)</td>
+<td>Enums (by name)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Also a closed-value type, so valid for <code>${}</code></td>
+<td>Built-in mapping; enums are closed-value types safe for <code>${}</code></td>
 </tr>
 <tr>
 <td><code>@Column</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Names the column on the field, the setter or the getter. <a href="annotations/#column">Details</a></td>
+<td>Explicit column name on field, setter, or getter. <a href="annotations/#column">Details</a></td>
 </tr>
 <tr>
 <td><code>@Handler</code> custom handlers</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Named on the property, the parameter, or in mapper XML. <a href="../usage/types/#custom-type-handlers">Details</a></td>
+<td>Declared on properties, parameters, or in mapper XML. <a href="../usage/types/#custom-type-handlers">Details</a></td>
 </tr>
 <tr>
-<td><code>&lt;typeHandlers&gt;</code>, one handler per Java type</td>
+<td>Global type handlers (<code>-Alarkbatis.typeHandlers</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Written out as <code>-Alarkbatis.typeHandlers</code> pairs and resolved during <code>javac</code>. <a href="configuration/#type-handlers-for-a-whole-build">Details</a></td>
+<td>Configured per Java type at compile time. <a href="configuration/#type-handlers-for-a-whole-build">Details</a></td>
 </tr>
 <tr>
-<td>TypeHandler discovery (<code>&lt;package&gt;</code>, <code>@MappedTypes</code>)</td>
+<td>Runtime TypeHandler discovery</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Nothing is scanned. The list is written out, which is also what makes it readable</td>
+<td>Replaced by explicit compile-time configuration</td>
 </tr>
 </tbody>
 </table>
-<h2 id="sessions-transactions-execution">Sessions, transactions, execution<a class="headerlink" href="#sessions-transactions-execution" title="Permanent link">&para;</a></h2>
+<h2 id="sessions-transactions-execution">Sessions, Transactions &amp; Execution<a class="headerlink" href="#sessions-transactions-execution" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Feature</th>
+<th>Status</th>
 <th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>LarkBatisTx</code> scopes, nesting, vote-to-commit</td>
+<td><code>LarkBatisTx</code> scopes &amp; vote-to-commit</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><a href="../usage/transactions/">Details</a></td>
+<td>Standalone transaction manager. <a href="../usage/transactions/">Details</a></td>
 </tr>
 <tr>
 <td>Spring <code>@Transactional</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Via <code>DataSourceUtils</code></td>
+<td>Automatic integration via <code>DataSourceUtils</code></td>
 </tr>
 <tr>
 <td>Spring exception translation</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><code>SQLExceptionSubclassTranslator</code> by default</td>
+<td>Translates JDBC exceptions to Spring's <code>DataAccessException</code> hierarchy</td>
 </tr>
 <tr>
 <td>Spring Boot auto-configuration</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Boot 3 and Boot 4 from one jar</td>
+<td>Single starter compatible with Spring Boot 3 and Boot 4</td>
 </tr>
 <tr>
 <td>Generated Spring <code>@Configuration</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><code>proxyBeanMethods = false</code></td>
+<td>Registers mappers as beans with <code>proxyBeanMethods = false</code></td>
 </tr>
 <tr>
 <td>Batch inserts</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>A method signature (<code>List&lt;T&gt;</code> parameter), not an executor mode</td>
+<td>Declared via method signature (<code>List&lt;T&gt;</code> parameter)</td>
 </tr>
 <tr>
 <td>Multi-row <code>VALUES</code> via <code>&lt;foreach&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td></td>
+<td>Generates multi-row insert statements</td>
 </tr>
 <tr>
-<td>The escape hatch (<code>query</code>, <code>queryOne</code>, <code>queryStream</code>, <code>update</code>)</td>
+<td>Escape hatch (<code>query</code>, <code>queryOne</code>, <code>queryStream</code>, <code>update</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Takes <code>SqlFragment</code>, never <code>String</code></td>
+<td>Executes dynamic SQL safely via <code>SqlFragment</code></td>
 </tr>
 <tr>
 <td><code>ExecutorType.BATCH</code> / <code>REUSE</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>There is no executor</td>
+<td>Replaced by batch method signatures</td>
 </tr>
 <tr>
-<td>Plugins / interceptors</td>
+<td>Interceptor plugins</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>The four objects MyBatis intercepts are what a generated body replaces, and the mechanism is a JDK proxy. <a href="mybatis-differences/#what-replaces-a-plugin">What replaces a plugin</a></td>
+<td>Replaced with explicit SQL, type handlers, or Spring AOP. <a href="mybatis-differences/#what-replaces-a-plugin">See recipes</a></td>
 </tr>
 <tr>
 <td>Second-level cache (<code>&lt;cache&gt;</code>, <code>&lt;cache-ref&gt;</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Cache above the mapper, where invalidation is visible</td>
+<td>Cache at the service level (e.g. Spring Cache, Redis)</td>
 </tr>
 <tr>
 <td>First-level cache</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>No session to hold it</td>
+<td>Connections are returned immediately to the pool</td>
 </tr>
 <tr>
 <td>Runtime <code>addMapper()</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>The mapper set is closed at compile time</td>
+<td>Mapper registry is closed at compile time</td>
 </tr>
 <tr>
 <td>Multiple <code>DataSource</code>s per mapper</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Deferred. Declare one session per <code>DataSource</code> and write the <code>@Bean</code> methods yourself</td>
+<td>Configure one session per <code>DataSource</code> and declare <code>@Bean</code> methods manually</td>
 </tr>
 <tr>
-<td>SQL logging (<code>log-sql</code>)</td>
+<td>Dynamic SQL logging (<code>log-sql</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Belongs to the driver or the pool: datasource-proxy, p6spy</td>
+<td>Configured at the connection pool or driver level (<code>datasource-proxy</code>, p6spy)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="build-and-packaging">Build and packaging<a class="headerlink" href="#build-and-packaging" title="Permanent link">&para;</a></h2>
+<h2 id="build-tooling">Build &amp; Tooling<a class="headerlink" href="#build-tooling" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Feature</th>
+<th>Status</th>
 <th>Notes</th>
 </tr>
 </thead>
@@ -2172,7 +2175,7 @@ design, with a compile error naming the replacement.</p>
 <tr>
 <td>Annotation processor (javac)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>javac only; ECJ is not supported</td>
+<td>Standard javac compiler (ECJ is not supported)</td>
 </tr>
 <tr>
 <td>Gradle plugin</td>
@@ -2182,47 +2185,46 @@ design, with a compile error naming the replacement.</p>
 <tr>
 <td>Maven plugin</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Needs <code>&lt;extensions&gt;true&lt;/extensions&gt;</code></td>
+<td>Requires <code>&lt;extensions&gt;true&lt;/extensions&gt;</code></td>
 </tr>
 <tr>
 <td>JPMS named modules</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>All five published artifacts</td>
+<td>Real named modules for all published artifacts</td>
 </tr>
 <tr>
-<td>Lombok interoperability</td>
+<td>Lombok compatibility</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Declare the LarkBatis processor <em>after</em> Lombok</td>
+<td>Declare LarkBatis processor <em>after</em> Lombok in build file</td>
 </tr>
 <tr>
-<td>Incremental builds</td>
+<td>Incremental compilation</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Aggregating processor; compile with <code>-parameters</code> under Gradle</td>
+<td>Compile with <code>-parameters</code> flag for reliable incremental builds</td>
 </tr>
 <tr>
 <td>Test-scoped mappers</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Only the <code>compile</code> source set is wired</td>
+<td>Mappers belong in main compilation source sets</td>
 </tr>
 <tr>
 <td>GraalVM native image</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Structurally ready, with no reflection to declare, but <strong>not yet verified by a real build</strong></td>
+<td>Zero runtime reflection by design (smoke test pending in M5)</td>
 </tr>
 <tr>
-<td>Legacy-mapper scanner</td>
+<td>Migration scanner</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><code>larkbatis-scan</code>. <a href="migration/">Details</a></td>
+<td><code>larkbatis-scan</code> CLI tool. <a href="migration/">Details</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="read-next">Read next<a class="headerlink" href="#read-next" title="Permanent link">&para;</a></h2>
+<h2 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="mybatis-differences/">MyBatis Differences</a>: the dropped and narrowed list, with the
-  reason for each</li>
-<li><a href="annotations/">Annotations</a>: every annotation and its attributes</li>
-<li><a href="runtime-api/">Runtime API</a>: the public runtime surface</li>
-<li><a href="configuration/">Configuration</a>: processor options, properties, system properties</li>
+<li><a href="mybatis-differences/">MyBatis Differences</a>: Detailed explanations for dropped and narrowed features</li>
+<li><a href="annotations/">Annotations</a>: Full reference for all LarkBatis annotations</li>
+<li><a href="runtime-api/">Runtime API</a>: Public runtime API surface</li>
+<li><a href="configuration/">Configuration</a>: Compiler options and application properties</li>
 </ul>
 
 

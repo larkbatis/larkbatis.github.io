@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#code-sinh-ra" class="md-skip">
+        <a href="#ma-nguon-sinh-ra-generated-code" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1308,10 +1308,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cac-tep-uoc-sinh-ra" class="md-nav__link">
+  <a href="#danh-sach-cac-file-sinh-ra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các tệp được sinh ra
+        Danh sách các file sinh ra
       
     </span>
   </a>
@@ -1319,10 +1319,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ban-hien-thuc-mapper" class="md-nav__link">
+  <a href="#chi-tiet-mapper-implementation-usermapperimpl" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bản hiện thực Mapper
+        Chi tiết Mapper Implementation (UserMapper$$Impl)
       
     </span>
   </a>
@@ -1330,10 +1330,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statement-ong" class="md-nav__link">
+  <a href="#xu-ly-dynamic-sql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement động
+        Xử lý Dynamic SQL
       
     </span>
   </a>
@@ -1344,7 +1344,7 @@
   <a href="#row-readers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Trình đọc dòng (Row Reader)
+        Row Reader (UserRow)
       
     </span>
   </a>
@@ -1352,10 +1352,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result-map-long-nhau" class="md-nav__link">
+  <a href="#nested-resultmap-single-pass-grouping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Result Map lồng nhau
+        Nested ResultMap (Single-Pass Grouping)
       
     </span>
   </a>
@@ -1363,21 +1363,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#registry-va-cau-hinh-spring" class="md-nav__link">
+  <a href="#registry-spring-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Registry và Cấu hình Spring
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#oc-va-kiem-soat-thay-oi-golden-snapshot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Đọc và kiểm soát thay đổi (Golden Snapshot)
+        Registry &amp; Spring Configuration
       
     </span>
   </a>
@@ -1822,10 +1811,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cac-tep-uoc-sinh-ra" class="md-nav__link">
+  <a href="#danh-sach-cac-file-sinh-ra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các tệp được sinh ra
+        Danh sách các file sinh ra
       
     </span>
   </a>
@@ -1833,10 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ban-hien-thuc-mapper" class="md-nav__link">
+  <a href="#chi-tiet-mapper-implementation-usermapperimpl" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bản hiện thực Mapper
+        Chi tiết Mapper Implementation (UserMapper$$Impl)
       
     </span>
   </a>
@@ -1844,10 +1833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statement-ong" class="md-nav__link">
+  <a href="#xu-ly-dynamic-sql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement động
+        Xử lý Dynamic SQL
       
     </span>
   </a>
@@ -1858,7 +1847,7 @@
   <a href="#row-readers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Trình đọc dòng (Row Reader)
+        Row Reader (UserRow)
       
     </span>
   </a>
@@ -1866,10 +1855,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result-map-long-nhau" class="md-nav__link">
+  <a href="#nested-resultmap-single-pass-grouping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Result Map lồng nhau
+        Nested ResultMap (Single-Pass Grouping)
       
     </span>
   </a>
@@ -1877,21 +1866,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#registry-va-cau-hinh-spring" class="md-nav__link">
+  <a href="#registry-spring-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Registry và Cấu hình Spring
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#oc-va-kiem-soat-thay-oi-golden-snapshot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Đọc và kiểm soát thay đổi (Golden Snapshot)
+        Registry &amp; Spring Configuration
       
     </span>
   </a>
@@ -1923,43 +1901,42 @@
   
 
 
-<h1 id="code-sinh-ra">Code sinh ra<a class="headerlink" href="#code-sinh-ra" title="Permanent link">&para;</a></h1>
-<p>Code sinh ra là một <strong>tính năng</strong>, không phải chi tiết triển khai nội bộ. Mã nguồn này được thiết kế để mở ra đọc và debug từng bước trong IDE. Một stack trace khi xảy ra lỗi phải trỏ chính xác đến dòng code Java trong package của ứng dụng, thay vì chuỗi gọi trừu tượng <code>MapperProxy.invoke → MapperMethod.execute → …</code>.</p>
-<p>Đối với một codebase có 300 phương thức mapper, khả năng debug trực quan này mang lại giá trị thực tế hàng ngày lớn hơn nhiều so với việc tiết kiệm vài micro giây cho mỗi truy vấn.</p>
-<h2 id="cac-tep-uoc-sinh-ra">Các tệp được sinh ra<a class="headerlink" href="#cac-tep-uoc-sinh-ra" title="Permanent link">&para;</a></h2>
+<h1 id="ma-nguon-sinh-ra-generated-code">Mã nguồn sinh ra (Generated Code)<a class="headerlink" href="#ma-nguon-sinh-ra-generated-code" title="Permanent link">&para;</a></h1>
+<p>Mã nguồn Java sinh ra bởi LarkBatis được thiết kế để đọc và debug trực tiếp trong IDE. Khi xảy ra lỗi hoặc ngoại lệ, stack trace sẽ trỏ chính xác đến từng dòng code Java cụ thể trong package của dự án, thay vì chuỗi gọi trừu tượng qua reflection như <code>MapperProxy.invoke → MapperMethod.execute</code>.</p>
+<h2 id="danh-sach-cac-file-sinh-ra">Danh sách các file sinh ra<a class="headerlink" href="#danh-sach-cac-file-sinh-ra" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Tệp</th>
+<th>File</th>
 <th>Số lượng</th>
-<th>Nội dung</th>
+<th>Vai trò</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>UserMapper$$Impl</code></td>
-<td>1 tệp cho mỗi mapper</td>
-<td>Bản hiện thực cụ thể. Mỗi statement tương ứng một phương thức</td>
+<td>1 file cho mỗi mapper</td>
+<td>Triển khai JDBC cụ thể của interface mapper</td>
 </tr>
 <tr>
 <td><code>UserRow</code></td>
-<td>1 tệp cho mỗi result class</td>
-<td>Ba phương thức đọc dòng và một bộ resolve cột. Dùng chung cho mọi statement trả về <code>User</code></td>
+<td>1 file cho mỗi result class</td>
+<td>Class đọc dòng từ <code>ResultSet</code>, dùng chung cho mọi truy vấn trả về <code>User</code></td>
 </tr>
 <tr>
 <td><code>LarkBatisMappers</code></td>
-<td>1 tệp cho mỗi lần biên dịch</td>
-<td>Static factory bao bọc tập hợp các mapper</td>
+<td>1 file cho toàn bộ lần compile</td>
+<td>Static factory khởi tạo các instance mapper</td>
 </tr>
 <tr>
 <td><code>LarkBatisMapperConfiguration</code></td>
-<td>1 tệp cho mỗi lần biên dịch (khi có Spring)</td>
-<td>Khai báo <code>@Bean</code> cho từng mapper</td>
+<td>1 file cho toàn bộ lần compile (khi có Spring)</td>
+<td>Khai báo các <code>@Bean</code> mapper</td>
 </tr>
 </tbody>
 </table>
-<p>Toàn bộ code sinh ra đều nằm trong cùng package với mapper interface. Khi sử dụng JPMS, không cần phải export package ra ngoài cho framework.</p>
-<h2 id="ban-hien-thuc-mapper">Bản hiện thực Mapper<a class="headerlink" href="#ban-hien-thuc-mapper" title="Permanent link">&para;</a></h2>
+<p>Mã nguồn sinh ra nằm trong cùng package với mapper interface.</p>
+<h2 id="chi-tiet-mapper-implementation-usermapperimpl">Chi tiết Mapper Implementation (<code>UserMapper$$Impl</code>)<a class="headerlink" href="#chi-tiet-mapper-implementation-usermapperimpl" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Generated</span><span class="p">(</span><span class="s">"io.github.larkbatis.processor.LarkBatisProcessor"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserMapper$$Impl</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">UserMapper</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -1990,95 +1967,93 @@
 </span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>SQL tĩnh là hằng số <code>static final String</code>, được cấp phát một lần duy nhất và tái sử dụng cho mọi lời gọi. Ký hiệu <code>#{}</code> đã được chuyển thành <code>?</code> ngay từ lúc build.</li>
-<li>Tên cột khoá tường minh cho <code>useGeneratedKeys</code>, cho phép gọi <code>prepareStatement(sql, String[])</code> thay vì dùng <code>RETURN_GENERATED_KEYS</code> vốn không đảm bảo tính di động giữa các hệ quản trị database.</li>
-<li>Constructor public nhận session làm tham số. Điều này giúp mapper trở thành một Spring bean thông thường mà không cần bất kỳ <code>FactoryBean</code> nào.</li>
-<li>Mượn connection từ session, không tự mở kết nối mới. Khi nằm trong transaction, connection này chính là kết nối của transaction hiện tại.</li>
-<li>Gọi trực tiếp <code>setLong</code> thay vì <code>setObject</code>, được chọn tĩnh từ lúc build dựa trên kiểu tham số khai báo.</li>
-<li>Bộ dịch ngoại lệ đính kèm chuỗi câu SQL vào exception.</li>
-<li>Giải phóng kết nối qua <code>release</code> trong khối <code>finally</code>. Connection <strong>không</strong> được đặt trong khối try-with-resources.</li>
+<li>Chuỗi SQL tĩnh được lưu dưới dạng <code>static final String</code>, tạo một lần duy nhất. Cú pháp <code>#{}</code> đã được chuyển thành dấu <code>?</code> trong pha compile.</li>
+<li>Tên cột Generated Keys tường minh cho <code>prepareStatement(sql, String[])</code>.</li>
+<li>Constructor public nhận <code>LarkBatisSession</code>, giúp Spring khởi tạo mapper như một Spring Bean thông thường.</li>
+<li>Mượn connection từ session (tham gia vào transaction nếu có).</li>
+<li>Gọi trực tiếp <code>ps.setLong()</code> theo kiểu tĩnh, không qua <code>setObject()</code> hay reflection.</li>
+<li>Dịch mã lỗi JDBC và đính kèm chuỗi SQL vào exception.</li>
+<li>Giải phóng connection trong khối <code>finally</code> qua <code>s.release(c)</code> (không bọc connection trong try-with-resources).</li>
 </ol>
-<h2 id="statement-ong">Statement động<a class="headerlink" href="#statement-ong" title="Permanent link">&para;</a></h2>
-<p>Các điều kiện được đánh giá <strong>một lần duy nhất</strong> vào các biến cục bộ, và chính các biến này điều khiển cả việc ghép chuỗi SQL lẫn việc gán tham số:</p>
+<h2 id="xu-ly-dynamic-sql">Xử lý Dynamic SQL<a class="headerlink" href="#xu-ly-dynamic-sql" title="Permanent link">&para;</a></h2>
+<p>Các điều kiện được tính toán một lần vào các biến cục bộ (boolean locals) và điều khiển đồng thời việc ghép chuỗi SQL lẫn bind tham số:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getMinAge</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">StringBuilder</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">(</span><span class="mi">96</span><span class="p">);</span><span class="w">       </span><span class="c1">// (1)!</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">StringBuilder</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">(</span><span class="mi">96</span><span class="p">);</span><span class="w">       </span><span class="c1">// (1)! Pre-sized StringBuilder</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users"</span><span class="p">);</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c0</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" WHERE"</span><span class="p">);</span><span class="w">               </span><span class="c1">// (2)!</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c0</span><span class="p">)</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" name LIKE ?"</span><span class="p">);</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">c0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">" AND age &gt;= ?"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">" age &gt;= ?"</span><span class="p">);</span><span class="w">   </span><span class="c1">// (3)!</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" ORDER BY id"</span><span class="p">);</span>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">String</span><span class="w"> </span><span class="n">sql</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">prepareStatement</span><span class="p">(</span><span class="n">sql</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c0</span><span class="p">)</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">setString</span><span class="p">(</span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w">     </span><span class="c1">// (4)!</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getMinAge</span><span class="p">());</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">prepareStatement</span><span class="p">(</span><span class="n">sql</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c0</span><span class="p">)</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">setString</span><span class="p">(</span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w">     </span><span class="c1">// (4)! Bind tham số cùng thứ tự điều kiện</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getMinAge</span><span class="p">());</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="c1">// ...</span>
 </span></code></pre></div>
 <ol>
-<li>Dung lượng của <code>StringBuilder</code> được tính toán từ lúc build dựa trên độ dài tối đa có thể có của câu SQL, tránh việc cấp phát lại bộ nhớ khi nối chuỗi.</li>
-<li>Thẻ <code>&lt;where&gt;</code> được chuyển thành lệnh nối chuỗi có điều kiện. Dùng toán tử <code>|</code> thay vì <code>||</code> vì cả hai toán hạng đều là biến cục bộ đã tính toán sẵn, không cần cơ chế ngắt sớm (short-circuit).</li>
-<li>Quy tắc xử lý từ khoá <code>AND</code> ở đầu mệnh đề được gập hằng số thành toán tử ba ngôi trên các biến cục bộ đã biết, không quét chuỗi lúc runtime.</li>
-<li>Quá trình gán tham số duyệt qua <strong>cùng</strong> các điều kiện theo <strong>đúng</strong> thứ tự đó. Nhờ vậy chuỗi SQL và tham số không bao giờ bị lệch nhau: không cần bảng tra cứu tên - vị trí, chỉ có một tập biến boolean dùng chung.</li>
+<li>Dung lượng <code>StringBuilder</code> được tính toán trước từ lúc build, tránh cấp phát lại bộ nhớ khi ghép chuỗi.</li>
+<li>Thẻ <code>&lt;where&gt;</code> được chuyển thành lệnh <code>append(" WHERE")</code> có điều kiện.</li>
+<li>Loại bỏ tiền tố <code>AND</code> bằng toán tử ba ngôi trên các biến boolean, không cắt chuỗi lúc runtime.</li>
+<li>Quá trình gán tham số duyệt qua cùng các biến điều kiện, đảm bảo số lượng và thứ tự dấu <code>?</code> luôn khớp tuyệt đối.</li>
 </ol>
-<h2 id="row-readers">Trình đọc dòng (Row Reader)<a class="headerlink" href="#row-readers" title="Permanent link">&para;</a></h2>
-<p>Mỗi result class tương ứng với một class đọc dòng riêng biệt, cung cấp ba điểm vào:</p>
+<h2 id="row-readers">Row Reader (<code>UserRow</code>)<a class="headerlink" href="#row-readers" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserRow</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">READER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UserRow</span><span class="p">::</span><span class="n">read</span><span class="p">;</span><span class="w">   </span><span class="c1">// (1)!</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">READER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UserRow</span><span class="p">::</span><span class="n">read</span><span class="p">;</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// (2)!</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">User</span><span class="p">();</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setEmail</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setCreatedAt</span><span class="p">(</span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">instant</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// (3)!</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">        </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">User</span><span class="p">();</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">));</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="p">...</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">columns</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span><span class="w">        </span><span class="c1">// (4)!</span>
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">        </span><span class="n">ResultSetMetaData</span><span class="w"> </span><span class="n">md</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getMetaData</span><span class="p">();</span>
-</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">        </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">4</span><span class="o">]</span><span class="p">;</span>
-</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">md</span><span class="p">.</span><span class="na">getColumnCount</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">            </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="na">getColumnLabel</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">replace</span><span class="p">(</span><span class="s">"_"</span><span class="p">,</span><span class="w"> </span><span class="s">""</span><span class="p">).</span><span class="na">toLowerCase</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="s">"id"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
-</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="s">"name"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">c</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
-</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">                </span><span class="p">...</span>
-</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">            </span><span class="p">}</span>
-</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
-</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="c1">// 1. Đọc theo vị trí cột cố định (tối ưu nhất, dùng khi biết trước danh sách SELECT)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">User</span><span class="p">();</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setEmail</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="na">setCreatedAt</span><span class="p">(</span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">instant</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="c1">// 2. Đọc theo mảng chỉ số cột (dùng khi SELECT * hoặc fallback)</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">User</span><span class="p">();</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">));</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">));</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">        </span><span class="c1">// ...</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">    </span><span class="c1">// 3. Quét metadata lấy chỉ số cột một lần duy nhất ở dòng đầu tiên</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">columns</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">        </span><span class="n">ResultSetMetaData</span><span class="w"> </span><span class="n">md</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getMetaData</span><span class="p">();</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">        </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">4</span><span class="o">]</span><span class="p">;</span>
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">md</span><span class="p">.</span><span class="na">getColumnCount</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">            </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="na">getColumnLabel</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">replace</span><span class="p">(</span><span class="s">"_"</span><span class="p">,</span><span class="w"> </span><span class="s">""</span><span class="p">).</span><span class="na">toLowerCase</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="s">"id"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="s">"name"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">c</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="w">                </span><span class="c1">// ...</span>
+</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-2-34"><a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-2-35"><a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+</span><span id="__span-2-36"><a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-37"><a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a><span class="p">}</span>
 </span></code></pre></div>
-<ol>
-<li>Lối thoát thủ công tái sử dụng hằng số này để đọc dữ liệu mà không cần reflection.</li>
-<li><strong>Đọc theo vị trí cố định</strong>, áp dụng khi bộ sinh code phân tích được danh sách SELECT. Mọi chỉ số cột đều là hằng số.</li>
-<li><strong>Đọc theo mảng chỉ số</strong>: <code>c[k]</code> là vị trí trong ResultSet của thuộc tính thứ <em>k</em>, với giá trị <code>0</code> nghĩa là "không được select". Thuộc tính không có cột tương ứng sẽ giữ giá trị mặc định, không bị gán null.</li>
-<li><strong>Bộ resolve cột</strong>, chỉ chạy một lần duy nhất trên dòng đầu tiên khi danh sách SELECT không thể phân tích cú pháp tĩnh. Các cột không khớp sẽ được bỏ qua, tương thích với cơ chế auto-mapping của MyBatis. Lệnh <code>replace("_","").toLowerCase()</code> áp dụng quy ước <code>snake_case</code> thống nhất với pha build.</li>
-</ol>
-<p>Cấu trúc ba điểm vào này giải thích vì sao câu lệnh <code>SELECT *</code> chỉ tốn một lần quét metadata ở dòng đầu tiên rồi sau đó đọc theo vị trí nhanh chóng, không tra cứu tên cột trên từng dòng.</p>
-<h2 id="result-map-long-nhau">Result Map lồng nhau<a class="headerlink" href="#result-map-long-nhau" title="Permanent link">&para;</a></h2>
-<p>Thẻ <code>&lt;resultMap&gt;</code> lồng nhau được biên dịch thành một vòng lặp gom nhóm, không dùng map <code>CacheKey</code>:</p>
+<h2 id="nested-resultmap-single-pass-grouping">Nested ResultMap (Single-Pass Grouping)<a class="headerlink" href="#nested-resultmap-single-pass-grouping" title="Permanent link">&para;</a></h2>
+<p>Các quan hệ 1-N trong <code>&lt;resultMap&gt;</code> được biên dịch thành vòng lặp gom nhóm trực tiếp:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">long</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">has</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">lastKey</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">          </span><span class="c1">// doi tuong cha moi</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">has</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">lastKey</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">          </span><span class="c1">// Bắt đầu một đối tượng cha mới</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Team</span><span class="p">();</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="c1">// ...</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getObject</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">         </span><span class="c1">// dong LEFT JOIN co du lieu con</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getObject</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">         </span><span class="c1">// Dòng chứa dữ liệu con từ LEFT JOIN</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="n">Member</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Member</span><span class="p">();</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="c1">// ...</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">parent</span><span class="p">.</span><span class="na">getMembers</span><span class="p">().</span><span class="na">add</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>MyBatis thực hiện việc này bằng cách tạo một <code>CacheKey</code> cho mỗi dòng: dùng reflection quét các cột id, đọc giá trị qua <code>TypeHandler</code>, tính mã hash và tra cứu đối tượng cha trong một <code>Map</code>. Trong LarkBatis, khoá là biến cục bộ có kiểu tĩnh được so sánh trực tiếp bằng <code>!=</code>, do đó khoá kiểu <code>long</code> hoàn toàn không tốn chi phí boxing kiểu đối tượng. Đổi lại, câu truy vấn <a href="../../usage/result-maps/#the-ordering-rule">bắt buộc phải có mệnh đề ORDER BY</a>.</p>
-<h2 id="registry-va-cau-hinh-spring">Registry và Cấu hình Spring<a class="headerlink" href="#registry-va-cau-hinh-spring" title="Permanent link">&para;</a></h2>
+<p>Khóa cha được so sánh trực tiếp qua biến primitive/object mà không cần khởi tạo <code>CacheKey</code> hay tra cứu <code>HashMap</code>. Cơ chế này yêu cầu câu truy vấn phải có mệnh đề <code>ORDER BY</code> theo khóa của bảng cha.</p>
+<h2 id="registry-spring-configuration">Registry &amp; Spring Configuration<a class="headerlink" href="#registry-spring-configuration" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LarkBatisMappers</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">UserMapper</span><span class="w"> </span><span class="nf">userMapper</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserMapper$$Impl</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
@@ -2093,13 +2068,7 @@
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Cả hai đều chỉ gồm vài dòng code đơn giản: mapper là một class Java thông thường có constructor, do đó việc khởi tạo và đăng ký bean diễn ra tự nhiên. Thuộc tính <code>proxyBeanMethods = false</code> giúp tránh việc Spring phải sinh CGLIB subclass lúc runtime, đúng với mục tiêu loại bỏ hoàn toàn việc sinh bytecode lúc chạy của dự án.</p>
-<h2 id="oc-va-kiem-soat-thay-oi-golden-snapshot">Đọc và kiểm soát thay đổi (Golden Snapshot)<a class="headerlink" href="#oc-va-kiem-soat-thay-oi-golden-snapshot" title="Permanent link">&para;</a></h2>
-<p>Code sinh ra không mang tính ngẫu nhiên. Các bản golden snapshot của code sinh ra được commit trực tiếp trong repository chính, vì vậy mọi thay đổi trong bộ sinh code đều hiển thị dưới dạng diff rõ ràng trong git:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-Pupdate-golden
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="gp">$ </span>git<span class="w"> </span>diff<span class="w"> </span>larkbatis-processor/src/test/resources/golden/
-</span></code></pre></div>
-<p>Nếu một thay đổi trong bộ sinh code không tạo ra diff nào trong thư mục golden, thay đổi đó không có tác dụng. Nếu tạo ra diff bất thường, quy trình code review sẽ phát hiện ngay lập tức.</p>
+<p><code>proxyBeanMethods = false</code> đảm bảo Spring không tạo CGLIB subclass lúc runtime.</p>
 
 
 

@@ -1623,7 +1623,7 @@
   <a href="#build-time-errors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build-time errors
+        Build-Time Errors
       
     </span>
   </a>
@@ -1634,7 +1634,7 @@
   <a href="#build-time-warnings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build-time warnings
+        Build-Time Warnings
       
     </span>
   </a>
@@ -1645,12 +1645,12 @@
   <a href="#runtime-exceptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Runtime exceptions
+        Runtime Exceptions
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Runtime exceptions">
+    <nav class="md-nav" aria-label="Runtime Exceptions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1725,10 +1725,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#under-spring" class="md-nav__link">
+  <a href="#spring-exception-translation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Under Spring
+        Spring Exception Translation
       
     </span>
   </a>
@@ -1875,7 +1875,7 @@
   <a href="#build-time-errors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build-time errors
+        Build-Time Errors
       
     </span>
   </a>
@@ -1886,7 +1886,7 @@
   <a href="#build-time-warnings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build-time warnings
+        Build-Time Warnings
       
     </span>
   </a>
@@ -1897,12 +1897,12 @@
   <a href="#runtime-exceptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Runtime exceptions
+        Runtime Exceptions
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Runtime exceptions">
+    <nav class="md-nav" aria-label="Runtime Exceptions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1977,10 +1977,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#under-spring" class="md-nav__link">
+  <a href="#spring-exception-translation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Under Spring
+        Spring Exception Translation
       
     </span>
   </a>
@@ -2024,176 +2024,153 @@
 
 
 <h1 id="errors-and-diagnostics">Errors and Diagnostics<a class="headerlink" href="#errors-and-diagnostics" title="Permanent link">&para;</a></h1>
-<p>Most things that go wrong in a MyBatis application at runtime go wrong in a LarkBatis
-application at build time. This page is split accordingly.</p>
-<h2 id="build-time-errors">Build-time errors<a class="headerlink" href="#build-time-errors" title="Permanent link">&para;</a></h2>
-<p>Every one of these names the mapper method and, where there is one, the replacement. Each
-also has a test in the processor's <code>CompileFailTest</code>, so the promises on this site are
-enforced, not aspirational.</p>
+<p>Because LarkBatis shifts validation from runtime to compile time, most configuration errors surface as build errors before tests or deployment even run.</p>
+<h2 id="build-time-errors">Build-Time Errors<a class="headerlink" href="#build-time-errors" title="Permanent link">&para;</a></h2>
+<p>Compile-time errors report the exact mapper method, XML line, and recommended fix:</p>
 <table>
 <thead>
 <tr>
-<th>Error</th>
-<th>Fix</th>
+<th>Compile Error</th>
+<th>Resolution</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>#{}</code> name does not resolve against the parameter types</td>
-<td>Check the name, or add <code>@Param</code>. If parameters are called <code>arg0</code>, see <a href="../../usage/troubleshooting/">Troubleshooting</a></td>
+<td><code>#{}</code> parameter name cannot be resolved</td>
+<td>Check parameter spelling or annotate with <code>@Param</code>. If parameters are called <code>arg0</code>, see <a href="../../usage/troubleshooting/">Troubleshooting</a></td>
 </tr>
 <tr>
-<td>A <code>String</code> parameter bound to <code>${}</code></td>
-<td><code>SqlFragment</code>, a closed-value type, or <code>@OrderBy(allowed = {...})</code></td>
+<td>Plain <code>String</code> parameter bound to <code>${}</code></td>
+<td>Use <code>SqlFragment</code>, closed-value types (enums/integers), or <code>@OrderBy(allowed = {...})</code></td>
 </tr>
 <tr>
-<td><code>test="count"</code>, OGNL truthiness</td>
-<td><code>count != 0</code>. Likewise <code>user != null</code>, <code>!list.isEmpty()</code></td>
+<td><code>test="count"</code> truthiness</td>
+<td>Use explicit comparison (<code>count != 0</code>, <code>user != null</code>, <code>!list.isEmpty()</code>)</td>
 </tr>
 <tr>
-<td><code>test=</code> outside the expression grammar</td>
-<td>Rewrite it, or move the decision into Java and pass the result in</td>
+<td>Unsupported expression in <code>test=</code></td>
+<td>Simplify the test condition or compute the boolean in Java</td>
 </tr>
 <tr>
-<td>A method has both an annotation and an XML statement, or neither</td>
-<td>Pick one</td>
+<td>Method has both annotation and XML statement, or neither</td>
+<td>Define statement in either an annotation or XML, not both</td>
 </tr>
 <tr>
-<td><code>Map</code> or <code>Object</code> parameter</td>
-<td>A parameter object, or <code>@Param</code> arguments</td>
+<td>Method takes untyped <code>Map</code> or <code>Object</code> parameter</td>
+<td>Use a concrete typed parameter object or <code>@Param</code> annotations</td>
 </tr>
 <tr>
-<td><code>useGeneratedKeys</code> without <code>keyProperty</code></td>
-<td>Say where the key should go</td>
+<td><code>useGeneratedKeys = true</code> missing <code>keyProperty</code></td>
+<td>Specify target property name in <code>keyProperty</code></td>
 </tr>
 <tr>
-<td><code>keyColumn</code> and <code>keyProperty</code> list different counts</td>
-<td>Make the lists the same length</td>
+<td>Count mismatch between <code>keyColumn</code> and <code>keyProperty</code></td>
+<td>Ensure both lists have the same number of comma-separated entries</td>
 </tr>
 <tr>
-<td><code>@PadPow2</code> on a <code>&lt;foreach&gt;</code> that is not a single-bind <code>IN</code> list, or on an <code>INSERT</code></td>
-<td>Remove it; padding would duplicate rows</td>
+<td><code>@PadPow2</code> on non-<code>IN</code> <code>&lt;foreach&gt;</code> or on <code>INSERT</code></td>
+<td>Remove <code>@PadPow2</code>. Padding is only valid for simple <code>IN</code> clauses</td>
 </tr>
 <tr>
-<td>Batch method with dynamic SQL</td>
-<td>A batch statement's text must be identical for every row</td>
+<td>Batch method contains dynamic SQL tags</td>
+<td>Batch inserts must use an invariant SQL statement string</td>
 </tr>
 <tr>
-<td><code>Stream</code> return over a nested <code>&lt;resultMap&gt;</code></td>
-<td>Use <code>List</code>, or stream flat rows and group them yourself</td>
+<td><code>Stream&lt;T&gt;</code> return over nested <code>&lt;resultMap&gt;</code></td>
+<td>Return <code>List&lt;T&gt;</code>, or stream flat rows and group them in memory</td>
 </tr>
 <tr>
-<td>Result map nested more than one level, or two nested mappings in one map</td>
-<td>One join, one grouping key</td>
+<td>Result map nested more than one level</td>
+<td>Limit join nesting to one level per query</td>
 </tr>
 <tr>
-<td><code>select=</code> on <code>&lt;association&gt;</code>/<code>&lt;collection&gt;</code></td>
-<td>Write the join</td>
+<td><code>select=</code> attribute on <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code></td>
+<td>Join the tables in SQL instead of using nested queries</td>
 </tr>
 <tr>
-<td><code>resultMap=</code>, <code>columnPrefix</code>, <code>extends</code>, <code>&lt;constructor&gt;</code>, <code>&lt;discriminator&gt;</code>, <code>autoMapping</code> in a result map</td>
-<td>See <a href="../../usage/result-maps/#narrowed-on-purpose">Result Maps</a></td>
+<td>Missing <code>&lt;id&gt;</code> column in nested result map query</td>
+<td>Include parent ID column in the <code>SELECT</code> list for row grouping</td>
 </tr>
 <tr>
-<td><code>&lt;id&gt;</code> column missing from the select list</td>
-<td>That column is what the grouping loop reads</td>
+<td>Type alias used in <code>type</code> / <code>ofType</code> / <code>javaType</code></td>
+<td>Use fully-qualified class names</td>
 </tr>
 <tr>
-<td>Type alias in <code>type</code> / <code>ofType</code> / <code>javaType</code></td>
-<td>Fully-qualified class name</td>
+<td>Computed expression in <code>&lt;include refid="..."&gt;</code></td>
+<td>Use a literal static fragment <code>refid</code></td>
 </tr>
 <tr>
-<td>Computed <code>refid</code> on <code>&lt;include&gt;</code></td>
-<td><code>refid</code> is inlined at build time, so it must be literal</td>
-</tr>
-<tr>
-<td>Result class with no no-arg constructor or no setters</td>
-<td>Add them. If the class uses Lombok, the message says so, because the cause is a <a href="../../usage/troubleshooting/">processor ordering problem</a></td>
+<td>Result class lacks no-arg constructor or setters</td>
+<td>Add a public no-arg constructor and setters (or fix Lombok annotation processor ordering)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="build-time-warnings">Build-time warnings<a class="headerlink" href="#build-time-warnings" title="Permanent link">&para;</a></h2>
-<p>Worth treating as errors in review.</p>
+<h2 id="build-time-warnings">Build-Time Warnings<a class="headerlink" href="#build-time-warnings" title="Permanent link">&para;</a></h2>
+<p>These warnings highlight potential runtime issues or suboptimal performance:</p>
 <table>
 <thead>
 <tr>
-<th>Warning</th>
-<th>Why it matters</th>
+<th>Build Warning</th>
+<th>Impact</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS</code></td>
-<td>Oracle returns <code>ROWID</code>, PostgreSQL returns every column. Works on H2, wrong in production</td>
+<td><code>useGeneratedKeys without keyColumn</code></td>
+<td>Defaults to non-portable <code>RETURN_GENERATED_KEYS</code>. (Oracle returns <code>ROWID</code>, PostgreSQL returns all columns)</td>
 </tr>
 <tr>
-<td>A statement fell back to name-based row reads</td>
-<td>The select list could not be parsed: <code>SELECT *</code>, a <code>${}</code> splice, an unaliased expression. Correct but measurably slower</td>
+<td>Fallback to name-based row reads</td>
+<td><code>SELECT *</code> or unaliased expressions prevent indexed reading; falls back to <code>ResultSetMetaData</code> lookup</td>
 </tr>
 <tr>
-<td>A nested result map statement has no <code>ORDER BY</code></td>
-<td>The grouping loop requires the ResultSet ordered by the parent key</td>
+<td>Nested result map query missing <code>ORDER BY</code></td>
+<td>Result set must be sorted by parent key for single-pass grouping</td>
 </tr>
 <tr>
-<td>A <code>&lt;result&gt;</code> column is missing from the select list</td>
-<td>That property stays unset</td>
+<td>Column in <code>&lt;result&gt;</code> not found in <code>SELECT</code> list</td>
+<td>Property will not be populated from query results</td>
 </tr>
 <tr>
-<td>A mapper XML <code>namespace</code> names an interface in another module</td>
-<td>The file is ignored</td>
+<td>Mapper XML <code>namespace</code> belongs to another module</td>
+<td>XML file will be ignored during current compilation unit</td>
 </tr>
 </tbody>
 </table>
-<h2 id="runtime-exceptions">Runtime exceptions<a class="headerlink" href="#runtime-exceptions" title="Permanent link">&para;</a></h2>
-<p>All unchecked, all rooted at <code>LarkBatisException</code>, which carries the SQL text via
-<code>sql()</code>.</p>
+<h2 id="runtime-exceptions">Runtime Exceptions<a class="headerlink" href="#runtime-exceptions" title="Permanent link">&para;</a></h2>
+<p>All runtime exceptions extend <code>LarkBatisException</code>:</p>
 <h3 id="larkbatisrejectedexception"><code>LarkBatisRejectedException</code><a class="headerlink" href="#larkbatisrejectedexception" title="Permanent link">&para;</a></h3>
-<p>A value offered to a <code>SqlFragment</code> factory or an <code>@OrderBy</code> switch was rejected. <strong>The
-value never reached the SQL text.</strong> The exception is the runtime edge of the <code>${}</code>
-discipline working, not a failure of it.</p>
+<p>Thrown when dynamic input fails validation against an allowed whitelist in <code>SqlFragment.allowed(...)</code> or <code>@OrderBy</code>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Rejected SQL fragment value: "id; DROP TABLE users" (allowed: id, name, created_at)
 </span></code></pre></div>
+<p>The invalid value is rejected before the SQL query is constructed.</p>
 <h3 id="larkbatisemptyforeachexception"><code>LarkBatisEmptyForeachException</code><a class="headerlink" href="#larkbatisemptyforeachexception" title="Permanent link">&para;</a></h3>
+<p>Thrown when an empty collection is passed to an unguarded <code>&lt;foreach&gt;</code> loop:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;foreach collection="ids"&gt; is empty in statement com.example.app.UserBatchMapper.findByIds;
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>wrap the loop in an &lt;if&gt; testing the collection if an empty one should drop the fragment instead
 </span></code></pre></div>
-<p>MyBatis would have let <code>... WHERE id IN</code> reach the database and fail there, with a syntax
-error naming neither the mapper nor the parameter.</p>
 <h3 id="larkbatisnokeyexception"><code>LarkBatisNoKeyException</code><a class="headerlink" href="#larkbatisnokeyexception" title="Permanent link">&para;</a></h3>
-<p>A statement declared <code>useGeneratedKeys</code> and the driver returned none. Better than a <code>0</code>
-id travelling through your code and failing somewhere unrelated.</p>
+<p>Thrown when <code>useGeneratedKeys = true</code> was configured, but the JDBC driver returned an empty generated keys result set.</p>
 <h3 id="larkbatiskeycountmismatchexception"><code>LarkBatisKeyCountMismatchException</code><a class="headerlink" href="#larkbatiskeycountmismatchexception" title="Permanent link">&para;</a></h3>
+<p>Thrown during batch inserts when the count of returned generated keys doesn't match the number of inserted batch rows.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Statement com.example.app.OrderMapper.insertAll expected 500 generated keys
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>but the driver returned 1
 </span></code></pre></div>
-<p>Drivers do this. Ignoring it would leave part of the batch with unset ids and nobody the
-wiser. MyBatis documents the same failure mode.</p>
 <h3 id="larkbatisunboundedvariantsexception"><code>LarkBatisUnboundedVariantsException</code><a class="headerlink" href="#larkbatisunboundedvariantsexception" title="Permanent link">&para;</a></h3>
+<p>Thrown when <code>fail-on-unbounded-fragment: true</code> is enabled and a statement exceeds <code>max-sql-variants</code>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>LarkBatis statement com.example.app.UserMapper.search has produced more than 64 distinct
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>SQL texts; statement caches will keep growing. Prefer SqlFragment.allowed(...) or @OrderBy
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>over unbounded fragments.
 </span></code></pre></div>
-<p>Only thrown when <code>fail-on-unbounded-fragment</code> is on. Otherwise the same condition produces
-one log line. <code>statementId()</code> and <code>limit()</code> are on the exception.</p>
 <h3 id="larkbatisrollbackonlyexception"><code>LarkBatisRollbackOnlyException</code><a class="headerlink" href="#larkbatisrollbackonlyexception" title="Permanent link">&para;</a></h3>
-<p><code>commit()</code> was called on a transaction an inner scope had already poisoned by leaving
-without voting. Throwing beats a silent rollback that looks like success to the caller.</p>
-<h2 id="under-spring">Under Spring<a class="headerlink" href="#under-spring" title="Permanent link">&para;</a></h2>
-<p><code>SpringLarkBatisSession.translate</code> routes through Spring's <code>SQLExceptionTranslator</code>
-instead, by default <code>SQLExceptionSubclassTranslator</code>, which reads the standard
-<code>SQLException</code> subclass tree and not a per-vendor error-code table.</p>
-<p>So a unique-constraint violation arrives as <code>DuplicateKeyException</code>, a deadlock as
-<code>CannotAcquireLockException</code>, exactly as they would from <code>JdbcTemplate</code>. Existing
-<code>@ExceptionHandler</code>s and <code>@Retryable</code> rules keep working unchanged.</p>
-<p>The LarkBatis-specific exceptions above (<code>LarkBatisRejectedException</code>,
-<code>LarkBatisEmptyForeachException</code>, …) are not <code>SQLException</code>s and pass through untouched.</p>
+<p>Thrown when an application calls <code>tx.commit()</code> on a transaction that was marked rollback-only by an inner failure or unvoted scope.</p>
+<h2 id="spring-exception-translation">Spring Exception Translation<a class="headerlink" href="#spring-exception-translation" title="Permanent link">&para;</a></h2>
+<p>When running inside Spring, <code>SpringLarkBatisSession</code> routes database errors through Spring's <code>SQLExceptionTranslator</code> (<code>SQLExceptionSubclassTranslator</code> by default).</p>
+<p>JDBC errors are automatically translated into Spring's <code>DataAccessException</code> hierarchy (e.g. <code>DuplicateKeyException</code>, <code>CannotAcquireLockException</code>), maintaining direct compatibility with existing <code>@ExceptionHandler</code> and <code>@Retryable</code> annotations.</p>
+<p>LarkBatis-specific validation exceptions (<code>LarkBatisRejectedException</code>, <code>LarkBatisEmptyForeachException</code>, etc.) are passed through directly.</p>
 <h2 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h2>
-<p>LarkBatis logs through <code>java.util.logging</code> and says very little; the variant-tracking
-warning is essentially all of it. SQL logging is absent, because every generated body
-would have to carry a logging branch. Use the driver or the pool
-(<code>net.ttddyy:datasource-proxy</code>, p6spy) for that.</p>
-<p>What replaces SQL logging in practice is that the SQL is <em>in your source tree</em>. Open
-<code>UserMapper$$Impl.java</code> and read the <code>static final String</code>.</p>
+<p>LarkBatis runtime logs via <code>java.util.logging</code>. It avoids injecting runtime logging branches into generated method bytecode. For detailed SQL and parameter logging, configure a logging proxy at the datasource or driver level (<code>datasource-proxy</code>, p6spy).</p>
+<p>Because SQL statements are generated at compile time, you can also inspect generated SQL directly in the generated <code>Mapper$$Impl.java</code> source files in your build directory.</p>
 
 
 

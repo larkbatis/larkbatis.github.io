@@ -914,10 +914,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-can-be-iterated" class="md-nav__link">
+  <a href="#supported-collection-types" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What can be iterated
+        Supported collection types
       
     </span>
   </a>
@@ -936,10 +936,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#binding-a-property-of-the-element" class="md-nav__link">
+  <a href="#binding-nested-properties" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Binding a property of the element
+        Binding nested properties
       
     </span>
   </a>
@@ -947,10 +947,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#empty-collections" class="md-nav__link">
+  <a href="#empty-collections-throw-immediately" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Empty collections
+        Empty collections throw immediately
       
     </span>
   </a>
@@ -961,7 +961,7 @@
   <a href="#padpow2-bounding-the-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @PadPow2: bounding the SQL variants
+        @PadPow2: Bounding SQL variants
       
     </span>
   </a>
@@ -969,10 +969,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multi-row-values" class="md-nav__link">
+  <a href="#multi-row-values-inserts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-row VALUES
+        Multi-row VALUES inserts
       
     </span>
   </a>
@@ -983,7 +983,7 @@
   <a href="#jdbc-batches" class="md-nav__link">
     <span class="md-ellipsis">
       
-        JDBC batches
+        JDBC batch inserts
       
     </span>
   </a>
@@ -1822,10 +1822,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-can-be-iterated" class="md-nav__link">
+  <a href="#supported-collection-types" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What can be iterated
+        Supported collection types
       
     </span>
   </a>
@@ -1844,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#binding-a-property-of-the-element" class="md-nav__link">
+  <a href="#binding-nested-properties" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Binding a property of the element
+        Binding nested properties
       
     </span>
   </a>
@@ -1855,10 +1855,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#empty-collections" class="md-nav__link">
+  <a href="#empty-collections-throw-immediately" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Empty collections
+        Empty collections throw immediately
       
     </span>
   </a>
@@ -1869,7 +1869,7 @@
   <a href="#padpow2-bounding-the-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @PadPow2: bounding the SQL variants
+        @PadPow2: Bounding SQL variants
       
     </span>
   </a>
@@ -1877,10 +1877,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multi-row-values" class="md-nav__link">
+  <a href="#multi-row-values-inserts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-row VALUES
+        Multi-row VALUES inserts
       
     </span>
   </a>
@@ -1891,7 +1891,7 @@
   <a href="#jdbc-batches" class="md-nav__link">
     <span class="md-ellipsis">
       
-        JDBC batches
+        JDBC batch inserts
       
     </span>
   </a>
@@ -1924,10 +1924,7 @@
 
 
 <h1 id="foreach-and-batches">foreach and Batches<a class="headerlink" href="#foreach-and-batches" title="Permanent link">&para;</a></h1>
-<p><code>&lt;foreach&gt;</code> is the hardest case in dynamic SQL, because the number of placeholders is
-the one thing about the SQL text that genuinely is not known until runtime. LarkBatis
-compiles it to <strong>two loops that walk the same elements in the same order</strong>: one appends
-placeholders, one binds values.</p>
+<p><code>&lt;foreach&gt;</code> requires dynamic SQL generation because the number of parameter placeholders is only known at runtime. LarkBatis compiles <code>&lt;foreach&gt;</code> into <strong>two parallel loops</strong>: the first generates the placeholder string (<code>?, ?, ?</code>), and the second binds the typed values.</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIds"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
@@ -1959,41 +1956,39 @@ placeholders, one binds values.</p>
 </span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>See <a href="#empty-collections">Empty collections</a> below.</li>
-<li>Cardinality changes the SQL text, so this statement is tracked like a <code>${}</code> splice.</li>
-<li>The second loop. No <code>__frch_id_0</code> naming layer routes values through, because the
-    loop index already connects placeholder <em>k</em> to value <em>k</em>.</li>
+<li>Throws immediately on empty collections (see below).</li>
+<li>Monitors generated SQL variants to prevent unbounded query cache growth.</li>
+<li>Direct iteration binds values positionally with zero intermediate map lookups.</li>
 </ol>
-<h2 id="what-can-be-iterated">What can be iterated<a class="headerlink" href="#what-can-be-iterated" title="Permanent link">&para;</a></h2>
+<h2 id="supported-collection-types">Supported collection types<a class="headerlink" href="#supported-collection-types" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Collection type</th>
+<th>Collection Type</th>
 <th><code>item</code></th>
 <th><code>index</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>List&lt;T&gt;</code>, any <code>Collection&lt;T&gt;</code></td>
-<td>the element</td>
-<td>the position</td>
+<td><code>List&lt;T&gt;</code>, <code>Collection&lt;T&gt;</code></td>
+<td>Element value</td>
+<td>Zero-based index integer</td>
 </tr>
 <tr>
-<td><code>T[]</code></td>
-<td>the element</td>
-<td>the position</td>
+<td><code>T[]</code> (arrays)</td>
+<td>Element value</td>
+<td>Zero-based index integer</td>
 </tr>
 <tr>
 <td><code>Map&lt;K, V&gt;</code></td>
-<td>the <strong>value</strong></td>
-<td>the <strong>key</strong></td>
+<td>Entry <strong>value</strong></td>
+<td>Entry <strong>key</strong></td>
 </tr>
 </tbody>
 </table>
-<p>All of them must be <strong>statically typed</strong>: <code>List&lt;Long&gt;</code>, not <code>List</code>. The element type is
-what chooses <code>ps.setLong</code> over <code>ps.setString</code> at build time.</p>
-<p>Loops nest, and the outer <code>item</code> can be the inner loop's <code>collection</code>:</p>
+<p>Collections must have <strong>concrete generic types</strong> (e.g. <code>List&lt;Long&gt;</code>, not raw <code>List</code>). The element type determines the typed <code>ps.setXxx</code> call generated at compile time.</p>
+<p>Nested loops are fully supported:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIdGroups"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"groups"</span><span class="w"> </span><span class="na">item=</span><span class="s">"group"</span><span class="w"> </span><span class="na">separator=</span><span class="s">" OR "</span><span class="nt">&gt;</span>
@@ -2005,10 +2000,8 @@ what chooses <code>ps.setLong</code> over <code>ps.setString</code> at build tim
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdGroups</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">groups</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Sibling loops may reuse the same <code>index</code> name; the generator renames them apart.</p>
 <h2 id="using-index">Using <code>index</code><a class="headerlink" href="#using-index" title="Permanent link">&para;</a></h2>
-<p><code>index</code> is the position (or the map key), and it binds like any other value. The standard
-"preserve the input order" trick:</p>
+<p><code>index</code> represents the item's index (or map key) and can be bound like any parameter. For example, preserving custom ordering:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIdsOrdered"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
@@ -2019,64 +2012,53 @@ what chooses <code>ps.setLong</code> over <code>ps.setString</code> at build tim
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span>END
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="nt">&lt;/select&gt;</span>
 </span></code></pre></div>
-<p>With a <code>Map</code>, <code>index</code> is the key and <code>item</code> is the value:</p>
+<p>When iterating over a <code>Map</code>, <code>index</code> binds the key and <code>item</code> binds the value:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"filters"</span><span class="w"> </span><span class="na">item=</span><span class="s">"value"</span><span class="w"> </span><span class="na">index=</span><span class="s">"column"</span><span class="w"> </span><span class="na">separator=</span><span class="s">" OR "</span><span class="nt">&gt;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>(name<span class="w"> </span>=<span class="w"> </span>#{column}<span class="w"> </span>AND<span class="w"> </span>email<span class="w"> </span>=<span class="w"> </span>#{value})
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nt">&lt;/foreach&gt;</span>
 </span></code></pre></div>
-<h2 id="binding-a-property-of-the-element">Binding a property of the element<a class="headerlink" href="#binding-a-property-of-the-element" title="Permanent link">&para;</a></h2>
-<p>The body does not have to bind the element itself:</p>
+<h2 id="binding-nested-properties">Binding nested properties<a class="headerlink" href="#binding-nested-properties" title="Permanent link">&para;</a></h2>
+<p>You can bind properties on collection items directly:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"probes"</span><span class="w"> </span><span class="na">item=</span><span class="s">"p"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{p.email}<span class="nt">&lt;/foreach&gt;</span>
 </span></code></pre></div>
-<h2 id="empty-collections">Empty collections<a class="headerlink" href="#empty-collections" title="Permanent link">&para;</a></h2>
+<h2 id="empty-collections-throw-immediately">Empty collections throw immediately<a class="headerlink" href="#empty-collections-throw-immediately" title="Permanent link">&para;</a></h2>
 <div class="admonition danger">
-<p class="admonition-title">An empty <code>&lt;foreach&gt;</code> throws</p>
+<p class="admonition-title">An empty <code>&lt;foreach&gt;</code> throws <code>LarkBatisEmptyForeachException</code></p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>LarkBatisEmptyForeachException:
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  &lt;foreach collection="ids"&gt; is empty in statement com.example.app.UserBatchMapper.findByIds;
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  wrap the loop in an &lt;if&gt; testing the collection if an empty one should drop the fragment instead
 </span></code></pre></div>
-</div>
-<p>MyBatis contributes <em>nothing</em> for an empty collection, not even <code>open</code> and <code>close</code>. That
-leaves <code>... WHERE id IN</code> to reach the database and fail there, with a syntax error that
-names neither the mapper nor the parameter. Failing here instead names both, at the call
-site that owns the empty list.</p>
-<p>If you genuinely want the fragment to disappear, say so, and you keep MyBatis's
-behaviour exactly:</p>
+<p>In MyBatis, an empty collection generates an empty string (omitting <code>open</code> and <code>close</code>), leaving <code>WHERE id IN</code> to fail at the database with a vague syntax error. LarkBatis catches this early with a clear exception naming the mapper and parameter.</p>
+<p>If you want the SQL clause omitted entirely when a collection is empty, wrap it in an <code>&lt;if&gt;</code> condition:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"ids != null and !ids.isEmpty()"</span><span class="nt">&gt;</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>AND<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="nt">&lt;/if&gt;</span>
 </span></code></pre></div>
-<h2 id="padpow2-bounding-the-sql-variants"><code>@PadPow2</code>: bounding the SQL variants<a class="headerlink" href="#padpow2-bounding-the-sql-variants" title="Permanent link">&para;</a></h2>
-<p>The SQL text of a <code>&lt;foreach&gt;</code> statement changes with the number of elements, so the
-driver's and the database's statement caches grow with <strong>every cardinality ever seen</strong>.
-<code>@PadPow2</code> rounds the placeholder count up to the next power of two, repeating the last
-element, which bounds that at log₂(n) variants instead of n. Hibernate calls the same
-trick <code>in_clause_parameter_padding</code>.</p>
+</div>
+<h2 id="padpow2-bounding-the-sql-variants"><code>@PadPow2</code>: Bounding SQL variants<a class="headerlink" href="#padpow2-bounding-the-sql-variants" title="Permanent link">&para;</a></h2>
+<p>Because <code>&lt;foreach&gt;</code> generates dynamic SQL strings based on collection length, variable collection sizes can flood statement caches.</p>
+<p><code>@PadPow2</code> rounds the parameter count up to the nearest power of two by repeating the last element, bounding the number of distinct SQL variants to $\log_2(N)$ instead of $N$ (similar to Hibernate's parameter padding).</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@PadPow2</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdsPadded</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p">);</span>
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">p0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">padPow2</span><span class="p">(</span><span class="n">n0</span><span class="p">);</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1">// ... p0 placeholders emitted</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1">// ... emits p0 placeholders (?, ?, ?, ?)</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">Long</span><span class="w"> </span><span class="n">last0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Long</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ids</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 </span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="n">last0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
 </span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">}</span>
 </span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n0</span><span class="p">;</span><span class="w"> </span><span class="n">k0</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">p0</span><span class="p">;</span><span class="w"> </span><span class="n">k0</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">last0</span><span class="p">);</span><span class="w">      </span><span class="c1">// repeat the last element</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">last0</span><span class="p">);</span><span class="w">      </span><span class="c1">// pads remaining positions with the last element</span>
 </span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>On an interface it applies to every statement; on a method, to that one.</p>
 <div class="admonition warning">
-<p class="admonition-title">Opt-in, and enforced</p>
-<p>Repeating the last element is invisible only where duplicates cannot change the
-result, which means an <code>IN</code> list. The generator enforces that: the <code>&lt;foreach&gt;</code> body
-must be a single <code>#{}</code> bind and the statement must not be an <code>INSERT</code>. Outside those
-limits padding is a <strong>compile error</strong>, never silently duplicated rows.</p>
+<p class="admonition-title">Padding rules</p>
+<p>Repeating elements is only safe where duplicate arguments don't affect query semantics (e.g. <code>IN</code> clauses). The compiler enforces this: <code>@PadPow2</code> is only permitted on <code>SELECT</code>/<code>UPDATE</code>/<code>DELETE</code> queries with simple <code>#{}</code> binds, and is rejected on <code>INSERT</code> statements.</p>
 </div>
-<h2 id="multi-row-values">Multi-row <code>VALUES</code><a class="headerlink" href="#multi-row-values" title="Permanent link">&para;</a></h2>
-<p>A <code>&lt;foreach&gt;</code> in an <code>INSERT</code> builds one statement with many value tuples:</p>
+<h2 id="multi-row-values-inserts">Multi-row <code>VALUES</code> inserts<a class="headerlink" href="#multi-row-values-inserts" title="Permanent link">&para;</a></h2>
+<p>Use <code>&lt;foreach&gt;</code> in <code>&lt;insert&gt;</code> statements to insert multiple rows in a single SQL statement:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">&lt;insert</span><span class="w"> </span><span class="na">id=</span><span class="s">"insertAll"</span><span class="nt">&gt;</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>INSERT<span class="w"> </span>INTO<span class="w"> </span>users<span class="w"> </span>(name,<span class="w"> </span>email,<span class="w"> </span>created_at)<span class="w"> </span>VALUES
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"users"</span><span class="w"> </span><span class="na">item=</span><span class="s">"u"</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="nt">&gt;</span>
@@ -2084,10 +2066,8 @@ limits padding is a <strong>compile error</strong>, never silently duplicated ro
 </span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="nt">&lt;/foreach&gt;</span>
 </span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="nt">&lt;/insert&gt;</span>
 </span></code></pre></div>
-<h2 id="jdbc-batches">JDBC batches<a class="headerlink" href="#jdbc-batches" title="Permanent link">&para;</a></h2>
-<p>Batching is not an executor mode you configure, because there is no executor. It is a
-<strong>method signature</strong>: an <code>@Insert</code> whose parameter is a <code>List&lt;T&gt;</code> compiles to <code>addBatch()</code> /
-<code>executeBatch()</code>.</p>
+<h2 id="jdbc-batches">JDBC batch inserts<a class="headerlink" href="#jdbc-batches" title="Permanent link">&para;</a></h2>
+<p>Batching in LarkBatis is declared via <strong>method signatures</strong>: an <code>@Insert</code> taking a <code>List&lt;T&gt;</code> compiles directly to JDBC <code>addBatch()</code> / <code>executeBatch()</code> calls:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO orders (status, total, placed_at) VALUES (#{status}, #{total}, #{placedAt})"</span><span class="p">)</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insertAll</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orders</span><span class="p">);</span>
@@ -2124,16 +2104,12 @@ limits padding is a <strong>compile error</strong>, never silently duplicated ro
 </span><span id="__span-13-30"><a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>An empty batch is a no-op returning 0. Unlike an empty <code>&lt;foreach&gt;</code>, it produces no
-    malformed SQL to protect you from.</li>
-<li>Drivers exist that return fewer keys than rows. Ignoring that would leave part of the
-    batch with null ids and nobody the wiser. See <a href="../generated-keys/">Generated Keys</a>.</li>
+<li>An empty list returns <code>0</code> immediately without touching the database.</li>
+<li>Validates that returned generated key counts match the batch size. See <a href="../generated-keys/">Generated Keys</a>.</li>
 </ol>
 <div class="admonition note">
-<p class="admonition-title">Batch and dynamic SQL do not combine</p>
-<p>A batch statement's SQL text must be the same for every row, which is what makes it
-one prepared statement. A batch method whose statement contains dynamic tags is a
-compile error.</p>
+<p class="admonition-title">Batch methods cannot contain dynamic SQL</p>
+<p>JDBC batching requires a single, invariant SQL statement string. Statements containing dynamic tags (<code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, etc.) cannot be used with batch execution and trigger a compile error.</p>
 </div>
 
 

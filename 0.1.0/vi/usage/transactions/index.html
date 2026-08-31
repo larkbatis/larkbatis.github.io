@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#transaction" class="md-skip">
+        <a href="#quan-ly-transaction" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1026,15 +1026,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#larkbatistx" class="md-nav__link">
+  <a href="#larkbatistx-trong-standalone-jdbc" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LarkBatisTx
+        LarkBatisTx trong Standalone JDBC
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="LarkBatisTx">
+    <nav class="md-nav" aria-label="LarkBatisTx trong Standalone JDBC">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1048,27 +1048,16 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#kiem-tra-trang-thai-transaction" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Kiểm tra trạng thái transaction
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#su-dung-trong-spring" class="md-nav__link">
+  <a href="#su-dung-voi-spring-transactional" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sử dụng trong Spring
+        Sử dụng với Spring @Transactional
       
     </span>
   </a>
@@ -1079,18 +1068,7 @@
   <a href="#why-generated-code-never-closes-the-connection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao code sinh ra không bao giờ đóng Connection trực tiếp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dich-exception" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dịch exception
+        Nguyên tắc quản lý Connection trong mã nguồn sinh ra
       
     </span>
   </a>
@@ -1817,15 +1795,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#larkbatistx" class="md-nav__link">
+  <a href="#larkbatistx-trong-standalone-jdbc" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LarkBatisTx
+        LarkBatisTx trong Standalone JDBC
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="LarkBatisTx">
+    <nav class="md-nav" aria-label="LarkBatisTx trong Standalone JDBC">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1839,27 +1817,16 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#kiem-tra-trang-thai-transaction" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Kiểm tra trạng thái transaction
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#su-dung-trong-spring" class="md-nav__link">
+  <a href="#su-dung-voi-spring-transactional" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sử dụng trong Spring
+        Sử dụng với Spring @Transactional
       
     </span>
   </a>
@@ -1870,18 +1837,7 @@
   <a href="#why-generated-code-never-closes-the-connection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao code sinh ra không bao giờ đóng Connection trực tiếp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dich-exception" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dịch exception
+        Nguyên tắc quản lý Connection trong mã nguồn sinh ra
       
     </span>
   </a>
@@ -1913,26 +1869,28 @@
   
 
 
-<h1 id="transaction">Transaction<a class="headerlink" href="#transaction" title="Permanent link">&para;</a></h1>
-<p>Khi chạy độc lập (standalone), <code>LarkBatisTx</code> cung cấp <strong>programmatic transaction scope</strong> tương thích với <code>AutoCloseable</code>. Khi tích hợp trong Spring, transaction boundary được quản lý hoàn toàn bằng <code>@Transactional</code> (declarative transaction) và LarkBatis sẽ tự động đồng bộ kết nối qua <code>DataSourceUtils</code>.</p>
-<h2 id="larkbatistx"><code>LarkBatisTx</code><a class="headerlink" href="#larkbatistx" title="Permanent link">&para;</a></h2>
+<h1 id="quan-ly-transaction">Quản lý Transaction<a class="headerlink" href="#quan-ly-transaction" title="Permanent link">&para;</a></h1>
+<p>Khi chạy độc lập (standalone JDBC), LarkBatis cung cấp <code>LarkBatisTx</code> hỗ trợ <strong>programmatic transaction scope</strong> tương thích với <code>AutoCloseable</code>. Khi chạy trong Spring Boot, transaction được quản lý qua annotation <code>@Transactional</code> thông qua <code>DataSourceUtils</code>.</p>
+<h2 id="larkbatistx-trong-standalone-jdbc"><code>LarkBatisTx</code> trong Standalone JDBC<a class="headerlink" href="#larkbatistx-trong-standalone-jdbc" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">updateBalance</span><span class="p">(</span><span class="n">account</span><span class="p">);</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Ba nguyên tắc cốt lõi giúp đảm bảo an toàn dữ liệu mặc định:</p>
-<p><strong>1 · <code>commit()</code> mang ngữ nghĩa vote (bỏ phiếu), không phải lệnh commit tức thì.</strong> Việc commit vật lý xuống database chỉ diễn ra khi scope ngoài cùng (outermost transaction scope) đóng lại. Cơ chế này cho phép lồng các transaction scope (nested scopes) một cách an toàn mà không làm commit dở dang dữ liệu của scope ngoài.</p>
-<p><strong>2 · Thoát khỏi một transaction scope mà chưa gọi <code>commit()</code> sẽ tự động đánh dấu rollback-only.</strong> Khi gặp lệnh <code>return</code> sớm, ngoại lệ chưa bắt (unhandled exception), hoặc quên gọi <code>tx.commit()</code>: toàn bộ transaction sẽ tự động chuyển sang trạng thái rollback-only, ngăn chặn hoàn toàn nguy cơ commit thiếu dữ liệu.</p>
-<p><strong>3 · Commit trên transaction đã bị đánh dấu hỏng sẽ ném ngoại lệ ngay lập tức.</strong> Nếu một transaction scope con bên trong kết thúc mà không commit rồi scope ngoài gọi <code>commit()</code>, hệ thống sẽ ném <code>LarkBatisRollbackOnlyException</code> thay vì âm thầm rollback, giúp lập trình viên phát hiện sớm lỗi logic nghiệp vụ.</p>
+<p>Ba nguyên tắc cốt lõi:</p>
+<ol>
+<li><strong><code>commit()</code> mang ngữ nghĩa vote (bỏ phiếu)</strong>: Lệnh commit thực sự xuống database chỉ được thực hiện khi scope ngoài cùng đóng lại thành công. Điều này cho phép lồng các transaction scope một cách an toàn.</li>
+<li><strong>Tự động chuyển sang rollback-only khi rời scope chưa commit</strong>: Nếu xảy ra exception hoặc thoát khối <code>try</code> mà chưa gọi <code>tx.commit()</code>, toàn bộ transaction sẽ tự động chuyển sang trạng thái rollback-only.</li>
+<li><strong>Commit trên transaction hỏng sẽ ném ngoại lệ rõ ràng</strong>: Nếu scope con bên trong bị rollback và scope ngoài cố tình gọi <code>commit()</code>, hệ thống sẽ ném <code>LarkBatisRollbackOnlyException</code> thay vì âm thầm rollback trong im lặng.</li>
+</ol>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">outer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// tham gia vào transaction ngoài (nested scope)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Tham gia vào transaction ngoài (nested scope)</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="n">inner</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                          </span><span class="c1">// bỏ phiếu (vote)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="n">inner</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                          </span><span class="c1">// Bỏ phiếu (vote)</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">outer</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                              </span><span class="c1">// bỏ phiếu; đóng scope ngoài cùng mới commit xuống DB</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">outer</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                              </span><span class="c1">// Bỏ phiếu; đóng scope ngoài cùng mới commit vật lý</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="transaction-chi-oc-read-only">Transaction chỉ đọc (Read-Only)<a class="headerlink" href="#transaction-chi-oc-read-only" title="Permanent link">&para;</a></h3>
@@ -1940,10 +1898,8 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mapper</span><span class="p">.</span><span class="na">findAll</span><span class="p">();</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="kiem-tra-trang-thai-transaction">Kiểm tra trạng thái transaction<a class="headerlink" href="#kiem-tra-trang-thai-transaction" title="Permanent link">&para;</a></h3>
-<p><code>session.hasActiveTransaction()</code> cho biết luồng hiện tại có đang nằm trong transaction hay không. Phương thức này phục vụ mục đích chẩn đoán hoặc cho các đoạn code cần phân biệt logic trong và ngoài transaction.</p>
-<h2 id="su-dung-trong-spring">Sử dụng trong Spring<a class="headerlink" href="#su-dung-trong-spring" title="Permanent link">&para;</a></h2>
-<p>Trong ứng dụng Spring, không dùng <code>LarkBatisTx</code> mà sử dụng <code>@Transactional</code>:</p>
+<h2 id="su-dung-voi-spring-transactional">Sử dụng với Spring <code>@Transactional</code><a class="headerlink" href="#su-dung-voi-spring-transactional" title="Permanent link">&para;</a></h2>
+<p>Trong ứng dụng Spring, bạn không cần dùng <code>LarkBatisTx</code> mà sử dụng trực tiếp <code>@Transactional</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Service</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AccountService</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -1964,77 +1920,22 @@
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Cơ chế này hoạt động vì <code>SpringLarkBatisSession.conn()</code> lấy kết nối qua <code>DataSourceUtils</code>. Phương thức này trả về đúng <code>Connection</code> đang gắn với transaction Spring hiện tại và chỉ mở kết nối mới khi chưa có transaction nào. <code>release()</code> đóng vai trò ngược lại: là no-op khi ở trong transaction, và đóng kết nối thực sự khi ở ngoài transaction.</p>
-<table>
-<thead>
-<tr>
-<th>Tình huống</th>
-<th>Kết quả</th>
-<th>Cơ chế hoạt động</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>@Transactional</code> trên service</td>
-<td>Hoạt động</td>
-<td><code>DataSourceUtils</code> trả về connection của transaction hiện tại</td>
-</tr>
-<tr>
-<td><code>REQUIRES_NEW</code>, <code>NESTED</code>, rollback rules</td>
-<td>Hoạt động</td>
-<td>Spring Transaction Manager xử lý; LarkBatis chỉ mượn Connection</td>
-</tr>
-<tr>
-<td><code>readOnly = true</code></td>
-<td>Hoạt động</td>
-<td>Spring tự động đặt cờ readOnly trên Connection</td>
-</tr>
-<tr>
-<td>Mapper gọi ngoài transaction</td>
-<td>Hoạt động</td>
-<td>Chế độ auto-commit; Connection được đóng và hoàn trả về pool ngay khi gọi <code>release</code></td>
-</tr>
-<tr>
-<td>Chia sẻ transaction với <code>JdbcTemplate</code> hoặc JPA</td>
-<td>Hoạt động</td>
-<td>Cùng dùng chung <code>DataSourceUtils</code> và <code>PlatformTransactionManager</code></td>
-</tr>
-<tr>
-<td>Phương thức trả về <code>Stream</code></td>
-<td>Hoạt động</td>
-<td>Trong transaction thì <code>release</code> là no-op; luôn bọc <code>Stream</code> trong <code>try-with-resources</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="why-generated-code-never-closes-the-connection">Vì sao code sinh ra không bao giờ đóng Connection trực tiếp<a class="headerlink" href="#why-generated-code-never-closes-the-connection" title="Permanent link">&para;</a></h2>
+<p><code>SpringLarkBatisSession.conn()</code> lấy kết nối thông qua <code>DataSourceUtils.getConnection(dataSource)</code>. Nhờ đó:
+- Sử dụng chung transaction với <code>JdbcTemplate</code> hoặc Hibernate/JPA trong cùng một transaction context.
+- Tự động hoàn trả kết nối về connection pool sau khi kết thúc transaction hoặc câu lệnh đơn lẻ.</p>
+<h2 id="why-generated-code-never-closes-the-connection">Nguyên tắc quản lý Connection trong mã nguồn sinh ra<a class="headerlink" href="#why-generated-code-never-closes-the-connection" title="Permanent link">&para;</a></h2>
+<p>Mã nguồn Java sinh ra luôn tuân thủ cấu trúc sau:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">prepareStatement</span><span class="p">(</span><span class="n">SQL</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// (1)!</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="c1">// ...</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">prepareStatement</span><span class="p">(</span><span class="n">SQL</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// Statement được quản lý bằng try-with-resources</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="c1">// Thực thi truy vấn</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="na">release</span><span class="p">(</span><span class="n">c</span><span class="p">);</span><span class="w">                                        </span><span class="c1">// (2)!</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="na">release</span><span class="p">(</span><span class="n">c</span><span class="p">);</span><span class="w">                                        </span><span class="c1">// Giải phóng connection qua session</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<ol>
-<li><strong>Statement</strong> nằm trong try-with-resources. <strong>Connection</strong> thì không.</li>
-<li>Chỉ <code>s.release(c)</code> mới biết connection này có thực sự được phép đóng hay không.</li>
-</ol>
-<p>Đặt <code>Connection</code> vào try-with-resources sẽ đóng mất một connection đang thuộc về một
-transaction đang chạy, và điều đó sai dưới Spring cũng như sai dưới <code>LarkBatisTx</code>. Đây
-là một <a href="../../wiki/design-rules/">lằn ranh thiết kế</a>: mọi thân phương thức sinh ra đều
-mang đúng hình dạng này, và các bài test của bộ phát mã khẳng định điều đó.</p>
-<h2 id="dich-exception">Dịch exception<a class="headerlink" href="#dich-exception" title="Permanent link">&para;</a></h2>
-<p><code>s.translate(e, sql)</code> biến một <code>SQLException</code> checked thành cây exception unchecked, mang
-theo câu SQL (hoặc một id giả-statement như <code>tx:commit</code>) đang được thực thi.</p>
 <ul>
-<li><strong>Độc lập:</strong> <code>LarkBatisException</code> và các lớp con của nó. <code>e.sql()</code> cho bạn văn bản
-  của statement.</li>
-<li><strong>Spring:</strong> <code>SQLExceptionTranslator</code> của Spring, mặc định là
-  <code>SQLExceptionSubclassTranslator</code>. Bộ dịch này đọc cây lớp con <code>SQLException</code> chuẩn chứ
-  không dùng bảng mã lỗi riêng theo từng hãng. Nhờ vậy một vi phạm ràng buộc duy nhất sẽ đến
-  dưới dạng <code>DuplicateKeyException</code>, y hệt như khi đến từ <code>JdbcTemplate</code>, và những
-  <code>@ExceptionHandler</code> sẵn có của bạn vẫn chạy nguyên.</li>
+<li><strong>PreparedStatement</strong> và <strong>ResultSet</strong> luôn nằm trong <code>try-with-resources</code>.</li>
+<li><strong>Connection</strong> tuyệt đối không bọc trong <code>try-with-resources</code> mà giải phóng qua <code>s.release(c)</code>. Điều này đảm bảo connection đang nằm trong transaction không bị đóng đột ngột.</li>
 </ul>
-<p>Xem <a href="../../features/errors/">Lỗi và chẩn đoán</a> để có danh sách exception đầy đủ.</p>
 
 
 

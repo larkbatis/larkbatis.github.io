@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#shape-va-value" class="md-skip">
+        <a href="#nguyen-tac-shape-vs-value" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1280,10 +1280,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#danh-sach-ong" class="md-nav__link">
+  <a href="#danh-sach-ong-cac-phan-tu-anh-gia-luc-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Danh sách đóng
+        Danh sách đóng các phần tử đánh giá lúc Runtime
       
     </span>
   </a>
@@ -1291,10 +1291,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ieu-o-oi-lai-uoc-gi-tung-muc-mot" class="md-nav__link">
+  <a href="#so-sanh-xu-ly-giua-larkbatis-va-mybatis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Điều đó đổi lại được gì, từng mục một
+        So sánh xử lý giữa LarkBatis và MyBatis
       
     </span>
   </a>
@@ -1302,10 +1302,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nhung-he-qua-that-su-cam-nhan-uoc" class="md-nav__link">
+  <a href="#he-qua-ky-thuat-cua-nguyen-tac-shape-vs-value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những hệ quả thật sự cảm nhận được
+        Hệ quả kỹ thuật của nguyên tắc Shape vs. Value
       
     </span>
   </a>
@@ -1313,21 +1313,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cho-nao-lat-cat-gay-kho-chiu" class="md-nav__link">
+  <a href="#cac-anh-oi-ky-thuat-trade-offs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Chỗ nào lát cắt gây khó chịu
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phep-thu-cho-moi-tinh-nang-moi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phép thử cho mọi tính năng mới
+        Các đánh đổi kỹ thuật (Trade-offs)
       
     </span>
   </a>
@@ -1800,10 +1789,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#danh-sach-ong" class="md-nav__link">
+  <a href="#danh-sach-ong-cac-phan-tu-anh-gia-luc-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Danh sách đóng
+        Danh sách đóng các phần tử đánh giá lúc Runtime
       
     </span>
   </a>
@@ -1811,10 +1800,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ieu-o-oi-lai-uoc-gi-tung-muc-mot" class="md-nav__link">
+  <a href="#so-sanh-xu-ly-giua-larkbatis-va-mybatis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Điều đó đổi lại được gì, từng mục một
+        So sánh xử lý giữa LarkBatis và MyBatis
       
     </span>
   </a>
@@ -1822,10 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nhung-he-qua-that-su-cam-nhan-uoc" class="md-nav__link">
+  <a href="#he-qua-ky-thuat-cua-nguyen-tac-shape-vs-value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những hệ quả thật sự cảm nhận được
+        Hệ quả kỹ thuật của nguyên tắc Shape vs. Value
       
     </span>
   </a>
@@ -1833,21 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cho-nao-lat-cat-gay-kho-chiu" class="md-nav__link">
+  <a href="#cac-anh-oi-ky-thuat-trade-offs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Chỗ nào lát cắt gây khó chịu
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phep-thu-cho-moi-tinh-nang-moi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phép thử cho mọi tính năng mới
+        Các đánh đổi kỹ thuật (Trade-offs)
       
     </span>
   </a>
@@ -1879,133 +1857,110 @@
   
 
 
-<h1 id="shape-va-value">Shape và value<a class="headerlink" href="#shape-va-value" title="Permanent link">&para;</a></h1>
-<p>Mọi quyết định thiết kế trong LarkBatis đều bắt nguồn từ một lát cắt. Một bên: mọi thứ
-suy ra được từ <strong>shape</strong> của mapper, và shape thì ngừng thay đổi khi file được lưu. Bên
-kia: những <strong>giá trị</strong> chảy qua một lời gọi lúc chạy.</p>
-<p>Phía shape được resolve lúc build. Phía value là phần duy nhất còn lại.</p>
-<h2 id="danh-sach-ong">Danh sách đóng<a class="headerlink" href="#danh-sach-ong" title="Permanent link">&para;</a></h2>
-<p>Danh sách dưới đây là toàn bộ những gì được phép resolve lúc chạy, và nó đóng: một danh
-sách mở sẽ âm thầm mọc lại thành một trình thông dịch.</p>
+<h1 id="nguyen-tac-shape-vs-value">Nguyên tắc Shape vs. Value<a class="headerlink" href="#nguyen-tac-shape-vs-value" title="Permanent link">&para;</a></h1>
+<p>Mọi quyết định thiết kế trong LarkBatis đều dựa trên một nguyên tắc phân tách ranh giới duy nhất:
+- <strong>Shape (Cấu trúc tĩnh)</strong>: Tất cả những gì có thể suy ra từ mapper interface, file XML, POJO result class và kiểu dữ liệu tham số. Shape cố định ngay khi lưu file mã nguồn và được giải quyết toàn bộ lúc build.
+- <strong>Value (Giá trị động)</strong>: Dữ liệu thực tế truyền qua các tham số và dòng dữ liệu trả về từ database lúc runtime.</p>
+<h2 id="danh-sach-ong-cac-phan-tu-anh-gia-luc-runtime">Danh sách đóng các phần tử đánh giá lúc Runtime<a class="headerlink" href="#danh-sach-ong-cac-phan-tu-anh-gia-luc-runtime" title="Permanent link">&para;</a></h2>
+<p>Dưới đây là <strong>danh sách đóng</strong> toàn bộ những gì LarkBatis cho phép đánh giá lúc runtime. Bất kỳ thành phần nào ngoài danh sách này đều không được phép suy diễn động lúc chạy:</p>
 <table>
 <thead>
 <tr>
-<th>Resolve lúc chạy</th>
-<th>Vì sao buộc phải thế</th>
+<th>Thành phần runtime</th>
+<th>Lý do kỹ thuật bắt buộc</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Giá trị</strong> tham số</td>
-<td>Chúng là đầu vào</td>
+<td><strong>Giá trị</strong> của tham số phương thức</td>
+<td>Dữ liệu đầu vào từ phía gọi</td>
 </tr>
 <tr>
-<td><strong>Kết quả boolean</strong> của một test <code>&lt;if&gt;</code> / <code>&lt;when&gt;</code></td>
-<td>Nó phụ thuộc vào giá trị tham số</td>
+<td><strong>Kết quả boolean</strong> của biểu thức <code>&lt;if test&gt;</code> / <code>&lt;when test&gt;</code></td>
+<td>Phụ thuộc vào giá trị tham số cụ thể</td>
 </tr>
 <tr>
-<td><strong>Kích thước</strong> tập hợp trong <code>&lt;foreach&gt;</code></td>
-<td>Nó phụ thuộc vào giá trị tham số</td>
+<td><strong>Kích thước collection</strong> trong <code>&lt;foreach&gt;</code></td>
+<td>Số lượng phần tử do caller truyền vào</td>
 </tr>
 <tr>
-<td>Các <strong>dòng</strong> trong một <code>ResultSet</code></td>
-<td>Database sinh ra chúng</td>
+<td><strong>Dữ liệu dòng</strong> trong <code>ResultSet</code></td>
+<td>Trả về từ database</td>
 </tr>
 <tr>
-<td><strong>Số cột thật</strong>, khi bộ sinh code không phân tích được select list</td>
-<td><code>SELECT *</code> không có câu trả lời tĩnh</td>
+<td><strong>Thứ tự cột thực tế</strong> khi không thể phân tích tĩnh select list</td>
+<td><code>SELECT *</code> hoặc chèn chuỗi <code>${}</code> trong select list</td>
 </tr>
 <tr>
-<td><strong>Nội dung</strong> của một <code>SqlFragment</code></td>
-<td>Cửa thoát hiểm, và nó được rà soát</td>
+<td><strong>Nội dung chuỗi</strong> của một <code>SqlFragment</code></td>
+<td>Phục vụ các câu SQL tùy biến có kiểm soát qua lối thoát thủ công</td>
 </tr>
 </tbody>
 </table>
-<p>Mọi thứ khác đều xảy ra lúc build. Không phải "thường là", không phải "khi có thể": là
-mọi thứ.</p>
-<p>Còn một chỗ nữa được để dành — một <code>databaseId</code> chọn một lần lúc khởi động, để
-mỗi statement có thể có biến thể riêng cho từng loại database. <strong>Chỗ đó chưa bao giờ được
-làm.</strong> Hiện tại, thuộc tính <code>databaseId</code> trên một statement là lỗi biên dịch, và câu trả
-lời cho hai loại database là hai interface mapper. Dòng này được nói rõ ra thay vì lặng lẽ
-bỏ đi, vì một danh sách tự nhận là đóng thì phải trung thực về những gì nằm trong nó.</p>
-<h2 id="ieu-o-oi-lai-uoc-gi-tung-muc-mot">Điều đó đổi lại được gì, từng mục một<a class="headerlink" href="#ieu-o-oi-lai-uoc-gi-tung-muc-mot" title="Permanent link">&para;</a></h2>
+<p>Mọi thứ khác đều được quyết định tĩnh từ pha build (<code>javac</code>).</p>
+<h2 id="so-sanh-xu-ly-giua-larkbatis-va-mybatis">So sánh xử lý giữa LarkBatis và MyBatis<a class="headerlink" href="#so-sanh-xu-ly-giua-larkbatis-va-mybatis" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Quyết lúc build</th>
-<th>MyBatis làm gì lúc chạy thay cho nó</th>
+<th>Quyết định kỹ thuật</th>
+<th>LarkBatis (Compile-Time)</th>
+<th>MyBatis (Runtime)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ps.setXxx</code> nào gắn mỗi tham số</td>
-<td>Tra <code>TypeHandlerRegistry</code> theo kiểu Java và kiểu JDBC</td>
+<td>Phương thức <code>ps.setXxx</code> bind tham số</td>
+<td>Biên dịch thẳng lệnh gọi JDBC theo kiểu tĩnh</td>
+<td>Tra cứu <code>TypeHandlerRegistry</code> theo cặp <code>(javaType, jdbcType)</code></td>
 </tr>
 <tr>
-<td>Chỉ số cột nào nuôi mỗi setter</td>
-<td><code>MetaObject.setValue(propertyName, value)</code> bằng reflection cho mỗi cột trên mỗi dòng</td>
+<td>Chỉ số cột đọc vào setter</td>
+<td>Xác định index tĩnh (<code>rs.getString(1)</code>)</td>
+<td>Reflection <code>MetaObject.setValue()</code> cho từng cột trên mỗi dòng</td>
 </tr>
 <tr>
-<td>Setter đó rốt cuộc là cái nào</td>
-<td><code>Reflector</code> dựng một map tên → <code>Invoker</code> cho mỗi lớp</td>
+<td>Nhận diện hàm setter</td>
+<td>Phân tích getter/setter lúc build</td>
+<td><code>Reflector</code> dựng HashMap ánh xạ name → <code>Invoker</code></td>
 </tr>
 <tr>
-<td><code>&lt;where&gt;</code> có phát từ khoá của nó không</td>
-<td>Một lượt quét mảnh SQL đã ráp lúc chạy để tìm <code>AND</code>/<code>OR</code> đứng đầu</td>
+<td>Xóa tiền tố trong <code>&lt;where&gt;</code></td>
+<td>Gập hằng số thành biểu thức điều kiện boolean</td>
+<td>Quét và cắt chuỗi SQL sau khi ghép</td>
 </tr>
 <tr>
-<td><code>&lt;include refid&gt;</code> bung ra thành cái gì</td>
-<td>Tra từ một map trong <code>Configuration</code></td>
+<td>Inlined nội dung <code>&lt;include&gt;</code></td>
+<td>Thay thế trực tiếp trong pha compile</td>
+<td>Tra cứu Map trong <code>Configuration</code> lúc khởi động</td>
 </tr>
 <tr>
-<td>Biểu thức Java cho mỗi <code>test</code></td>
-<td>OGNL phân tích rồi đánh giá dựa trên một <code>ObjectWrapper</code></td>
+<td>Đánh giá biểu thức <code>test</code></td>
+<td>Mã Java boolean thuần</td>
+<td>Trình thông dịch OGNL evaluate động qua <code>ObjectWrapper</code></td>
 </tr>
 <tr>
-<td>Lớp nào hiện thực mapper</td>
-<td><code>Proxy.newProxyInstance</code> + điều phối qua <code>MapperMethod</code></td>
+<td>Khởi tạo Mapper</td>
+<td>Khởi tạo class <code>Mapper$$Impl</code> trực tiếp</td>
+<td>JDK <code>Proxy.newProxyInstance</code> điều phối qua <code>MapperMethod</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="nhung-he-qua-that-su-cam-nhan-uoc">Những hệ quả thật sự cảm nhận được<a class="headerlink" href="#nhung-he-qua-that-su-cam-nhan-uoc" title="Permanent link">&para;</a></h2>
-<p><strong>Lỗi kiểu dời về lúc biên dịch.</strong> Một <code>#{customerName}</code> không tồn tại trên kiểu tham số
-là lỗi build có nêu tên phương thức. Trong MyBatis nó là một <code>ReflectionException</code> lúc
-chạy, trên đúng nhánh code xui xẻo.</p>
-<p><strong>Không có metadata nào phải viết cho native image.</strong> Không <code>Proxy</code>, không
-<code>Class.forName</code>, không <code>setAccessible</code>, nên chẳng có gì để khai báo. Tính chất này là <em>hệ
-quả</em> của lát cắt, không phải một tính năng được thêm vào.</p>
-<p><strong>Không thể vô tình đưa reflection quay lại.</strong> Chẳng có runtime nào để mà làm chuyện đó.
-Một yêu cầu tính năng cần soi kiểu lúc chạy thì không có chỗ nào để đặt, và đó là lý do
-<a href="../../features/mybatis-differences/">danh sách tính năng bị bỏ</a> lại như hiện tại.</p>
-<p><strong>Một số tính năng MyBatis trở thành bất khả thi chứ không phải chưa hiện thực.</strong> Phân
-biệt đó quan trọng khi đọc danh sách bị bỏ. <code>&lt;discriminator&gt;</code> chọn lớp kết quả từ một giá
-trị cột, nghĩa là <em>shape</em> của kết quả phụ thuộc vào một giá trị lúc chạy, nên tự thân nó
-đã nằm sai phía của lát cắt. Lazy loading cần một proxy cho mỗi đối tượng kết quả. Plugin
-móc vào một pipeline runtime vốn không tồn tại. Không cái nào trong số đó là "chưa làm".</p>
-<h2 id="cho-nao-lat-cat-gay-kho-chiu">Chỗ nào lát cắt gây khó chịu<a class="headerlink" href="#cho-nao-lat-cat-gay-kho-chiu" title="Permanent link">&para;</a></h2>
-<p>Ba chỗ, và cần thành thật rằng đó là những đánh đổi chứ không phải phần thắng miễn phí.</p>
-<p><strong>1 · Số phần tử của <code>&lt;foreach&gt;</code>.</strong> Số placeholder đúng là một giá trị lúc chạy, nên câu
-SQL của những statement đó được ráp lúc chạy. LarkBatis biên dịch vòng lặp thay vì thông
-dịch một cái cây, nhưng câu SQL vẫn thay đổi, và đó là lý do những statement ấy có theo
-dõi biến thể cũng như lý do <code>@PadPow2</code> tồn tại.</p>
-<p><strong>2 · <code>SELECT *</code>.</strong> Số cột không biết được lúc build. Riêng statement đó lùi về đọc theo
-tên, với chỉ số lấy từ <code>ResultSetMetaData</code> ở dòng đầu tiên. Vẫn đúng, chậm hơn, và được báo
-lúc build để nó là một quyết định.</p>
-<p><strong>3 · <code>${}</code>.</strong> Đôi khi một định danh thật sự đến từ cấu hình. Thay vì cấm nó, lát cắt
-được cưỡng chế ở mức kiểu: chỉ <code>SqlFragment</code>, các kiểu giá trị đóng, hoặc
-<code>@OrderBy(allowed = {...})</code> mới được nối vào, và văn bản tuỳ ý có đúng một điểm vào có
-tên.</p>
-<h2 id="phep-thu-cho-moi-tinh-nang-moi">Phép thử cho mọi tính năng mới<a class="headerlink" href="#phep-thu-cho-moi-tinh-nang-moi" title="Permanent link">&para;</a></h2>
-<p>Trước khi thêm bất cứ thứ gì, câu hỏi là: <em>thứ này có cần một giá trị lúc chạy không nằm
-trong danh sách không?</em></p>
-<ul>
-<li><strong>Không</strong> → nó thuộc về lúc build, và câu hỏi thiết kế duy nhất còn lại là code sinh ra
-  nên trông thế nào.</li>
-<li><strong>Có</strong> → hoặc danh sách phải dài thêm, và điều đó đòi một lý do rất tốt, hoặc tính năng
-  bị bỏ kèm một lỗi biên dịch nêu tên thứ thay thế.</li>
-</ul>
-<p>Hãy đọc <a href="../../features/mybatis-differences/">danh sách tính năng bị bỏ</a> với câu hỏi đó
-trong đầu và nó sẽ thôi trông có vẻ tuỳ tiện.</p>
+<h2 id="he-qua-ky-thuat-cua-nguyen-tac-shape-vs-value">Hệ quả kỹ thuật của nguyên tắc Shape vs. Value<a class="headerlink" href="#he-qua-ky-thuat-cua-nguyen-tac-shape-vs-value" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Phát hiện lỗi kiểu dữ liệu ngay lúc build</strong>: Một lỗi gõ sai tên thuộc tính <code>#{customerName}</code> sẽ báo lỗi compile <code>javac</code> kèm tên method mapper, thay vì ném <code>ReflectionException</code> lúc runtime ở nhánh code hiếm khi chạy tới.</li>
+<li><strong>Loại bỏ hoàn toàn Reflection Metadata cho Native Image</strong>: Do không sử dụng <code>Proxy</code>, <code>Class.forName</code>, hay <code>setAccessible()</code>, ứng dụng không cần cấu hình file <code>reflect-config.json</code> cho GraalVM Native Image.</li>
+<li><strong>Ngăn chặn triệt để suy diễn kiểu động lúc runtime</strong>: Do không có runtime reflection engine, hệ thống không thể vô tình mang các cơ chế tra cứu động quay trở lại.</li>
+<li><strong>Lý giải rõ ràng cho các tính năng bị loại bỏ</strong>: </li>
+<li>Thẻ <code>&lt;discriminator&gt;</code> chọn class kết quả dựa trên giá trị cột (nghĩa là <em>Shape</em> của đối tượng phụ thuộc vào <em>Value</em> runtime), vi phạm trực tiếp nguyên tắc Shape vs. Value.</li>
+<li>Lazy loading đòi hỏi bọc dynamic proxy trên từng entity kết quả.</li>
+<li>Plugin/Interceptor can thiệp vào dynamic pipeline vốn không tồn tại trong LarkBatis.</li>
+</ol>
+<h2 id="cac-anh-oi-ky-thuat-trade-offs">Các đánh đổi kỹ thuật (Trade-offs)<a class="headerlink" href="#cac-anh-oi-ky-thuat-trade-offs" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Biến thể prepared statement của <code>&lt;foreach&gt;</code></strong>: Số lượng phần tử trong collection là giá trị runtime, do đó câu SQL buộc phải được dựng lúc chạy. LarkBatis hạn chế số biến thể statement bằng <code>@PadPow2</code> và theo dõi qua <code>LarkBatisSql.trackVariants()</code>.</li>
+<li><strong>Đọc theo tên cột đối với <code>SELECT *</code></strong>: Khi không thể phân tích cú pháp tĩnh danh sách cột, LarkBatis fallback về đọc index cột từ <code>ResultSetMetaData</code> một lần duy nhất ở dòng đầu tiên.</li>
+<li><strong>Kiểm soát an toàn cho <code>${}</code></strong>: Để hỗ trợ các nhu cầu sắp xếp động thực tế mà không mở cổng SQL Injection, LarkBatis yêu cầu kiểu dữ liệu của <code>${}</code> phải là <code>SqlFragment</code>, kiểu tập giá trị đóng, hoặc gắn <code>@OrderBy(allowed = {...})</code>.</li>
+</ol>
 
 
 

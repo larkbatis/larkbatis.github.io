@@ -1280,10 +1280,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-closed-list" class="md-nav__link">
+  <a href="#the-closed-runtime-list" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The closed list
+        The Closed Runtime List
       
     </span>
   </a>
@@ -1291,10 +1291,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-that-buys-item-by-item" class="md-nav__link">
+  <a href="#what-compile-time-resolution-replaces" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What that buys, item by item
+        What Compile-Time Resolution Replaces
       
     </span>
   </a>
@@ -1302,10 +1302,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-consequences-you-actually-feel" class="md-nav__link">
+  <a href="#practical-architectural-benefits" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The consequences you actually feel
+        Practical Architectural Benefits
       
     </span>
   </a>
@@ -1313,10 +1313,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-the-cut-is-uncomfortable" class="md-nav__link">
+  <a href="#where-the-boundary-requires-trade-offs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where the cut is uncomfortable
+        Where the Boundary Requires Trade-offs
       
     </span>
   </a>
@@ -1324,10 +1324,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-test-for-any-new-feature" class="md-nav__link">
+  <a href="#the-guiding-rule-for-new-features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The test for any new feature
+        The Guiding Rule for New Features
       
     </span>
   </a>
@@ -1800,10 +1800,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-closed-list" class="md-nav__link">
+  <a href="#the-closed-runtime-list" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The closed list
+        The Closed Runtime List
       
     </span>
   </a>
@@ -1811,10 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-that-buys-item-by-item" class="md-nav__link">
+  <a href="#what-compile-time-resolution-replaces" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What that buys, item by item
+        What Compile-Time Resolution Replaces
       
     </span>
   </a>
@@ -1822,10 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-consequences-you-actually-feel" class="md-nav__link">
+  <a href="#practical-architectural-benefits" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The consequences you actually feel
+        Practical Architectural Benefits
       
     </span>
   </a>
@@ -1833,10 +1833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-the-cut-is-uncomfortable" class="md-nav__link">
+  <a href="#where-the-boundary-requires-trade-offs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where the cut is uncomfortable
+        Where the Boundary Requires Trade-offs
       
     </span>
   </a>
@@ -1844,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-test-for-any-new-feature" class="md-nav__link">
+  <a href="#the-guiding-rule-for-new-features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The test for any new feature
+        The Guiding Rule for New Features
       
     </span>
   </a>
@@ -1879,132 +1879,104 @@
   
 
 
-<h1 id="shape-vs-value">Shape vs Value<a class="headerlink" href="#shape-vs-value" title="Permanent link">&para;</a></h1>
-<p>Every design decision in LarkBatis follows from one cut. On one side: everything
-derivable from the <strong>shape</strong> of a mapper, which stopped changing when you saved the file.
-On the other: the <strong>values</strong> that flow through a call at runtime.</p>
-<p>The shape side is resolved at build time. The value side is the only thing left.</p>
-<h2 id="the-closed-list">The closed list<a class="headerlink" href="#the-closed-list" title="Permanent link">&para;</a></h2>
-<p>The list below is the whole of what may be resolved at runtime, and it is closed: an open
-one would quietly grow back into an interpreter.</p>
+<h1 id="shape-vs-value">Shape vs. Value<a class="headerlink" href="#shape-vs-value" title="Permanent link">&para;</a></h1>
+<p>Every architectural decision in LarkBatis stems from a single design rule: separating the <strong>static structure (shape)</strong> of a query from the <strong>dynamic values</strong> passed at runtime.</p>
+<p>The structure of a query—its SQL template, parameter types, column mappings, and target bean setters—is completely fixed the moment you write the code. Only dynamic values should be evaluated when the query executes.</p>
+<h2 id="the-closed-runtime-list">The Closed Runtime List<a class="headerlink" href="#the-closed-runtime-list" title="Permanent link">&para;</a></h2>
+<p>To prevent the gradual creep of runtime interpreters and reflection, LarkBatis strictly limits what may be evaluated at runtime to this closed list:</p>
 <table>
 <thead>
 <tr>
-<th>Resolved at runtime</th>
-<th>Why it has to be</th>
+<th>Runtime Evaluation</th>
+<th>Technical Reason</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Parameter <strong>values</strong></td>
-<td>They are the input</td>
+<td>Method parameter <strong>values</strong></td>
+<td>Dynamic inputs provided by caller</td>
 </tr>
 <tr>
-<td>The <strong>boolean result</strong> of an <code>&lt;if&gt;</code> / <code>&lt;when&gt;</code> test</td>
-<td>It depends on parameter values</td>
+<td>Evaluated <strong>boolean result</strong> of <code>&lt;if&gt;</code> / <code>&lt;when&gt;</code></td>
+<td>Depends on runtime parameter values</td>
 </tr>
 <tr>
-<td>The <strong>size</strong> of a <code>&lt;foreach&gt;</code> collection</td>
-<td>It depends on parameter values</td>
+<td>Element <strong>count</strong> of <code>&lt;foreach&gt;</code> collections</td>
+<td>Depends on collection size passed at runtime</td>
 </tr>
 <tr>
-<td>The <strong>rows</strong> in a <code>ResultSet</code></td>
-<td>The database produced them</td>
+<td>Returned <strong>data rows</strong> from a <code>ResultSet</code></td>
+<td>Data returned by the database</td>
 </tr>
 <tr>
-<td>The <strong>actual column count</strong>, when the generator could not parse the select list</td>
-<td><code>SELECT *</code> has no static answer</td>
+<td>Dynamic <strong>column positions</strong> for <code>SELECT *</code></td>
+<td>Only used when query columns cannot be parsed statically</td>
 </tr>
 <tr>
-<td>The <strong>contents</strong> of a <code>SqlFragment</code></td>
-<td>The escape hatch, and it is audited</td>
+<td>Dynamic text in <code>SqlFragment</code></td>
+<td>Explicitly audited dynamic SQL fragments</td>
 </tr>
 </tbody>
 </table>
-<p>Everything else happens at build time. Not "usually", not "when possible": everything.</p>
-<p>One more slot is reserved — a <code>databaseId</code> chosen once at startup, so a statement could
-have a per-vendor variant. <strong>It was never built.</strong> A <code>databaseId</code> attribute on a
-statement is a compile error today, and the answer to two vendors is two mapper
-interfaces. The row is called out here rather than quietly left off, because a list that
-claims to be closed has to be honest about what is on it.</p>
-<h2 id="what-that-buys-item-by-item">What that buys, item by item<a class="headerlink" href="#what-that-buys-item-by-item" title="Permanent link">&para;</a></h2>
+<p>Everything else—parameter setter selection, property-to-column mappings, SQL inlining, and bean instantiation—is resolved at compile time during <code>javac</code>.</p>
+<h2 id="what-compile-time-resolution-replaces">What Compile-Time Resolution Replaces<a class="headerlink" href="#what-compile-time-resolution-replaces" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Decided at build time</th>
-<th>What MyBatis does at runtime instead</th>
+<th>Compile-Time Resolution (LarkBatis)</th>
+<th>Runtime Interpretation (MyBatis)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Which <code>ps.setXxx</code> binds each parameter</td>
-<td><code>TypeHandlerRegistry</code> lookup by Java type and JDBC type</td>
+<td>Hardcodes typed <code>ps.setXxx</code> calls</td>
+<td><code>TypeHandlerRegistry</code> map lookup per parameter</td>
 </tr>
 <tr>
-<td>Which column index feeds each setter</td>
-<td>Reflective <code>MetaObject.setValue(propertyName, value)</code> per column per row</td>
+<td>Hardcodes positional <code>rs.getXxx(index)</code> calls</td>
+<td>Reflective <code>MetaObject.setValue()</code> per column per row</td>
 </tr>
 <tr>
-<td>Which setter that even is</td>
-<td><code>Reflector</code> builds a name → <code>Invoker</code> map per class</td>
+<td>Hardcodes direct bean setter invocations</td>
+<td><code>Reflector</code> property name-to-method invocation lookup</td>
 </tr>
 <tr>
-<td>Whether <code>&lt;where&gt;</code> emits its keyword</td>
-<td>A runtime scan of the assembled fragment for a leading <code>AND</code>/<code>OR</code></td>
+<td>Constant-folds <code>&lt;where&gt;</code> and <code>&lt;set&gt;</code> into booleans</td>
+<td>Runtime substring scanning and string trimming</td>
 </tr>
 <tr>
-<td>What <code>&lt;include refid&gt;</code> expands to</td>
-<td>Resolved from a <code>Configuration</code> map</td>
+<td>Inlines static <code>&lt;include refid="..."&gt;</code> fragments</td>
+<td>Runtime XML DOM tree node resolution</td>
 </tr>
 <tr>
-<td>The Java expression for each <code>test</code></td>
-<td>OGNL parses and evaluates against an <code>ObjectWrapper</code></td>
+<td>Compiles <code>&lt;if test="..."&gt;</code> to plain Java booleans</td>
+<td>Runtime OGNL expression parsing and reflection</td>
 </tr>
 <tr>
-<td>Which class implements the mapper</td>
-<td><code>Proxy.newProxyInstance</code> + <code>MapperMethod</code> dispatch</td>
+<td>Generates concrete <code>Mapper$$Impl</code> classes</td>
+<td><code>Proxy.newProxyInstance()</code> dynamic JDK proxies</td>
 </tr>
 </tbody>
 </table>
-<h2 id="the-consequences-you-actually-feel">The consequences you actually feel<a class="headerlink" href="#the-consequences-you-actually-feel" title="Permanent link">&para;</a></h2>
-<p><strong>Type errors move to compile time.</strong> A <code>#{customerName}</code> that does not exist on the
-parameter type is a build error naming the method. In MyBatis it is a runtime
-<code>ReflectionException</code> on the unlucky code path.</p>
-<p><strong>There is no metadata to write for native image.</strong> No <code>Proxy</code>, no <code>Class.forName</code>, no
-<code>setAccessible</code>, so nothing to declare. The property is a <em>consequence</em> of the cut, not a
-feature that was added.</p>
-<p><strong>Reflection cannot be reintroduced accidentally.</strong> There is no runtime that could do it.
-A feature request that needs runtime type inspection has no place to put it, which is why
-the <a href="../../features/mybatis-differences/">dropped feature list</a> is what it is.</p>
-<p><strong>Some MyBatis features become impossible rather than unimplemented.</strong> That distinction
-matters when reading the dropped list. <code>&lt;discriminator&gt;</code> chooses a result class from a
-column value, so the <em>shape</em> of the result depends on a runtime value and it lands on the
-wrong side of the cut by construction. Lazy loading needs a proxy per result object. Plugins
-hook a runtime pipeline that does not exist. None of these are "not yet".</p>
-<h2 id="where-the-cut-is-uncomfortable">Where the cut is uncomfortable<a class="headerlink" href="#where-the-cut-is-uncomfortable" title="Permanent link">&para;</a></h2>
-<p>Three places, and it is worth being honest that they are trade-offs and not free wins.</p>
-<p><strong>1 · <code>&lt;foreach&gt;</code> cardinality.</strong> The number of placeholders genuinely is a runtime value,
-so the SQL text is assembled at runtime for those statements. LarkBatis compiles the loop
-instead of interpreting a tree, but the text still varies, which is why those statements
-get variant tracking and why <code>@PadPow2</code> exists.</p>
-<p><strong>2 · <code>SELECT *</code>.</strong> The column count is not knowable at build time. That one statement
-falls back to name-based reads resolved from <code>ResultSetMetaData</code> on the first row. Correct,
-slower, and reported at build time so it is a decision.</p>
-<p><strong>3 · <code>${}</code>.</strong> Sometimes an identifier really does come from configuration. Instead of a
-ban, the cut is enforced at the type level: only <code>SqlFragment</code>, closed-value types, or
-<code>@OrderBy(allowed = {...})</code> may be spliced, and arbitrary text has exactly one named entry
-point.</p>
-<h2 id="the-test-for-any-new-feature">The test for any new feature<a class="headerlink" href="#the-test-for-any-new-feature" title="Permanent link">&para;</a></h2>
-<p>Before adding anything, the question is: <em>does this need a runtime value that is not on
-the list?</em></p>
+<h2 id="practical-architectural-benefits">Practical Architectural Benefits<a class="headerlink" href="#practical-architectural-benefits" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>No</strong> → it belongs at build time, and the only question left is what the generated
-  code should look like.</li>
-<li><strong>Yes</strong> → either the list grows, which requires a very good reason, or the feature is
-  dropped with a compile error naming the replacement.</li>
+<li><strong>Compile-Time Type Safety</strong>: Referencing a non-existent parameter like <code>#{customerName}</code> fails compilation with a clear error pointing to the method. In standard MyBatis, this only fails at runtime when that specific query executes.</li>
+<li><strong>Zero GraalVM Native Image Metadata</strong>: Without <code>Proxy</code>, <code>Class.forName()</code>, or <code>setAccessible()</code>, there is no reflection reachability configuration to write or maintain.</li>
+<li><strong>Guaranteed No-Reflection Architecture</strong>: Because there is no runtime reflection engine, new features cannot accidentally introduce runtime reflection overhead.</li>
 </ul>
-<p>Read the <a href="../../features/mybatis-differences/">dropped feature list</a> with that question in
-hand and it stops looking arbitrary.</p>
+<h2 id="where-the-boundary-requires-trade-offs">Where the Boundary Requires Trade-offs<a class="headerlink" href="#where-the-boundary-requires-trade-offs" title="Permanent link">&para;</a></h2>
+<p>Being honest about architectural trade-offs:</p>
+<ol>
+<li><strong><code>&lt;foreach&gt;</code> Parameter Counts</strong>: Because collection size is only known at runtime, dynamic query strings must be assembled for <code>&lt;foreach&gt;</code> queries. LarkBatis compiles this into efficient loops and provides <code>@PadPow2</code> to bound statement cache variants.</li>
+<li><strong><code>SELECT *</code> Queries</strong>: If column names cannot be parsed at compile time, LarkBatis resolves column indexes once from <code>ResultSetMetaData</code> on the first row, then reads subsequent rows positionally.</li>
+<li><strong>Dynamic Identifiers via <code>${}</code></strong>: When table or column names must vary dynamically, LarkBatis enforces type-safe validation using <code>@OrderBy(allowed = {...})</code> or audited <code>SqlFragment</code> wrappers.</li>
+</ol>
+<h2 id="the-guiding-rule-for-new-features">The Guiding Rule for New Features<a class="headerlink" href="#the-guiding-rule-for-new-features" title="Permanent link">&para;</a></h2>
+<p>When evaluating any proposed feature, we ask a single question: <em>Does this feature require runtime information not on the closed list?</em></p>
+<ul>
+<li><strong>If No</strong>: It must be resolved at compile time.</li>
+<li><strong>If Yes</strong>: The feature is either modeled as an explicit <code>SqlFragment</code> or rejected with a compile error pointing to a safer alternative.</li>
+</ul>
 
 
 

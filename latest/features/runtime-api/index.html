@@ -1946,39 +1946,33 @@
 
 
 <h1 id="runtime-api">Runtime API<a class="headerlink" href="#runtime-api" title="Permanent link">&para;</a></h1>
-<p>Everything in <code>io.github.larkbatis.runtime</code>. Zero dependencies beyond JDBC, and nothing
-here inspects a type, resolves a name or consults a registry. That all happened at build
-time.</p>
+<p>Here is the public API in <code>io.github.larkbatis.runtime</code>. The runtime has zero dependencies beyond standard JDBC—no reflection, no dynamic proxies, and no runtime type inspection.</p>
 <h2 id="larkbatissession"><code>LarkBatisSession</code><a class="headerlink" href="#larkbatissession" title="Permanent link">&para;</a></h2>
-<p>The whole environment a generated mapper needs.</p>
+<p>The runtime session contract used by all generated mappers:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">LarkBatisSession</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="nf">conn</span><span class="p">();</span><span class="w">                                    </span><span class="c1">// (1)!</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="p">);</span><span class="w">                           </span><span class="c1">// (2)!</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="n">RuntimeException</span><span class="w"> </span><span class="nf">translate</span><span class="p">(</span><span class="n">SQLException</span><span class="w"> </span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">sql</span><span class="p">);</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1">// the manual escape hatch</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1">// Escape hatch for dynamic SQL</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w">   </span><span class="nf">query</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">);</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="w">         </span><span class="nf">queryOne</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">);</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">queryStream</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">);</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">int</span><span class="w">           </span><span class="nf">update</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">);</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="c1">// used by generated Stream-returning bodies</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="c1">// Internal helpers for Stream returns</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">Connection</span><span class="p">,</span><span class="w"> </span><span class="n">PreparedStatement</span><span class="p">,</span><span class="w"> </span><span class="n">ResultSet</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">);</span>
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">RuntimeException</span><span class="w"> </span><span class="nf">streamFailed</span><span class="p">(</span><span class="n">Connection</span><span class="p">,</span><span class="w"> </span><span class="n">PreparedStatement</span><span class="p">,</span><span class="w"> </span><span class="n">ResultSet</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">SQLException</span><span class="p">);</span>
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Borrow a connection. Inside an active transaction scope this returns the
-    transaction's connection; otherwise a fresh auto-commit one.</li>
-<li>Return a connection borrowed with <code>conn()</code>. A no-op when the connection belongs to an
-    active transaction; closes it otherwise.</li>
+<li><strong><code>conn()</code></strong>: Returns the connection bound to the active transaction, or opens a new auto-commit connection if running standalone.</li>
+<li><strong><code>release(Connection c)</code></strong>: Returns the connection. A no-op if part of an active transaction; closes the connection otherwise.</li>
 </ol>
-<p>Two implementations: <code>JdbcLarkBatisSession</code> (standalone) and <code>SpringLarkBatisSession</code>
-(in <code>larkbatis-spring</code>).</p>
-<p>Note what the escape-hatch signatures refuse: there is no <code>String</code> overload anywhere.
-Arbitrary SQL text enters only through <code>SqlFragment</code>.</p>
+<p>Implementations: <code>JdbcLarkBatisSession</code> (standalone Java) and <code>SpringLarkBatisSession</code> (<code>larkbatis-spring</code>).</p>
 <h2 id="jdbclarkbatissession"><code>JdbcLarkBatisSession</code><a class="headerlink" href="#jdbclarkbatissession" title="Permanent link">&para;</a></h2>
+<p>Standalone implementation of <code>LarkBatisSession</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">JdbcLarkBatisSession</span><span class="p">(</span><span class="n">DataSource</span><span class="w"> </span><span class="n">dataSource</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kd">public</span><span class="w"> </span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="nf">begin</span><span class="p">()</span>
@@ -1986,7 +1980,7 @@ Arbitrary SQL text enters only through <code>SqlFragment</code>.</p>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">hasActiveTransaction</span><span class="p">()</span>
 </span></code></pre></div>
 <h2 id="larkbatistx"><code>LarkBatisTx</code><a class="headerlink" href="#larkbatistx" title="Permanent link">&para;</a></h2>
-<p>One transaction scope, for try-with-resources.</p>
+<p>Transaction scope for standalone applications using try-with-resources:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
@@ -1996,134 +1990,134 @@ Arbitrary SQL text enters only through <code>SqlFragment</code>.</p>
 <thead>
 <tr>
 <th>Method</th>
-<th></th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>commit()</code></td>
-<td><strong>Votes</strong> to commit. The actual commit happens when the outermost scope closes. Throws <code>LarkBatisRollbackOnlyException</code> if an inner scope already poisoned the transaction</td>
+<td><strong>Votes</strong> to commit. The physical commit executes when the outermost scope closes</td>
 </tr>
 <tr>
 <td><code>rollbackOnly()</code></td>
-<td>Marks the transaction rollback-only explicitly</td>
+<td>Explicitly marks the transaction as rollback-only</td>
 </tr>
 <tr>
 <td><code>close()</code></td>
-<td>Leaving without voting marks the whole transaction rollback-only</td>
+<td>Exiting the block without voting to commit triggers an automatic rollback</td>
 </tr>
 </tbody>
 </table>
-<p>Scopes nest: an inner <code>begin()</code> joins the outer transaction, and only the outermost close
-touches the connection. <a href="../../usage/transactions/">Details</a></p>
+<p>Scopes support nesting: inner scopes join the existing outer transaction. See <a href="../../usage/transactions/">Transactions</a>.</p>
 <h2 id="sqlfragment"><code>SqlFragment</code><a class="headerlink" href="#sqlfragment" title="Permanent link">&para;</a></h2>
-<p>The single gate arbitrary SQL text passes through.</p>
+<p>The safe wrapper for dynamic SQL text:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">SqlFragment</span><span class="w"> </span><span class="nf">allowed</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">...</span><span class="w"> </span><span class="n">allowed</span><span class="p">)</span><span class="w">   </span><span class="c1">// (1)!</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">SqlFragment</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w">                    </span><span class="c1">// (2)!</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">SqlFragment</span><span class="w"> </span><span class="nf">unsafeRawSql</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w">                  </span><span class="c1">// (3)!</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">text</span><span class="p">()</span>
 </span></code></pre></div>
 <ol>
-<li>Closed allow-list. Anything else throws <code>LarkBatisRejectedException</code>. <strong>Prefer this.</strong></li>
-<li>A plain SQL identifier: letters, digits, underscore, optionally dot-qualified.</li>
-<li>Anything. The one audit point: <code>grep -rn unsafeRawSql src/</code>.</li>
+<li><strong><code>allowed(...)</code></strong>: Validates against a static whitelist. (Recommended).</li>
+<li><strong><code>identifier(...)</code></strong>: Validates SQL identifiers (alphanumeric and underscores).</li>
+<li><strong><code>unsafeRawSql(...)</code></strong>: Slices raw SQL text. Searchable across codebases via <code>grep -rn unsafeRawSql src/</code>.</li>
 </ol>
 <h2 id="larkbatissql"><code>LarkBatisSql</code><a class="headerlink" href="#larkbatissql" title="Permanent link">&para;</a></h2>
-<p>Static helpers referenced by generated code.</p>
+<p>Static utility helpers called by generated bytecode:</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Helper</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>trackVariants(String statementId, String sql)</code></td>
-<td>Counts distinct SQL texts per statement. Emitted for every statement whose text is not fixed at build time</td>
+<td><code>trackVariants(statementId, sql)</code></td>
+<td>Monitors distinct SQL text variants per statement</td>
 </tr>
 <tr>
 <td><code>maxSqlVariants(int limit)</code></td>
-<td>Threshold. Default <strong>64</strong>, or <code>-Dlarkbatis.maxSqlVariants</code></td>
+<td>Sets threshold for dynamic SQL text variants (default 64)</td>
 </tr>
 <tr>
 <td><code>failOnUnboundedVariants(boolean)</code></td>
-<td>Throw instead of warning. Default <code>false</code>, or <code>-Dlarkbatis.failOnUnboundedVariants</code></td>
+<td>Throws exception instead of logging warning when threshold exceeded</td>
 </tr>
 <tr>
 <td><code>padPow2(int n)</code></td>
-<td>Next power of two, for <code>@PadPow2</code></td>
+<td>Calculates power-of-two padding length for <code>@PadPow2</code></td>
 </tr>
 <tr>
 <td><code>sum(int[] updateCounts)</code></td>
-<td>Total of <code>executeBatch()</code> counts</td>
+<td>Aggregates result counts for JDBC batch execution</td>
 </tr>
 </tbody>
 </table>
 <h2 id="jdbccodec"><code>JdbcCodec</code><a class="headerlink" href="#jdbccodec" title="Permanent link">&para;</a></h2>
-<p>Null-aware and converting read/write helpers, the inlined remains of the <code>TypeHandler</code>
-layer. The <em>choice</em> of helper was made at build time; only the value work happens here.</p>
-<p><strong>Reads:</strong> <code>booleanOrNull</code> <code>byteOrNull</code> <code>shortOrNull</code> <code>intOrNull</code> <code>longOrNull</code>
-<code>floatOrNull</code> <code>doubleOrNull</code> <code>instant</code> <code>localDateTime</code> <code>localDate</code> <code>localTime</code> <code>enumValue</code></p>
-<p><strong>Writes:</strong> <code>setBoolean</code> <code>setByte</code> <code>setShort</code> <code>setInt</code> <code>setLong</code> <code>setFloat</code> <code>setDouble</code>
-<code>setInstant</code> <code>setLocalDateTime</code> <code>setLocalDate</code> <code>setLocalTime</code> <code>setEnum</code></p>
+<p>Static helpers for null-safe primitive conversions and enum/date mappings:</p>
+<ul>
+<li><strong>Reads</strong>: <code>booleanOrNull</code>, <code>byteOrNull</code>, <code>shortOrNull</code>, <code>intOrNull</code>, <code>longOrNull</code>, <code>floatOrNull</code>, <code>doubleOrNull</code>, <code>instant</code>, <code>localDateTime</code>, <code>localDate</code>, <code>localTime</code>, <code>enumValue</code></li>
+<li><strong>Writes</strong>: <code>setBoolean</code>, <code>setByte</code>, <code>setShort</code>, <code>setInt</code>, <code>setLong</code>, <code>setFloat</code>, <code>setDouble</code>, <code>setInstant</code>, <code>setLocalDateTime</code>, <code>setLocalDate</code>, <code>setLocalTime</code>, <code>setEnum</code></li>
+</ul>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="nf">longOrNull</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">column</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">column</span><span class="p">);</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">wasNull</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w">   </span><span class="c1">// rs.getLong returns 0 for SQL NULL</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">wasNull</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Types whose accessor is already correct (<code>String</code>, <code>BigDecimal</code>, <code>byte[]</code>,
-<code>java.sql.Timestamp</code>) are called directly and do not appear here.</p>
+<p>Standard types with built-in null handling (<code>String</code>, <code>BigDecimal</code>, <code>byte[]</code>, <code>Timestamp</code>) use direct JDBC methods.</p>
 <h2 id="rowreadert-and-statementbinder"><code>RowReader&lt;T&gt;</code> and <code>StatementBinder</code><a class="headerlink" href="#rowreadert-and-statementbinder" title="Permanent link">&para;</a></h2>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@FunctionalInterface</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nd">@FunctionalInterface</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">StatementBinder</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">bind</span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@FunctionalInterface</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="p">;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">}</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nd">@FunctionalInterface</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">StatementBinder</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">bind</span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="p">;</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Every generated row-reader class exposes <code>public static final RowReader&lt;T&gt; READER</code>, so
-the escape hatch reuses generated readers and never reflects.</p>
+<p>Every generated row reader class exposes a <code>public static final RowReader&lt;T&gt; READER</code> instance. Custom escape-hatch queries reuse these static readers with zero runtime reflection.</p>
 <h2 id="exceptions">Exceptions<a class="headerlink" href="#exceptions" title="Permanent link">&para;</a></h2>
-<p>All unchecked, all rooted at <code>LarkBatisException</code>, which carries the SQL text (or a
-pseudo-statement id such as <code>tx:commit</code>) via <code>sql()</code>.</p>
+<p>All exceptions are unchecked and extend <code>LarkBatisException</code>:</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>Thrown when</th>
+<th>Exception</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>LarkBatisException</code></td>
-<td>Root. Wraps a <code>SQLException</code> with its SQL text</td>
+<td>Base runtime exception wrapping underlying <code>SQLException</code>s</td>
 </tr>
 <tr>
 <td><code>LarkBatisRejectedException</code></td>
-<td>A value offered to a <code>SqlFragment</code> factory or an <code>@OrderBy</code> switch was rejected. The value never reached the SQL</td>
+<td>Thrown when an input to <code>SqlFragment</code> or <code>@OrderBy</code> is rejected by the whitelist</td>
 </tr>
 <tr>
 <td><code>LarkBatisEmptyForeachException</code></td>
-<td>A <code>&lt;foreach&gt;</code> collection was empty. Names the statement and the parameter</td>
+<td>Thrown when an un-guarded <code>&lt;foreach&gt;</code> collection is empty</td>
 </tr>
 <tr>
 <td><code>LarkBatisNoKeyException</code></td>
-<td>A statement expected a generated key and the driver returned none</td>
+<td>Thrown when <code>useGeneratedKeys = true</code> is set but the driver returned no keys</td>
 </tr>
 <tr>
 <td><code>LarkBatisKeyCountMismatchException</code></td>
-<td>A batch insert got fewer keys back than it had rows</td>
+<td>Thrown when a batch insert receives fewer generated keys than inserted rows</td>
 </tr>
 <tr>
 <td><code>LarkBatisUnboundedVariantsException</code></td>
-<td>A statement exceeded <code>max-sql-variants</code> and the deployment asked to fail rather than warn</td>
+<td>Thrown when dynamic SQL variants exceed <code>max-sql-variants</code> with fail-fast enabled</td>
 </tr>
 <tr>
 <td><code>LarkBatisRollbackOnlyException</code></td>
-<td><code>commit()</code> on a transaction an inner scope already poisoned</td>
+<td>Thrown when attempting to commit a transaction poisoned by an inner scope error</td>
 </tr>
 </tbody>
 </table>
-<p>Under Spring, <code>translate</code> produces Spring's <code>DataAccessException</code> tree instead, so a
-unique-constraint violation arrives as <code>DuplicateKeyException</code>, exactly as from
-<code>JdbcTemplate</code>. <a href="../errors/">Details</a></p>
+<p>In Spring environments, <code>translate()</code> automatically converts errors to Spring's <code>DataAccessException</code> hierarchy (e.g. <code>DuplicateKeyException</code>). See <a href="../errors/">Errors</a>.</p>
 
 
 

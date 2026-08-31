@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#life-of-a-call" class="md-skip">
+        <a href="#call-lifecycle" class="md-skip">
           Skip to content
         </a>
       
@@ -1336,10 +1336,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mybatis" class="md-nav__link">
+  <a href="#mybatis-execution-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MyBatis
+        MyBatis Execution Flow
       
     </span>
   </a>
@@ -1347,10 +1347,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#larkbatis" class="md-nav__link">
+  <a href="#larkbatis-execution-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LarkBatis
+        LarkBatis Execution Flow
       
     </span>
   </a>
@@ -1358,10 +1358,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-column-assignment-side-by-side" class="md-nav__link">
+  <a href="#column-assignment-under-the-hood" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The column assignment, side by side
+        Column Assignment: Under the Hood
       
     </span>
   </a>
@@ -1369,10 +1369,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-still-happens-at-runtime" class="md-nav__link">
+  <a href="#what-actually-runs-at-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What still happens at runtime
+        What Actually Runs at Runtime
       
     </span>
   </a>
@@ -1380,10 +1380,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#which-is-why-the-benefit-scales-with-rows" class="md-nav__link">
+  <a href="#where-performance-gains-matter-most" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Which is why the benefit scales with rows
+        Where Performance Gains Matter Most
       
     </span>
   </a>
@@ -1800,10 +1800,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mybatis" class="md-nav__link">
+  <a href="#mybatis-execution-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MyBatis
+        MyBatis Execution Flow
       
     </span>
   </a>
@@ -1811,10 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#larkbatis" class="md-nav__link">
+  <a href="#larkbatis-execution-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LarkBatis
+        LarkBatis Execution Flow
       
     </span>
   </a>
@@ -1822,10 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-column-assignment-side-by-side" class="md-nav__link">
+  <a href="#column-assignment-under-the-hood" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The column assignment, side by side
+        Column Assignment: Under the Hood
       
     </span>
   </a>
@@ -1833,10 +1833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-still-happens-at-runtime" class="md-nav__link">
+  <a href="#what-actually-runs-at-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What still happens at runtime
+        What Actually Runs at Runtime
       
     </span>
   </a>
@@ -1844,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#which-is-why-the-benefit-scales-with-rows" class="md-nav__link">
+  <a href="#where-performance-gains-matter-most" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Which is why the benefit scales with rows
+        Where Performance Gains Matter Most
       
     </span>
   </a>
@@ -1879,11 +1879,11 @@
   
 
 
-<h1 id="life-of-a-call">Life of a Call<a class="headerlink" href="#life-of-a-call" title="Permanent link">&para;</a></h1>
-<p>One mapper call, both ways. Same interface, same SQL, same result.</p>
+<h1 id="call-lifecycle">Call Lifecycle<a class="headerlink" href="#call-lifecycle" title="Permanent link">&para;</a></h1>
+<p>Let's trace a single mapper call under standard MyBatis versus LarkBatis. Both use the identical Java interface, SQL statement, and result class:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapper</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
 </span></code></pre></div>
-<h2 id="mybatis">MyBatis<a class="headerlink" href="#mybatis" title="Permanent link">&para;</a></h2>
+<h2 id="mybatis-execution-flow">MyBatis Execution Flow<a class="headerlink" href="#mybatis-execution-flow" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant App
@@ -1908,10 +1908,8 @@
         end
     end
     Res--&gt;&gt;App: User</code></pre>
-<p>Four groups of reflective work on that path: <code>createCacheKey</code>, <code>getBoundSql</code> (OGNL when
-the statement is dynamic), <code>setParameters</code>, and <code>handleResultSets</code>. The last one is the
-expensive one, because it runs per column per row.</p>
-<h2 id="larkbatis">LarkBatis<a class="headerlink" href="#larkbatis" title="Permanent link">&para;</a></h2>
+<p>MyBatis performs multiple layers of reflection and runtime lookups: <code>createCacheKey</code>, <code>getBoundSql</code> (runtime OGNL evaluation for dynamic SQL), <code>TypeHandler</code> parameter lookups, and <code>handleResultSets</code>. The result set mapping is by far the most expensive step because it runs for every single column of every single row.</p>
+<h2 id="larkbatis-execution-flow">LarkBatis Execution Flow<a class="headerlink" href="#larkbatis-execution-flow" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant App
@@ -1930,83 +1928,70 @@ expensive one, because it runs per column per row.</p>
     Row--&gt;&gt;Impl: User
     Impl-&gt;&gt;Sess: release(c)
     Impl--&gt;&gt;App: User</code></pre>
-<p>No proxy, no lookup, no evaluation. The steps that disappeared did not move somewhere
-else. They were performed at build time, and their answers are literals in the source.</p>
-<h2 id="the-column-assignment-side-by-side">The column assignment, side by side<a class="headerlink" href="#the-column-assignment-side-by-side" title="Permanent link">&para;</a></h2>
-<p>The measured difference lives here. For <strong>every column of every row</strong>, MyBatis does:</p>
+<p>In LarkBatis, there is no dynamic proxy, no statement map lookup, and no runtime expression interpreter. The column positions, parameter types, and setter calls were fixed during compilation.</p>
+<h2 id="column-assignment-under-the-hood">Column Assignment: Under the Hood<a class="headerlink" href="#column-assignment-under-the-hood" title="Permanent link">&para;</a></h2>
+<p>The performance difference between the two approaches is most visible in result set processing.</p>
+<p>For <strong>every single column of every row</strong>, MyBatis executes:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">metaObject</span><span class="p">.</span><span class="na">setValue</span><span class="p">(</span><span class="s">"userName"</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">//  ① new PropertyTokenizer(name)        allocation + indexOf + substring</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">//  ② BeanWrapper.set(prop, value)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1">//  ③ metaClass.getSetInvoker(name)      HashMap lookup by String</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">//  ④ Object[] params = { value }        allocation</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1">//  ⑤ method.invoke(obj, params)         reflective call</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">//  1. new PropertyTokenizer(name)        allocation + string parsing</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">//  2. BeanWrapper.set(prop, value)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1">//  3. metaClass.getSetInvoker(name)      HashMap lookup by String</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">//  4. Object[] params = { value }        allocation</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1">//  5. method.invoke(obj, params)         reflective method invocation</span>
 </span></code></pre></div>
-<p>LarkBatis does:</p>
+<p>LarkBatis executes direct, hardcoded bytecode:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">u</span><span class="p">.</span><span class="na">setUserName</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1">// the property name disappeared at build time</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">// the column index 4 was chosen at build time</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">// what is left is a putfield</span>
 </span></code></pre></div>
-<p>For a 10-column × 1,000-row result, that is <strong>10,000 <code>PropertyTokenizer</code> allocations +
-10,000 <code>Object[]</code> allocations + 10,000 map lookups + 10,000 <code>Method.invoke</code> calls</strong>, to
-perform 10,000 assignments that are fundamentally a <code>putfield</code>.</p>
-<div class="admonition note">
-<p class="admonition-title">The interesting part is not ⑤</p>
-<p>Since JDK 18, core reflection is built on method handles and a hot <code>Method.invoke</code> is
-very close to a direct call. The reliable saving is in ①③④, the work that exists
-<em>only</em> because the property name is a string that has to be resolved at runtime.</p>
-<p>This also predicts something the measurements confirmed: escape analysis does not
-clean this up. The <code>setValue → BeanWrapper → Invoker</code> chain is too deep for the JIT to
-scalar-replace those allocations. See <a href="../performance/">Performance</a>.</p>
-</div>
-<h2 id="what-still-happens-at-runtime">What still happens at runtime<a class="headerlink" href="#what-still-happens-at-runtime" title="Permanent link">&para;</a></h2>
-<p>Being precise about this matters, because "no runtime work" would be a lie:</p>
+<p>For a query returning 1,000 rows with 10 columns:</p>
+<ul>
+<li><strong>MyBatis</strong>: 10,000 <code>PropertyTokenizer</code> allocations + 10,000 <code>Object[]</code> arrays + 10,000 map lookups + 10,000 reflective <code>Method.invoke()</code> calls.</li>
+<li><strong>LarkBatis</strong>: 10,000 direct setter calls reading directly from indexed columns.</li>
+</ul>
+<p>The JIT compiler cannot eliminate MyBatis's allocations via escape analysis because the <code>setValue → BeanWrapper → Invoker</code> call chain is too deep.</p>
+<h2 id="what-actually-runs-at-runtime">What Actually Runs at Runtime<a class="headerlink" href="#what-actually-runs-at-runtime" title="Permanent link">&para;</a></h2>
+<p>To be transparent about runtime execution:</p>
 <table>
 <thead>
 <tr>
-<th>Still at runtime</th>
-<th></th>
+<th>Operation</th>
+<th>Execution Details</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>s.conn()</code> / <code>s.release(c)</code></td>
-<td>Borrowing from the pool or the transaction</td>
+<td>Obtains/returns connection from datasource or active transaction</td>
 </tr>
 <tr>
 <td><code>ps.setLong(1, 42)</code></td>
-<td>Binding the value, which is the point</td>
+<td>Positional JDBC parameter binding</td>
 </tr>
 <tr>
 <td><code>ps.executeQuery()</code></td>
-<td>The database round trip, which dominates a single-row query</td>
+<td>Database query execution and network round-trip</td>
 </tr>
 <tr>
 <td><code>rs.getString(2)</code></td>
-<td>The driver's own work</td>
+<td>JDBC driver column decoding</td>
 </tr>
 <tr>
-<td>For dynamic statements: evaluating each <code>test</code> once, and appending to a <code>StringBuilder</code></td>
-<td></td>
+<td>Dynamic SQL generation</td>
+<td>Evaluates <code>&lt;if&gt;</code> booleans once and appends to a local <code>StringBuilder</code></td>
 </tr>
 <tr>
-<td>For <code>&lt;foreach&gt;</code>: one loop for placeholders, one for values</td>
-<td></td>
+<td><code>&lt;foreach&gt;</code> loops</td>
+<td>Two loops: one generates placeholder strings (<code>?, ?</code>), one binds values</td>
 </tr>
 <tr>
-<td>For <code>${}</code> / <code>&lt;foreach&gt;</code>: one <code>trackVariants</code> call</td>
-<td>A <code>ConcurrentHashMap</code> lookup</td>
+<td>SQL variant monitoring</td>
+<td>One <code>ConcurrentHashMap</code> variant count check for dynamic queries</td>
 </tr>
 </tbody>
 </table>
-<p>What is gone is everything <em>between</em> the call and those operations.</p>
-<h2 id="which-is-why-the-benefit-scales-with-rows">Which is why the benefit scales with rows<a class="headerlink" href="#which-is-why-the-benefit-scales-with-rows" title="Permanent link">&para;</a></h2>
-<p>A <code>findById</code> returning one row does the reflective column work 4 times. A report query
-returning 10,000 rows does it 40,000 times, and that is where a 3.0 ms query becomes a
-0.8 ms one. Same code, same design; the multiplier is the row count.</p>
-<p>To put it bluntly: <strong>LarkBatis is an investment for
-report queries, exports, batches and list screens. It changes almost nothing for
-single-record lookups.</strong></p>
+<p>LarkBatis removes the intermediate abstraction layers between your application and JDBC.</p>
+<h2 id="where-performance-gains-matter-most">Where Performance Gains Matter Most<a class="headerlink" href="#where-performance-gains-matter-most" title="Permanent link">&para;</a></h2>
+<p>For a simple <code>findById</code> query returning a single row, the database network latency dominates total execution time—LarkBatis saves a few microseconds of CPU time.</p>
+<p>However, for report queries, batch processing, exports, and multi-row list queries returning thousands of rows, eliminating per-row reflection and intermediate object allocations reduces query processing overhead significantly.</p>
 
 
 

@@ -1539,19 +1539,19 @@
   <a href="#statement-annotations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement annotations
+        Statement Annotations
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Statement annotations">
+    <nav class="md-nav" aria-label="Statement Annotations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#select-insert-update-delete" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @Select @Insert @Update @Delete
+        @Select, @Insert, @Update, @Delete
       
     </span>
   </a>
@@ -1864,19 +1864,19 @@
   <a href="#statement-annotations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement annotations
+        Statement Annotations
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Statement annotations">
+    <nav class="md-nav" aria-label="Statement Annotations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#select-insert-update-delete" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @Select @Insert @Update @Delete
+        @Select, @Insert, @Update, @Delete
       
     </span>
   </a>
@@ -2002,15 +2002,13 @@
 
 
 <h1 id="annotations">Annotations<a class="headerlink" href="#annotations" title="Permanent link">&para;</a></h1>
-<p>Everything in <code>io.github.larkbatis.annotations</code>. All of them are <code>CLASS</code>-retention: they
-exist for the compiler and never appear at runtime, which is why a modular consumer
-declares the artifact <code>requires static</code>.</p>
-<h2 id="statement-annotations">Statement annotations<a class="headerlink" href="#statement-annotations" title="Permanent link">&para;</a></h2>
-<h3 id="select-insert-update-delete"><code>@Select</code> <code>@Insert</code> <code>@Update</code> <code>@Delete</code><a class="headerlink" href="#select-insert-update-delete" title="Permanent link">&para;</a></h3>
+<p>Here is the complete reference for annotations in <code>io.github.larkbatis.annotations</code>. All annotations use <code>CLASS</code> retention: they are read by the compiler during build time and discarded from bytecode at runtime. Modular projects can declare them via <code>requires static io.github.larkbatis.annotations;</code>.</p>
+<h2 id="statement-annotations">Statement Annotations<a class="headerlink" href="#statement-annotations" title="Permanent link">&para;</a></h2>
+<h3 id="select-insert-update-delete"><code>@Select</code>, <code>@Insert</code>, <code>@Update</code>, <code>@Delete</code><a class="headerlink" href="#select-insert-update-delete" title="Permanent link">&para;</a></h3>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">METHOD</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Select</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p><code>String[]</code>, joined with a single space. Applied to a mapper method.</p>
+<p>Accepts <code>String[]</code> (lines are joined with a single space). Applied directly to mapper methods:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Select</span><span class="p">({</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="s">"SELECT id, name, email, created_at"</span><span class="p">,</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="s">"FROM users"</span><span class="p">,</span>
@@ -2018,25 +2016,20 @@ declares the artifact <code>requires static</code>.</p>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">})</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">User</span><span class="w"> </span><span class="nf">findByEmail</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">);</span>
 </span></code></pre></div>
-<p>A method may have <strong>either</strong> a statement annotation <strong>or</strong> an XML statement. Both, or
-neither, is a compile error.</p>
+<p>Each method must define its SQL using <strong>either</strong> an annotation <strong>or</strong> XML. Having both or neither is a compile error.</p>
 <hr />
 <h2 id="mapper"><code>@Mapper</code><a class="headerlink" href="#mapper" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">TYPE</span><span class="p">)</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Mapper</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Marks an interface whose statements (or some of them) live in mapper XML. The XML file's
-<code>&lt;mapper namespace="…"&gt;</code> must be this interface's fully-qualified name, and each statement
-<code>id</code> must match a method name.</p>
-<p>Purely annotation-based mappers do <strong>not</strong> need it: the marker exists so the processor can
-see XML-only interfaces at all, which would otherwise never reach a processing round.</p>
+<p>Marks an interface whose statements are defined in mapper XML. The XML file's <code>namespace</code> must match the interface's fully-qualified class name, and statement <code>id</code>s must match method names.</p>
+<p>Purely annotation-based mappers do <strong>not</strong> need <code>@Mapper</code>: javac discovers them automatically from their <code>@Select</code>/<code>@Insert</code> annotations.</p>
 <hr />
 <h2 id="param"><code>@Param</code><a class="headerlink" href="#param" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">PARAMETER</span><span class="p">)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Param</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Names a parameter for <code>#{}</code> resolution. Required when a method has several parameters,
-and a reliable substitute for compiling with <code>-parameters</code>.</p>
+<p>Names a method parameter for <code>#{}</code> binding. Required when a method has multiple parameters unless compiled with the javac <code>-parameters</code> flag.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users WHERE name LIKE #{pattern} AND id &gt; #{after}"</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">page</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"pattern"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pattern</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"after"</span><span class="p">)</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">after</span><span class="p">);</span>
 </span></code></pre></div>
@@ -2049,177 +2042,115 @@ and a reliable substitute for compiling with <code>-parameters</code>.</p>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">keyColumn</span><span class="p">()</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Only the generated-keys subset of the MyBatis annotation is supported.</p>
+<p>Configures primary key retrieval after an <code>INSERT</code> statement:</p>
 <table>
 <thead>
 <tr>
 <th>Attribute</th>
-<th></th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>useGeneratedKeys</code></td>
-<td>Ask the driver for generated keys after an <code>INSERT</code></td>
+<td>Set to <code>true</code> to retrieve database-generated keys</td>
 </tr>
 <tr>
 <td><code>keyProperty</code></td>
-<td>Property (or <code>param.property</code>) the key is assigned to. <strong>Required</strong> when <code>useGeneratedKeys</code> is set; a wrong name is a compile error. Comma-separated for composite keys</td>
+<td>Target property on parameter object (e.g. <code>"id"</code> or <code>"user.id"</code>). <strong>Required</strong> when <code>useGeneratedKeys</code> is <code>true</code></td>
 </tr>
 <tr>
 <td><code>keyColumn</code></td>
-<td>Column name(s) of the key, comma-separated. Strongly recommended: omitting it produces a <strong>mandatory build warning</strong> and falls back to the non-portable <code>RETURN_GENERATED_KEYS</code>. See <a href="../../usage/generated-keys/">Generated Keys</a></td>
+<td>Database column name(s). Strongly recommended for consistent driver behavior. See <a href="../../usage/generated-keys/">Generated Keys</a></td>
 </tr>
 </tbody>
 </table>
-<p>If both are comma-separated, the two lists must be the same length.</p>
+<p>For composite keys, provide matching comma-separated lists:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name, email) VALUES (#{name}, #{email})"</span><span class="p">)</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
 </span></code></pre></div>
-<p><a href="../../usage/generated-keys/">Details</a></p>
 <hr />
 <h2 id="orderby"><code>@OrderBy</code><a class="headerlink" href="#orderby" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">PARAMETER</span><span class="p">)</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">OrderBy</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="nf">allowed</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Permits a <code>String</code> parameter to be bound to <code>${}</code>, by compiling it to a <code>switch</code> over the
-literal allow-list. A value outside the list is rejected at runtime with
-<code>LarkBatisRejectedException</code> and never reaches the SQL text.</p>
+<p>Allows a <code>String</code> parameter to be safely spliced into dynamic <code>${}</code> SQL clauses by validating it against a static whitelist at runtime via a generated <code>switch</code> statement. Inputs outside the allowed list throw <code>LarkBatisRejectedException</code>.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users ORDER BY ${sort}"</span><span class="p">)</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="nd">@OrderBy</span><span class="p">(</span><span class="n">allowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="s">"name"</span><span class="p">,</span><span class="w"> </span><span class="s">"created_at"</span><span class="p">})</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">sort</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Without it, a <code>String</code> parameter bound to <code>${}</code> is a compile error.
-<a href="../../usage/raw-sql/">Details</a></p>
+<p>Without <code>@OrderBy</code>, binding a plain <code>String</code> to <code>${}</code> fails compilation. See <a href="../../usage/raw-sql/">Raw SQL</a>.</p>
 <hr />
 <h2 id="padpow2"><code>@PadPow2</code><a class="headerlink" href="#padpow2" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">TYPE</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">PadPow2</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Pads a <code>&lt;foreach&gt;</code> placeholder count up to the next power of two, repeating the last
-element, which bounds SQL-text variants at log₂(n) instead of n. Hibernate calls the same
-trick <code>in_clause_parameter_padding</code>.</p>
-<p>On an interface it applies to every statement; on a method, to that one.</p>
+<p>Rounds <code>&lt;foreach&gt;</code> placeholder counts in <code>IN</code> clauses up to the next power of two by repeating the last element, bounding dynamic SQL statement variants to $\log_2(N)$ instead of $N$.</p>
+<p>Can be applied at the interface level or on individual methods:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nd">@PadPow2</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdsPadded</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p">);</span>
+</span></code></pre></div>
 <div class="admonition warning">
-<p class="admonition-title">Enforced, not trusted</p>
-<p>Repeating the last element is invisible only in an <code>IN</code> list. The generator requires
-the <code>&lt;foreach&gt;</code> body to be a single <code>#{}</code> bind and the statement not to be an
-<code>INSERT</code>. Outside those limits padding is a <strong>compile error</strong>, never silently
-duplicated rows.</p>
+<p class="admonition-title">Restricted to <code>IN</code> clauses</p>
+<p>Repeating parameters is only valid when duplicate elements don't affect query semantics. The compiler enforces that <code>@PadPow2</code> is only used on <code>SELECT</code>/<code>UPDATE</code>/<code>DELETE</code> statements with simple single-item <code>#{}</code> binds, and rejects its use on <code>INSERT</code> queries.</p>
 </div>
-<p><a href="../../usage/foreach-and-batches/#padpow2-bounding-the-sql-variants">Details</a></p>
 <hr />
 <h2 id="column"><code>@Column</code><a class="headerlink" href="#column" title="Permanent link">&para;</a></h2>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">FIELD</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Column</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">FIELD</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Column</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Names the column a result property reads from, where the build-time <code>snake_case</code> →
-<code>camelCase</code> convention is not enough: a legacy name the property should not be bent to,
-or one that has no relation to the property name at all.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Contact</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"contact_id"</span><span class="p">)</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">phone</span><span class="p">;</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"usr_email"</span><span class="p">)</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setEmail</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">email</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
-</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"mobile"</span><span class="p">)</span>
-</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getPhone</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">phone</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>
-</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">    </span><span class="c1">// ...</span>
-</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="p">}</span>
+<p>Overrides the default <code>snake_case</code> → <code>camelCase</code> column mapping for a specific field or accessor:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Contact</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"contact_id"</span><span class="p">)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">phone</span><span class="p">;</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"usr_email"</span><span class="p">)</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setEmail</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">email</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"mobile"</span><span class="p">)</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getPhone</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">phone</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Read on the <strong>field, the setter and the getter</strong>: the annotation targets <code>FIELD</code> and
-<code>METHOD</code> both, and the site you pick is the site that is read. Two of them naming
-different columns for one property is a compile error, because there is no correct way to
-pick between them.</p>
-<p>The name replaces the property name everywhere a column is matched: the positional reader
-when the select list parses, and the name-based <code>switch</code> when it does not. Matching stays
-case-insensitive, and underscores are ignored on both sides by default, so
-<code>@Column("usr_email")</code> also matches a <code>USR_EMAIL</code> or <code>usrEmail</code> label. Under
-<a href="../configuration/#column-naming"><code>-Alarkbatis.mapUnderscoreToCamelCase=false</code></a> the
-underscores are significant: the same annotation then matches <code>USR_EMAIL</code> but not
-<code>usrEmail</code>, which is also what makes <code>@Column</code> the way to keep one column mapped in a
-build that turned the convention off.</p>
-<div class="admonition warning">
-<p class="admonition-title">One column, one property</p>
-<p>Two properties resolving to the same column is a compile error naming both, and that
-includes a <code>@Column</code> colliding with another property's own name. The generated
-reader switches on that name, so there is no reading that could be right.</p>
-</div>
-<p>A <code>&lt;resultMap&gt;</code> still wins where it applies: it names columns per statement, which is
-more specific than a class-wide default.</p>
+<p>Can be placed on fields, getters, or setters. (Placing conflicting <code>@Column</code> names on the same property is a compile error).</p>
 <hr />
 <h2 id="larkbatisrow"><code>@LarkBatisRow</code><a class="headerlink" href="#larkbatisrow" title="Permanent link">&para;</a></h2>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">TYPE</span><span class="p">)</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">LarkBatisRow</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">TYPE</span><span class="p">)</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">LarkBatisRow</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Asks for a generated row reader for a class that never appears as a statement's
-<code>resultType</code>: the shape of an ad-hoc query, read only by the
-<a href="../../usage/raw-sql/#the-escape-hatch">escape hatch</a>.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nd">@LarkBatisRow</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DomainCount</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">domain</span><span class="p">;</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">total</span><span class="p">;</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="c1">// no-arg constructor + setters, as for any result class</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">}</span>
-</span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DomainCount</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">countByDomain</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minimum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span><span class="s">"SELECT ... GROUP BY domain HAVING COUNT(*) &gt;= ?"</span><span class="p">),</span>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">            </span><span class="n">ps</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">minimum</span><span class="p">),</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">            </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span><span class="w">   </span><span class="c1">// generated because of the annotation</span>
+<p>Generates a static <code>RowReader</code> for classes used exclusively in custom escape-hatch queries rather than standard mapper return types:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nd">@LarkBatisRow</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DomainCount</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">domain</span><span class="p">;</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">total</span><span class="p">;</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span><span class="c1">// standard getters and setters</span>
 </span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The same reasoning keeps <code>s.query(...)</code> taking a <code>RowReader&lt;T&gt;</code> instead of a <code>Class&lt;T&gt;</code>.
-A <code>Class</code> there would have to be inspected at runtime to find setters, costing the
-no-reflection property the whole design rests on. The reader is generated, so javac
-checks the result type and there is nothing to discover at startup.</p>
-<p>The class has the same contract as any result class: no-arg constructor and setters. Its
-<strong>declaration order is the canonical column order</strong> of <code>READER</code>, there being no select
-list to take an order from. Hand-assembled SQL either selects the columns in that order,
-or reads through <code>DomainCountRow.columns(rs)</code> and <code>DomainCountRow.read(rs, c)</code>, which
-match on name.</p>
-<p>Marking a class that a statement already returns is harmless: one reader is generated
-either way.</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DomainCount</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">countByDomain</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minimum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span><span class="s">"SELECT ... GROUP BY domain HAVING COUNT(*) &gt;= ?"</span><span class="p">),</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">            </span><span class="n">ps</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">minimum</span><span class="p">),</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">            </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span><span class="w">   </span><span class="c1">// generated via @LarkBatisRow</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">}</span>
+</span></code></pre></div>
 <hr />
 <h2 id="handler"><code>@Handler</code><a class="headerlink" href="#handler" title="Permanent link">&para;</a></h2>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">PARAMETER</span><span class="p">,</span><span class="w"> </span><span class="n">FIELD</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Handler</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">PARAMETER</span><span class="p">,</span><span class="w"> </span><span class="n">FIELD</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Handler</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Names the <code>LarkBatisTypeHandler</code> that moves one parameter or one result property: named
-explicitly, called directly from generated code, with no registry lookup and no discovery
-scan. It also lifts the <a href="../../usage/types/">type whitelist</a> for the value it moves, which
-is usually the reason to reach for it.</p>
-<p>For a type that always moves the same way, registering it once for the whole build with
-<a href="../configuration/#type-handlers-for-a-whole-build"><code>-Alarkbatis.typeHandlers</code></a> says the
-same thing without an annotation per site. This annotation still wins wherever it
-appears.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Wallet</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Money</span><span class="w"> </span><span class="n">balance</span><span class="p">;</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="p">}</span>
-</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
-</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id FROM wallet WHERE balance &gt;= #{floor}"</span><span class="p">)</span>
-</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">atLeast</span><span class="p">(</span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w"> </span><span class="n">Money</span><span class="w"> </span><span class="n">floor</span><span class="p">);</span>
+<p>Specifies a custom <code>LarkBatisTypeHandler</code> for a specific parameter, field, getter, or setter. Generated code calls the handler directly without runtime registry lookups.</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Wallet</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Money</span><span class="w"> </span><span class="n">balance</span><span class="p">;</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="p">}</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id FROM wallet WHERE balance &gt;= #{floor}"</span><span class="p">)</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">atLeast</span><span class="p">(</span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w"> </span><span class="n">Money</span><span class="w"> </span><span class="n">floor</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Read on the <strong>field, the setter and the getter</strong>, as <code>@Column</code> is, and two of them naming
-different handlers is a compile error. A mapper XML <code>typeHandler=</code> attribute names the
-same thing and is read the same way; the two must agree.</p>
-<p>The handler class has to be public and concrete, with a public no-argument constructor,
-and stateless, because one instance is shared. See
-<a href="../../usage/types/#custom-type-handlers">custom type handlers</a> for the full contract.</p>
-<div class="admonition note">
-<p class="admonition-title">Why <code>Class&lt;?&gt;</code> and not <code>Class&lt;? extends LarkBatisTypeHandler&lt;?&gt;&gt;</code></p>
-<p>Bounding it would make <code>larkbatis-annotations</code> depend on <code>larkbatis-runtime</code>, and
-that artifact has no dependencies, which is what lets you declare it
-<code>requires static</code>. The processor makes the check javac would have made, and gets to
-say <em>why</em> a handler was rejected while it is at it.</p>
-</div>
+<p>See <a href="../../usage/types/#custom-type-handlers">Custom Type Handlers</a> for implementation details.</p>
 
 
 

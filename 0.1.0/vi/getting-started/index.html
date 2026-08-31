@@ -1698,10 +1698,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#yeu-cau" class="md-nav__link">
+  <a href="#yeu-cau-moi-truong" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Yêu cầu
+        Yêu cầu môi trường
       
     </span>
   </a>
@@ -1709,10 +1709,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gradle" class="md-nav__link">
+  <a href="#cau-hinh-gradle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Gradle
+        Cấu hình Gradle
       
     </span>
   </a>
@@ -1720,10 +1720,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#maven" class="md-nav__link">
+  <a href="#cau-hinh-maven" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Maven
+        Cấu hình Maven
       
     </span>
   </a>
@@ -1731,10 +1731,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#spring-boot" class="md-nav__link">
+  <a href="#cau-hinh-spring-boot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Spring Boot
+        Cấu hình Spring Boot
       
     </span>
   </a>
@@ -1742,10 +1742,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mapper-xml" class="md-nav__link">
+  <a href="#du-an-su-dung-mapper-xml" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mapper XML
+        Dự án sử dụng Mapper XML
       
     </span>
   </a>
@@ -1753,10 +1753,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dung-chung-voi-lombok" class="md-nav__link">
+  <a href="#thu-tu-cau-hinh-khi-dung-lombok" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dùng chung với Lombok
+        Thứ tự cấu hình khi dùng Lombok
       
     </span>
   </a>
@@ -1764,10 +1764,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tiep-theo" class="md-nav__link">
+  <a href="#buoc-tiep-theo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tiếp theo
+        Bước tiếp theo
       
     </span>
   </a>
@@ -1800,63 +1800,62 @@
 
 
 <h1 id="cai-at">Cài đặt<a class="headerlink" href="#cai-at" title="Permanent link">&para;</a></h1>
-<p>LarkBatis là ba artifact trên bản build của bạn: hai jar runtime nhỏ và một annotation
-processor không bao giờ lọt ra classpath ứng dụng.</p>
+<p>LarkBatis bao gồm ba artifact chính trong cấu hình build: hai thư viện runtime nhỏ và một annotation processor chỉ chạy lúc biên dịch (không xuất hiện trên runtime classpath của ứng dụng).</p>
 <table>
 <thead>
 <tr>
 <th>Artifact</th>
 <th>Scope</th>
-<th>Là gì</th>
+<th>Vai trò</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>io.github.larkbatis:larkbatis-annotations</code></td>
 <td><code>implementation</code></td>
-<td>Các annotation cho mapper. Không chứa logic, retention <code>CLASS</code></td>
+<td>Chứa các annotation của mapper (retention <code>CLASS</code>, không chứa logic)</td>
 </tr>
 <tr>
 <td><code>io.github.larkbatis:larkbatis-runtime</code></td>
 <td><code>implementation</code></td>
-<td><code>LarkBatisSession</code>, <code>LarkBatisTx</code>, <code>JdbcCodec</code>, <code>SqlFragment</code>. Không phụ thuộc gì ngoài JDBC</td>
+<td><code>LarkBatisSession</code>, <code>LarkBatisTx</code>, <code>JdbcCodec</code>, <code>SqlFragment</code> (không phụ thuộc gì ngoài JDBC)</td>
 </tr>
 <tr>
 <td><code>io.github.larkbatis:larkbatis-processor</code></td>
 <td><code>annotationProcessor</code></td>
-<td>Bộ sinh code. Chỉ dùng lúc build: tuyệt đối không được xuất hiện trên classpath lúc chạy</td>
+<td>Annotation processor sinh code Java thuần lúc biên dịch</td>
 </tr>
 </tbody>
 </table>
 <p>Phiên bản hiện tại: <strong><code>0.1.0</code></strong>.</p>
-<h2 id="yeu-cau">Yêu cầu<a class="headerlink" href="#yeu-cau" title="Permanent link">&para;</a></h2>
+<h2 id="yeu-cau-moi-truong">Yêu cầu môi trường<a class="headerlink" href="#yeu-cau-moi-truong" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Thành phần</th>
+<th>Yêu cầu</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Java</td>
-<td>17 trở lên (bản thân dự án build trên toolchain Java 17)</td>
+<td>Java 17 trở lên</td>
 </tr>
 <tr>
 <td>Trình biên dịch</td>
-<td><strong>Chỉ javac.</strong> Processor phụ thuộc vào hành vi của javac: thứ tự khai báo của các phần tử, và việc resolve nhiều vòng cho kiểu được sinh ra. ECJ / Eclipse batch compilation không được hỗ trợ</td>
+<td><strong>Chỉ hỗ trợ javac.</strong> Processor phụ thuộc vào cơ chế phân tích AST và multi-round type resolution của javac. Không hỗ trợ ECJ (Eclipse Compiler for Java)</td>
 </tr>
 <tr>
 <td>Công cụ build</td>
-<td>Gradle hoặc Maven. Chỉ cần plugin build nếu bạn dùng mapper XML</td>
+<td>Gradle hoặc Maven. Cần cài đặt thêm build plugin nếu dự án sử dụng mapper XML</td>
 </tr>
 <tr>
 <td>Database</td>
-<td>Bất cứ thứ gì có JDBC driver</td>
+<td>Mọi cơ sở dữ liệu có JDBC driver chuẩn</td>
 </tr>
 </tbody>
 </table>
-<h2 id="gradle">Gradle<a class="headerlink" href="#gradle" title="Permanent link">&para;</a></h2>
+<h2 id="cau-hinh-gradle">Cấu hình Gradle<a class="headerlink" href="#cau-hinh-gradle" title="Permanent link">&para;</a></h2>
 <div class="language-kotlin highlight"><span class="filename">build.gradle.kts</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">java</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
@@ -1876,14 +1875,9 @@ processor không bao giờ lọt ra classpath ứng dụng.</p>
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Cờ này bảo javac giữ lại tên tham số thật trong file class. Thiếu nó, một bản build
-    incremental của Gradle có thể đưa cho processor một phương thức mapper mà tham số tên
-    là <code>arg0</code>, <code>arg1</code>, khiến <code>#{id}</code> không còn gì để đối chiếu. Đặt tên cho từng tham số
-    bằng <code>@Param("...")</code> cũng được.
-    <a href="../usage/troubleshooting/#what-the-flag-actually-does">Xử lý sự cố</a> giải thích vì
-    sao build sạch lại giấu mất vấn đề này.</li>
+<li>Cờ <code>-parameters</code> yêu cầu <code>javac</code> lưu tên tham số thật vào bytecode class file. Nếu thiếu cờ này, các bản build incremental của Gradle có thể truyền class file chứa tên tham số nhân tạo (<code>arg0</code>, <code>arg1</code>) cho processor, khiến bộ biên dịch không tìm thấy tên tham số cho <code>#{id}</code>. Bạn cũng có thể dùng <code>@Param("...")</code> trực tiếp trên từng tham số. Xem thêm <a href="../usage/troubleshooting/#what-the-flag-actually-does">Khắc phục sự cố</a>.</li>
 </ol>
-<h2 id="maven">Maven<a class="headerlink" href="#maven" title="Permanent link">&para;</a></h2>
+<h2 id="cau-hinh-maven">Cấu hình Maven<a class="headerlink" href="#cau-hinh-maven" title="Permanent link">&para;</a></h2>
 <div class="language-xml highlight"><span class="filename">pom.xml</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&lt;dependencies&gt;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&lt;dependency&gt;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&lt;groupId&gt;</span>io.github.larkbatis<span class="nt">&lt;/groupId&gt;</span>
@@ -1916,22 +1910,17 @@ processor không bao giờ lọt ra classpath ứng dụng.</p>
 </span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="w">  </span><span class="nt">&lt;/plugins&gt;</span>
 </span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="nt">&lt;/build&gt;</span>
 </span></code></pre></div>
-<h2 id="spring-boot">Spring Boot<a class="headerlink" href="#spring-boot" title="Permanent link">&para;</a></h2>
-<p>Một starter thay cho cả ba khai báo ở trên, và không cần <code>@MapperScan</code>:</p>
+<h2 id="cau-hinh-spring-boot">Cấu hình Spring Boot<a class="headerlink" href="#cau-hinh-spring-boot" title="Permanent link">&para;</a></h2>
+<p>Sử dụng starter tiện ích của Spring Boot, không cần <code>@MapperScan</code>:</p>
 <div class="language-kotlin highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-annotations:0.1.0"</span><span class="p">)</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0"</span><span class="p">)</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-processor:0.1.0"</span><span class="p">)</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Xem <a href="spring-boot/">Spring Boot</a> để có phần thiết lập đầy đủ và
-<a href="../usage/spring/">Tích hợp Spring</a> để biết bên dưới nó chạy thế nào.</p>
-<h2 id="mapper-xml">Mapper XML<a class="headerlink" href="#mapper-xml" title="Permanent link">&para;</a></h2>
-<p>Nếu có statement nào của bạn nằm trong mapper XML thay vì trong annotation, hãy thêm
-<a href="build-plugins/">plugin build</a> tương ứng với công cụ build của bạn. Processor đọc
-mapper XML bằng <code>java.io</code> thuần, nằm ngoài <code>Filer</code> của trình biên dịch, bởi vì đặc tả của
-<code>Filer.getResource</code> không đảm bảo với tới được <code>src/main/resources</code>. Vì vậy phải nói cho
-công cụ build biết rằng những file đó là đầu vào biên dịch.</p>
+<p>Xem <a href="spring-boot/">Spring Boot</a> để biết cách thiết lập chi tiết và <a href="../usage/spring/">Tích hợp Spring</a> để hiểu cơ chế hoạt động bên dưới.</p>
+<h2 id="du-an-su-dung-mapper-xml">Dự án sử dụng Mapper XML<a class="headerlink" href="#du-an-su-dung-mapper-xml" title="Permanent link">&para;</a></h2>
+<p>Nếu bạn định nghĩa câu truy vấn trong file XML thay vì annotation, hãy thêm <a href="build-plugins/">build plugin</a> tương ứng. Do annotation processor đọc XML qua file I/O thông thường (ngoài phạm vi <code>Filer</code>), build plugin giúp thông báo cho Gradle/Maven biết các file XML là compile input cần theo dõi khi thay đổi:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Gradle</label><label for="__tabbed_1_2">Maven</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1952,17 +1941,12 @@ công cụ build biết rằng những file đó là đầu vào biên dịch.</
 </div>
 </div>
 </div>
-<h2 id="dung-chung-voi-lombok">Dùng chung với Lombok<a class="headerlink" href="#dung-chung-voi-lombok" title="Permanent link">&para;</a></h2>
-<p>Hãy khai báo <code>larkbatis-processor</code> <strong>sau</strong> <code>org.projectlombok:lombok</code>. Lombok ghi
-getter và setter của nó vào AST khi processor của chính nó chạy, còn javac thì chạy các
-processor tìm được theo đúng thứ tự trên classpath. Khai báo trước, LarkBatis sẽ nhìn
-thấy một lớp kết quả không có lấy một accessor nào.</p>
+<h2 id="thu-tu-cau-hinh-khi-dung-lombok">Thứ tự cấu hình khi dùng Lombok<a class="headerlink" href="#thu-tu-cau-hinh-khi-dung-lombok" title="Permanent link">&para;</a></h2>
+<p>Hãy khai báo <code>larkbatis-processor</code> <strong>đứng sau</strong> Lombok trong danh sách <code>annotationProcessor</code>. Lombok tạo getter/setter trên AST khi processor của nó chạy; nếu LarkBatis chạy trước, nó sẽ thấy class POJO không có getter/setter nào và báo lỗi:</p>
 <div class="language-kotlin highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"org.projectlombok:lombok"</span><span class="p">)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-processor:0.1.0"</span><span class="p">)</span><span class="w">  </span><span class="c1">// sau</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-processor:0.1.0"</span><span class="p">)</span><span class="w">  </span><span class="c1">// bắt buộc đặt sau Lombok</span>
 </span></code></pre></div>
-<p>Lỗi build có nêu đúng vấn đề khi nó phát hiện annotation của Lombok trên lớp đó, nhưng
-cách sửa vẫn chỉ là một dòng thứ tự này.</p>
-<h2 id="tiep-theo">Tiếp theo<a class="headerlink" href="#tiep-theo" title="Permanent link">&para;</a></h2>
+<h2 id="buoc-tiep-theo">Bước tiếp theo<a class="headerlink" href="#buoc-tiep-theo" title="Permanent link">&para;</a></h2>
 <p><a class="md-button md-button--primary" href="quick-start/">Viết mapper đầu tiên <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg></span></a></p>
 
 

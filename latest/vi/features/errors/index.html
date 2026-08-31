@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#loi-va-chan-oan" class="md-skip">
+        <a href="#xu-ly-loi-ngoai-le" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1620,10 +1620,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#loi-luc-build-build-time-errors" class="md-nav__link">
+  <a href="#loi-luc-bien-dich-compile-time-errors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lỗi lúc build (Build-time errors)
+        Lỗi lúc biên dịch (Compile-time Errors)
       
     </span>
   </a>
@@ -1631,10 +1631,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#canh-bao-luc-build-build-time-warnings" class="md-nav__link">
+  <a href="#canh-bao-luc-bien-dich-compile-time-warnings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cảnh báo lúc build (Build-time warnings)
+        Cảnh báo lúc biên dịch (Compile-time Warnings)
       
     </span>
   </a>
@@ -1642,15 +1642,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ngoai-le-luc-runtime" class="md-nav__link">
+  <a href="#ngoai-le-luc-runtime-runtime-exceptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ngoại lệ lúc Runtime
+        Ngoại lệ lúc Runtime (Runtime Exceptions)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Ngoại lệ lúc Runtime">
+    <nav class="md-nav" aria-label="Ngoại lệ lúc Runtime (Runtime Exceptions)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1725,21 +1725,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tich-hop-voi-spring" class="md-nav__link">
+  <a href="#tich-hop-dich-ma-loi-trong-spring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tích hợp với Spring
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#ghi-log" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ghi log
+        Tích hợp dịch mã lỗi trong Spring
       
     </span>
   </a>
@@ -1872,10 +1861,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#loi-luc-build-build-time-errors" class="md-nav__link">
+  <a href="#loi-luc-bien-dich-compile-time-errors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lỗi lúc build (Build-time errors)
+        Lỗi lúc biên dịch (Compile-time Errors)
       
     </span>
   </a>
@@ -1883,10 +1872,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#canh-bao-luc-build-build-time-warnings" class="md-nav__link">
+  <a href="#canh-bao-luc-bien-dich-compile-time-warnings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cảnh báo lúc build (Build-time warnings)
+        Cảnh báo lúc biên dịch (Compile-time Warnings)
       
     </span>
   </a>
@@ -1894,15 +1883,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ngoai-le-luc-runtime" class="md-nav__link">
+  <a href="#ngoai-le-luc-runtime-runtime-exceptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ngoại lệ lúc Runtime
+        Ngoại lệ lúc Runtime (Runtime Exceptions)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Ngoại lệ lúc Runtime">
+    <nav class="md-nav" aria-label="Ngoại lệ lúc Runtime (Runtime Exceptions)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1977,21 +1966,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tich-hop-voi-spring" class="md-nav__link">
+  <a href="#tich-hop-dich-ma-loi-trong-spring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tích hợp với Spring
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#ghi-log" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ghi log
+        Tích hợp dịch mã lỗi trong Spring
       
     </span>
   </a>
@@ -2023,94 +2001,81 @@
   
 
 
-<h1 id="loi-va-chan-oan">Lỗi và Chẩn đoán<a class="headerlink" href="#loi-va-chan-oan" title="Permanent link">&para;</a></h1>
-<p>Hầu hết các lỗi xảy ra lúc runtime trong ứng dụng MyBatis sẽ được phát hiện ngay lúc build trong ứng dụng LarkBatis. Tài liệu này được phân chia theo hai mốc thời gian đó.</p>
-<h2 id="loi-luc-build-build-time-errors">Lỗi lúc build (Build-time errors)<a class="headerlink" href="#loi-luc-build-build-time-errors" title="Permanent link">&para;</a></h2>
-<p>Mỗi lỗi biên dịch đều nêu rõ phương thức mapper gây lỗi và giải pháp thay thế tương ứng. Tất cả đều có test tự động trong lớp <code>CompileFailTest</code> của processor để đảm bảo các ràng buộc luôn được thực thi nghiêm ngặt.</p>
+<h1 id="xu-ly-loi-ngoai-le">Xử lý lỗi &amp; Ngoại lệ<a class="headerlink" href="#xu-ly-loi-ngoai-le" title="Permanent link">&para;</a></h1>
+<p>Hầu hết các lỗi tiềm ẩn lúc runtime trong MyBatis sẽ được LarkBatis phát hiện ngay từ pha biên dịch (<code>javac</code>).</p>
+<h2 id="loi-luc-bien-dich-compile-time-errors">Lỗi lúc biên dịch (Compile-time Errors)<a class="headerlink" href="#loi-luc-bien-dich-compile-time-errors" title="Permanent link">&para;</a></h2>
+<p>Mỗi lỗi compile đều nêu rõ class, phương thức mapper gây lỗi và thông báo hướng dẫn sửa:</p>
 <table>
 <thead>
 <tr>
-<th>Lỗi</th>
+<th>Lỗi compile</th>
 <th>Cách khắc phục</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Tên trong <code>#{}</code> không khớp với kiểu tham số</td>
-<td>Kiểm tra lại tên hoặc thêm <code>@Param</code>. Nếu tên tham số bị đổi thành <code>arg0</code>, xem <a href="../../usage/troubleshooting/">Xử lý sự cố</a></td>
+<td>Tên tham số trong <code>#{}</code> không tồn tại</td>
+<td>Kiểm tra lại tên biến hoặc thêm <code>@Param</code>. Nếu tên biến bị đổi thành <code>arg0</code>, xem <a href="../../usage/troubleshooting/">Khắc phục sự cố</a></td>
 </tr>
 <tr>
-<td>Tham số kiểu <code>String</code> gắn trực tiếp vào <code>${}</code></td>
-<td>Dùng <code>SqlFragment</code>, kiểu tập giá trị đóng, hoặc <code>@OrderBy(allowed = {...})</code></td>
+<td>Gán trực tiếp biến <code>String</code> vào <code>${}</code></td>
+<td>Đổi kiểu sang <code>SqlFragment</code>, enum/primitive, hoặc gắn <code>@OrderBy(allowed = {...})</code></td>
 </tr>
 <tr>
-<td><code>test="count"</code>, kiểm tra truthiness theo kiểu OGNL</td>
-<td>Đổi thành <code>count != 0</code>. Tương tự: <code>user != null</code>, <code>!list.isEmpty()</code></td>
+<td><code>test="count"</code> (truthiness kiểu OGNL)</td>
+<td>Đổi thành so sánh tường minh: <code>count != 0</code>, <code>user != null</code>, <code>!list.isEmpty()</code></td>
 </tr>
 <tr>
-<td>Biểu thức <code>test=</code> nằm ngoài ngữ pháp được hỗ trợ</td>
-<td>Viết lại biểu thức hoặc tính toán logic trong Java rồi truyền kết quả vào</td>
+<td>Biểu thức <code>test</code> ngoài ngữ pháp hỗ trợ</td>
+<td>Viết lại biểu thức hoặc tính toán logic trong Java trước khi truyền vào mapper</td>
 </tr>
 <tr>
-<td>Phương thức khai báo cả annotation lẫn XML, hoặc không khai báo cái nào</td>
-<td>Chọn một trong hai hình thức</td>
+<td>Khai báo câu truy vấn ở cả annotation lẫn XML</td>
+<td>Chọn một trong hai nơi để định nghĩa câu truy vấn</td>
 </tr>
 <tr>
-<td>Tham số kiểu <code>Map</code> hoặc <code>Object</code></td>
-<td>Dùng parameter object hoặc các tham số <code>@Param</code> cụ thể</td>
+<td>Tham số kiểu <code>Map</code> hoặc <code>Object</code> không định kiểu</td>
+<td>Sử dụng parameter class cụ thể hoặc khai báo <code>@Param</code> cho từng tham số</td>
 </tr>
 <tr>
-<td>Khai báo <code>useGeneratedKeys</code> nhưng thiếu <code>keyProperty</code></td>
-<td>Chỉ định rõ thuộc tính nhận giá trị khoá</td>
+<td>Bật <code>useGeneratedKeys</code> nhưng thiếu <code>keyProperty</code></td>
+<td>Chỉ định tên thuộc tính POJO nhận giá trị khóa tự tăng</td>
 </tr>
 <tr>
-<td>Số lượng trong <code>keyColumn</code> và <code>keyProperty</code> không khớp nhau</td>
+<td>Số lượng <code>keyColumn</code> và <code>keyProperty</code> không khớp</td>
 <td>Khai báo hai danh sách có cùng số lượng phần tử</td>
 </tr>
 <tr>
-<td>Gắn <code>@PadPow2</code> trên <code>&lt;foreach&gt;</code> không phải danh sách <code>IN</code> đơn, hoặc gắn trên lệnh <code>INSERT</code></td>
-<td>Gỡ bỏ annotation; việc pad trong các trường hợp này sẽ làm nhân bản dòng dữ liệu</td>
+<td>Gắn <code>@PadPow2</code> trên câu lệnh <code>INSERT</code></td>
+<td>Gỡ bỏ <code>@PadPow2</code> (chỉ được dùng cho mệnh đề <code>WHERE ... IN</code>)</td>
 </tr>
 <tr>
-<td>Phương thức batch chứa SQL động</td>
-<td>Chuỗi SQL của câu lệnh batch phải cố định cho mọi dòng dữ liệu</td>
+<td>Batch insert chứa SQL động</td>
+<td>Câu lệnh batch insert nhận <code>List&lt;T&gt;</code> bắt buộc phải có cấu trúc SQL cố định</td>
 </tr>
 <tr>
-<td>Trả về kiểu <code>Stream</code> trên một <code>&lt;resultMap&gt;</code> lồng nhau</td>
-<td>Dùng <code>List</code>, hoặc stream các dòng phẳng rồi tự gom nhóm</td>
+<td>Phương thức trả về <code>Stream&lt;T&gt;</code> trên <code>&lt;resultMap&gt;</code> join</td>
+<td>Trả về <code>List&lt;T&gt;</code>, hoặc stream danh sách phẳng rồi tự gom nhóm trong Java</td>
 </tr>
 <tr>
-<td>Result map lồng nhau nhiều hơn một cấp, hoặc chứa hai ánh xạ lồng nhau trong một map</td>
-<td>Chỉ dùng một phép join, một khoá gom nhóm</td>
+<td>Result map lồng sâu hơn 1 cấp</td>
+<td>Sử dụng join 1 cấp hoặc ghép dữ liệu trong tầng Service</td>
 </tr>
 <tr>
-<td>Khai báo <code>select=</code> trên <code>&lt;association&gt;</code>/<code>&lt;collection&gt;</code></td>
-<td>Viết tường minh bằng câu lệnh join</td>
-</tr>
-<tr>
-<td>Khai báo <code>resultMap=</code>, <code>columnPrefix</code>, <code>extends</code>, <code>&lt;constructor&gt;</code>, <code>&lt;discriminator&gt;</code>, <code>autoMapping</code> trong result map</td>
-<td>Xem <a href="../../usage/result-maps/#narrowed-on-purpose">Result Map</a></td>
+<td>Khai báo <code>select="..."</code> trong <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code></td>
+<td>Viết lại bằng câu lệnh <code>JOIN</code> tường minh</td>
 </tr>
 <tr>
 <td>Cột <code>&lt;id&gt;</code> bị thiếu trong danh sách SELECT</td>
-<td>Cột này là điều kiện bắt buộc để vòng lặp gom nhóm hoạt động</td>
+<td>Thêm cột khóa chính vào câu <code>SELECT</code> để thuật toán gom nhóm hoạt động</td>
 </tr>
 <tr>
-<td>Dùng type alias trong <code>type</code> / <code>ofType</code> / <code>javaType</code></td>
-<td>Dùng tên class đầy đủ (FQN)</td>
-</tr>
-<tr>
-<td>Khai báo <code>refid</code> động trên thẻ <code>&lt;include&gt;</code></td>
-<td><code>refid</code> được inline lúc build nên bắt buộc phải là hằng số cố định</td>
-</tr>
-<tr>
-<td>Result class thiếu constructor không tham số hoặc thiếu setter</td>
-<td>Bổ sung đầy đủ. Nếu class dùng Lombok, thông báo lỗi sẽ nêu rõ nguyên nhân do <a href="../../usage/troubleshooting/">thứ tự nạp annotation processor</a></td>
+<td>Result class thiếu constructor mặc định hoặc setter</td>
+<td>Bổ sung constructor không tham số và setter (hoặc kiểm tra thứ tự nạp Lombok)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="canh-bao-luc-build-build-time-warnings">Cảnh báo lúc build (Build-time warnings)<a class="headerlink" href="#canh-bao-luc-build-build-time-warnings" title="Permanent link">&para;</a></h2>
-<p>Những cảnh báo này nên được xử lý nghiêm túc như lỗi trong quá trình code review.</p>
+<h2 id="canh-bao-luc-bien-dich-compile-time-warnings">Cảnh báo lúc biên dịch (Compile-time Warnings)<a class="headerlink" href="#canh-bao-luc-bien-dich-compile-time-warnings" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2121,59 +2086,47 @@
 <tbody>
 <tr>
 <td><code>useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS</code></td>
-<td>Oracle trả về <code>ROWID</code>, PostgreSQL trả về tất cả các cột. Code chạy được trên H2 nhưng sẽ lỗi trên production</td>
+<td>Oracle trả về <code>ROWID</code>, PostgreSQL trả về toàn bộ dòng. Cần chỉ định rõ <code>keyColumn</code> để đảm bảo tương thích database</td>
 </tr>
 <tr>
-<td>Statement phải fallback về đọc dòng theo tên cột</td>
-<td>Không phân tích được danh sách SELECT: <code>SELECT *</code>, chèn <code>${}</code>, hoặc biểu thức không có alias. Code vẫn chạy đúng nhưng tốc độ đọc chậm hơn</td>
+<td>Fallback đọc theo tên cột</td>
+<td>Xảy ra khi câu lệnh là <code>SELECT *</code> hoặc dùng <code>${}</code> trong SELECT. Code vẫn chạy đúng nhưng tốc độ đọc chậm hơn</td>
 </tr>
 <tr>
-<td>Statement dùng result map lồng nhau nhưng không có <code>ORDER BY</code></td>
-<td>Vòng lặp gom nhóm yêu cầu ResultSet phải được sắp xếp theo khoá của bảng cha</td>
+<td>Result map lồng nhau nhưng câu SQL thiếu <code>ORDER BY</code></td>
+<td>Thuật toán gom nhóm single-pass yêu cầu ResultSet phải được sắp xếp theo khóa của bảng cha</td>
 </tr>
 <tr>
-<td>Cột trong thẻ <code>&lt;result&gt;</code> không có trong danh sách SELECT</td>
-<td>Thuộc tính tương ứng sẽ giữ giá trị mặc định</td>
-</tr>
-<tr>
-<td>Thuộc tính <code>namespace</code> trong mapper XML trỏ tới interface ở module khác</td>
-<td>Tệp XML đó sẽ bị bỏ qua</td>
+<td>Khai báo <code>&lt;result&gt;</code> cho cột không tồn tại trong SELECT</td>
+<td>Thuộc tính tương ứng trong Java Bean sẽ giữ giá trị mặc định (<code>null</code>/<code>0</code>)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="ngoai-le-luc-runtime">Ngoại lệ lúc Runtime<a class="headerlink" href="#ngoai-le-luc-runtime" title="Permanent link">&para;</a></h2>
-<p>Tất cả đều là unchecked exception, kế thừa từ <code>LarkBatisException</code> và mang theo nội dung câu SQL qua phương thức <code>sql()</code>.</p>
+<h2 id="ngoai-le-luc-runtime-runtime-exceptions">Ngoại lệ lúc Runtime (Runtime Exceptions)<a class="headerlink" href="#ngoai-le-luc-runtime-runtime-exceptions" title="Permanent link">&para;</a></h2>
+<p>Tất cả ngoại lệ kế thừa từ unchecked exception <code>LarkBatisException</code> và cung cấp phương thức <code>sql()</code> để kiểm tra câu lệnh gây lỗi.</p>
 <h3 id="larkbatisrejectedexception"><code>LarkBatisRejectedException</code><a class="headerlink" href="#larkbatisrejectedexception" title="Permanent link">&para;</a></h3>
-<p>Giá trị đưa vào factory của <code>SqlFragment</code> hoặc câu lệnh switch <code>@OrderBy</code> bị từ chối. <strong>Giá trị này chưa từng lọt vào câu SQL.</strong> Ngoại lệ này là minh chứng cho thấy cơ chế kiểm soát <code>${}</code> đang hoạt động hiệu quả, không phải lỗi của hệ thống.</p>
+<p>Ném ra khi giá trị truyền vào <code>SqlFragment.allowed()</code> hoặc <code>@OrderBy</code> không nằm trong danh sách whitelist cho phép:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Rejected SQL fragment value: "id; DROP TABLE users" (allowed: id, name, created_at)
 </span></code></pre></div>
 <h3 id="larkbatisemptyforeachexception"><code>LarkBatisEmptyForeachException</code><a class="headerlink" href="#larkbatisemptyforeachexception" title="Permanent link">&para;</a></h3>
+<p>Ném ra khi collection truyền vào thẻ <code>&lt;foreach&gt;</code> bị rỗng:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;foreach collection="ids"&gt; is empty in statement com.example.app.UserBatchMapper.findByIds;
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>wrap the loop in an &lt;if&gt; testing the collection if an empty one should drop the fragment instead
 </span></code></pre></div>
-<p>MyBatis sẽ để chuỗi <code>... WHERE id IN</code> gửi thẳng đến database và gây lỗi cú pháp tại đó, với thông báo lỗi không chỉ ra được mapper hay tham số nào.</p>
 <h3 id="larkbatisnokeyexception"><code>LarkBatisNoKeyException</code><a class="headerlink" href="#larkbatisnokeyexception" title="Permanent link">&para;</a></h3>
-<p>Statement khai báo <code>useGeneratedKeys</code> nhưng JDBC driver không trả về khoá nào. Ngoại lệ này giúp ngăn chặn giá trị id bằng <code>0</code> lan truyền trong ứng dụng và gây lỗi ở những vị trí không liên quan.</p>
+<p>Ném ra khi câu lệnh bật <code>useGeneratedKeys</code> nhưng JDBC driver không trả về khóa chính nào sau khi thực thi <code>INSERT</code>.</p>
 <h3 id="larkbatiskeycountmismatchexception"><code>LarkBatisKeyCountMismatchException</code><a class="headerlink" href="#larkbatiskeycountmismatchexception" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Statement com.example.app.OrderMapper.insertAll expected 500 generated keys
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>but the driver returned 1
+<p>Ném ra khi số lượng khóa chính trả về trong batch insert ít hơn số bản ghi được gửi đi:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Statement com.example.app.OrderMapper.insertAll expected 500 generated keys but the driver returned 1
 </span></code></pre></div>
-<p>Một số JDBC driver hoạt động như vậy. Bỏ qua lỗi này sẽ khiến một phần của đợt batch không có id mà không ai hay biết. MyBatis cũng ghi nhận trường hợp lỗi tương tự.</p>
 <h3 id="larkbatisunboundedvariantsexception"><code>LarkBatisUnboundedVariantsException</code><a class="headerlink" href="#larkbatisunboundedvariantsexception" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>LarkBatis statement com.example.app.UserMapper.search has produced more than 64 distinct
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>SQL texts; statement caches will keep growing. Prefer SqlFragment.allowed(...) or @OrderBy
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>over unbounded fragments.
-</span></code></pre></div>
-<p>Chỉ phát sinh khi bật tuỳ chọn <code>fail-on-unbounded-fragment</code>. Nếu không bật, hệ thống chỉ ghi nhận một dòng log cảnh báo. Thông tin <code>statementId()</code> và <code>limit()</code> được đính kèm trong exception.</p>
+<p>Ném ra khi số lượng biến thể prepared statement vượt quá ngưỡng <code>max-sql-variants</code> và ứng dụng đang bật <code>fail-on-unbounded-fragment: true</code>.</p>
 <h3 id="larkbatisrollbackonlyexception"><code>LarkBatisRollbackOnlyException</code><a class="headerlink" href="#larkbatisrollbackonlyexception" title="Permanent link">&para;</a></h3>
-<p>Phương thức <code>commit()</code> được gọi trên một transaction đã bị scope con bên trong đánh dấu rollback vì kết thúc scope mà không commit. Ném lỗi rõ ràng luôn tốt hơn việc rollback trong im lặng khiến caller lầm tưởng thao tác đã thành công.</p>
-<h2 id="tich-hop-voi-spring">Tích hợp với Spring<a class="headerlink" href="#tich-hop-voi-spring" title="Permanent link">&para;</a></h2>
-<p><code>SpringLarkBatisSession.translate</code> chuyển đổi ngoại lệ qua <code>SQLExceptionTranslator</code> của Spring, mặc định sử dụng <code>SQLExceptionSubclassTranslator</code>. Bộ dịch này phân tích cây phân cấp lớp chuẩn của <code>SQLException</code> thay vì tra cứu bảng mã lỗi riêng của từng nhà cung cấp database.</p>
-<p>Nhờ đó, lỗi trùng khoá duy nhất sẽ chuyển thành <code>DuplicateKeyException</code>, lỗi deadlock thành <code>CannotAcquireLockException</code>, hoàn toàn tương thích với <code>JdbcTemplate</code>. Các cấu hình <code>@ExceptionHandler</code> và quy tắc <code>@Retryable</code> hiện có trong dự án tiếp tục hoạt động mà không cần sửa đổi.</p>
-<p>Các ngoại lệ riêng của LarkBatis ở trên (<code>LarkBatisRejectedException</code>, <code>LarkBatisEmptyForeachException</code>,...) không phải là <code>SQLException</code> nên được chuyển tiếp nguyên vẹn.</p>
-<h2 id="ghi-log">Ghi log<a class="headerlink" href="#ghi-log" title="Permanent link">&para;</a></h2>
-<p>LarkBatis sử dụng <code>java.util.logging</code> và xuất rất ít thông tin log; cảnh báo theo dõi biến thể SQL gần như là nội dung duy nhất. Hệ thống không tích hợp tính năng ghi log SQL, vì điều đó đòi hỏi mọi thân phương thức sinh ra đều phải gánh thêm một nhánh rẽ kiểm tra log. Hãy sử dụng driver hoặc connection pool (<code>net.ttddyy:datasource-proxy</code>, p6spy) cho nhu cầu này.</p>
-<p>Trong thực tế, bạn không cần log SQL khi chạy vì toàn bộ câu SQL <em>đã nằm sẵn trong mã nguồn</em>. Bạn chỉ cần mở tệp <code>UserMapper$$Impl.java</code> và đọc hằng số <code>static final String</code>.</p>
+<p>Ném ra khi gọi <code>commit()</code> trên một transaction đã bị scope bên trong đánh dấu rollback.</p>
+<h2 id="tich-hop-dich-ma-loi-trong-spring">Tích hợp dịch mã lỗi trong Spring<a class="headerlink" href="#tich-hop-dich-ma-loi-trong-spring" title="Permanent link">&para;</a></h2>
+<p>Khi chạy trong Spring, <code>SpringLarkBatisSession</code> chuyển đổi lỗi JDBC thông qua <code>SQLExceptionTranslator</code> của Spring (<code>SQLExceptionSubclassTranslator</code>).</p>
+<p>Các lỗi cơ sở dữ liệu sẽ tự động được chuyển đổi sang cây phân cấp <code>DataAccessException</code> tương ứng (ví dụ <code>DuplicateKeyException</code>, <code>CannotAcquireLockException</code>), đảm bảo tương thích trực tiếp với các annotation <code>@ExceptionHandler</code> và <code>@Retryable</code> hiện có trong dự án.</p>
+<p>Các ngoại lệ riêng của LarkBatis (<code>LarkBatisRejectedException</code>, <code>LarkBatisEmptyForeachException</code>, v.v.) được chuyển tiếp trực tiếp mà không bị thay đổi.</p>
 
 
 

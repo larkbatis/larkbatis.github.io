@@ -703,10 +703,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-the-defaults-do-not-fit" class="md-nav__link">
+  <a href="#customizing-defaults" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When the defaults do not fit
+        Customizing defaults
       
     </span>
   </a>
@@ -1877,10 +1877,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-the-defaults-do-not-fit" class="md-nav__link">
+  <a href="#customizing-defaults" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When the defaults do not fit
+        Customizing defaults
       
     </span>
   </a>
@@ -1924,10 +1924,7 @@
 
 
 <h1 id="spring-boot-quick-start">Spring Boot Quick Start<a class="headerlink" href="#spring-boot-quick-start" title="Permanent link">&para;</a></h1>
-<p>There is no <code>@MapperScan</code>, no <code>SqlSessionFactoryBean</code> and no <code>SqlSessionTemplate</code>.
-A mapper implementation is a real class with a real constructor, so it is an ordinary bean.
-The processor emits a <code>@Configuration</code> with one <code>@Bean</code> method per mapper, and the
-auto-configuration supplies the single <code>LarkBatisSession</code> those methods ask for.</p>
+<p>You don't need <code>@MapperScan</code>, <code>SqlSessionFactoryBean</code>, or <code>SqlSessionTemplate</code>. Since generated mapper implementations are real classes with standard constructors, they are just normal Spring beans. The processor emits a <code>@Configuration</code> class with one <code>@Bean</code> method per mapper, and auto-configuration provides the shared <code>LarkBatisSession</code>.</p>
 <h2 id="1-dependencies">1 · Dependencies<a class="headerlink" href="#1-dependencies" title="Permanent link">&para;</a></h2>
 <div class="language-kotlin highlight"><span class="filename">build.gradle.kts</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"org.springframework.boot:spring-boot-starter-jdbc"</span><span class="p">)</span>
@@ -1943,14 +1940,9 @@ auto-configuration supplies the single <code>LarkBatisSession</code> those metho
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Keeps real parameter names in the class file, so <code>#{id}</code> still finds <code>id</code> on a Gradle
-    incremental build. Without it the processor can see <code>arg0</code> instead and fail to resolve
-    the bind. Spring Boot's own starter parent sets the same flag for its constructor
-    binding, so this line is often already there.
-    <a href="../../usage/troubleshooting/#what-the-flag-actually-does">Troubleshooting</a> has the
-    detail.</li>
+<li>Preserves parameter names in bytecode so <code>#{id}</code> can find <code>id</code> during Gradle incremental builds. Without this, javac passes <code>arg0</code> to the processor instead. Spring Boot's starter parent already turns this on for constructor binding, so you might already have it. See <a href="../../usage/troubleshooting/#what-the-flag-actually-does">Troubleshooting</a>.</li>
 </ol>
-<p>That is the whole setup. Works on <strong>Spring Boot 3 and Spring Boot 4</strong> from the same jar.</p>
+<p>That's the entire setup. It works on <strong>Spring Boot 3 and Spring Boot 4</strong> from the same jar.</p>
 <h2 id="2-a-mapper">2 · A mapper<a class="headerlink" href="#2-a-mapper" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><span class="filename">AccountMapper.java</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.app</span><span class="p">;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
@@ -2003,25 +1995,15 @@ auto-configuration supplies the single <code>LarkBatisSession</code> those metho
 </span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>An ordinary constructor injection of an ordinary bean. The bean is
-    <code>AccountMapper$$Impl</code>, declared by the generated <code>LarkBatisMapperConfiguration</code>,
-    which lands in your base package so <code>@SpringBootApplication</code>'s default
-    <code>@ComponentScan</code> picks it up.</li>
+<li>Standard constructor injection of a normal bean. The bean is <code>AccountMapper$$Impl</code>, declared by the generated <code>LarkBatisMapperConfiguration</code> in your base package (which <code>@SpringBootApplication</code>'s default <code>@ComponentScan</code> picks up automatically).</li>
 </ol>
-<p><code>@Transactional</code> works because <code>SpringLarkBatisSession.conn()</code> goes through
-<code>DataSourceUtils</code>, which returns the connection already bound to the running transaction.
-Spring owns the transaction and LarkBatis only asks for a connection, so <code>REQUIRES_NEW</code>,
-<code>NESTED</code>, rollback rules and <code>readOnly = true</code> all behave exactly as they do for
-<code>JdbcTemplate</code>. Sharing one transaction with <code>JdbcTemplate</code> or JPA works for the same
-reason. <a href="../../usage/spring/">Spring Integration</a> has the connection contract in full.</p>
+<p><code>@Transactional</code> works out of the box because <code>SpringLarkBatisSession.conn()</code> delegates to <code>DataSourceUtils</code>, which returns the connection already participating in the active transaction. Spring manages the transaction while LarkBatis simply borrows the connection. That means <code>REQUIRES_NEW</code>, <code>NESTED</code>, custom rollback rules, and <code>readOnly = true</code> behave exactly as they do with <code>JdbcTemplate</code>. Sharing transactions with <code>JdbcTemplate</code> or JPA works for the same reason. See <a href="../../usage/spring/">Spring Integration</a> for details.</p>
 <h2 id="4-configure-optional">4 · Configure (optional)<a class="headerlink" href="#4-configure-optional" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><span class="filename">application.yml</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">larkbatis</span><span class="p">:</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># distinct SQL texts per statement before a warning</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># true = throw instead; useful in staging</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># distinct SQL strings per statement before warning</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># true = throw exception; great in staging</span>
 </span></code></pre></div>
-<p>Both settings are about the operational cost of <code>${}</code>: statement caches are keyed by SQL
-text, so a fragment whose value set is not bounded grows them without limit. See
-<a href="../../features/configuration/">Configuration</a>.</p>
+<p>Both settings help monitor the operational cost of <code>${}</code>: statement caches are keyed by SQL text, so unbounded dynamic fragments could grow caches indefinitely. See <a href="../../features/configuration/">Configuration</a>.</p>
 <h2 id="what-the-processor-generated">What the processor generated<a class="headerlink" href="#what-the-processor-generated" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><span class="filename">LarkBatisMapperConfiguration.java</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Generated</span><span class="p">(</span><span class="s">"io.github.larkbatis.processor.LarkBatisProcessor"</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nd">@Configuration</span><span class="p">(</span><span class="n">proxyBeanMethods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span><span class="w">   </span><span class="c1">// (1)!</span>
@@ -2034,41 +2016,34 @@ text, so a fragment whose value set is not bounded grows them without limit. See
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Required, not cosmetic. Left at its default of <code>true</code>, Spring builds a CGLIB
-    subclass of this class at runtime, which is precisely the runtime bytecode generation
-    LarkBatis exists to remove.</li>
+<li>This is required, not cosmetic. If left at the default <code>true</code>, Spring creates a CGLIB subclass at runtime—which is the exact kind of runtime bytecode generation LarkBatis is built to eliminate.</li>
 </ol>
-<h2 id="when-the-defaults-do-not-fit">When the defaults do not fit<a class="headerlink" href="#when-the-defaults-do-not-fit" title="Permanent link">&para;</a></h2>
+<h2 id="customizing-defaults">Customizing defaults<a class="headerlink" href="#customizing-defaults" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Situation</th>
+<th>Scenario</th>
 <th>What to do</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Mappers outside the scanned packages</td>
+<td>Mappers outside scanned packages</td>
 <td><code>-Alarkbatis.springConfigPackage=com.example.app</code>, or <code>@Import(LarkBatisMapperConfiguration.class)</code></td>
 </tr>
 <tr>
-<td>You want to declare the mapper beans yourself</td>
+<td>Declare mapper beans manually</td>
 <td><code>-Alarkbatis.springConfig=false</code></td>
 </tr>
 <tr>
-<td>More than one <code>DataSource</code></td>
-<td>Declare one <code>SpringLarkBatisSession</code> per <code>DataSource</code> and write the <code>@Bean</code> methods yourself. The auto-configuration is <code>@ConditionalOnSingleCandidate</code>, so it backs off rather than guessing. Mark one <code>DataSource</code> <code>@Primary</code>, or suppress the generated class</td>
+<td>Multiple <code>DataSource</code> beans</td>
+<td>Define a <code>SpringLarkBatisSession</code> per <code>DataSource</code> and write mapper <code>@Bean</code> definitions manually. Auto-configuration uses <code>@ConditionalOnSingleCandidate</code> and backs off when multiple datasources exist without a <code>@Primary</code> bean</td>
 </tr>
 </tbody>
 </table>
-<p>Per-mapper <code>DataSource</code> selection is deferred until a real service needs it.</p>
 <h2 id="spring-aot-and-native-image">Spring AOT and native image<a class="headerlink" href="#spring-aot-and-native-image" title="Permanent link">&para;</a></h2>
-<p><code>@Bean AccountMapper accountMapper(LarkBatisSession s)</code> has a static return type, so
-Spring AOT treats it like any other bean: no <code>getObjectType()</code> at runtime, no proxy hint,
-no <code>reflect-config.json</code> for the mapper layer. <code>MapperFactoryBean</code> is the opposite case,
-where the bean type is only known at runtime and what it returns is a JDK proxy.</p>
-<p>Read on: <a href="../../usage/spring/">Spring Integration</a> covers the Boot 3 / Boot 4 story, what
-runs and what does not, and the properties in detail.</p>
+<p>Because <code>@Bean AccountMapper accountMapper(LarkBatisSession s)</code> has a static return type, Spring AOT treats it like any standard bean: no runtime <code>getObjectType()</code> inspection, no proxy hints, and no <code>reflect-config.json</code> needed for the mapper layer.</p>
+<p>See <a href="../../usage/spring/">Spring Integration</a> for full details on Spring Boot 3 / 4 support and available properties.</p>
 
 
 

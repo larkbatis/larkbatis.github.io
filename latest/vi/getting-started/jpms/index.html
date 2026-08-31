@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#java-module-jpms" class="md-skip">
+        <a href="#java-module-system-jpms" class="md-skip">
           Bỏ qua
         </a>
       
@@ -704,10 +704,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#ban-mo-ta-phia-consumer" class="md-nav__link">
+  <a href="#cau-hinh-module-infojava" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bản mô tả phía consumer
+        Cấu hình module-info.java
       
     </span>
   </a>
@@ -715,10 +715,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nhung-thu-ban-khong-can" class="md-nav__link">
+  <a href="#nhung-thu-ban-khong-can-cau-hinh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những thứ bạn không cần
+        Những thứ bạn không cần cấu hình
       
     </span>
   </a>
@@ -726,10 +726,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#jdbc-driver-cua-ban-co-the-can-chi-thi-rieng" class="md-nav__link">
+  <a href="#luu-y-ve-jdbc-driver" class="md-nav__link">
     <span class="md-ellipsis">
       
-        JDBC driver của bạn có thể cần chỉ thị riêng
+        Lưu ý về JDBC Driver
       
     </span>
   </a>
@@ -737,10 +737,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#native-image" class="md-nav__link">
+  <a href="#graalvm-native-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native image
+        GraalVM Native Image
       
     </span>
   </a>
@@ -1789,10 +1789,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#ban-mo-ta-phia-consumer" class="md-nav__link">
+  <a href="#cau-hinh-module-infojava" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bản mô tả phía consumer
+        Cấu hình module-info.java
       
     </span>
   </a>
@@ -1800,10 +1800,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nhung-thu-ban-khong-can" class="md-nav__link">
+  <a href="#nhung-thu-ban-khong-can-cau-hinh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Những thứ bạn không cần
+        Những thứ bạn không cần cấu hình
       
     </span>
   </a>
@@ -1811,10 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#jdbc-driver-cua-ban-co-the-can-chi-thi-rieng" class="md-nav__link">
+  <a href="#luu-y-ve-jdbc-driver" class="md-nav__link">
     <span class="md-ellipsis">
       
-        JDBC driver của bạn có thể cần chỉ thị riêng
+        Lưu ý về JDBC Driver
       
     </span>
   </a>
@@ -1822,10 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#native-image" class="md-nav__link">
+  <a href="#graalvm-native-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native image
+        GraalVM Native Image
       
     </span>
   </a>
@@ -1857,16 +1857,13 @@
   
 
 
-<h1 id="java-module-jpms">Java Module (JPMS)<a class="headerlink" href="#java-module-jpms" title="Permanent link">&para;</a></h1>
-<p><code>larkbatis-annotations</code> và <code>larkbatis-runtime</code> phát hành dưới dạng <strong>module có tên
-thật</strong>, không phải automatic module, và ba artifact Spring cũng vậy. Code mapper sinh ra
-dùng được từ một consumer modular, và module path không hề có split package. Đây là một
-yêu cầu thiết kế của dự án, không phải thứ có thì tốt.</p>
+<h1 id="java-module-system-jpms">Java Module System (JPMS)<a class="headerlink" href="#java-module-system-jpms" title="Permanent link">&para;</a></h1>
+<p>Các artifact <code>larkbatis-annotations</code>, <code>larkbatis-runtime</code> và các thư viện Spring của LarkBatis được đóng gói dưới dạng <strong>named module tường minh</strong> (không phải automatic module), không gặp tình trạng split package.</p>
 <table>
 <thead>
 <tr>
 <th>Artifact</th>
-<th>Tên module</th>
+<th>Tên Module</th>
 </tr>
 </thead>
 <tbody>
@@ -1892,74 +1889,46 @@ yêu cầu thiết kế của dự án, không phải thứ có thì tốt.</p>
 </tr>
 </tbody>
 </table>
-<p><code>larkbatis-processor</code> chỉ dùng lúc build và không bao giờ xuất hiện trên module path.</p>
-<h2 id="ban-mo-ta-phia-consumer">Bản mô tả phía consumer<a class="headerlink" href="#ban-mo-ta-phia-consumer" title="Permanent link">&para;</a></h2>
-<p>Ba chỉ thị, và cái thứ ba mới là cái làm người ta bất ngờ:</p>
+<p><code>larkbatis-processor</code> chỉ chạy trong pha build và không xuất hiện trên runtime module path.</p>
+<h2 id="cau-hinh-module-infojava">Cấu hình <code>module-info.java</code><a class="headerlink" href="#cau-hinh-module-infojava" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><span class="filename">module-info.java</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">module</span> <span class="nc">com</span><span class="p">.</span><span class="na">example</span><span class="p">.</span><span class="na">app</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">runtime</span><span class="p">;</span><span class="w">             </span><span class="c1">// (1)!</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">annotations</span><span class="p">;</span><span class="w">  </span><span class="c1">// (2)!</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">compiler</span><span class="p">;</span><span class="w">                     </span><span class="c1">// (3)!</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">compiler</span><span class="p">;</span><span class="w">                    </span><span class="c1">// (3)!</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Những gì phần thân sinh ra thực sự gọi tới: <code>LarkBatisSession</code>, <code>JdbcCodec</code>,
-    <code>RowReader</code>, <code>LarkBatisSql</code>.</li>
-<li>Mọi annotation của mapper đều có retention <code>CLASS</code>, nên đây chỉ là một cạnh phụ
-    thuộc lúc biên dịch.</li>
-<li>Mọi file nguồn phát ra đều mang <code>@javax.annotation.processing.Generated</code>, nằm trong
-    <code>java.compiler</code>. Retention <code>SOURCE</code> khiến nó thành <code>static</code>.</li>
+<li>Cung cấp các class runtime mà code sinh ra cần dùng: <code>LarkBatisSession</code>, <code>JdbcCodec</code>, <code>RowReader</code>, <code>LarkBatisSql</code>.</li>
+<li>Annotations chỉ cần lúc biên dịch (retention <code>CLASS</code>).</li>
+<li>Annotation <code>@Generated</code> trong các file mã nguồn được sinh ra thuộc module <code>java.compiler</code>.</li>
 </ol>
 <div class="admonition failure">
-<p class="admonition-title"><code>package javax.annotation.processing is not visible</code></p>
-<p>Đây là thứ bạn nhận được khi thiếu <code>requires static java.compiler</code>, và thông báo lỗi
-lại trỏ vào file <strong>được sinh ra</strong>, nên lần đầu gặp rất dễ rối. Cứ thêm chỉ thị đó vào.</p>
+<p class="admonition-title">Lỗi: <code>package javax.annotation.processing is not visible</code></p>
+<p>Lỗi này xảy ra khi bạn quên khai báo <code>requires static java.compiler</code>. Hãy thêm chỉ thị này vào <code>module-info.java</code>.</p>
 </div>
-<h2 id="nhung-thu-ban-khong-can">Những thứ bạn <em>không</em> cần<a class="headerlink" href="#nhung-thu-ban-khong-can" title="Permanent link">&para;</a></h2>
+<h2 id="nhung-thu-ban-khong-can-cau-hinh">Những thứ bạn không cần cấu hình<a class="headerlink" href="#nhung-thu-ban-khong-can-cau-hinh" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>requires java.sql</code></strong>: <code>io.github.larkbatis.runtime</code> đã requires nó <em>transitive</em>,
-  vì API của chính nó đưa cho bạn <code>Connection</code>, <code>ResultSet</code> và <code>PreparedStatement</code>. Một
-  module đọc được runtime thì đã gọi tên được các kiểu đó rồi.</li>
-<li><strong><code>opens</code>, ở bất cứ đâu</strong>: không module LarkBatis nào cần tới. Chẳng có reflection
-  nào để mà mở cho ai cả.</li>
-<li><strong>một <code>exports</code> cho code sinh ra</strong>: nó nằm trong chính package của bạn, ngay cạnh
-  interface mapper mà nó hiện thực.</li>
+<li><strong>Không cần <code>requires java.sql</code></strong>: <code>io.github.larkbatis.runtime</code> đã khai báo <code>requires transitive java.sql</code>, nên ứng dụng của bạn tự động nhìn thấy <code>Connection</code>, <code>ResultSet</code> và <code>PreparedStatement</code>.</li>
+<li><strong>Không cần <code>opens ...</code></strong>: LarkBatis hoàn toàn không dùng reflection lúc runtime, nên không cần mở package cho bất kỳ module nào.</li>
+<li><strong>Không cần <code>exports</code> mã nguồn sinh ra</strong>: Code được sinh ra trong cùng package với mapper interface của bạn.</li>
 </ul>
-<h2 id="jdbc-driver-cua-ban-co-the-can-chi-thi-rieng">JDBC driver của bạn có thể cần chỉ thị riêng<a class="headerlink" href="#jdbc-driver-cua-ban-co-the-can-chi-thi-rieng" title="Permanent link">&para;</a></h2>
-<p>Đó là việc của driver, không phải của tầng mapper, nhưng nó vẫn sẽ đáp xuống
-<code>module-info.java</code> của bạn. H2 là ví dụ hay gặp:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">module</span> <span class="nc">com</span><span class="p">.</span><span class="na">example</span><span class="p">.</span><span class="na">app</span><span class="w"> </span><span class="p">{</span>
+<h2 id="luu-y-ve-jdbc-driver">Lưu ý về JDBC Driver<a class="headerlink" href="#luu-y-ve-jdbc-driver" title="Permanent link">&para;</a></h2>
+<p>Một số JDBC driver (như H2) hoạt động dưới dạng automatic module và có thể yêu cầu thêm cấu hình phụ thuộc:</p>
+<div class="language-java highlight"><span class="filename">module-info.java</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">module</span> <span class="nc">com</span><span class="p">.</span><span class="na">example</span><span class="p">.</span><span class="na">app</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">runtime</span><span class="p">;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">annotations</span><span class="p">;</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">compiler</span><span class="p">;</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="c1">// automatic module, tên lấy từ manifest của jar — kiểm tra lại bằng</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="c1">// `jar --describe-module` sau mỗi lần nâng cấp</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">h2database</span><span class="p">;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="c1">// JdbcDataSource của H2 hiện thực javax.naming.Referenceable, mà một automatic</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="c1">// module thì không khai báo requires của riêng nó được, nên consumer phải đọc</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="c1">// java.naming thay cho nó.</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">naming</span><span class="p">;</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">h2database</span><span class="p">;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">naming</span><span class="p">;</span><span class="w">     </span><span class="c1">// Do JdbcDataSource của H2 implements javax.naming.Referenceable</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Một automatic module không khai báo được <code>requires</code> của riêng mình, nên mọi thứ nó cần
-mà nền tảng không cho sẵn đều trở thành việc của consumer. Hãy chạy
-<code>jar --describe-module</code> với jar của driver sau mỗi lần nâng cấp, vì tên của một automatic
-module lấy từ manifest và có thể đổi.</p>
-<h2 id="native-image">Native image<a class="headerlink" href="#native-image" title="Permanent link">&para;</a></h2>
-<p>Tầng mapper chẳng có gì để khai báo. Không <code>Proxy.newProxyInstance</code>, không
-<code>Class.forName</code>, không <code>setAccessible</code> ở bất cứ đâu trong runtime hay trong code sinh
-ra, nên cũng không có metadata reachability nào phải viết. JDBC driver của bạn thì vẫn
-có thể kèm theo hoặc cần metadata riêng, và đó là chuyện của driver.</p>
+<h2 id="graalvm-native-image">GraalVM Native Image<a class="headerlink" href="#graalvm-native-image" title="Permanent link">&para;</a></h2>
+<p>Tầng mapper của LarkBatis không sử dụng <code>Proxy.newProxyInstance()</code>, không dùng <code>Class.forName()</code> và không dùng <code>setAccessible()</code>. Do đó, bạn không cần khai báo reflection reachability metadata cho mappers khi biên dịch GraalVM native image.</p>
 <div class="admonition warning">
-<p class="admonition-title">Chưa được kiểm chứng bằng một bản build thật</p>
-<p>Khẳng định đó mang tính cấu trúc, và có thể tự kiểm bằng cách đọc code. Nhưng bản
-build native image thì <strong>vẫn chưa từng chạy</strong>; đó là phần việc M5 còn treo. Hãy coi
-nó là một kỳ vọng có cơ sở chứ chưa phải một kết quả. Xem
-<a href="../../wiki/performance/#native-image">Hiệu năng</a>.</p>
+<p class="admonition-title">Lưu ý kiểm thử thực tế</p>
+<p>Mặc dù về mặt cấu trúc không có reflection, việc kiểm thử tích hợp đầy đủ quy trình build native image được lên kế hoạch trong mốc M5. Xem <a href="../../wiki/performance/#native-image">Hiệu năng</a>.</p>
 </div>
-<p>Module <code>larkbatis-sample</code> của repository lõi là một consumer modular chạy được, và cũng
-là đối tượng dự kiến của bài kiểm tra đó.</p>
 
 
 
@@ -2014,13 +1983,13 @@ là đối tượng dự kiến của bài kiểm tra đó.</p>
         
         
           
-          <a href="../../usage/" class="md-footer__link md-footer__link--next" aria-label="Sau: Sử dụng">
+          <a href="../../usage/" class="md-footer__link md-footer__link--next" aria-label="Sau: Hướng dẫn sử dụng">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Sau
               </span>
               <div class="md-ellipsis">
-                Sử dụng
+                Hướng dẫn sử dụng
               </div>
             </div>
             <div class="md-footer__button md-icon">

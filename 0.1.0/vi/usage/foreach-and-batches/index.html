@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#foreach-va-batch" class="md-skip">
+        <a href="#the-foreach-batching" class="md-skip">
           Bỏ qua
         </a>
       
@@ -914,10 +914,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cac-kieu-du-lieu-ho-tro-lap" class="md-nav__link">
+  <a href="#cac-kieu-collection-ho-tro" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các kiểu dữ liệu hỗ trợ lặp
+        Các kiểu Collection hỗ trợ
       
     </span>
   </a>
@@ -925,21 +925,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#su-dung-index" class="md-nav__link">
+  <a href="#su-dung-index-trong-vong-lap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sử dụng index
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#gan-thuoc-tinh-cua-phan-tu" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Gán thuộc tính của phần tử
+        Sử dụng index trong Vòng lặp
       
     </span>
   </a>
@@ -950,7 +939,7 @@
   <a href="#empty-collections" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tập hợp rỗng
+        Xử lý Collection rỗng
       
     </span>
   </a>
@@ -961,18 +950,7 @@
   <a href="#padpow2-bounding-the-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @PadPow2: Giới hạn số biến thể SQL
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#values-nhieu-dong" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VALUES nhiều dòng
+        @PadPow2: Giới hạn biến thể Prepared Statement
       
     </span>
   </a>
@@ -983,7 +961,7 @@
   <a href="#jdbc-batches" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batch của JDBC
+        Batch Insert nhiều dòng với JDBC Batch
       
     </span>
   </a>
@@ -1822,10 +1800,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cac-kieu-du-lieu-ho-tro-lap" class="md-nav__link">
+  <a href="#cac-kieu-collection-ho-tro" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các kiểu dữ liệu hỗ trợ lặp
+        Các kiểu Collection hỗ trợ
       
     </span>
   </a>
@@ -1833,21 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#su-dung-index" class="md-nav__link">
+  <a href="#su-dung-index-trong-vong-lap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sử dụng index
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#gan-thuoc-tinh-cua-phan-tu" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Gán thuộc tính của phần tử
+        Sử dụng index trong Vòng lặp
       
     </span>
   </a>
@@ -1858,7 +1825,7 @@
   <a href="#empty-collections" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tập hợp rỗng
+        Xử lý Collection rỗng
       
     </span>
   </a>
@@ -1869,18 +1836,7 @@
   <a href="#padpow2-bounding-the-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @PadPow2: Giới hạn số biến thể SQL
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#values-nhieu-dong" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VALUES nhiều dòng
+        @PadPow2: Giới hạn biến thể Prepared Statement
       
     </span>
   </a>
@@ -1891,7 +1847,7 @@
   <a href="#jdbc-batches" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batch của JDBC
+        Batch Insert nhiều dòng với JDBC Batch
       
     </span>
   </a>
@@ -1923,15 +1879,16 @@
   
 
 
-<h1 id="foreach-va-batch">foreach và batch<a class="headerlink" href="#foreach-va-batch" title="Permanent link">&para;</a></h1>
-<p><code>&lt;foreach&gt;</code> là trường hợp phức tạp nhất trong SQL động vì số lượng placeholder chỉ được xác định lúc runtime. LarkBatis biên dịch nó thành <strong>hai vòng lặp duyệt qua cùng tập phần tử theo đúng thứ tự</strong>: một vòng dựng chuỗi placeholder (<code>?, ?, ?</code>), một vòng gán giá trị tham số vào <code>PreparedStatement</code>.</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIds"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
+<h1 id="the-foreach-batching">Thẻ foreach &amp; Batching<a class="headerlink" href="#the-foreach-batching" title="Permanent link">&para;</a></h1>
+<p>Trong SQL động, thẻ <code>&lt;foreach&gt;</code> có số lượng tham số giữ chỗ (<code>?</code>) thay đổi tùy theo kích thước collection runtime. LarkBatis biên dịch thẻ này thành <strong>hai vòng lặp duyệt tuần tự</strong>: vòng lặp thứ nhất dựng chuỗi placeholder <code>(?, ?, ...)</code>, vòng lặp thứ hai bind giá trị vào <code>PreparedStatement</code>.</p>
+<div class="language-xml highlight"><span class="filename">UserBatchMapper.xml</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIds"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span>ORDER<span class="w"> </span>BY<span class="w"> </span>id
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nt">&lt;/select&gt;</span>
 </span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Override</span>
+<p>Mã nguồn Java sinh ra:</p>
+<div class="language-java highlight"><span class="filename">UserBatchMapper$$Impl.java</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Override</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIds</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">StringBuilder</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">(</span><span class="mi">144</span><span class="p">);</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users WHERE id IN"</span><span class="p">);</span>
@@ -1951,44 +1908,44 @@
 </span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Long</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ids</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">                                               </span><span class="c1">// (3)!</span>
 </span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">            </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 </span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">        </span><span class="c1">// ... đọc các dòng</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">        </span><span class="c1">// ... đọc ResultSet</span>
 </span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Xem <a href="#empty-collections">Tập hợp rỗng</a> bên dưới.</li>
-<li>Số lượng phần tử thay đổi làm thay đổi chuỗi câu SQL, nên statement này được theo dõi biến thể tương tự như một điểm chèn <code>${}</code>.</li>
-<li>Vòng lặp thứ hai gán trực tiếp giá trị theo chỉ số vòng lặp, không cần biến trung gian <code>__frch_id_0</code>.</li>
+<li>Ném exception rõ ràng nếu danh sách rỗng thay vì sinh câu SQL lỗi cú pháp gửi xuống database.</li>
+<li>Theo dõi số lượng biến thể prepared statement để tránh tràn cache.</li>
+<li>Bind trực tiếp theo thứ tự duyệt, không cần biến trung gian tạm thời.</li>
 </ol>
-<h2 id="cac-kieu-du-lieu-ho-tro-lap">Các kiểu dữ liệu hỗ trợ lặp<a class="headerlink" href="#cac-kieu-du-lieu-ho-tro-lap" title="Permanent link">&para;</a></h2>
+<h2 id="cac-kieu-collection-ho-tro">Các kiểu Collection hỗ trợ<a class="headerlink" href="#cac-kieu-collection-ho-tro" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Kiểu tập hợp</th>
-<th><code>item</code></th>
-<th><code>index</code></th>
+<th>Kiểu dữ liệu</th>
+<th>Thuộc tính <code>item</code></th>
+<th>Thuộc tính <code>index</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>List&lt;T&gt;</code>, mọi <code>Collection&lt;T&gt;</code></td>
-<td>phần tử</td>
-<td>vị trí</td>
+<td><code>List&lt;T&gt;</code>, <code>Collection&lt;T&gt;</code></td>
+<td>Giá trị phần tử</td>
+<td>Chỉ số index (0, 1, 2...)</td>
 </tr>
 <tr>
-<td><code>T[]</code></td>
-<td>phần tử</td>
-<td>vị trí</td>
+<td><code>T[]</code> (Mảng)</td>
+<td>Giá trị phần tử</td>
+<td>Chỉ số index (0, 1, 2...)</td>
 </tr>
 <tr>
 <td><code>Map&lt;K, V&gt;</code></td>
-<td><strong>giá trị</strong></td>
-<td><strong>khoá</strong></td>
+<td><strong>Value (Giá trị)</strong></td>
+<td><strong>Key (Khóa)</strong></td>
 </tr>
 </tbody>
 </table>
-<p>Tất cả đều phải <strong>định kiểu tĩnh rõ ràng</strong>: <code>List&lt;Long&gt;</code>, không dùng raw type <code>List</code>. Kiểu phần tử là cơ sở để bộ sinh code chọn gọi <code>ps.setLong</code> thay vì <code>ps.setString</code> ngay lúc build.</p>
-<p>Hỗ trợ vòng lặp lồng nhau, và <code>item</code> của vòng ngoài có thể làm <code>collection</code> của vòng trong:</p>
+<p>Tất cả collection phải <strong>được định kiểu generic rõ ràng</strong> (ví dụ <code>List&lt;Long&gt;</code>, không dùng raw type <code>List</code>).</p>
+<p>Hỗ trợ vòng lặp lồng nhau:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIdGroups"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"groups"</span><span class="w"> </span><span class="na">item=</span><span class="s">"group"</span><span class="w"> </span><span class="na">separator=</span><span class="s">" OR "</span><span class="nt">&gt;</span>
@@ -2000,9 +1957,8 @@
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdGroups</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">groups</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Các vòng lặp ngang hàng có thể dùng lại cùng một tên <code>index</code>; bộ sinh code sẽ tự động phân tách phạm vi biến.</p>
-<h2 id="su-dung-index">Sử dụng <code>index</code><a class="headerlink" href="#su-dung-index" title="Permanent link">&para;</a></h2>
-<p><code>index</code> là vị trí (hoặc khoá của map), và có thể bind như mọi tham số khác. Đây là kỹ thuật quen thuộc để giữ nguyên thứ tự đầu vào:</p>
+<h2 id="su-dung-index-trong-vong-lap">Sử dụng <code>index</code> trong Vòng lặp<a class="headerlink" href="#su-dung-index-trong-vong-lap" title="Permanent link">&para;</a></h2>
+<p>Biến <code>index</code> đại diện cho thứ tự vòng lặp (hoặc Map key) và có thể bind như một tham số thông thường:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"findByIdsOrdered"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users<span class="w"> </span>WHERE<span class="w"> </span>id<span class="w"> </span>IN
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
@@ -2013,105 +1969,83 @@
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span>END
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="nt">&lt;/select&gt;</span>
 </span></code></pre></div>
-<p>Với <code>Map</code>, <code>index</code> là khoá còn <code>item</code> là giá trị:</p>
+<p>Với <code>Map</code>, <code>index</code> là key và <code>item</code> là value:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"filters"</span><span class="w"> </span><span class="na">item=</span><span class="s">"value"</span><span class="w"> </span><span class="na">index=</span><span class="s">"column"</span><span class="w"> </span><span class="na">separator=</span><span class="s">" OR "</span><span class="nt">&gt;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>(name<span class="w"> </span>=<span class="w"> </span>#{column}<span class="w"> </span>AND<span class="w"> </span>email<span class="w"> </span>=<span class="w"> </span>#{value})
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nt">&lt;/foreach&gt;</span>
 </span></code></pre></div>
-<h2 id="gan-thuoc-tinh-cua-phan-tu">Gán thuộc tính của phần tử<a class="headerlink" href="#gan-thuoc-tinh-cua-phan-tu" title="Permanent link">&para;</a></h2>
-<p>Thân vòng lặp có thể gán property của phần tử thay vì chính phần tử đó:</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"probes"</span><span class="w"> </span><span class="na">item=</span><span class="s">"p"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{p.email}<span class="nt">&lt;/foreach&gt;</span>
-</span></code></pre></div>
-<h2 id="empty-collections">Tập hợp rỗng<a class="headerlink" href="#empty-collections" title="Permanent link">&para;</a></h2>
+<h2 id="empty-collections">Xử lý Collection rỗng<a class="headerlink" href="#empty-collections" title="Permanent link">&para;</a></h2>
 <div class="admonition danger">
-<p class="admonition-title"><code>&lt;foreach&gt;</code> rỗng sẽ ném exception</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>LarkBatisEmptyForeachException:
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  &lt;foreach collection="ids"&gt; is empty in statement com.example.app.UserBatchMapper.findByIds;
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  wrap the loop in an &lt;if&gt; testing the collection if an empty one should drop the fragment instead
-</span></code></pre></div>
-<p>MyBatis không chèn bất kỳ chuỗi nào (kể cả <code>open</code> và <code>close</code>) khi tập hợp rỗng, dẫn đến câu SQL lỗi cú pháp <code>... WHERE id IN</code> gửi xuống database mà không chỉ rõ mapper hay tham số nào.</p>
-<p>LarkBatis chủ động ném <code>LarkBatisEmptyForeachException</code> ngay tại chỗ gọi kèm đầy đủ thông tin.</p>
+<p class="admonition-title">Không cho phép collection rỗng mặc định</p>
+<p>Khi collection truyền vào <code>&lt;foreach&gt;</code> rỗng, LarkBatis ném ngoại lệ <code>LarkBatisEmptyForeachException</code> kèm tên mapper và tên tham số.</p>
+<p>Nếu bạn muốn bỏ qua đoạn SQL này khi collection rỗng, hãy bọc thẻ <code>&lt;foreach&gt;</code> bên trong thẻ <code>&lt;if&gt;</code>:</p>
 </div>
-<p>Nếu bạn muốn đoạn SQL đó biến mất khi danh sách rỗng, hãy bọc trong thẻ <code>&lt;if&gt;</code> để giữ đúng hành vi của MyBatis:</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"ids != null and !ids.isEmpty()"</span><span class="nt">&gt;</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>AND<span class="w"> </span>id<span class="w"> </span>IN
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="nt">&lt;/if&gt;</span>
+<div class="language-xml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"ids != null and !ids.isEmpty()"</span><span class="nt">&gt;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>AND<span class="w"> </span>id<span class="w"> </span>IN
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"ids"</span><span class="w"> </span><span class="na">item=</span><span class="s">"id"</span><span class="w"> </span><span class="na">open=</span><span class="s">"("</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="w"> </span><span class="na">close=</span><span class="s">")"</span><span class="nt">&gt;</span>#{id}<span class="nt">&lt;/foreach&gt;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nt">&lt;/if&gt;</span>
 </span></code></pre></div>
-<h2 id="padpow2-bounding-the-sql-variants"><code>@PadPow2</code>: Giới hạn số biến thể SQL<a class="headerlink" href="#padpow2-bounding-the-sql-variants" title="Permanent link">&para;</a></h2>
-<p>Câu SQL của một statement có <code>&lt;foreach&gt;</code> thay đổi theo số phần tử, khiến statement cache của JDBC driver và database bị phình to theo từng kích thước danh sách. <code>@PadPow2</code> làm tròn số placeholder lên luỹ thừa của 2 gần nhất bằng cách lặp lại phần tử cuối cùng, qua đó chặn số biến thể ở mức log₂(n) thay vì n. Trong Hibernate, kỹ thuật tương đương có tên là <code>in_clause_parameter_padding</code>.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@PadPow2</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdsPadded</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p">);</span>
+<h2 id="padpow2-bounding-the-sql-variants"><code>@PadPow2</code>: Giới hạn biến thể Prepared Statement<a class="headerlink" href="#padpow2-bounding-the-sql-variants" title="Permanent link">&para;</a></h2>
+<p>Kích thước collection thay đổi sẽ tạo ra nhiều biến thể câu lệnh SQL khác nhau trong statement cache. Annotation <code>@PadPow2</code> tự động đệm số lượng placeholder lên lũy thừa của 2 gần nhất bằng cách lặp lại phần tử cuối cùng, giúp giới hạn số biến thể câu lệnh ở mức log₂(n) thay vì n.</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nd">@PadPow2</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByIdsPadded</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p">);</span>
 </span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">p0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">padPow2</span><span class="p">(</span><span class="n">n0</span><span class="p">);</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1">// ... phát ra p0 placeholder</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">Long</span><span class="w"> </span><span class="n">last0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Long</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ids</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="n">last0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">}</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n0</span><span class="p">;</span><span class="w"> </span><span class="n">k0</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">p0</span><span class="p">;</span><span class="w"> </span><span class="n">k0</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">last0</span><span class="p">);</span><span class="w">      </span><span class="c1">// lặp lại phần tử cuối</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">}</span>
+<p>Code Java sinh ra tương ứng:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">p0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">padPow2</span><span class="p">(</span><span class="n">n0</span><span class="p">);</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">Long</span><span class="w"> </span><span class="n">last0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Long</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ids</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">last0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">}</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n0</span><span class="p">;</span><span class="w"> </span><span class="n">k0</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">p0</span><span class="p">;</span><span class="w"> </span><span class="n">k0</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setLong</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">last0</span><span class="p">);</span><span class="w">      </span><span class="c1">// Lặp lại phần tử cuối để đệm</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Đặt trên interface thì áp dụng cho mọi statement; đặt trên phương thức thì chỉ áp dụng cho phương thức đó.</p>
 <div class="admonition warning">
-<p class="admonition-title">Quy tắc an toàn bắt buộc</p>
-<p>Việc lặp lại phần tử cuối cùng chỉ an toàn tuyệt đối trong mệnh đề <code>IN</code>. Bộ sinh code kiểm tra nghiêm ngặt: thân <code>&lt;foreach&gt;</code> phải chứa duy nhất một liên kết <code>#{}</code> và câu lệnh không phải là <code>INSERT</code>. Nằm ngoài các điều kiện này, việc pad sẽ <strong>báo lỗi biên dịch</strong>.</p>
+<p class="admonition-title">Chỉ dùng cho mệnh đề <code>WHERE IN</code></p>
+<p>Việc lặp lại phần tử chỉ an toàn trong mệnh đề <code>WHERE ... IN (...)</code>. Bộ sinh code cấm dùng <code>@PadPow2</code> trong câu lệnh <code>INSERT</code> và sẽ báo lỗi compile nếu phát hiện.</p>
 </div>
-<h2 id="values-nhieu-dong"><code>VALUES</code> nhiều dòng<a class="headerlink" href="#values-nhieu-dong" title="Permanent link">&para;</a></h2>
-<p>Một <code>&lt;foreach&gt;</code> trong <code>INSERT</code> dựng nên một statement với nhiều bộ giá trị:</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">&lt;insert</span><span class="w"> </span><span class="na">id=</span><span class="s">"insertAll"</span><span class="nt">&gt;</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>INSERT<span class="w"> </span>INTO<span class="w"> </span>users<span class="w"> </span>(name,<span class="w"> </span>email,<span class="w"> </span>created_at)<span class="w"> </span>VALUES
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">&lt;foreach</span><span class="w"> </span><span class="na">collection=</span><span class="s">"users"</span><span class="w"> </span><span class="na">item=</span><span class="s">"u"</span><span class="w"> </span><span class="na">separator=</span><span class="s">","</span><span class="nt">&gt;</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span>(#{u.name},<span class="w"> </span>#{u.email},<span class="w"> </span>#{u.createdAt})
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="nt">&lt;/foreach&gt;</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="nt">&lt;/insert&gt;</span>
+<h2 id="jdbc-batches">Batch Insert nhiều dòng với JDBC Batch<a class="headerlink" href="#jdbc-batches" title="Permanent link">&para;</a></h2>
+<p>Trong LarkBatis, phương thức <code>@Insert</code> nhận tham số <code>List&lt;T&gt;</code> sẽ tự động được biên dịch thành JDBC batch (<code>addBatch()</code> / <code>executeBatch()</code>):</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO orders (status, total, placed_at) VALUES (#{status}, #{total}, #{placedAt})"</span><span class="p">)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insertAll</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orders</span><span class="p">);</span>
 </span></code></pre></div>
-<h2 id="jdbc-batches">Batch của JDBC<a class="headerlink" href="#jdbc-batches" title="Permanent link">&para;</a></h2>
-<p>Batch trong LarkBatis không phải là một chế độ cấu hình Executor như trong MyBatis, mà được định nghĩa trực tiếp qua <strong>chữ ký phương thức</strong>: một phương thức <code>@Insert</code> nhận tham số <code>List&lt;T&gt;</code> sẽ tự động biên dịch thành luồng JDBC <code>addBatch()</code> / <code>executeBatch()</code>.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO orders (status, total, placed_at) VALUES (#{status}, #{total}, #{placedAt})"</span><span class="p">)</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insertAll</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orders</span><span class="p">);</span>
+<p>Mã nguồn Java sinh ra:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">insertAll</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orders</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">orders</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                                   </span><span class="c1">// Danh sách rỗng: trả về 0 ngay lập tức</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">prepareStatement</span><span class="p">(</span><span class="n">SQL_insertAll</span><span class="p">,</span><span class="w"> </span><span class="n">KEYS_insertAll</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Order</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">orders</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">            </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setEnum</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="na">getStatus</span><span class="p">());</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">            </span><span class="n">ps</span><span class="p">.</span><span class="na">setBigDecimal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="na">getTotal</span><span class="p">());</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">            </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setInstant</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="na">getPlacedAt</span><span class="p">());</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">            </span><span class="n">ps</span><span class="p">.</span><span class="na">addBatch</span><span class="p">();</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">next</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">                </span><span class="n">orders</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">setId</span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">                </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">                </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LarkBatisKeyCountMismatchException</span><span class="p">(</span><span class="n">STMT</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">SQLException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">translate</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">SQL_insertAll</span><span class="p">);</span>
+</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="na">release</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">insertAll</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orders</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">orders</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                                   </span><span class="c1">// (1)!</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">prepareStatement</span><span class="p">(</span><span class="n">SQL_insertAll</span><span class="p">,</span><span class="w"> </span><span class="n">KEYS_insertAll</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Order</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">orders</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">            </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setEnum</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="na">getStatus</span><span class="p">());</span>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">            </span><span class="n">ps</span><span class="p">.</span><span class="na">setBigDecimal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="na">getTotal</span><span class="p">());</span>
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">            </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setInstant</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="na">getPlacedAt</span><span class="p">());</span>
-</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">            </span><span class="n">ps</span><span class="p">.</span><span class="na">addBatch</span><span class="p">();</span>
-</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
-</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">next</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="w">                </span><span class="n">orders</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">setId</span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
-</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="w">                </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
-</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="w">            </span><span class="p">}</span>
-</span><span id="__span-13-20"><a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-21"><a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a><span class="w">                </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LarkBatisKeyCountMismatchException</span><span class="p">(</span><span class="n">STMT</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"> </span><span class="c1">// (2)!</span>
-</span><span id="__span-13-22"><a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="w">            </span><span class="p">}</span>
-</span><span id="__span-13-23"><a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-13-24"><a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
-</span><span id="__span-13-25"><a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">SQLException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-26"><a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">translate</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">SQL_insertAll</span><span class="p">);</span>
-</span><span id="__span-13-27"><a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-28"><a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a><span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="na">release</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-</span><span id="__span-13-29"><a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-13-30"><a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="p">}</span>
-</span></code></pre></div>
-<ol>
-<li>Batch rỗng sẽ trả về 0 ngay lập tức mà không gửi lệnh nào xuống database.</li>
-<li>Một số JDBC driver trả về ít khoá hơn số dòng. Kiểm tra này giúp phát hiện lỗi thiếu ID trong batch. Xem <a href="../generated-keys/">Generated Keys</a>.</li>
-</ol>
 <div class="admonition note">
-<p class="admonition-title">Batch không đi cùng với SQL động</p>
-<p>Câu SQL của statement batch phải giống hệt nhau cho mọi dòng dữ liệu để sử dụng chung một PreparedStatement duy nhất. Phương thức batch có chứa thẻ động là lỗi biên dịch.</p>
+<p class="admonition-title">Batch insert không kết hợp với dynamic SQL</p>
+<p>Câu lệnh SQL trong JDBC batch phải có cấu trúc cố định cho mọi phần tử. Do đó, phương thức batch không được phép chứa các thẻ động (<code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, v.v.).</p>
 </div>
 
 

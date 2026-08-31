@@ -34,7 +34,7 @@
     
     
       
-        <title>Wiki - LarkBatis</title>
+        <title>Tài liệu Kiến trúc & Thiết kế (Wiki) - LarkBatis</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wiki" class="md-skip">
+        <a href="#tai-lieu-kien-truc-thiet-ke-wiki" class="md-skip">
           Bỏ qua
         </a>
       
@@ -125,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Wiki
+              Tài liệu Kiến trúc &amp; Thiết kế (Wiki)
             
           </span>
         </div>
@@ -1698,10 +1698,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tien-e-goi-trong-mot-oan" class="md-nav__link">
+  <a href="#tien-e-thiet-ke" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tiền đề gói trong một đoạn
+        Tiền đề thiết kế
       
     </span>
   </a>
@@ -1709,10 +1709,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cai-gi-o-ay-khong-moi" class="md-nav__link">
+  <a href="#inh-vi-ky-thuat" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cái gì ở đây không mới
+        Định vị kỹ thuật
       
     </span>
   </a>
@@ -1744,58 +1744,43 @@
   
 
 
-<h1 id="wiki">Wiki<a class="headerlink" href="#wiki" title="Permanent link">&para;</a></h1>
-<p>Các trang tham khảo nói LarkBatis <em>làm gì</em>. Những trang này nói <em>vì sao</em> nó được dựng
-như vậy, và cái giá của lựa chọn đó.</p>
+<h1 id="tai-lieu-kien-truc-thiet-ke-wiki">Tài liệu Kiến trúc &amp; Thiết kế (Wiki)<a class="headerlink" href="#tai-lieu-kien-truc-thiet-ke-wiki" title="Permanent link">&para;</a></h1>
+<p>Mục tài liệu này trình bày các nguyên tắc thiết kế, kiến trúc nội bộ, cơ chế biên dịch và các đánh đổi kỹ thuật của LarkBatis.</p>
 <div class="grid cards">
 <ul>
 <li>
-<p><strong><a href="architecture/">Kiến trúc</a></strong></p>
-<p>Hai pha, cách chia module, và pipeline từ mã nguồn mapper tới Java sinh ra.</p>
+<p><strong><a href="architecture/">Kiến trúc tổng thể</a></strong></p>
+<p>Mô hình 2 pha, cấu trúc phân chia module và pipeline biên dịch từ Java/XML sang mã nguồn JDBC.</p>
 </li>
 <li>
-<p><strong><a href="shape-vs-value/">Shape và value</a></strong></p>
-<p>Lát cắt duy nhất mà cả thiết kế đi theo: danh sách đóng những thứ được phép resolve
-lúc chạy.</p>
+<p><strong><a href="shape-vs-value/">Shape vs. Value</a></strong></p>
+<p>Nguyên tắc phân tách ranh giới cốt lõi: danh sách đóng các phần tử được đánh giá lúc runtime.</p>
 </li>
 <li>
-<p><strong><a href="generated-code/">Code sinh ra</a></strong></p>
-<p>Mỗi file phát ra trông như thế nào, và vì sao dễ đọc lại là một tính năng chứ không
-phải một thứ trang trí.</p>
+<p><strong><a href="generated-code/">Mã nguồn sinh ra</a></strong></p>
+<p>Cấu trúc chi tiết của các class <code>Mapper$$Impl</code> và <code>RowReader</code> sinh ra.</p>
 </li>
 <li>
-<p><strong><a href="call-flow/">Vòng đời một lời gọi</a></strong></p>
-<p>Một lời gọi mapper, từng bước một, đặt cạnh đường đi của MyBatis mà nó thay thế.</p>
+<p><strong><a href="call-flow/">Vòng đời một lời gọi mapper</a></strong></p>
+<p>So sánh chi tiết từng bước thực thi giữa luồng runtime của LarkBatis và MyBatis truyền thống.</p>
 </li>
 <li>
-<p><strong><a href="design-rules/">Lằn ranh thiết kế</a></strong></p>
-<p>Chín quy tắc đúng trong mọi thay đổi, và cái gì vỡ nếu nới lỏng một quy tắc.</p>
+<p><strong><a href="design-rules/">Nguyên tắc thiết kế</a></strong></p>
+<p>9 quy tắc bất biến chi phối toàn bộ kiến trúc và các ràng buộc kỹ thuật.</p>
 </li>
 <li>
-<p><strong><a href="performance/">Hiệu năng</a></strong></p>
-<p>Những con số đã đo, những khẳng định chưa đo, và chỗ mà lợi ích thật sự không áp
-dụng.</p>
+<p><strong><a href="performance/">Hiệu năng &amp; Benchmark</a></strong></p>
+<p>Dữ liệu đo lường JMH thực tế, phân tích mức giảm latency/RAM và các giới hạn kỹ thuật.</p>
 </li>
 </ul>
 </div>
-<h2 id="tien-e-goi-trong-mot-oan">Tiền đề gói trong một đoạn<a class="headerlink" href="#tien-e-goi-trong-mot-oan" title="Permanent link">&para;</a></h2>
-<p>Một lời gọi mapper của MyBatis được resolve lúc chạy: điều phối qua proxy, OGNL đánh giá
-từng <code>&lt;if test&gt;</code>, tra <code>TypeHandler</code> cho mỗi tham số, <code>setValue</code> bằng reflection cho mỗi
-cột trên mỗi dòng. Không phần nào trong đó phụ thuộc vào <em>giá trị</em> chảy qua lời gọi.
-Chúng phụ thuộc vào <em>shape</em> của mapper, mà shape thì ngừng thay đổi ngay khi file được
-lưu. Vậy thì resolve shape một lần, lúc build, rồi phát ra thẳng các lời gọi JDBC. Còn
-lại lúc chạy là chừng 1.500 dòng không phụ thuộc gì ngoài JDBC, và cũng không có metadata
-reachability nào của GraalVM phải viết, vì chẳng có reflection ở đâu cả.</p>
-<h2 id="cai-gi-o-ay-khong-moi">Cái gì ở đây không mới<a class="headerlink" href="#cai-gi-o-ay-khong-moi" title="Permanent link">&para;</a></h2>
-<p>LarkBatis không phải một ý tưởng mới. Micronaut
-Data biên dịch truy vấn thành code lúc build mà không dùng reflection; jOOQ sinh code từ
-schema; Spring Data có một nhánh AOT. <strong>Điều không cái nào trong số đó làm là giữ lại
-mô hình mapper của MyBatis</strong>: mapper XML, <code>#{}</code>, <code>&lt;if&gt;</code>, <code>&lt;foreach&gt;</code>, <code>&lt;resultMap&gt;</code>. Hàng
-nghìn codebase ở Hàn Quốc và Nhật Bản đang chạy trên đúng mô hình đó hôm nay.</p>
-<p>Giá trị nằm ở con đường chuyển đổi, không nằm ở ý tưởng. Cách đóng khung ấy quyết định
-khá nhiều thứ trong thiết kế: đó là lý do frontend XML tồn tại, lý do bộ khung kiểm thử
-vi sai đem SQL sinh ra so với đầu ra thông dịch của MyBatis, và lý do mọi tính năng bị bỏ
-đều đi kèm một lỗi biên dịch nêu tên thứ thay thế thay vì im lặng.</p>
+<h2 id="tien-e-thiet-ke">Tiền đề thiết kế<a class="headerlink" href="#tien-e-thiet-ke" title="Permanent link">&para;</a></h2>
+<p>Trong MyBatis truyền thống, mỗi lời gọi mapper phải trải qua: điều phối qua Dynamic Proxy, OGNL evaluate từng biểu thức <code>&lt;if test&gt;</code>, tra cứu <code>TypeHandler</code> theo cặp type cho mỗi tham số, và gọi setter qua Java Reflection cho từng cột trên mỗi dòng <code>ResultSet</code>.</p>
+<p>Toàn bộ các thông tin này phụ thuộc vào <strong>Shape</strong> (cấu trúc tĩnh của câu truy vấn và Java Bean), vốn không thay đổi sau khi lưu file mã nguồn. LarkBatis phân tích toàn bộ Shape trong pha build và sinh ra các lệnh gọi JDBC trực tiếp.</p>
+<p>Runtime chỉ còn khoảng 1.500 dòng code JDBC thuần, loại bỏ hoàn toàn dynamic proxy, reflection và metadata config cho GraalVM Native Image.</p>
+<h2 id="inh-vi-ky-thuat">Định vị kỹ thuật<a class="headerlink" href="#inh-vi-ky-thuat" title="Permanent link">&para;</a></h2>
+<p>LarkBatis không phát minh ra khái niệm compile-time SQL generation (Micronaut Data hay jOOQ đã áp dụng các hướng tiếp cận tương tự). Điểm khác biệt mấu chốt của LarkBatis là <strong>giữ nguyên mô hình mapper quen thuộc của MyBatis</strong>: file XML, cú pháp <code>#{}</code> / <code>${}</code>, các thẻ <code>&lt;if&gt;</code>, <code>&lt;foreach&gt;</code>, <code>&lt;resultMap&gt;</code>.</p>
+<p>Mục tiêu của LarkBatis là cung cấp lộ trình chuyển đổi trực tiếp cho các hệ thống MyBatis hiện có, mang lại hiệu năng cao và an toàn kiểu tĩnh mà không đòi hỏi viết lại toàn bộ mã nguồn truy vấn.</p>
 
 
 

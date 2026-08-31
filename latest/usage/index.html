@@ -1698,10 +1698,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-shape-of-a-project" class="md-nav__link">
+  <a href="#project-structure" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The shape of a project
+        Project Structure
       
     </span>
   </a>
@@ -1709,10 +1709,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pages-in-this-section" class="md-nav__link">
+  <a href="#documentation-sections" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pages in this section
+        Documentation Sections
       
     </span>
   </a>
@@ -1720,10 +1720,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#two-rules-that-explain-most-surprises" class="md-nav__link">
+  <a href="#two-guiding-design-rules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Two rules that explain most surprises
+        Two guiding design rules
       
     </span>
   </a>
@@ -1756,96 +1756,79 @@
 
 
 <h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
-<p>Everything you write in LarkBatis is one of two things: a <strong>mapper interface</strong> whose
-methods carry statement annotations, or a mapper interface marked <code>@Mapper</code> whose
-statements live in <strong>mapper XML</strong>. Both compile to the same generated implementation.
-They are two frontends onto one intermediate representation, not two code paths.</p>
-<h2 id="the-shape-of-a-project">The shape of a project<a class="headerlink" href="#the-shape-of-a-project" title="Permanent link">&para;</a></h2>
+<p>In LarkBatis, you write SQL mappers in one of two ways: a <strong>mapper interface</strong> with statement annotations, or an interface marked <code>@Mapper</code> whose statements live in <strong>mapper XML</strong>. Both compile to identical Java implementations. They are simply two ways to feed the same compiler pipeline.</p>
+<h2 id="project-structure">Project Structure<a class="headerlink" href="#project-structure" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/main/java/com/example/app/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    User.java                 # result class: no-arg constructor, setters
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    UserMapper.java           # annotation statements
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    UserSearchMapper.java     # @Mapper — statements in XML
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    User.java                 # result class: standard no-arg constructor + getters/setters
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    UserMapper.java           # annotation-based mapper
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    UserSearchMapper.java     # @Mapper — statements defined in XML
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>src/main/resources/mappers/
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    UserSearchMapper.xml      # namespace = com.example.app.UserSearchMapper
 </span></code></pre></div>
-<p>At build time the processor emits, into the same package:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>UserMapper$$Impl.java              one per mapper
+<p>During compilation, the processor generates the following classes in the same package:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>UserMapper$$Impl.java              one per mapper interface
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>UserSearchMapper$$Impl.java
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>UserRow.java                       one per result class
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>LarkBatisMappers.java             one per compilation
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>LarkBatisMapperConfiguration.java one, if Spring is on the build classpath
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>UserRow.java                       one per result class (shared across mappers)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>LarkBatisMappers.java             one per compilation module (static factory)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>LarkBatisMapperConfiguration.java generated when Spring is on the classpath
 </span></code></pre></div>
-<h2 id="pages-in-this-section">Pages in this section<a class="headerlink" href="#pages-in-this-section" title="Permanent link">&para;</a></h2>
+<h2 id="documentation-sections">Documentation Sections<a class="headerlink" href="#documentation-sections" title="Permanent link">&para;</a></h2>
 <div class="grid cards">
 <ul>
 <li>
 <p><strong><a href="mappers/">Mapper Interfaces</a></strong></p>
-<p>Statement annotations, <code>#{}</code> parameters, <code>@Param</code>, result classes and how columns
-find their setters.</p>
+<p>Statement annotations, <code>#{}</code> parameters, <code>@Param</code>, result classes, and automatic column-to-setter mapping.</p>
 </li>
 <li>
 <p><strong><a href="xml-mappers/">Mapper XML</a></strong></p>
-<p><code>@Mapper</code>, namespaces, statement ids, <code>&lt;sql&gt;</code>/<code>&lt;include&gt;</code>, and how a statement is
-resolved per method.</p>
+<p><code>@Mapper</code>, namespaces, statement IDs, <code>&lt;sql&gt;</code>/<code>&lt;include&gt;</code>, and statement resolution.</p>
 </li>
 <li>
 <p><strong><a href="dynamic-sql/">Dynamic SQL</a></strong></p>
-<p><code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code>, <code>&lt;trim&gt;</code>, and the narrow <code>test</code> grammar that
-replaces OGNL.</p>
+<p><code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code>, <code>&lt;trim&gt;</code>, and the type-checked <code>test</code> grammar.</p>
 </li>
 <li>
 <p><strong><a href="foreach-and-batches/">foreach and Batches</a></strong></p>
-<p><code>IN</code> lists, multi-row <code>VALUES</code>, nested loops, <code>addBatch()</code> inserts and <code>@PadPow2</code>.</p>
+<p><code>IN</code> lists, multi-row <code>VALUES</code>, nested loops, JDBC <code>addBatch()</code> inserts, and <code>@PadPow2</code>.</p>
 </li>
 <li>
 <p><strong><a href="result-maps/">Result Maps and Joins</a></strong></p>
-<p><code>&lt;resultMap&gt;</code>, one level of <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code>, and the ordering rule
-that makes it work.</p>
+<p><code>&lt;resultMap&gt;</code>, 1-level <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code> joins, and parent-key ordering rules.</p>
 </li>
 <li>
 <p><strong><a href="generated-keys/">Generated Keys</a></strong></p>
-<p><code>useGeneratedKeys</code>, why <code>keyColumn</code> matters, and key counting in batch mode.</p>
+<p><code>useGeneratedKeys</code>, why naming <code>keyColumn</code> matters, and batch key handling.</p>
 </li>
 <li>
 <p><strong><a href="streaming/">Streaming Results</a></strong></p>
-<p><code>Stream&lt;T&gt;</code> returns over an open cursor, and who owns the resources.</p>
+<p><code>Stream&lt;T&gt;</code> returns over open database cursors, and resource lifecycle management.</p>
 </li>
 <li>
 <p><strong><a href="transactions/">Transactions</a></strong></p>
-<p><code>LarkBatisTx</code> vote-to-commit semantics, nesting, and <code>@Transactional</code>.</p>
+<p><code>LarkBatisTx</code> vote-to-commit scopes, nesting, and Spring <code>@Transactional</code> integration.</p>
 </li>
 <li>
 <p><strong><a href="raw-sql/">Raw SQL and SqlFragment</a></strong></p>
-<p>The <code>${}</code> discipline, <code>@OrderBy</code>, the escape hatch, and SQL-variant tracking.</p>
+<p>Safe <code>${}</code> usage, <code>@OrderBy</code> allowlists, manual escape hatches, and SQL-variant tracking.</p>
 </li>
 <li>
 <p><strong><a href="types/">Types and Handlers</a></strong></p>
-<p>What <code>#{}</code> binds without help, <code>JdbcCodec</code>, <code>@Column</code>, <code>@Handler</code>, enums and
-<code>java.time</code>.</p>
+<p>Default <code>#{}</code> mappings, <code>JdbcCodec</code>, <code>@Column</code>, <code>@Handler</code>, enums, and <code>java.time</code> support.</p>
 </li>
 <li>
 <p><strong><a href="spring/">Spring Integration</a></strong></p>
-<p>What <code>mybatis-spring</code> does that LarkBatis does not need, and what it still does.</p>
+<p>How LarkBatis integrates with Spring Boot without proxies or runtime scanning.</p>
 </li>
 <li>
 <p><strong><a href="troubleshooting/">Troubleshooting</a></strong></p>
-<p>Nothing generated, <code>arg0</code> parameter names, Lombok ordering, XML not picked up.</p>
+<p>Common build issues: missing generated files, <code>arg0</code> parameter names, and Lombok processor ordering.</p>
 </li>
 </ul>
 </div>
-<h2 id="two-rules-that-explain-most-surprises">Two rules that explain most surprises<a class="headerlink" href="#two-rules-that-explain-most-surprises" title="Permanent link">&para;</a></h2>
-<p><strong>1 · If it can be decided at build time, it is.</strong> Column indexes, type-handler choices,
-<code>&lt;trim&gt;</code> prefixes, <code>&lt;include&gt;</code> bodies, whether a comparison is on a <code>long</code> or a <code>String</code>:
-none of it is inspected at runtime. A mistake in any of them surfaces as a compile error
-naming the mapper method, not as a stack trace.</p>
-<p><strong>2 · If it cannot, it must be explicit.</strong> The list of things resolved at runtime is short
-and closed: parameter values, the boolean results of <code>&lt;if&gt;</code>/<code>&lt;when&gt;</code> tests, the size of a
-<code>&lt;foreach&gt;</code> collection, the rows in a <code>ResultSet</code>, the actual column count when the select
-list could not be parsed, and the contents of a <code>SqlFragment</code>. Anything not on that list
-has to be spelled out in the mapper signature, which is why binding a <code>String</code> to <code>${}</code>
-fails the build instead of passing quietly.</p>
-<p>The full statement of that boundary is in the wiki:
-<a href="../wiki/shape-vs-value/">Shape vs Value</a>.</p>
+<h2 id="two-guiding-design-rules">Two guiding design rules<a class="headerlink" href="#two-guiding-design-rules" title="Permanent link">&para;</a></h2>
+<p><strong>1. If something can be decided at build time, it is.</strong> Column indexes, type handler choices, <code>&lt;trim&gt;</code> prefixes, <code>&lt;include&gt;</code> inlining, and type comparisons: none of this is inspected at runtime. Any mistakes fail the build with a clear error pointing to the exact mapper method.</p>
+<p><strong>2. If something cannot be decided at build time, it must be explicit.</strong> The list of runtime operations is strictly limited: parameter values, boolean evaluation of <code>&lt;if&gt;</code>/<code>&lt;when&gt;</code> tests, <code>&lt;foreach&gt;</code> collection sizes, reading <code>ResultSet</code> rows, and <code>SqlFragment</code> contents. Anything beyond this must be declared explicitly in the method signature (which is why passing a raw <code>String</code> to <code>${}</code> fails compilation).</p>
+<p>See <a href="../wiki/shape-vs-value/">Shape vs Value</a> for the full architectural breakdown.</p>
 
 
 

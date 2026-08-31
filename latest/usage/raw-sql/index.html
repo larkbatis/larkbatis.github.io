@@ -1057,7 +1057,7 @@
   <a href="#the-rule" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The rule
+        The Rule
       
     </span>
   </a>
@@ -1088,10 +1088,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#why-unsaferawsql-has-that-name" class="md-nav__link">
+  <a href="#auditing-raw-sql-with-grep" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why unsafeRawSql has that name
+        Auditing raw SQL with grep
       
     </span>
   </a>
@@ -1115,10 +1115,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#in-a-select-list" class="md-nav__link">
+  <a href="#dynamic-columns-in-select-lists" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ${} in a select list
+        Dynamic columns in select lists
       
     </span>
   </a>
@@ -1129,7 +1129,7 @@
   <a href="#the-escape-hatch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The escape hatch
+        The manual escape hatch
       
     </span>
   </a>
@@ -1831,7 +1831,7 @@
   <a href="#the-rule" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The rule
+        The Rule
       
     </span>
   </a>
@@ -1862,10 +1862,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#why-unsaferawsql-has-that-name" class="md-nav__link">
+  <a href="#auditing-raw-sql-with-grep" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why unsafeRawSql has that name
+        Auditing raw SQL with grep
       
     </span>
   </a>
@@ -1889,10 +1889,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#in-a-select-list" class="md-nav__link">
+  <a href="#dynamic-columns-in-select-lists" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ${} in a select list
+        Dynamic columns in select lists
       
     </span>
   </a>
@@ -1903,7 +1903,7 @@
   <a href="#the-escape-hatch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The escape hatch
+        The manual escape hatch
       
     </span>
   </a>
@@ -1936,109 +1936,81 @@
 
 
 <h1 id="raw-sql-and-sqlfragment">Raw SQL and SqlFragment<a class="headerlink" href="#raw-sql-and-sqlfragment" title="Permanent link">&para;</a></h1>
-<p><code>#{}</code> is a bind parameter. <code>${}</code> splices text straight into the SQL, and that is where
-SQL injection lives. LarkBatis does not ban <code>${}</code>, because sorting by a user-chosen
-column is a real requirement. It makes every splice go through a type the compiler can
-check and a name you can <code>grep</code> for.</p>
-<h2 id="the-rule">The rule<a class="headerlink" href="#the-rule" title="Permanent link">&para;</a></h2>
+<p><code>#{}</code> creates a JDBC bind parameter (<code>?</code>). <code>${}</code> splices text directly into raw SQL—which is where SQL injection risks come from. LarkBatis does not ban <code>${}</code> outright because dynamic sorting or schema targeting are legitimate requirements. Instead, it forces every splice through types the compiler can verify and you can easily <code>grep</code> for.</p>
+<h2 id="the-rule">The Rule<a class="headerlink" href="#the-rule" title="Permanent link">&para;</a></h2>
 <div class="admonition failure">
-<p class="admonition-title">A <code>String</code> parameter bound to <code>${}</code> is a compile error</p>
+<p class="admonition-title">Binding a plain <code>String</code> to <code>${}</code> is a compile error</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users ORDER BY ${sort}"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">sort</span><span class="p">);</span><span class="w">        </span><span class="c1">// compile error</span>
 </span></code></pre></div>
-<p>The error names the parameter and lists the three accepted forms.</p>
+<p>The compiler rejects this and lists the supported types.</p>
 </div>
 <table>
 <thead>
 <tr>
-<th>Accepted for <code>${}</code></th>
+<th>Type for <code>${}</code></th>
 <th>Why it is safe</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>SqlFragment</code></td>
-<td>Constructed through a factory that validated the value, or through <code>unsafeRawSql</code>, the one audit point</td>
+<td>Created via audited factory methods (<code>allowed</code>, <code>identifier</code>, <code>unsafeRawSql</code>)</td>
 </tr>
 <tr>
-<td>Closed-value types: <code>int</code>, <code>long</code>, <code>short</code>, <code>byte</code>, <code>boolean</code>, enums</td>
-<td>Their entire value space is already SQL-safe</td>
+<td>Closed-value types (<code>int</code>, <code>long</code>, <code>boolean</code>, <code>enum</code>)</td>
+<td>Finite value ranges that cannot introduce SQL injection</td>
 </tr>
 <tr>
-<td><code>String</code> annotated <code>@OrderBy(allowed = {...})</code></td>
-<td>Compiled to a <code>switch</code> over the literal list</td>
+<td><code>String</code> with <code>@OrderBy(allowed = {...})</code></td>
+<td>Compiled to a strict Java <code>switch</code> statement over string literals</td>
 </tr>
 </tbody>
 </table>
 <h2 id="orderby"><code>@OrderBy</code><a class="headerlink" href="#orderby" title="Permanent link">&para;</a></h2>
-<p>The common case, and the one that needs no ceremony at the call site:</p>
+<p>The most common use case for dynamic SQL text is column sorting. You can declare allowed column names directly:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users ORDER BY ${sort}"</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="nd">@OrderBy</span><span class="p">(</span><span class="n">allowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="s">"name"</span><span class="p">,</span><span class="w"> </span><span class="s">"created_at"</span><span class="p">})</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">sort</span><span class="p">);</span>
 </span></code></pre></div>
-<p>The generator emits a <code>switch</code> over the three literals. A value outside the list is
-rejected with <code>LarkBatisRejectedException</code> naming the value and the allowed set. The
-value never reaches the SQL text.</p>
+<p>The generator emits a <code>switch</code> statement validating the input against this list. Any unrecognized string throws a <code>LarkBatisRejectedException</code> immediately, preventing invalid input from ever touching the database.</p>
 <h2 id="sqlfragment"><code>SqlFragment</code><a class="headerlink" href="#sqlfragment" title="Permanent link">&para;</a></h2>
-<p>Three factories, and the difference between them is the whole point:</p>
+<p>When building dynamic SQL fragments in Java, use <code>SqlFragment</code> factories:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">allowed</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="s">"created_at"</span><span class="p">,</span><span class="w"> </span><span class="s">"name"</span><span class="p">)</span><span class="w">   </span><span class="c1">// (1)!</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">identifier</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w">                      </span><span class="c1">// (2)!</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w">                    </span><span class="c1">// (3)!</span>
 </span></code></pre></div>
 <ol>
-<li>A closed allow-list. Anything else throws <code>LarkBatisRejectedException</code>. <strong>Prefer
-    this.</strong></li>
-<li>Accepts a plain SQL identifier (letters, digits, underscore, optionally
-    dot-qualified) and rejects everything else. For column and table names that genuinely
-    come from configuration.</li>
-<li>Accepts anything. The single audit point for arbitrary SQL text in the entire
-    codebase.</li>
+<li><strong><code>SqlFragment.allowed(...)</code></strong>: Validates against a static whitelist. (Recommended).</li>
+<li><strong><code>SqlFragment.identifier(...)</code></strong>: Validates that the input is a valid SQL identifier (alphanumeric and underscores only). Ideal for dynamic table or schema names.</li>
+<li><strong><code>SqlFragment.unsafeRawSql(...)</code></strong>: Slices arbitrary text into SQL without checks. This serves as the single searchable audit point for unescaped SQL across your entire codebase.</li>
 </ol>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users WHERE ${predicate} ORDER BY id"</span><span class="p">)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">where</span><span class="p">(</span><span class="n">SqlFragment</span><span class="w"> </span><span class="n">predicate</span><span class="p">);</span>
 </span></code></pre></div>
-<h3 id="why-unsaferawsql-has-that-name">Why <code>unsafeRawSql</code> has that name<a class="headerlink" href="#why-unsaferawsql-has-that-name" title="Permanent link">&para;</a></h3>
-<p>The name carries the warning because the method is the one place arbitrary text becomes
-SQL. Auditing raw-SQL insertion in a LarkBatis codebase is:</p>
+<h3 id="auditing-raw-sql-with-grep">Auditing raw SQL with <code>grep</code><a class="headerlink" href="#auditing-raw-sql-with-grep" title="Permanent link">&para;</a></h3>
+<p>Because raw SQL creation is channeled through <code>unsafeRawSql</code>, security audits are straightforward:</p>
 <div class="language-console highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp">$ </span>grep<span class="w"> </span>-rn<span class="w"> </span><span class="s1">'unsafeRawSql'</span><span class="w"> </span>src/
 </span></code></pre></div>
-<p>MyBatis has no equivalent convergence point. <code>${}</code> is scattered through XML,
-<code>@SelectProvider</code> bodies are scattered through Java, and finding all of them means reading
-every mapper.</p>
+<p>In standard MyBatis, <code>${}</code> expressions and <code>@SelectProvider</code> methods are scattered across XML files and Java classes, requiring full codebase reviews to detect vulnerabilities.</p>
 <h2 id="tracking-sql-variants">Tracking SQL variants<a class="headerlink" href="#tracking-sql-variants" title="Permanent link">&para;</a></h2>
-<p>Statement caches, both the driver's and the database's, are keyed by the <strong>SQL text</strong>. A
-fragment whose value set is not bounded grows them without limit, and you find out about
-it as a memory or a latency incident rather than as a bug.</p>
-<p>Two kinds of statement have text that is not fixed at build time: a <code>${}</code> splice, and a
-<code>&lt;foreach&gt;</code>, whose element count changes the text just as much. Both get a generated call:</p>
+<p>Both database engines and JDBC drivers cache execution plans by query text. Unbounded <code>${}</code> splices or fluctuating <code>&lt;foreach&gt;</code> sizes can flood statement caches with thousands of distinct query strings.</p>
+<p>LarkBatis automatically monitors statements with dynamic SQL:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">trackVariants</span><span class="p">(</span><span class="n">STMT_findByIds</span><span class="p">,</span><span class="w"> </span><span class="n">sql</span><span class="p">);</span>
 </span></code></pre></div>
-<p>It counts distinct SQL texts per statement. Past the threshold you get <strong>one</strong> log line
-naming the statement, and the counter stops retaining texts.</p>
+<p>If a statement exceeds the configured variant threshold, LarkBatis logs a warning:</p>
 <div class="language-yaml highlight"><span class="filename">application.yml</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">larkbatis</span><span class="p">:</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># default</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># default threshold</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># default</span>
 </span></code></pre></div>
-<p>Outside Spring the same settings are system properties
-(<code>-Dlarkbatis.maxSqlVariants=64</code>, <code>-Dlarkbatis.failOnUnboundedVariants=true</code>) or the
-static methods <code>LarkBatisSql.maxSqlVariants(int)</code> and
-<code>LarkBatisSql.failOnUnboundedVariants(boolean)</code>.</p>
 <div class="admonition tip">
-<p class="admonition-title">Turn <code>fail-on-unbounded-fragment</code> on in staging</p>
-<p>A production system should not start throwing because of a log-worthy trend, which is
-why the default is a warning. A test or staging profile that throws
-<code>LarkBatisUnboundedVariantsException</code> finds the unbounded fragment before it ships.</p>
+<p class="admonition-title">Enable <code>fail-on-unbounded-fragment</code> in CI/testing</p>
+<p>Set <code>larkbatis.fail-on-unbounded-fragment: true</code> in your test environment to catch unbounded query generation before deploying to production.</p>
 </div>
-<p><code>@PadPow2</code> is the other half of this story for <code>&lt;foreach&gt;</code>: it bounds the variants
-structurally instead of reporting on them. See
-<a href="../foreach-and-batches/#padpow2-bounding-the-sql-variants">foreach and Batches</a>.</p>
-<h2 id="in-a-select-list"><code>${}</code> in a select list<a class="headerlink" href="#in-a-select-list" title="Permanent link">&para;</a></h2>
-<p>A <code>${}</code> inside the select list means the generator cannot parse the columns, so that one
-statement falls back to a name-based row reader resolved from <code>ResultSetMetaData</code> on the
-first row. Correct, measurably slower, and <strong>reported at build time</strong>, so the trade-off is
-visible when you make it.</p>
-<h2 id="the-escape-hatch">The escape hatch<a class="headerlink" href="#the-escape-hatch" title="Permanent link">&para;</a></h2>
-<p>Sometimes the SQL genuinely has to be assembled in Java. A <code>default</code> method on the mapper
-interface is where that goes, and it keeps two properties that matter:</p>
+<p>To structurally bound <code>&lt;foreach&gt;</code> variants, use <code>@PadPow2</code>. See <a href="../foreach-and-batches/#padpow2-bounding-the-sql-variants">foreach and Batches</a>.</p>
+<h2 id="dynamic-columns-in-select-lists">Dynamic columns in select lists<a class="headerlink" href="#dynamic-columns-in-select-lists" title="Permanent link">&para;</a></h2>
+<p>Using <code>${}</code> inside a <code>SELECT</code> column list prevents the compiler from predicting column positions. The statement automatically falls back to reading columns by name from <code>ResultSetMetaData</code> on the first row. The build outputs a note whenever this fallback occurs.</p>
+<h2 id="the-escape-hatch">The manual escape hatch<a class="headerlink" href="#the-escape-hatch" title="Permanent link">&para;</a></h2>
+<p>When you need to construct complex queries dynamically in Java, write a <code>default</code> method on your mapper interface:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">recent</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span>
@@ -2049,16 +2021,15 @@ interface is where that goes, and it keeps two properties that matter:</p>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>A <code>StatementBinder</code>, a lambda over the <code>PreparedStatement</code>. Bind your <code>?</code> here;
-    prefer this over splicing values into the text.</li>
-<li>The <strong>generated</strong> row reader. No reflection, and the result type is checked by javac.</li>
+<li><strong><code>StatementBinder</code> lambda</strong>: Bind JDBC parameters safely using <code>ps.setXxx</code> rather than string concatenation.</li>
+<li><strong>Generated <code>UserRow.READER</code></strong>: Reads rows positionally with zero reflection.</li>
 </ol>
-<p>The entry points:</p>
+<p>Core execution methods:</p>
 <table>
 <thead>
 <tr>
 <th>Method</th>
-<th>Returns</th>
+<th>Return Type</th>
 </tr>
 </thead>
 <tbody>
@@ -2068,28 +2039,24 @@ interface is where that goes, and it keeps two properties that matter:</p>
 </tr>
 <tr>
 <td><code>s.queryOne(SqlFragment, StatementBinder, RowReader&lt;T&gt;)</code></td>
-<td><code>T</code> or <code>null</code></td>
+<td><code>T</code> (or <code>null</code>)</td>
 </tr>
 <tr>
 <td><code>s.queryStream(SqlFragment, StatementBinder, RowReader&lt;T&gt;)</code></td>
-<td><code>Stream&lt;T&gt;</code>, caller closes</td>
+<td><code>Stream&lt;T&gt;</code> (caller closes)</td>
 </tr>
 <tr>
 <td><code>s.update(SqlFragment, StatementBinder)</code></td>
-<td><code>int</code></td>
+<td><code>int</code> (affected rows)</td>
 </tr>
 </tbody>
 </table>
-<p>Note what the signature refuses: there is no <code>String</code> overload. Even here, arbitrary SQL
-text enters through the same audited gate.</p>
-<p>A reader exists for every class used as a statement's <code>resultType</code>. A class used <em>only</em>
-here has no statement to trigger one, so mark it
-<a href="../../features/annotations/#larkbatisrow"><code>@LarkBatisRow</code></a>:</p>
+<p>If you need a row reader for a class that isn't referenced in any mapper statement, annotate it with <a href="../../features/annotations/#larkbatisrow"><code>@LarkBatisRow</code></a>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@LarkBatisRow</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DomainCount</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">domain</span><span class="p">;</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">total</span><span class="p">;</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="c1">// no-arg constructor + setters</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="c1">// standard getters and setters</span>
 </span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DomainCount</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">countByDomain</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minimum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -2100,11 +2067,9 @@ here has no statement to trigger one, so mark it
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">            </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span>
 </span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>READER</code> reads <strong>positionally, in the class's declaration order</strong>, because there was no
-select list at build time to check the order against. Where hand-assembled SQL cannot
-promise that order, resolve by name instead:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">columns</span><span class="p">(</span><span class="n">rs</span><span class="p">);</span><span class="w">   </span><span class="c1">// once, from ResultSetMetaData</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">DomainCount</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+<p><code>DomainCountRow.READER</code> reads columns positionally based on property declaration order. If your custom SQL returns columns in a different order, use name-based reading:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">columns</span><span class="p">(</span><span class="n">rs</span><span class="p">);</span><span class="w">   </span><span class="c1">// resolved once from metadata</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">DomainCount</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="n">columns</span><span class="p">);</span>
 </span></code></pre></div>
 
 

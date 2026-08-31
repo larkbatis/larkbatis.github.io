@@ -1676,10 +1676,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#status" class="md-nav__link">
+  <a href="#milestone-status" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Status
+        Milestone Status
       
     </span>
   </a>
@@ -1687,10 +1687,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#m0-the-cheapest-possible-falsification" class="md-nav__link">
+  <a href="#m0-proving-the-thesis-cheaply" class="md-nav__link">
     <span class="md-ellipsis">
       
-        M0: the cheapest possible falsification
+        M0: Proving the thesis cheaply
       
     </span>
   </a>
@@ -1698,10 +1698,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#m5-what-is-actually-left" class="md-nav__link">
+  <a href="#m5-remaining-items" class="md-nav__link">
     <span class="md-ellipsis">
       
-        M5: what is actually left
+        M5: Remaining items
       
     </span>
   </a>
@@ -1720,10 +1720,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-will-not-be-added" class="md-nav__link">
+  <a href="#features-that-will-not-be-added" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What will not be added
+        Features that will not be added
       
     </span>
   </a>
@@ -1811,10 +1811,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#status" class="md-nav__link">
+  <a href="#milestone-status" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Status
+        Milestone Status
       
     </span>
   </a>
@@ -1822,10 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#m0-the-cheapest-possible-falsification" class="md-nav__link">
+  <a href="#m0-proving-the-thesis-cheaply" class="md-nav__link">
     <span class="md-ellipsis">
       
-        M0: the cheapest possible falsification
+        M0: Proving the thesis cheaply
       
     </span>
   </a>
@@ -1833,10 +1833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#m5-what-is-actually-left" class="md-nav__link">
+  <a href="#m5-remaining-items" class="md-nav__link">
     <span class="md-ellipsis">
       
-        M5: what is actually left
+        M5: Remaining items
       
     </span>
   </a>
@@ -1855,10 +1855,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-will-not-be-added" class="md-nav__link">
+  <a href="#features-that-will-not-be-added" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What will not be added
+        Features that will not be added
       
     </span>
   </a>
@@ -1902,139 +1902,117 @@
 
 
 <h1 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h1>
-<p>Milestones were ordered by one criterion: <strong>lowest semantic risk first, provable benefit
-earliest.</strong></p>
-<h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h2>
+<p>We ordered our milestones around one rule: <strong>tackle the biggest semantic risks first and prove real performance gains as early as possible.</strong></p>
+<h2 id="milestone-status">Milestone Status<a class="headerlink" href="#milestone-status" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
+<th>Milestone</th>
 <th>Scope</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>M0</strong></td>
-<td>Benchmark groundwork: an <code>ObjectWrapperFactory</code> experiment on mybatis-3 itself, to test the central claim before writing any LarkBatis code</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-</tr>
-<tr>
-<td><strong>M1</strong></td>
-<td>Runtime core; annotation-only processor for static SQL and <code>#{}</code>; <code>$$Impl</code> + row readers; <code>useGeneratedKeys</code>; <code>SqlFragment</code></td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-</tr>
-<tr>
-<td><strong>M2</strong></td>
-<td>Gradle plugin; mapper XML; dynamic tags; the expression grammar. <em>The highest semantic risk in the project</em>, hence the differential harness against MyBatis</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-</tr>
-<tr>
-<td><strong>M3</strong></td>
-<td><code>&lt;foreach&gt;</code>, power-of-two padding, batch insert</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-</tr>
-<tr>
-<td><strong>M4</strong></td>
-<td>One-level join <code>&lt;resultMap&gt;</code>, <code>Stream</code> returns, transactions, Spring integration</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-</tr>
-<tr>
-<td><strong>M5</strong></td>
-<td>Extended benchmarks, legacy-mapper scanner, design revision</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span> except the native-image smoke test</td>
-</tr>
-</tbody>
-</table>
-<p>Also landed alongside these: the Maven plugin, JPMS descriptors for all five published
-artifacts, and Spring Boot 3 / Boot 4 compatibility from one jar.</p>
-<h2 id="m0-the-cheapest-possible-falsification">M0: the cheapest possible falsification<a class="headerlink" href="#m0-the-cheapest-possible-falsification" title="Permanent link">&para;</a></h2>
-<p>Worth describing because of what it says about the project's method. MyBatis already has
-an <code>ObjectWrapperFactory</code> SPI, so you can generate an <code>ObjectWrapper</code> per result class and
-plug it into <code>Configuration</code> <strong>without patching MyBatis at all</strong>. If removing <code>Reflector</code>
-and <code>MetaObject</code> from the row-read path measurably improved things, LarkBatis's central
-claim was proven on a real codebase for a few hundred lines of experiment. If it did not,
-several months were saved.</p>
-<p>It improved things, and by a wide margin. See
-<a href="../../wiki/performance/">Performance</a>.</p>
-<h2 id="m5-what-is-actually-left">M5: what is actually left<a class="headerlink" href="#m5-what-is-actually-left" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th></th>
 <th>Status</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>larkbatis-benchmarks</code> (JMH; pinned sessions; STATEMENT-scope cache; H2 over TCP; JDK 17 vs 21; 50-bean megamorphic experiment)</td>
+<td><strong>M0</strong></td>
+<td>Proof of concept: an <code>ObjectWrapperFactory</code> experiment on stock MyBatis to test the core thesis before writing any LarkBatis code</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+</tr>
+<tr>
+<td><strong>M1</strong></td>
+<td>Runtime core: annotation-based processor for static SQL and <code>#{}</code>; <code>$$Impl</code> + row readers; <code>useGeneratedKeys</code>; <code>SqlFragment</code></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+</tr>
+<tr>
+<td><strong>M2</strong></td>
+<td>Gradle plugin: mapper XML; dynamic tags; expression grammar parser; differential test harness against MyBatis</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+</tr>
+<tr>
+<td><strong>M3</strong></td>
+<td><code>&lt;foreach&gt;</code>, power-of-two padding (<code>@PadPow2</code>), batch inserts</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+</tr>
+<tr>
+<td><strong>M4</strong></td>
+<td>1-level join <code>&lt;resultMap&gt;</code>, <code>Stream</code> returns, transaction scopes, Spring Boot integration</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+</tr>
+<tr>
+<td><strong>M5</strong></td>
+<td>Extended JMH benchmarks, legacy-mapper scanner CLI, design documentation</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span> (except native-image smoke test)</td>
+</tr>
+</tbody>
+</table>
+<p>Completed alongside these: Maven build plugin, JPMS named module descriptors for all published artifacts, and unified Spring Boot 3 / Boot 4 compatibility.</p>
+<h2 id="m0-proving-the-thesis-cheaply">M0: Proving the thesis cheaply<a class="headerlink" href="#m0-proving-the-thesis-cheaply" title="Permanent link">&para;</a></h2>
+<p>This milestone was about validating our core assumption with minimal effort. MyBatis has an <code>ObjectWrapperFactory</code> SPI, which lets you plug in a generated <code>ObjectWrapper</code> per result class without modifying MyBatis itself. If eliminating <code>Reflector</code> and <code>MetaObject</code> on the row-reading path made a measurable difference, our thesis was validated with just a few hundred lines of test code. If not, we could walk away before investing months of effort.</p>
+<p>It proved the thesis decisively. See <a href="../../wiki/performance/">Performance</a>.</p>
+<h2 id="m5-remaining-items">M5: Remaining items<a class="headerlink" href="#m5-remaining-items" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>larkbatis-benchmarks</code> (JMH; pinned sessions; STATEMENT-scope cache; H2 over TCP; JDK 17 vs 21; 50-bean megamorphic benchmark)</td>
 <td>Done. <a href="../../wiki/performance/#measured-on-larkbatis-itself">Results</a></td>
 </tr>
 <tr>
-<td><code>larkbatis-scanner</code> (<code>larkbatis-scan</code>)</td>
-<td>Implemented. <a href="../migration/">Details</a></td>
+<td><code>larkbatis-scanner</code> (<code>larkbatis-scan</code> CLI)</td>
+<td>Done. <a href="../migration/">Details</a></td>
 </tr>
 <tr>
 <td><strong>Native-image smoke test</strong></td>
-<td><strong>Not run.</strong> The development machine has no GraalVM</td>
+<td><strong>Not yet run.</strong> Development environment lacks GraalVM setup</td>
 </tr>
 <tr>
-<td>A migrated service running in a real environment for a week</td>
-<td>Not done. The trial migration passed its whole test suite on a copy</td>
+<td>Extended 1-week production soak test of migrated service</td>
+<td>Pending. (The initial trial migration passed 100% of its test suite)</td>
 </tr>
 <tr>
-<td>The design revision, rewritten around what the benchmarks and the trial migration showed</td>
+<td>Architecture documentation revision</td>
 <td>Done</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">The native-image promise is unverified</p>
-<p>Zero reflection is the project's strongest qualitative claim, and it is structural:
-no <code>Proxy</code>, no <code>Class.forName</code>, no <code>setAccessible</code> to declare, and you can check that
-by reading the code. But <strong>no real native-image build has been done</strong>. It should not be
-presented as a result until there is one.</p>
+<p class="admonition-title">Native image verification status</p>
+<p>Zero runtime reflection is a structural guarantee: there are no dynamic proxies, no <code>Class.forName</code>, and no <code>setAccessible</code> calls in runtime or generated code. However, <strong>an end-to-end native-image build has not been executed yet</strong>. We treat this as an architectural design property rather than a benchmarked claim until that smoke test runs.</p>
 </div>
 <h2 id="deliberately-deferred">Deliberately deferred<a class="headerlink" href="#deliberately-deferred" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>Why</th>
+<th>Feature</th>
+<th>Reason</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Multiple <code>DataSource</code>s</strong> (<code>@LarkBatisDataSource</code>)</td>
-<td>No design without a real service that needs it. Today: one <code>SpringLarkBatisSession</code> per <code>DataSource</code>, mapper <code>@Bean</code> methods written by hand</td>
+<td>We want real production usage before locking in an API. Today: define one <code>SpringLarkBatisSession</code> per <code>DataSource</code> and wire mapper <code>@Bean</code> methods manually</td>
 </tr>
 <tr>
 <td><strong>Test-scoped mappers</strong></td>
-<td>Only the <code>compile</code> source set is wired, in both build plugins</td>
+<td>Build plugins only configure main source sets</td>
 </tr>
 <tr>
 <td><strong><code>log-sql</code></strong></td>
-<td>Every generated body would need a logging branch. Driver- or pool-level logging instead</td>
-</tr>
-<tr>
-<td><strong>Maven plugin functional tests</strong></td>
-<td>Blocked on the artifacts being publishable to a local repository, the same status as the Gradle plugin's TestKit tests</td>
+<td>Handled more cleanly at the JDBC pool or driver level (<code>datasource-proxy</code>, p6spy)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="what-will-not-be-added">What will not be added<a class="headerlink" href="#what-will-not-be-added" title="Permanent link">&para;</a></h2>
-<p>None of those are backlog items. Each sits on the wrong side of the
-<a href="../../wiki/shape-vs-value/">shape/value cut</a>, and adding one would mean adding back a
-runtime that can inspect types.</p>
-<p>Full OGNL · <code>&lt;bind&gt;</code> · the <code>@SelectProvider</code> family · lazy loading · plugins and
-interceptors · <code>Object</code>/<code>Map</code> parameters · <code>&lt;discriminator&gt;</code> · nested selects in
-<code>&lt;collection&gt;</code> · second-level cache · runtime <code>addMapper()</code> · <code>RowBounds</code> · TypeHandler
-discovery by scan · <code>ExecutorType</code>.</p>
-<p>Each already has a compile error naming its replacement. See
-<a href="../mybatis-differences/">MyBatis Differences</a>.</p>
+<h2 id="features-that-will-not-be-added">Features that will not be added<a class="headerlink" href="#features-that-will-not-be-added" title="Permanent link">&para;</a></h2>
+<p>These are not backlog items. Each sits on the wrong side of our <a href="../../wiki/shape-vs-value/">shape vs value boundary</a>, and adding them would re-introduce runtime reflection and interpretation:</p>
+<p>Full OGNL expressions · <code>&lt;bind&gt;</code> · <code>@SelectProvider</code> annotations · Lazy loading · Interceptor plugins · Untyped <code>Object</code>/<code>Map</code> parameters · <code>&lt;discriminator&gt;</code> · Nested <code>select=</code> queries in <code>&lt;collection&gt;</code> · Second-level caches · Dynamic runtime <code>addMapper()</code> · <code>RowBounds</code> · Runtime classpath scanning · <code>ExecutorType</code>.</p>
+<p>Each unsupported feature produces a clear compile-time error with its recommended alternative. See <a href="../mybatis-differences/">MyBatis Differences</a>.</p>
 <h2 id="versioning">Versioning<a class="headerlink" href="#versioning" title="Permanent link">&para;</a></h2>
-<p>Documentation is versioned alongside releases. The version selector in the header switches
-between them, and <code>latest</code> always points at the most recent release.</p>
+<p>Documentation is versioned alongside releases. Use the version selector in the header to view documentation for specific releases.</p>
 
 
 

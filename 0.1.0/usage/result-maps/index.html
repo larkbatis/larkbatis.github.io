@@ -964,10 +964,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-auto-mapping" class="md-nav__link">
+  <a href="#no-implicit-auto-mapping-in-resultmap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        No auto-mapping
+        No implicit auto-mapping in &lt;resultMap&gt;
       
     </span>
   </a>
@@ -975,10 +975,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#column-positions" class="md-nav__link">
+  <a href="#column-indexes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Column positions
+        Column indexes
       
     </span>
   </a>
@@ -989,7 +989,7 @@
   <a href="#narrowed-on-purpose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What a result map cannot do
+        Intentional limitations
       
     </span>
   </a>
@@ -997,10 +997,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stream-and-nested-result-maps" class="md-nav__link">
+  <a href="#streams-and-nested-result-maps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stream and nested result maps
+        Streams and nested result maps
       
     </span>
   </a>
@@ -1833,10 +1833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-auto-mapping" class="md-nav__link">
+  <a href="#no-implicit-auto-mapping-in-resultmap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        No auto-mapping
+        No implicit auto-mapping in &lt;resultMap&gt;
       
     </span>
   </a>
@@ -1844,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#column-positions" class="md-nav__link">
+  <a href="#column-indexes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Column positions
+        Column indexes
       
     </span>
   </a>
@@ -1858,7 +1858,7 @@
   <a href="#narrowed-on-purpose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What a result map cannot do
+        Intentional limitations
       
     </span>
   </a>
@@ -1866,10 +1866,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stream-and-nested-result-maps" class="md-nav__link">
+  <a href="#streams-and-nested-result-maps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stream and nested result maps
+        Streams and nested result maps
       
     </span>
   </a>
@@ -1902,8 +1902,7 @@
 
 
 <h1 id="result-maps-and-joins">Result Maps and Joins<a class="headerlink" href="#result-maps-and-joins" title="Permanent link">&para;</a></h1>
-<p>A <code>&lt;resultMap&gt;</code> declares the column each property comes from, and may fill <strong>one</strong> nested
-<code>&lt;association&gt;</code> (a single child object) or <code>&lt;collection&gt;</code> (a <code>List</code>) from the same join.</p>
+<p>A <code>&lt;resultMap&gt;</code> explicitly maps SQL columns to Java properties and can populate <strong>one</strong> nested <code>&lt;association&gt;</code> (a 1-to-1 child object) or <code>&lt;collection&gt;</code> (a <code>List</code>) from a SQL join query.</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"teamWithMembers"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.Team"</span><span class="nt">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">   </span><span class="na">column=</span><span class="s">"t_id"</span><span class="nt">/&gt;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&lt;result</span><span class="w"> </span><span class="na">property=</span><span class="s">"name"</span><span class="w"> </span><span class="na">column=</span><span class="s">"t_name"</span><span class="nt">/&gt;</span>
@@ -1921,7 +1920,7 @@
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span>ORDER<span class="w"> </span>BY<span class="w"> </span>t.id,<span class="w"> </span>m.jersey
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="nt">&lt;/select&gt;</span>
 </span></code></pre></div>
-<p>An <code>&lt;association&gt;</code> works the same way for a single child:</p>
+<p><code>&lt;association&gt;</code> works the exact same way for single child relationships:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"teamWithCoach"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.Team"</span><span class="nt">&gt;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">   </span><span class="na">column=</span><span class="s">"t_id"</span><span class="nt">/&gt;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&lt;result</span><span class="w"> </span><span class="na">property=</span><span class="s">"name"</span><span class="w"> </span><span class="na">column=</span><span class="s">"t_name"</span><span class="nt">/&gt;</span>
@@ -1932,8 +1931,7 @@
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nt">&lt;/resultMap&gt;</span>
 </span></code></pre></div>
 <h2 id="what-it-compiles-to">What it compiles to<a class="headerlink" href="#what-it-compiles-to" title="Permanent link">&para;</a></h2>
-<p>A loop that starts a new parent where the <code>&lt;id&gt;</code> column changes, and skips the child when
-its <code>&lt;id&gt;</code> column is <code>NULL</code>, which is a <code>LEFT JOIN</code> miss:</p>
+<p>A generated loop instantiates a new parent object whenever the parent <code>&lt;id&gt;</code> column value changes. It ignores child properties when the child <code>&lt;id&gt;</code> is <code>NULL</code> (a <code>LEFT JOIN</code> miss):</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Team</span><span class="o">&gt;</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">Team</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kt">long</span><span class="w"> </span><span class="n">lastKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -1959,99 +1957,77 @@ its <code>&lt;id&gt;</code> column is <code>NULL</code>, which is a <code>LEFT J
 </span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>MyBatis does this job by building a <code>CacheKey</code> per row: reflect over the id columns,
-    read each through a <code>TypeHandler</code>, hash, look the parent up in a map. Here the key is
-    a typed local compared with <code>!=</code>, so a <code>long</code> key costs no boxing per row.</li>
-<li>The <code>LEFT JOIN</code> miss test. Without it, an unmatched parent would gain a child of all
-    nulls.</li>
+<li>MyBatis manages join grouping by creating a <code>CacheKey</code> per row: reflecting over ID columns, converting them via <code>TypeHandler</code>s, hashing, and performing HashMap lookups. LarkBatis compares typed primitives directly using <code>!=</code>, avoiding object allocations and boxing entirely.</li>
+<li>Handles <code>LEFT JOIN</code> misses. Without this check, unmatched parent rows would create child instances filled with <code>null</code>s.</li>
 </ol>
 <h2 id="the-ordering-rule">The ordering rule<a class="headerlink" href="#the-ordering-rule" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
-<p class="admonition-title">The ResultSet must be ordered by the parent key</p>
-<p>That is the price of not keeping a map. Rows that revisit a key <strong>after another
-parent's rows</strong> produce a second parent object instead of merging into the first.</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">jersey</span><span class="w">   </span><span class="c1">-- parent key first</span>
+<p class="admonition-title">The query ResultSet MUST be ordered by parent ID</p>
+<p>This is the trade-off for zero heap allocations: rows must group parent keys sequentially. If rows for a given parent ID appear out of order later in the ResultSet, a duplicate parent instance will be created rather than merged into the previous one.</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">jersey</span><span class="w">   </span><span class="c1">-- parent key must be ordered first</span>
 </span></code></pre></div>
-<p>A statement using a nested result map with <strong>no <code>ORDER BY</code> at all</strong> gets a build-time
-note. A wrong <code>ORDER BY</code> cannot be detected at build time, so that one is on you.</p>
+<p>Queries using nested result maps without an <code>ORDER BY</code> clause will produce a build warning.</p>
 </div>
-<h2 id="no-auto-mapping">No auto-mapping<a class="headerlink" href="#no-auto-mapping" title="Permanent link">&para;</a></h2>
-<p>A result map maps <strong>exactly what it declares</strong>. There is no <code>autoMapping</code> and no implicit
-column matching inside a <code>&lt;resultMap&gt;</code>.</p>
+<h2 id="no-implicit-auto-mapping-in-resultmap">No implicit auto-mapping in <code>&lt;resultMap&gt;</code><a class="headerlink" href="#no-implicit-auto-mapping-in-resultmap" title="Permanent link">&para;</a></h2>
+<p>A <code>&lt;resultMap&gt;</code> maps <strong>only the columns you explicitly declare</strong>. There is no implicit runtime column guessing:</p>
 <ul>
-<li>A <code>&lt;result&gt;</code> whose column is missing from the select list is a <strong>build warning</strong>, and
-  leaves that property unset.</li>
-<li>An <code>&lt;id&gt;</code> whose column is missing is a <strong>build error</strong>, because that column is what the
-  loop reads.</li>
+<li>A <code>&lt;result&gt;</code> mapping referencing a column missing from the <code>SELECT</code> list produces a <strong>build warning</strong>, leaving that property unset.</li>
+<li>An <code>&lt;id&gt;</code> mapping referencing a missing column causes a <strong>compile error</strong> because the loop requires it for row grouping.</li>
 </ul>
-<p>If you want columns matched to property names by convention, use <code>resultType</code> instead.
-That path <em>does</em> apply <code>snake_case</code> → <code>camelCase</code>, at build time. The two are different
-tools: <code>resultType</code> for "map what matches", <code>resultMap</code> for "map what I say".</p>
-<h2 id="column-positions">Column positions<a class="headerlink" href="#column-positions" title="Permanent link">&para;</a></h2>
-<p>When the select list parses, positions are constants. When it does not, that statement
-gets its own generated resolver that reads <code>ResultSetMetaData</code> once on the first row and
-matches the column names the map declared. Correct either way, and the build tells you
-which happened. See
-<a href="../mappers/#positional-or-name-based-reads">Positional or name-based reads</a>.</p>
-<h2 id="narrowed-on-purpose">What a result map cannot do<a class="headerlink" href="#narrowed-on-purpose" title="Permanent link">&para;</a></h2>
-<p>Each of these is a <strong>compile error naming the replacement</strong>:</p>
+<p>If you want automatic camelCase property mapping based on column names, use <code>resultType</code> instead. Use <code>resultType</code> for standard convention mapping and <code>&lt;resultMap&gt;</code> when you need explicit column-to-property control or SQL join mapping.</p>
+<h2 id="column-indexes">Column indexes<a class="headerlink" href="#column-indexes" title="Permanent link">&para;</a></h2>
+<p>When the <code>SELECT</code> list can be parsed, column indexes are hardcoded as static constants. If the query uses <code>SELECT *</code> or dynamic column splices, a lightweight resolver determines column positions once on the first row and reads by index thereafter.</p>
+<h2 id="narrowed-on-purpose">Intentional limitations<a class="headerlink" href="#narrowed-on-purpose" title="Permanent link">&para;</a></h2>
+<p>The following features produce explicit <strong>compile errors</strong> with recommended alternatives:</p>
 <table>
 <thead>
 <tr>
-<th>Not supported</th>
-<th>Instead</th>
+<th>Unsupported Feature</th>
+<th>Recommended Alternative</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>More than one level of nesting, or two nested mappings in one map</td>
-<td>One join, one grouping key</td>
+<td>Nesting deeper than 1 level, or multiple collections</td>
+<td>Use a single SQL join, or query relationships separately</td>
 </tr>
 <tr>
-<td><code>select=</code> on <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code> (nested select)</td>
-<td>Write the join; the nested select <em>is</em> the N+1 it avoids</td>
+<td><code>select=</code> on <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code></td>
+<td>Write a SQL join (nested <code>select=</code> causes N+1 queries)</td>
 </tr>
 <tr>
-<td><code>resultMap=</code> inside a nested mapping</td>
-<td>Spell the child's <code>&lt;id&gt;</code>/<code>&lt;result&gt;</code> out, which keeps the one-level limit visible</td>
+<td>Nested <code>resultMap=</code> references</td>
+<td>Declare child <code>&lt;id&gt;</code>/<code>&lt;result&gt;</code> mappings inline</td>
 </tr>
 <tr>
-<td><code>columnPrefix</code></td>
-<td>Alias the child columns in the select list</td>
+<td><code>columnPrefix</code> attribute</td>
+<td>Alias child columns in the <code>SELECT</code> query</td>
 </tr>
 <tr>
-<td><code>extends</code></td>
-<td>Spell the mappings out</td>
+<td><code>extends</code> attribute</td>
+<td>Declare property mappings explicitly</td>
 </tr>
 <tr>
-<td><code>&lt;constructor&gt;</code></td>
-<td>Result classes are built with a no-arg constructor and setters</td>
+<td><code>&lt;constructor&gt;</code> results</td>
+<td>Provide a standard no-arg constructor and setters</td>
 </tr>
 <tr>
-<td><code>&lt;discriminator&gt;</code></td>
-<td>Separate statements with separate result types</td>
+<td><code>&lt;discriminator&gt;</code> tags</td>
+<td>Split into separate queries with distinct return types</td>
 </tr>
 <tr>
-<td><code>autoMapping</code></td>
-<td>Declare the mappings, or use <code>resultType</code></td>
+<td><code>autoMapping="true"</code></td>
+<td>Declare mappings explicitly or use <code>resultType</code></td>
 </tr>
 <tr>
-<td><code>&lt;id column="x"/&gt;</code> with no <code>property</code></td>
-<td>Map the key to a property and mark that <code>&lt;id&gt;</code></td>
-</tr>
-<tr>
-<td>A type alias in <code>type</code> / <code>ofType</code> / <code>javaType</code></td>
-<td>The fully-qualified class name</td>
+<td>Type aliases in <code>type</code>/<code>javaType</code>/<code>ofType</code></td>
+<td>Use fully-qualified class names</td>
 </tr>
 </tbody>
 </table>
-<p>Deeper object graphs are assembled in Java from two statements: the same number of round
-trips, with the assembly visible in code you can read.</p>
-<h2 id="stream-and-nested-result-maps"><code>Stream</code> and nested result maps<a class="headerlink" href="#stream-and-nested-result-maps" title="Permanent link">&para;</a></h2>
-<p>A <code>Stream</code> return over a nested <code>&lt;resultMap&gt;</code> is a <strong>compile error</strong>. A parent spans
-several rows, so it is only complete once the next parent starts; answering that from a
-one-row-at-a-time cursor means buffering the whole result, which is exactly what the
-<code>Stream</code> return was chosen to avoid. See <a href="../streaming/">Streaming Results</a>.</p>
+<p>For multi-level hierarchies, execute two targeted queries and assemble the object graph in Java. It uses the same number of database round trips and keeps your assembly logic clear and testable.</p>
+<h2 id="streams-and-nested-result-maps">Streams and nested result maps<a class="headerlink" href="#streams-and-nested-result-maps" title="Permanent link">&para;</a></h2>
+<p>Returning a <code>Stream&lt;T&gt;</code> with a nested <code>&lt;resultMap&gt;</code> is a <strong>compile error</strong>. Because parent objects span multiple rows in a join ResultSet, a parent is only complete when the next parent ID is encountered. Streaming one row at a time would require buffering the entire ResultSet in memory, defeating the purpose of streaming. See <a href="../streaming/">Streaming Results</a>.</p>
 
 
 

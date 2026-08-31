@@ -953,10 +953,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#null-semantics-fixed-and-documented" class="md-nav__link">
+  <a href="#strict-null-semantics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Null semantics, fixed and documented
+        Strict null semantics
       
     </span>
   </a>
@@ -980,10 +980,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifying-against-mybatis" class="md-nav__link">
+  <a href="#testing-against-mybatis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verifying against MyBatis
+        Testing against MyBatis
       
     </span>
   </a>
@@ -1917,10 +1917,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#null-semantics-fixed-and-documented" class="md-nav__link">
+  <a href="#strict-null-semantics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Null semantics, fixed and documented
+        Strict null semantics
       
     </span>
   </a>
@@ -1944,10 +1944,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifying-against-mybatis" class="md-nav__link">
+  <a href="#testing-against-mybatis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verifying against MyBatis
+        Testing against MyBatis
       
     </span>
   </a>
@@ -1980,9 +1980,7 @@
 
 
 <h1 id="dynamic-sql">Dynamic SQL<a class="headerlink" href="#dynamic-sql" title="Permanent link">&para;</a></h1>
-<p><code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code> and <code>&lt;trim&gt;</code> all work, and none of them survives
-to runtime as a tree. The generator folds the tag structure into condition locals and
-guarded appends; the only thing evaluated at runtime is each <code>test</code> expression, once.</p>
+<p><code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code>, and <code>&lt;trim&gt;</code> all work out of the box, and none of them exist as a runtime AST. The generator flattens the XML tags into boolean variables and guarded string appends. At runtime, each <code>test</code> condition is evaluated exactly once.</p>
 <h2 id="what-it-compiles-to">What it compiles to<a class="headerlink" href="#what-it-compiles-to" title="Permanent link">&para;</a></h2>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"search"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users
@@ -2024,36 +2022,28 @@ guarded appends; the only thing evaluated at runtime is each <code>test</code> e
 </span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Each <code>test</code> is evaluated <strong>once</strong>, into a local. The same local drives both SQL
-    assembly and parameter binding, so the two can never disagree.</li>
-<li>The capacity is computed at build time from the longest possible text.</li>
-<li><code>&lt;where&gt;</code> becomes a guarded literal, not a runtime string scan for a leading
-    <code>AND</code>/<code>OR</code>.</li>
-<li>This is the <code>&lt;where&gt;</code> leading-conjunction rule, constant-folded: the first branch
-    that fires emits no <code>AND</code>. It is a ternary over already-computed locals, not a
-    substring search.</li>
-<li>Binding walks the same conditions in the same order. There is no parameter-name map
-    in between.</li>
+<li>Each <code>test</code> condition is evaluated <strong>once</strong> into a local boolean. The same boolean drives both SQL assembly and parameter binding, so they can never disagree.</li>
+<li><code>StringBuilder</code> initial capacity is computed at build time from the maximum possible query length.</li>
+<li><code>&lt;where&gt;</code> turns into a simple conditional append rather than a runtime string scan for leading <code>AND</code>/<code>OR</code>.</li>
+<li>The leading <code>AND</code>/<code>OR</code> strip rule is constant-folded: the first active branch omits <code>AND</code>. It's a simple ternary expression over precomputed booleans.</li>
+<li>Parameter binding walks the exact same conditions in the exact same order. There is no intermediate parameter map.</li>
 </ol>
 <h2 id="if"><code>&lt;if&gt;</code><a class="headerlink" href="#if" title="Permanent link">&para;</a></h2>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"email != null"</span><span class="nt">&gt;</span>AND<span class="w"> </span>email<span class="w"> </span>=<span class="w"> </span>#{email}<span class="nt">&lt;/if&gt;</span>
 </span></code></pre></div>
-<p>Anything inside is appended when the condition holds. Nesting works; siblings work; an
-<code>&lt;if&gt;</code> inside a <code>&lt;foreach&gt;</code> body works.</p>
+<p>Appends content when the condition is true. Supports nesting, sibling tags, and placement inside <code>&lt;foreach&gt;</code> bodies.</p>
 <h2 id="choose-when-otherwise"><code>&lt;choose&gt;</code> / <code>&lt;when&gt;</code> / <code>&lt;otherwise&gt;</code><a class="headerlink" href="#choose-when-otherwise" title="Permanent link">&para;</a></h2>
-<p>Exactly one branch fires, and the mutual exclusion is compiled in:</p>
+<p>Only one branch executes, and mutual exclusion is baked into generated bytecode:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;choose&gt;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&lt;when</span><span class="w"> </span><span class="na">test=</span><span class="s">"status != null"</span><span class="nt">&gt;</span>AND<span class="w"> </span>status<span class="w"> </span>=<span class="w"> </span>#{status}<span class="nt">&lt;/when&gt;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&lt;otherwise&gt;</span>AND<span class="w"> </span>status<span class="w"> </span>=<span class="w"> </span>'NEW'<span class="nt">&lt;/otherwise&gt;</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nt">&lt;/choose&gt;</span>
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getStatus</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">c0</span><span class="p">;</span><span class="w">                       </span><span class="c1">// &lt;otherwise&gt; is the negation of the disjunction</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">c0</span><span class="p">;</span><span class="w">                       </span><span class="c1">// &lt;otherwise&gt; is the negation of prior branches</span>
 </span></code></pre></div>
 <h2 id="where-and-set"><code>&lt;where&gt;</code> and <code>&lt;set&gt;</code><a class="headerlink" href="#where-and-set" title="Permanent link">&para;</a></h2>
-<p><code>&lt;where&gt;</code> emits the keyword only if the body contributed something, and strips the
-leading <code>AND</code>/<code>OR</code> of whichever branch fired first. <code>&lt;set&gt;</code> does the same for <code>SET</code> and
-a trailing comma:</p>
+<p><code>&lt;where&gt;</code> adds <code>WHERE</code> only if at least one child condition is true, stripping leading <code>AND</code>/<code>OR</code> automatically. <code>&lt;set&gt;</code> does the same for <code>SET</code> and manages trailing commas:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&lt;update</span><span class="w"> </span><span class="na">id=</span><span class="s">"rename"</span><span class="nt">&gt;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>UPDATE<span class="w"> </span>users
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&lt;set&gt;</span>
@@ -2068,19 +2058,15 @@ a trailing comma:</p>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" email = ?"</span><span class="p">);</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" WHERE id = ?"</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Notice there is no trailing-comma trimming at runtime: the generator knows which branch
-is last for each combination and emits the comma only where a later branch will follow.</p>
+<p>Notice there's no runtime string trimming for trailing commas. The generator already knows which branch comes last for every possible combination and only emits commas when another field follows.</p>
 <h2 id="trim"><code>&lt;trim&gt;</code><a class="headerlink" href="#trim" title="Permanent link">&para;</a></h2>
-<p>Supported with <strong>literal attributes</strong> (<code>prefix</code>, <code>suffix</code>, <code>prefixOverrides</code>,
-<code>suffixOverrides</code>), which are constant-folded at build time. That is what makes <code>&lt;where&gt;</code>
-and <code>&lt;set&gt;</code> compile to the code above; they are <code>&lt;trim&gt;</code> with fixed attributes.</p>
+<p>Supports literal attributes (<code>prefix</code>, <code>suffix</code>, <code>prefixOverrides</code>, <code>suffixOverrides</code>), which are constant-folded at compile time. (<code>&lt;where&gt;</code> and <code>&lt;set&gt;</code> are simply <code>&lt;trim&gt;</code> with predefined defaults).</p>
 <h2 id="the-test-grammar">The <code>test</code> grammar<a class="headerlink" href="#the-test-grammar" title="Permanent link">&para;</a></h2>
-<p>Compatibility with MyBatis stops here, and only here. <code>test</code> is <strong>not</strong> OGNL. It is a narrow
-grammar, type-checked against the mapper method's parameters:</p>
+<p>This is where we intentionally break from MyBatis: <code>test</code> attributes do not use OGNL. Instead, we use a simple, strictly type-checked grammar validated against your Java method parameters:</p>
 <table>
 <thead>
 <tr>
-<th>Accepted</th>
+<th>Expression</th>
 <th>Example</th>
 </tr>
 </thead>
@@ -2090,7 +2076,7 @@ grammar, type-checked against the mapper method's parameters:</p>
 <td><code>name != null</code>, <code>probe.email == null</code></td>
 </tr>
 <tr>
-<td>Comparisons on typed property paths</td>
+<td>Comparisons on typed properties</td>
 <td><code>age &gt;= 18</code>, <code>status == 'NEW'</code>, <code>id != other.id</code></td>
 </tr>
 <tr>
@@ -2098,7 +2084,7 @@ grammar, type-checked against the mapper method's parameters:</p>
 <td><code>and</code>, <code>or</code>, <code>not</code>, parentheses</td>
 </tr>
 <tr>
-<td>Size and emptiness</td>
+<td>Collections &amp; strings</td>
 <td><code>ids.size() &gt; 0</code>, <code>name.length() &gt; 3</code>, <code>!ids.isEmpty()</code></td>
 </tr>
 <tr>
@@ -2106,26 +2092,22 @@ grammar, type-checked against the mapper method's parameters:</p>
 <td><code>user.isActive()</code></td>
 </tr>
 <tr>
-<td>Bare booleans</td>
-<td><code>active</code>, where <code>active</code> really is a <code>boolean</code>/<code>Boolean</code> property</td>
+<td>Plain boolean properties</td>
+<td><code>active</code> (when <code>active</code> is a <code>boolean</code>/<code>Boolean</code>)</td>
 </tr>
 </tbody>
 </table>
-<p>Anything else is a <strong>compile error naming the offending token</strong>.</p>
+<p>Anything outside this grammar triggers a <strong>compile error naming the offending token</strong>.</p>
 <div class="admonition failure">
-<p class="admonition-title">OGNL truthiness is not reproduced</p>
+<p class="admonition-title">No OGNL truthiness</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"count"</span><span class="nt">&gt;</span><span class="w">      </span><span class="cm">&lt;!-- compile error --&gt;</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"user"</span><span class="nt">&gt;</span><span class="w">       </span><span class="cm">&lt;!-- compile error --&gt;</span>
 </span></code></pre></div>
-<p>MyBatis treats a non-null, non-zero, non-empty value as true. LarkBatis refuses to
-guess which of those you meant. Write <code>count != 0</code>, <code>user != null</code>, or
-<code>!list.isEmpty()</code>.</p>
-<p>This is not pedantry: <code>test="count"</code> in a MyBatis codebase is genuinely ambiguous
-between "count is set" and "count is non-zero", and the two differ exactly where it
-matters.</p>
+<p>MyBatis treats non-null, non-zero, and non-empty values as true. LarkBatis doesn't guess what you meant. Be explicit: write <code>count != 0</code>, <code>user != null</code>, or <code>!list.isEmpty()</code>.</p>
+<p>This isn't pedantry: in real codebases, <code>test="count"</code> is ambiguous—does it mean "count != null" or "count &gt; 0"? That ambiguity causes real bugs.</p>
 </div>
-<h3 id="null-semantics-fixed-and-documented">Null semantics, fixed and documented<a class="headerlink" href="#null-semantics-fixed-and-documented" title="Permanent link">&para;</a></h3>
-<p>OGNL coerces; the grammar does not. The rules are stated once and hold everywhere:</p>
+<h3 id="strict-null-semantics">Strict null semantics<a class="headerlink" href="#strict-null-semantics" title="Permanent link">&para;</a></h3>
+<p>OGNL coerces types implicitly; our grammar does not. The rules are straightforward:</p>
 <table>
 <thead>
 <tr>
@@ -2137,13 +2119,13 @@ matters.</p>
 <tbody>
 <tr>
 <td><code>a == null</code> / <code>a != null</code></td>
-<td>Null-propagating over every reference step of the path, same as OGNL's null-safe navigation</td>
+<td>Null-safe across navigation paths</td>
 <td>Same</td>
 </tr>
 <tr>
-<td><code>age &lt;= 18</code> when <code>age</code> is null</td>
-<td><strong><code>false</code></strong>, because a null anywhere along either operand makes the comparison false</td>
-<td><code>true</code>, null coerces to zero</td>
+<td><code>age &lt;= 18</code> (when <code>age</code> is null)</td>
+<td><strong><code>false</code></strong> (null operand makes comparison false)</td>
+<td><code>true</code> (null coerced to 0)</td>
 </tr>
 <tr>
 <td><code>a != b</code></td>
@@ -2151,28 +2133,18 @@ matters.</p>
 <td>Same</td>
 </tr>
 <tr>
-<td><code>user.isActive()</code> when <code>user</code> is null</td>
+<td><code>user.isActive()</code> (when <code>user</code> is null)</td>
 <td><strong><code>false</code></strong></td>
-<td>Throws</td>
+<td>Throws NPE</td>
 </tr>
 </tbody>
 </table>
-<p>The second row is the one to check when migrating. A <code>null &lt;= 18</code> that silently meant
-"true" in MyBatis becomes "false" here, and that is a deliberate divergence: null-as-zero
-is the same ambiguity the grammar rejects for truthiness. The
-<a href="../../features/migration/">migration scanner</a> flags the tests it cannot decide.</p>
+<p>Keep row 2 in mind when migrating: <code>null &lt;= 18</code> was silently <code>true</code> in MyBatis, but evaluates to <code>false</code> in LarkBatis. The <a href="../../features/migration/">migration scanner</a> flags expressions that warrant a look.</p>
 <h2 id="dynamic-sql-and-statement-caches">Dynamic SQL and statement caches<a class="headerlink" href="#dynamic-sql-and-statement-caches" title="Permanent link">&para;</a></h2>
-<p>A statement whose text depends on runtime conditions produces more than one SQL string.
-The count is bounded: with <em>n</em> independent <code>&lt;if&gt;</code>s the ceiling is 2ⁿ texts, known at
-build time. What is <em>not</em> bounded is a <code>${}</code> splice or a <code>&lt;foreach&gt;</code> whose cardinality
-varies, so those statements get a <code>LarkBatisSql.trackVariants</code> call. See
-<a href="../raw-sql/#tracking-sql-variants">Raw SQL</a>.</p>
-<h2 id="verifying-against-mybatis">Verifying against MyBatis<a class="headerlink" href="#verifying-against-mybatis" title="Permanent link">&para;</a></h2>
-<p>The core repository carries a differential test harness: the same mapper is run through
-MyBatis's interpreted path and through the generated code against a recording
-<code>DataSource</code>, and the resulting SQL text and parameter bindings are compared. There is
-also a sweep over the mapper XML corpus in the MyBatis source tree, which is how the
-grammar's coverage was measured, not guessed.</p>
+<p>Queries with dynamic SQL produce multiple distinct SQL strings at runtime. With $N$ independent <code>&lt;if&gt;</code> blocks, there are at most $2^N$ fixed variations known at compile time.</p>
+<p>However, <code>${}</code> splices or varying <code>&lt;foreach&gt;</code> collection sizes produce unbounded SQL variants. These statements include a <code>LarkBatisSql.trackVariants</code> call to monitor cache growth. See <a href="../raw-sql/#tracking-sql-variants">Raw SQL</a>.</p>
+<h2 id="testing-against-mybatis">Testing against MyBatis<a class="headerlink" href="#testing-against-mybatis" title="Permanent link">&para;</a></h2>
+<p>Our differential test harness executes identical mappers through both MyBatis and LarkBatis against a recording database, asserting that generated SQL strings and parameter bindings match across both engines.</p>
 
 
 

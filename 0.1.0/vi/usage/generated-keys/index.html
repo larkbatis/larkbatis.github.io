@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#generated-keys" class="md-skip">
+        <a href="#generated-keys-khoa-tu-tang" class="md-skip">
           Bỏ qua
         </a>
       
@@ -970,10 +970,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#luon-khai-bao-ten-cot-keycolumn-tuong-minh" class="md-nav__link">
+  <a href="#tam-quan-trong-cua-keycolumn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Luôn khai báo tên cột keyColumn tường minh
+        Tầm quan trọng của keyColumn
       
     </span>
   </a>
@@ -981,10 +981,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#keyproperty-khi-co-nhieu-tham-so" class="md-nav__link">
+  <a href="#khi-phuong-thuc-co-nhieu-tham-so" class="md-nav__link">
     <span class="md-ellipsis">
       
-        keyProperty khi có nhiều tham số
+        Khi phương thức có nhiều tham số
       
     </span>
   </a>
@@ -992,10 +992,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#batch-insert-va-generated-keys" class="md-nav__link">
+  <a href="#generated-keys-trong-batch-insert" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batch Insert và Generated Keys
+        Generated Keys trong Batch Insert
       
     </span>
   </a>
@@ -1006,18 +1006,7 @@
   <a href="#selectkey-is-not-supported" class="md-nav__link">
     <span class="md-ellipsis">
       
-        &lt;selectKey&gt; không được hỗ trợ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#khi-khong-co-generated-key-nao-tra-ve" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Khi không có Generated Key nào trả về
+        Thẻ &lt;selectKey&gt; không được hỗ trợ
       
     </span>
   </a>
@@ -1800,10 +1789,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#luon-khai-bao-ten-cot-keycolumn-tuong-minh" class="md-nav__link">
+  <a href="#tam-quan-trong-cua-keycolumn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Luôn khai báo tên cột keyColumn tường minh
+        Tầm quan trọng của keyColumn
       
     </span>
   </a>
@@ -1811,10 +1800,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#keyproperty-khi-co-nhieu-tham-so" class="md-nav__link">
+  <a href="#khi-phuong-thuc-co-nhieu-tham-so" class="md-nav__link">
     <span class="md-ellipsis">
       
-        keyProperty khi có nhiều tham số
+        Khi phương thức có nhiều tham số
       
     </span>
   </a>
@@ -1822,10 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#batch-insert-va-generated-keys" class="md-nav__link">
+  <a href="#generated-keys-trong-batch-insert" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batch Insert và Generated Keys
+        Generated Keys trong Batch Insert
       
     </span>
   </a>
@@ -1836,18 +1825,7 @@
   <a href="#selectkey-is-not-supported" class="md-nav__link">
     <span class="md-ellipsis">
       
-        &lt;selectKey&gt; không được hỗ trợ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#khi-khong-co-generated-key-nao-tra-ve" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Khi không có Generated Key nào trả về
+        Thẻ &lt;selectKey&gt; không được hỗ trợ
       
     </span>
   </a>
@@ -1879,12 +1857,13 @@
   
 
 
-<h1 id="generated-keys">Generated Keys<a class="headerlink" href="#generated-keys" title="Permanent link">&para;</a></h1>
-<p><code>@Options(useGeneratedKeys = true, ...)</code> yêu cầu JDBC driver trả về Generated Keys (giá trị khoá tự tăng / sequence) sau câu lệnh <code>INSERT</code> và gán trực tiếp vào property của đối tượng tham số.</p>
+<h1 id="generated-keys-khoa-tu-tang">Generated Keys (Khóa tự tăng)<a class="headerlink" href="#generated-keys-khoa-tu-tang" title="Permanent link">&para;</a></h1>
+<p><code>@Options(useGeneratedKeys = true, ...)</code> yêu cầu JDBC driver trả về Generated Keys (khóa tự tăng / sequence) sau khi thực thi <code>INSERT</code> và tự động gán vào trường của đối tượng tham số.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name, email, created_at) VALUES (#{name}, #{email}, #{createdAt})"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
 </span></code></pre></div>
+<p>Mã nguồn Java sinh ra:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">KEYS_insert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">"id"</span><span class="w"> </span><span class="p">};</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nd">@Override</span>
@@ -1909,67 +1888,55 @@
 </span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Khai báo tường minh <strong>tên cột Generated Keys</strong> (<code>keyColumn</code>) vì cờ <code>RETURN_GENERATED_KEYS</code> có hành vi không đồng nhất giữa các hệ quản trị database. Xem chi tiết bên dưới.</li>
-<li>Cả setter lẫn accessor đều được xác định tĩnh lúc build từ <code>keyProperty</code> và kiểu dữ liệu của property đó.</li>
+<li>Truyền mảng tên cột <code>KEYS_insert</code> tường minh vào <code>prepareStatement</code> thay vì dùng cờ chung <code>RETURN_GENERATED_KEYS</code>.</li>
+<li>Lệnh gọi setter <code>u.setId()</code> được xác định tĩnh từ lúc build.</li>
 </ol>
-<h2 id="luon-khai-bao-ten-cot-keycolumn-tuong-minh">Luôn khai báo tên cột <code>keyColumn</code> tường minh<a class="headerlink" href="#luon-khai-bao-ten-cot-keycolumn-tuong-minh" title="Permanent link">&para;</a></h2>
+<h2 id="tam-quan-trong-cua-keycolumn">Tầm quan trọng của <code>keyColumn</code><a class="headerlink" href="#tam-quan-trong-cua-keycolumn" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
-<p class="admonition-title"><code>keyColumn</code> là tuỳ chọn trong annotation nhưng gần như bắt buộc trên production</p>
-<p><code>prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)</code> không đảm bảo tính di động (portable):</p>
-<ul>
-<li><strong>Oracle</strong> trả về <code>ROWID</code> thay vì giá trị sequence thực tế.</li>
-<li><strong>PostgreSQL</strong> trả về <em>toàn bộ</em> các cột của dòng vừa chèn.</li>
-</ul>
-<p>Truyền một mảng <code>String[]</code> tên cột tường minh là cách duy nhất mang lại hành vi nhất quán trên mọi database. Khi có <code>keyColumn</code>, bộ sinh code phát ra <code>prepareStatement(sql, String[])</code>. Khi thiếu nó, hệ thống buộc phải fallback về <code>RETURN_GENERATED_KEYS</code> và phát ra một <strong>cảnh báo build bắt buộc</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>warning: useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS,
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>which returns ROWID on Oracle and all columns on PostgreSQL. Name the key column(s)
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>explicitly.
-</span></code></pre></div>
-<p>Hãy xử lý cảnh báo này trong quá trình code review để đảm bảo ứng dụng vận hành chính xác trên môi trường production.</p>
+<p class="admonition-title">Luôn khai báo <code>keyColumn</code> tường minh</p>
+<p>Lệnh <code>prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)</code> có hành vi không đồng nhất giữa các database:
+- <strong>Oracle</strong>: Trả về <code>ROWID</code> thay vì giá trị sequence thực tế.
+- <strong>PostgreSQL</strong>: Trả về tất cả các cột của bản ghi vừa chèn.</p>
+<p>Chỉ khi truyền tên cột cụ thể qua <code>keyColumn</code> (ví dụ <code>keyColumn = "id"</code>), JDBC driver mới trả về đúng giá trị mong đợi trên mọi hệ quản trị database. Nếu bỏ trống <code>keyColumn</code>, compiler sẽ phát cảnh báo lúc build.</p>
 </div>
-<p><code>keyProperty</code> là <strong>thuộc tính bắt buộc</strong>: bật <code>useGeneratedKeys</code> mà thiếu <code>keyProperty</code> là lỗi biên dịch.</p>
-<p>Với composite primary key (khoá chính tổ hợp), hãy phân tách các tên bằng dấu phẩy ở cả hai thuộc tính; hai danh sách phải có cùng số lượng phần tử:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenantId,id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenant_id,id"</span><span class="p">)</span>
+<p>Với khóa chính tổ hợp (composite key), phân tách các tên bằng dấu phẩy:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenantId,id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenant_id,id"</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="keyproperty-khi-co-nhieu-tham-so"><code>keyProperty</code> khi có nhiều tham số<a class="headerlink" href="#keyproperty-khi-co-nhieu-tham-so" title="Permanent link">&para;</a></h2>
-<p>Khi phương thức có nhiều hơn một tham số, <code>keyProperty</code> phải chỉ rõ tên tham số tiền tố:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name) VALUES (#{u.name})"</span><span class="p">)</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"u.id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"u"</span><span class="p">)</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"audit"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">audit</span><span class="p">);</span>
+<h2 id="khi-phuong-thuc-co-nhieu-tham-so">Khi phương thức có nhiều tham số<a class="headerlink" href="#khi-phuong-thuc-co-nhieu-tham-so" title="Permanent link">&para;</a></h2>
+<p>Khi phương thức nhận nhiều tham số, <code>keyProperty</code> phải chỉ rõ tên biến tham số tiền tố:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name) VALUES (#{u.name})"</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"u.id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"u"</span><span class="p">)</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"audit"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">audit</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Tên tham số không tồn tại sẽ bị bắt ngay <strong>lúc biên dịch</strong>, không phải lỗi <code>ReflectionException</code> lúc runtime.</p>
-<h2 id="batch-insert-va-generated-keys">Batch Insert và Generated Keys<a class="headerlink" href="#batch-insert-va-generated-keys" title="Permanent link">&para;</a></h2>
-<p>Một <code>@Insert</code> nhận <code>List&lt;T&gt;</code> biên dịch thành <code>addBatch()</code> / <code>executeBatch()</code>, và các Generated Keys trả về dưới dạng một <code>ResultSet</code> duy nhất được ánh xạ tương ứng vào từng phần tử của danh sách:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">next</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="n">orders</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">setId</span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LarkBatisKeyCountMismatchException</span><span class="p">(</span><span class="n">STMT_insertAll</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">}</span>
+<h2 id="generated-keys-trong-batch-insert">Generated Keys trong Batch Insert<a class="headerlink" href="#generated-keys-trong-batch-insert" title="Permanent link">&para;</a></h2>
+<p>Khi thực hiện batch insert nhận <code>List&lt;T&gt;</code>, Generated Keys được đọc tuần tự và gán vào từng phần tử trong danh sách:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">next</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="n">orders</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">setId</span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LarkBatisKeyCountMismatchException</span><span class="p">(</span><span class="n">STMT_insertAll</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Phép kiểm tra số lượng này đảm bảo an toàn: một số JDBC driver trả về ít khoá hơn số dòng chèn thực tế. Việc bỏ qua lỗi này sẽ khiến một phần dữ liệu trong batch có id không được gán mà không ai hay biết. <code>LarkBatisKeyCountMismatchException</code> sẽ chỉ rõ tên statement, số lượng khoá kỳ vọng và số lượng thực tế nhận được.</p>
-<h2 id="selectkey-is-not-supported"><code>&lt;selectKey&gt;</code> không được hỗ trợ<a class="headerlink" href="#selectkey-is-not-supported" title="Permanent link">&para;</a></h2>
-<p>Những database không hỗ trợ cơ chế trả về Generated Keys (hoặc quy trình cần lấy sequence <em>trước</em> khi insert) thường dùng <code>&lt;selectKey&gt;</code> trong MyBatis. Tính năng này không được hỗ trợ vì thực chất nó là một câu lệnh thứ hai chạy ngầm ẩn dưới dạng tuỳ chọn cấu hình. Hãy viết tường minh câu lệnh thứ hai đó ra:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT user_seq.NEXTVAL FROM dual"</span><span class="p">)</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">nextUserId</span><span class="p">();</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (id, name) VALUES (#{id}, #{name})"</span><span class="p">)</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
+<p>Nếu số lượng khóa trả về không khớp với số dòng gửi đi, hệ thống lập tức ném <code>LarkBatisKeyCountMismatchException</code>.</p>
+<h2 id="selectkey-is-not-supported">Thẻ <code>&lt;selectKey&gt;</code> không được hỗ trợ<a class="headerlink" href="#selectkey-is-not-supported" title="Permanent link">&para;</a></h2>
+<p>LarkBatis loại bỏ thẻ <code>&lt;selectKey&gt;</code> vì nó ẩn giấu một câu lệnh truy vấn thứ hai bên trong cấu hình. Thay vào đó, hãy tách thành 2 phương thức mapper tường minh:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT user_seq.NEXTVAL FROM dual"</span><span class="p">)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">nextUserId</span><span class="p">();</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (id, name) VALUES (#{id}, #{name})"</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
 </span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="na">nextUserId</span><span class="p">());</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="na">nextUserId</span><span class="p">());</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><a href="../../features/migration/">Trình quét mã cũ</a> sẽ tự động phát hiện mọi thẻ <code>&lt;selectKey&gt;</code> và gợi ý đoạn code thay thế tương ứng.</p>
-<h2 id="khi-khong-co-generated-key-nao-tra-ve">Khi không có Generated Key nào trả về<a class="headerlink" href="#khi-khong-co-generated-key-nao-tra-ve" title="Permanent link">&para;</a></h2>
-<p>Nếu một statement khai báo <code>useGeneratedKeys</code> mà JDBC driver không trả về khoá nào, <code>LarkBatisNoKeyException</code> sẽ được ném ra kèm tên statement, ngăn ngừa việc giá trị id mặc định <code>0</code> lan truyền trong ứng dụng và gây lỗi ở tầng nghiệp vụ khác.</p>
 
 
 

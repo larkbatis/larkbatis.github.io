@@ -34,7 +34,7 @@
     
     
       
-        <title>Các tính năng được hỗ trợ - LarkBatis</title>
+        <title>Ma trận tính năng - LarkBatis</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cac-tinh-nang-uoc-ho-tro" class="md-skip">
+        <a href="#ma-tran-tinh-nang" class="md-skip">
           Bỏ qua
         </a>
       
@@ -125,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Các tính năng được hỗ trợ
+              Ma trận tính năng
             
           </span>
         </div>
@@ -1698,10 +1698,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#statement" class="md-nav__link">
+  <a href="#khai-bao-statement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement
+        Khai báo Statement
       
     </span>
   </a>
@@ -1709,10 +1709,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sql-ong" class="md-nav__link">
+  <a href="#sql-ong-dynamic-sql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SQL động
+        SQL Động (Dynamic SQL)
       
     </span>
   </a>
@@ -1720,10 +1720,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#anh-xa-ket-qua" class="md-nav__link">
+  <a href="#anh-xa-ket-qua-result-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ánh xạ kết quả
+        Ánh xạ kết quả (Result Mapping)
       
     </span>
   </a>
@@ -1731,10 +1731,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kieu-du-lieu" class="md-nav__link">
+  <a href="#kieu-du-lieu-type-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kiểu dữ liệu
+        Kiểu dữ liệu &amp; Type Handlers
       
     </span>
   </a>
@@ -1742,10 +1742,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#session-transaction-va-thuc-thi" class="md-nav__link">
+  <a href="#session-quan-ly-transaction" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Session, transaction và thực thi
+        Session &amp; Quản lý Transaction
       
     </span>
   </a>
@@ -1753,10 +1753,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#build-va-ong-goi" class="md-nav__link">
+  <a href="#build-ong-goi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build và đóng gói
+        Build &amp; Đóng gói
       
     </span>
   </a>
@@ -1764,10 +1764,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#oc-tiep" class="md-nav__link">
+  <a href="#tai-lieu-lien-quan" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Đọc tiếp
+        Tài liệu liên quan
       
     </span>
   </a>
@@ -1799,234 +1799,234 @@
   
 
 
-<h1 id="cac-tinh-nang-uoc-ho-tro">Các tính năng được hỗ trợ<a class="headerlink" href="#cac-tinh-nang-uoc-ho-tro" title="Permanent link">&para;</a></h1>
-<p>Bảng tổng hợp tính năng đầy đủ. Ký hiệu <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span> là đã hiện thực và có test kiểm thử; <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span> là được thu hẹp phạm vi theo quy tắc rõ ràng; <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span> là chủ động loại bỏ từ khâu thiết kế (trình biên dịch sẽ báo lỗi kèm theo giải pháp thay thế).</p>
+<h1 id="ma-tran-tinh-nang">Ma trận tính năng<a class="headerlink" href="#ma-tran-tinh-nang" title="Permanent link">&para;</a></h1>
+<p>Bảng tổng hợp chi tiết mức độ hỗ trợ các tính năng trong LarkBatis: <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span> Đã hỗ trợ đầy đủ kèm test kiểm thử; <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span> Thu hẹp phạm vi theo quy tắc an toàn; <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span> Chủ động loại bỏ (báo lỗi compile kèm giải pháp thay thế).</p>
 <p>Phiên bản hiện tại: <strong><code>0.1.0</code></strong>.</p>
-<h2 id="statement">Statement<a class="headerlink" href="#statement" title="Permanent link">&para;</a></h2>
+<h2 id="khai-bao-statement">Khai báo Statement<a class="headerlink" href="#khai-bao-statement" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
-<th>Ghi chú</th>
+<th>Tính năng</th>
+<th>Trạng thái</th>
+<th>Ghi chú kỹ thuật</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>@Select</code> <code>@Insert</code> <code>@Update</code> <code>@Delete</code></td>
+<td><code>@Select</code>, <code>@Insert</code>, <code>@Update</code>, <code>@Delete</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Giá trị <code>String[]</code>, được nối với nhau bằng một dấu cách đơn</td>
+<td>Chấp nhận mảng <code>String[]</code>, tự động nối với nhau bằng dấu cách</td>
 </tr>
 <tr>
-<td><code>&lt;select&gt;</code> <code>&lt;insert&gt;</code> <code>&lt;update&gt;</code> <code>&lt;delete&gt;</code> trong mapper XML</td>
+<td><code>&lt;select&gt;</code>, <code>&lt;insert&gt;</code>, <code>&lt;update&gt;</code>, <code>&lt;delete&gt;</code> trong mapper XML</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Namespace là FQN của interface, <code>id</code> là tên phương thức. <a href="../usage/xml-mappers/">Chi tiết</a></td>
+<td>Namespace là FQN của interface, <code>id</code> khớp với tên phương thức. Xem <a href="../usage/xml-mappers/">Mapper XML</a></td>
 </tr>
 <tr>
 <td>Kết hợp cả annotation và XML trong cùng một mapper</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Được xác định theo từng phương thức; nếu một phương thức khai báo cả hai hoặc không khai báo cái nào thì trình biên dịch sẽ báo lỗi</td>
+<td>Xử lý độc lập theo từng phương thức (báo lỗi compile nếu trùng lặp hoặc thiếu định nghĩa)</td>
 </tr>
 <tr>
 <td>Tham số liên kết <code>#{}</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Được resolve dựa trên kiểu tham số của phương thức ngay lúc build</td>
+<td>Xác định kiểu dữ liệu tĩnh từ tham số phương thức lúc biên dịch</td>
 </tr>
 <tr>
-<td>Chèn trực tiếp <code>${}</code></td>
+<td>Chèn chuỗi động <code>${}</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Chỉ chấp nhận <code>SqlFragment</code>, kiểu dữ liệu tập giá trị đóng, hoặc <code>@OrderBy</code>. <a href="../usage/raw-sql/">Chi tiết</a></td>
+<td>Chỉ chấp nhận <code>SqlFragment</code>, enum/primitive, hoặc <code>@OrderBy</code>. Xem <a href="../usage/raw-sql/">Raw SQL &amp; An toàn</a></td>
 </tr>
 <tr>
 <td><code>@Param</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Đặt tên rõ ràng cho tham số</td>
+<td>Đặt tên tham số tường minh cho câu lệnh SQL</td>
 </tr>
 <tr>
 <td><code>@Options(useGeneratedKeys, keyProperty, keyColumn)</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><a href="../usage/generated-keys/">Chi tiết</a></td>
+<td>Tự động gán khóa chính tự tăng sau khi insert. Xem <a href="../usage/generated-keys/">Generated Keys</a></td>
 </tr>
 <tr>
 <td><code>&lt;selectKey&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Tách thành một statement thứ hai riêng biệt</td>
+<td>Thay thế bằng hai câu truy vấn độc lập để kiểm soát transaction rõ ràng</td>
 </tr>
 <tr>
-<td>Họ annotation <code>@SelectProvider</code> / <code>@InsertProvider</code></td>
+<td>Provider annotations (<code>@SelectProvider</code>, v.v.)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>SQL do phương thức Java dựng động lúc runtime là thứ bộ sinh code không thể nhìn thấy lúc build</td>
+<td>Chuỗi SQL dựng động qua reflection lúc runtime không thể phân tích trước lúc build</td>
 </tr>
 <tr>
-<td>Tham số kiểu <code>Map</code> hoặc <code>Object</code></td>
+<td>Tham số kiểu <code>Map</code> hoặc <code>Object</code> không định kiểu</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Không có kiểu cụ thể để resolve <code>#{}</code>. Cần dùng parameter object hoặc đặt <code>@Param</code> cho từng tham số</td>
+<td>Cần định nghĩa parameter class rõ ràng hoặc gắn <code>@Param</code> cho từng tham số</td>
 </tr>
 <tr>
 <td><code>RowBounds</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Phân trang trên bộ nhớ từ ResultSet đầy đủ gây lãng phí. Nên phân trang bằng SQL với <code>LIMIT</code>/<code>OFFSET</code></td>
+<td>Phân trang trên bộ nhớ (in-memory) gây lãng phí RAM. Nên dùng <code>LIMIT</code>/<code>OFFSET</code> trực tiếp trong SQL</td>
 </tr>
 </tbody>
 </table>
-<h2 id="sql-ong">SQL động<a class="headerlink" href="#sql-ong" title="Permanent link">&para;</a></h2>
+<h2 id="sql-ong-dynamic-sql">SQL Động (Dynamic SQL)<a class="headerlink" href="#sql-ong-dynamic-sql" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
-<th>Ghi chú</th>
+<th>Tính năng</th>
+<th>Trạng thái</th>
+<th>Ghi chú kỹ thuật</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>&lt;if&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Biên dịch thành biến cục bộ <code>boolean</code>, chỉ đánh giá một lần</td>
+<td>Biên dịch thành biến <code>boolean</code> cục bộ, đánh giá điều kiện một lần duy nhất</td>
 </tr>
 <tr>
-<td><code>&lt;choose&gt;</code> / <code>&lt;when&gt;</code> / <code>&lt;otherwise&gt;</code></td>
+<td><code>&lt;choose&gt;</code>, <code>&lt;when&gt;</code>, <code>&lt;otherwise&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Logic loại trừ tương hỗ được biên dịch thẳng vào code</td>
+<td>Biên dịch thành khối lệnh <code>if-else</code> trong mã Java thuần</td>
 </tr>
 <tr>
-<td><code>&lt;where&gt;</code> / <code>&lt;set&gt;</code></td>
+<td><code>&lt;where&gt;</code>, <code>&lt;set&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Constant-folded lúc build, không quét chuỗi lúc runtime</td>
+<td>Constant-fold lúc biên dịch, không quét chuỗi regex lúc runtime</td>
 </tr>
 <tr>
 <td><code>&lt;trim&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Chỉ hỗ trợ thuộc tính dạng chuỗi cố định, xử lý gập hằng số lúc build</td>
+<td>Chỉ hỗ trợ chuỗi tiền tố/hậu tố cố định</td>
 </tr>
 <tr>
-<td><code>&lt;sql&gt;</code> / <code>&lt;include&gt;</code></td>
+<td><code>&lt;sql&gt;</code>, <code>&lt;include&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td><code>refid</code> phải cố định, được inline trực tiếp lúc build</td>
+<td><code>refid</code> phải cố định, được inline trực tiếp lúc biên dịch</td>
 </tr>
 <tr>
 <td><code>&lt;foreach&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Collection, mảng, map phải định kiểu tĩnh. Ném exception nếu collection rỗng. <a href="../usage/foreach-and-batches/">Chi tiết</a></td>
+<td>Ném exception nếu collection rỗng. Xem <a href="../usage/foreach-and-batches/">foreach &amp; Batching</a></td>
 </tr>
 <tr>
 <td><code>@PadPow2</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Giới hạn số biến thể SQL trong mệnh đề <code>IN</code>. Ép theo đúng shape danh sách <code>IN</code></td>
+<td>Giới hạn số lượng biến thể prepared statement trong mệnh đề <code>IN</code></td>
 </tr>
 <tr>
 <td><code>&lt;bind&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Tạo biến OGNL lúc chạy. Nên tính toán giá trị trong Java rồi truyền vào qua tham số</td>
+<td>Nên tính toán biến trong mã Java trước khi truyền vào mapper</td>
 </tr>
 <tr>
-<td>OGNL trong thuộc tính <code>test</code></td>
+<td>Biểu thức OGNL phức tạp trong <code>test</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Thay thế bằng <a href="../usage/dynamic-sql/#the-test-grammar">ngữ pháp biểu thức thu hẹp</a>; kiểm tra truthiness theo kiểu OGNL sẽ báo lỗi biên dịch</td>
+<td>Thay thế bằng <a href="../usage/dynamic-sql/#the-test-grammar">ngữ pháp biểu thức an toàn</a></td>
 </tr>
 <tr>
 <td><code>databaseId</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Thuộc tính <code>databaseId</code> sẽ báo lỗi biên dịch. Nên tách riêng từng interface mapper cho mỗi loại database</td>
+<td>Nên tách riêng từng interface mapper cho mỗi loại database vendor</td>
 </tr>
 </tbody>
 </table>
-<h2 id="anh-xa-ket-qua">Ánh xạ kết quả<a class="headerlink" href="#anh-xa-ket-qua" title="Permanent link">&para;</a></h2>
+<h2 id="anh-xa-ket-qua-result-mapping">Ánh xạ kết quả (Result Mapping)<a class="headerlink" href="#anh-xa-ket-qua-result-mapping" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
-<th>Ghi chú</th>
+<th>Tính năng</th>
+<th>Trạng thái</th>
+<th>Ghi chú kỹ thuật</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>resultType</code> theo quy ước đặt tên</td>
+<td>Ánh xạ <code>resultType</code> theo quy ước</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Luôn chuyển đổi <code>snake_case</code> → <code>camelCase</code> lúc build</td>
+<td>Tự động chuyển đổi <code>snake_case</code> sang <code>camelCase</code> lúc biên dịch</td>
 </tr>
 <tr>
-<td>Đọc dòng theo vị trí cột</td>
+<td>Đọc dòng theo chỉ số vị trí cột</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Áp dụng khi parser phân tích được danh sách cột trong câu SELECT</td>
+<td>Tối ưu khi câu <code>SELECT</code> liệt kê tên cột rõ ràng</td>
 </tr>
 <tr>
 <td>Fallback đọc theo tên cột</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Dùng cho <code>SELECT *</code>,...; index cột chỉ được resolve một lần từ <code>ResultSetMetaData</code></td>
+<td>Sử dụng khi câu truy vấn là <code>SELECT *</code> (phân giải index một lần qua <code>ResultSetMetaData</code>)</td>
 </tr>
 <tr>
-<td>Kết quả kiểu vô hướng (scalar)</td>
+<td>Kết quả kiểu vô hướng (Scalar)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Đọc trực tiếp <code>long</code>, <code>String</code>,... từ cột 1</td>
+<td>Đọc trực tiếp kiểu nguyên thủy / wrapper từ cột đầu tiên</td>
 </tr>
 <tr>
-<td>Phương thức trả về <code>List&lt;T&gt;</code></td>
+<td>Trả về <code>List&lt;T&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Đọc danh sách dòng vào List</td>
+<td>Đọc danh sách bản ghi tuần tự</td>
 </tr>
 <tr>
-<td>Phương thức trả về <code>Stream&lt;T&gt;</code></td>
+<td>Trả về <code>Stream&lt;T&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Caller có trách nhiệm đóng stream. <a href="../usage/streaming/">Chi tiết</a></td>
+<td>Stream kết nối con trỏ database, caller chịu trách nhiệm đóng stream. Xem <a href="../usage/streaming/">Streaming</a></td>
 </tr>
 <tr>
 <td><code>&lt;resultMap&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Chỉ ánh xạ tường minh các cột được khai báo, không auto-mapping</td>
+<td>Ánh xạ tường minh các cột được định nghĩa, không tự động auto-mapping</td>
 </tr>
 <tr>
-<td><code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code></td>
+<td><code>&lt;association&gt;</code>, <code>&lt;collection&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Hỗ trợ tối đa <strong>một</strong> cấp lồng nhau qua phép join, ResultSet bắt buộc phải sắp xếp theo khoá của bảng cha</td>
+<td>Hỗ trợ 1 cấp join, yêu cầu câu truy vấn <code>ORDER BY</code> theo khóa của bảng cha</td>
 </tr>
 <tr>
-<td>Lồng <code>select=</code> trong result map</td>
+<td>Lồng <code>select="..."</code> trong result map</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Đây chính là lỗi N+1 truy vấn. Cần viết tường minh bằng câu lệnh join</td>
+<td>Tránh phát sinh lỗi N+1 truy vấn; nên viết câu <code>JOIN</code> tường minh</td>
 </tr>
 <tr>
 <td><code>&lt;discriminator&gt;</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Khiến kiểu class kết quả phụ thuộc vào giá trị cột lúc runtime</td>
+<td>Kiểu class kết quả phải cố định từ lúc biên dịch</td>
 </tr>
 <tr>
-<td>Constructor mapping (<code>&lt;constructor&gt;</code>)</td>
+<td><code>&lt;constructor&gt;</code> mapping</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Class kết quả được khởi tạo bằng constructor không tham số và các setter</td>
+<td>POJO kết quả yêu cầu constructor không tham số và setter</td>
 </tr>
 <tr>
-<td>Các thuộc tính <code>extends</code>, <code>columnPrefix</code>, <code>autoMapping</code> của <code>resultMap</code></td>
+<td><code>extends</code>, <code>columnPrefix</code>, <code>autoMapping</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Khai báo tường minh tất cả các ánh xạ cần thiết</td>
+<td>Khai báo tường minh tất cả ánh xạ cần thiết</td>
 </tr>
 <tr>
 <td>Lazy loading</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Đòi hỏi phải bọc proxy cho từng đối tượng kết quả</td>
+<td>Tránh tạo bytecode proxy bọc quanh đối tượng kết quả</td>
 </tr>
 <tr>
 <td>Type alias</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Dùng tên class đầy đủ (FQN)</td>
+<td>Sử dụng tên class đầy đủ (FQN)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="kieu-du-lieu">Kiểu dữ liệu<a class="headerlink" href="#kieu-du-lieu" title="Permanent link">&para;</a></h2>
+<h2 id="kieu-du-lieu-type-handlers">Kiểu dữ liệu &amp; Type Handlers<a class="headerlink" href="#kieu-du-lieu-type-handlers" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
-<th>Ghi chú</th>
+<th>Tính năng</th>
+<th>Trạng thái</th>
+<th>Ghi chú kỹ thuật</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Primitive và wrapper</td>
+<td>Kiểu nguyên thủy và wrapper</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Wrapper đi qua <code>JdbcCodec</code> để xử lý null an toàn</td>
+<td>Sử dụng <code>JdbcCodec</code> để xử lý <code>null</code> an toàn</td>
 </tr>
 <tr>
 <td><code>String</code>, <code>BigDecimal</code>, <code>BigInteger</code>, <code>byte[]</code></td>
@@ -2034,192 +2034,182 @@
 <td>Đọc/ghi trực tiếp qua JDBC</td>
 </tr>
 <tr>
-<td><code>java.sql.Date</code> / <code>Time</code> / <code>Timestamp</code></td>
+<td><code>java.sql.Date</code>, <code>Time</code>, <code>Timestamp</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Hỗ trợ kiểu thời gian JDBC chuẩn</td>
+<td>Đọc/ghi trực tiếp qua JDBC</td>
 </tr>
 <tr>
 <td><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code>, <code>LocalDateTime</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Hỗ trợ API <code>java.time</code> chuẩn Java 8+</td>
+<td>Hỗ trợ toàn diện API <code>java.time</code> chuẩn</td>
 </tr>
 <tr>
 <td>Enum (theo <code>name()</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Thuộc kiểu giá trị đóng, hợp lệ khi dùng với <code>${}</code></td>
+<td>Kiểu tập đóng an toàn, được phép dùng trong <code>${}</code></td>
 </tr>
 <tr>
 <td><code>@Column</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Đặt tên cột tương ứng trên field, setter hoặc getter. <a href="annotations/#column">Chi tiết</a></td>
+<td>Đặt tên cột thủ công trên field hoặc getter/setter. Xem <a href="annotations/#column">Annotations</a></td>
 </tr>
 <tr>
-<td>TypeHandler tuỳ biến với <code>@Handler</code></td>
+<td>Custom TypeHandler với <code>@Handler</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Khai báo trên thuộc tính, tham số hoặc trong mapper XML. <a href="../usage/types/#custom-type-handlers">Chi tiết</a></td>
+<td>Gắn trên field, param hoặc trong XML. Xem <a href="../usage/types/#custom-type-handlers">Kiểu dữ liệu</a></td>
 </tr>
 <tr>
-<td><code>&lt;typeHandlers&gt;</code>, một handler cho mỗi kiểu Java</td>
+<td><code>&lt;typeHandlers&gt;</code> cấp toàn cục</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Khai báo qua cặp <code>-Alarkbatis.typeHandlers</code> và được resolve trong quá trình <code>javac</code>. <a href="configuration/#type-handlers-for-a-whole-build">Chi tiết</a></td>
+<td>Cấu hình qua compiler option <code>-Alarkbatis.typeHandlers</code>. Xem <a href="configuration/">Cấu hình</a></td>
 </tr>
 <tr>
-<td>Tự động quét TypeHandler (<code>&lt;package&gt;</code>, <code>@MappedTypes</code>)</td>
+<td>Quét tự động TypeHandler (<code>&lt;package&gt;</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Không quét classpath lúc chạy. Danh sách handler được khai báo tường minh lúc build</td>
+<td>Không quét classpath lúc runtime; cần khai báo tường minh lúc biên dịch</td>
 </tr>
 </tbody>
 </table>
-<h2 id="session-transaction-va-thuc-thi">Session, transaction và thực thi<a class="headerlink" href="#session-transaction-va-thuc-thi" title="Permanent link">&para;</a></h2>
+<h2 id="session-quan-ly-transaction">Session &amp; Quản lý Transaction<a class="headerlink" href="#session-quan-ly-transaction" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
-<th>Ghi chú</th>
+<th>Tính năng</th>
+<th>Trạng thái</th>
+<th>Ghi chú kỹ thuật</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Scope <code>LarkBatisTx</code>, lồng nhau, cơ chế vote-to-commit</td>
+<td>Scope <code>LarkBatisTx</code>, cơ chế vote-to-commit</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><a href="../usage/transactions/">Chi tiết</a></td>
+<td>Hỗ trợ lồng scope transaction độc lập. Xem <a href="../usage/transactions/">Transactions</a></td>
 </tr>
 <tr>
-<td><code>@Transactional</code> của Spring</td>
+<td>Spring <code>@Transactional</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Tích hợp qua <code>DataSourceUtils</code></td>
+<td>Tích hợp trực tiếp qua <code>DataSourceUtils</code></td>
 </tr>
 <tr>
-<td>Dịch mã lỗi ngoại lệ Spring</td>
+<td>Dịch mã lỗi Spring</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Mặc định sử dụng <code>SQLExceptionSubclassTranslator</code></td>
+<td>Tự động chuyển đổi sang cây exception <code>DataAccessException</code></td>
 </tr>
 <tr>
-<td>Spring Boot auto-configuration</td>
+<td>Spring Boot Starter</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Tương thích cả Spring Boot 3 lẫn Spring Boot 4 trong cùng một jar</td>
+<td>Tương thích cả Spring Boot 3 và Spring Boot 4 trong cùng một jar</td>
 </tr>
 <tr>
-<td>Sinh class <code>@Configuration</code> cho Spring</td>
+<td>Sinh <code>@Configuration</code> tự động</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Đặt thuộc tính <code>proxyBeanMethods = false</code></td>
+<td>Thiết lập <code>proxyBeanMethods = false</code> để tránh CGLIB proxy</td>
 </tr>
 <tr>
 <td>Batch insert</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Định nghĩa qua chữ ký phương thức (tham số <code>List&lt;T&gt;</code>), không cần chuyển chế độ executor</td>
+<td>Hỗ trợ phương thức nhận <code>List&lt;T&gt;</code> gọi <code>addBatch()</code> tự động</td>
 </tr>
 <tr>
-<td>Chèn nhiều dòng qua <code>VALUES</code> với <code>&lt;foreach&gt;</code></td>
+<td>Insert nhiều bản ghi qua <code>VALUES (...)</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Sinh câu SQL đa dòng tối ưu</td>
+<td>Sử dụng <code>&lt;foreach&gt;</code> để sinh câu SQL gộp tối ưu</td>
 </tr>
 <tr>
-<td>Lối thoát thủ công (<code>query</code>, <code>queryOne</code>, <code>queryStream</code>, <code>update</code>)</td>
+<td>Escape hatch (<code>query</code>, <code>queryOne</code>, <code>update</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Nhận <code>SqlFragment</code>, không bao giờ nhận chuỗi <code>String</code> tuỳ tiện</td>
+<td>Thực thi qua <code>SqlFragment</code>, không nhận chuỗi <code>String</code> tùy tiện</td>
 </tr>
 <tr>
-<td>Chế độ <code>ExecutorType.BATCH</code> / <code>REUSE</code></td>
+<td><code>ExecutorType.BATCH</code> / <code>REUSE</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Không có lớp executor trung gian lúc runtime</td>
+<td>Không dùng executor trung gian phức tạp</td>
 </tr>
 <tr>
-<td>Plugin / interceptor</td>
+<td>Plugins / Interceptors</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>4 đối tượng mà MyBatis chặn bắt đã được thay thế hoàn toàn bằng thân phương thức sinh sẵn, không dùng JDK proxy. <a href="mybatis-differences/#what-replaces-a-plugin">Giải pháp thay thế plugin</a></td>
+<td>Xem <a href="mybatis-differences/#what-replaces-a-plugin">Giải pháp thay thế Plugin</a></td>
 </tr>
 <tr>
-<td>Cache cấp 2 (<code>&lt;cache&gt;</code>, <code>&lt;cache-ref&gt;</code>)</td>
+<td>Level-2 Cache (<code>&lt;cache&gt;</code>, <code>&lt;cache-ref&gt;</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Nên đặt cache ở tầng service phía trên mapper, nơi dễ kiểm soát việc vô hiệu hoá cache</td>
+<td>Nên cài đặt cache ở tầng Service thay vì tầng ORM</td>
 </tr>
 <tr>
-<td>Cache cấp 1</td>
+<td>Level-1 Cache</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Không có đối tượng session lưu trạng thái để giữ cache</td>
+<td><code>LarkBatisSession</code> là stateless, không lưu trữ entity cache</td>
 </tr>
 <tr>
-<td>Gọi <code>addMapper()</code> lúc runtime</td>
+<td>Đăng ký <code>addMapper()</code> động lúc runtime</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Danh sách mapper được chốt cố định ngay khi biên dịch</td>
-</tr>
-<tr>
-<td>Nhiều <code>DataSource</code> trên cùng một mapper</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Tạm hoãn. Khai báo một session riêng cho từng <code>DataSource</code> và tự viết các phương thức <code>@Bean</code></td>
+<td>Danh sách mapper được chốt cố định lúc biên dịch</td>
 </tr>
 <tr>
 <td>Ghi log SQL (<code>log-sql</code>)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Việc ghi log SQL thuộc trách nhiệm của driver hoặc connection pool: datasource-proxy, p6spy</td>
+<td>Sử dụng logging proxy ở tầng DataSource (như <code>datasource-proxy</code>, <code>p6spy</code>)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="build-va-ong-goi">Build và đóng gói<a class="headerlink" href="#build-va-ong-goi" title="Permanent link">&para;</a></h2>
+<h2 id="build-ong-goi">Build &amp; Đóng gói<a class="headerlink" href="#build-ong-goi" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
-<th>Ghi chú</th>
+<th>Tính năng</th>
+<th>Trạng thái</th>
+<th>Ghi chú kỹ thuật</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Annotation processor (javac)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Chỉ hỗ trợ <code>javac</code>; không hỗ trợ ECJ</td>
+<td>Chỉ hỗ trợ <code>javac</code>, không hỗ trợ ECJ</td>
 </tr>
 <tr>
 <td>Gradle plugin</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td><a href="../getting-started/build-plugins/">Chi tiết</a></td>
+<td>Tự động cấu hình compile inputs và processor path</td>
 </tr>
 <tr>
 <td>Maven plugin</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Cần cấu hình <code>&lt;extensions&gt;true&lt;/extensions&gt;</code></td>
+<td>Yêu cầu cấu hình <code>&lt;extensions&gt;true&lt;/extensions&gt;</code></td>
 </tr>
 <tr>
-<td>JPMS module đặt tên</td>
+<td>JPMS (Java Module System)</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Cả 5 artifact phát hành đều có <code>module-info.java</code> chuẩn</td>
+<td>Tất cả artifact đều có <code>module-info.java</code> chuẩn</td>
 </tr>
 <tr>
 <td>Tương thích với Lombok</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Khai báo processor của LarkBatis chạy <em>sau</em> Lombok</td>
+<td>Khai báo <code>larkbatis-processor</code> chạy sau Lombok</td>
 </tr>
 <tr>
-<td>Build tăng dần (incremental build)</td>
+<td>Incremental compilation</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Aggregating processor; cần biên dịch với cờ <code>-parameters</code> trên Gradle</td>
+<td>Aggregating processor; cần bật cờ <code>-parameters</code></td>
 </tr>
 <tr>
-<td>Mapper chỉ dùng cho test</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-<td>Chỉ hỗ trợ source set <code>compile</code> chính</td>
-</tr>
-<tr>
-<td>GraalVM native image</td>
+<td>GraalVM Native Image</td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></td>
-<td>Đã sẵn sàng về mặt cấu trúc (không dùng reflection), nhưng <strong>chưa qua kiểm thử thực tế trên build native</strong></td>
+<td>Sẵn sàng về mặt cấu trúc (không dùng reflection); kiểm thử quy trình build đầy đủ ở mốc M5</td>
 </tr>
 <tr>
-<td>Bộ quét mapper cũ</td>
+<td>Quét mã nguồn cũ <code>larkbatis-scan</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
-<td>Công cụ CLI <code>larkbatis-scan</code>. <a href="migration/">Chi tiết</a></td>
+<td>Công cụ CLI phân tích mức độ tương thích. Xem <a href="migration/">Migration</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="oc-tiep">Đọc tiếp<a class="headerlink" href="#oc-tiep" title="Permanent link">&para;</a></h2>
+<h2 id="tai-lieu-lien-quan">Tài liệu liên quan<a class="headerlink" href="#tai-lieu-lien-quan" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="mybatis-differences/">Khác biệt với MyBatis</a>: danh sách chi tiết các tính năng bị loại bỏ hoặc thu hẹp kèm lý do kỹ thuật</li>
-<li><a href="annotations/">Annotation</a>: danh mục đầy đủ các annotation và thuộc tính</li>
-<li><a href="runtime-api/">API runtime</a>: các interface và class runtime công khai</li>
-<li><a href="configuration/">Cấu hình</a>: tuỳ chọn processor, thuộc tính và system property</li>
+<li><a href="mybatis-differences/">Khác biệt với MyBatis</a>: Chi tiết các thay đổi hành vi và hướng xử lý</li>
+<li><a href="annotations/">Danh mục Annotations</a>: Chi tiết toàn bộ annotation của LarkBatis</li>
+<li><a href="runtime-api/">Runtime API</a>: Bề mặt API public lúc runtime</li>
+<li><a href="configuration/">Tùy chọn cấu hình</a>: Danh mục đầy đủ các compiler option và application properties</li>
 </ul>
 
 

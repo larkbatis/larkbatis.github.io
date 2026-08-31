@@ -1753,10 +1753,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-lombok-as-well" class="md-nav__link">
+  <a href="#using-lombok" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using Lombok as well
+        Using Lombok
       
     </span>
   </a>
@@ -1800,8 +1800,7 @@
 
 
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
-<p>LarkBatis is three artifacts on your build: two small runtime jars, and one annotation
-processor that never reaches the application classpath.</p>
+<p>LarkBatis needs just three artifacts in your build: two small runtime jars, and one annotation processor that never touches your runtime classpath.</p>
 <table>
 <thead>
 <tr>
@@ -1814,7 +1813,7 @@ processor that never reaches the application classpath.</p>
 <tr>
 <td><code>io.github.larkbatis:larkbatis-annotations</code></td>
 <td><code>implementation</code></td>
-<td>The mapper annotations. No logic, <code>CLASS</code> retention</td>
+<td>Mapper annotations. No logic, <code>CLASS</code> retention</td>
 </tr>
 <tr>
 <td><code>io.github.larkbatis:larkbatis-runtime</code></td>
@@ -1824,7 +1823,7 @@ processor that never reaches the application classpath.</p>
 <tr>
 <td><code>io.github.larkbatis:larkbatis-processor</code></td>
 <td><code>annotationProcessor</code></td>
-<td>The generator. Build-only: it must never appear on a runtime classpath</td>
+<td>The code generator. Build-only: never include on runtime classpath</td>
 </tr>
 </tbody>
 </table>
@@ -1840,19 +1839,19 @@ processor that never reaches the application classpath.</p>
 <tbody>
 <tr>
 <td>Java</td>
-<td>17 or newer (the project itself builds on a Java 17 toolchain)</td>
+<td>17 or newer (the project builds on Java 17 toolchains)</td>
 </tr>
 <tr>
 <td>Compiler</td>
-<td><strong>javac only.</strong> The processor depends on javac behaviour: declaration order of elements, and multi-round resolution of generated types. ECJ / Eclipse batch compilation is not supported</td>
+<td><strong>javac only.</strong> The processor depends on javac behavior (declaration order of elements and multi-round resolution). ECJ / Eclipse batch compiler is not supported</td>
 </tr>
 <tr>
 <td>Build tool</td>
-<td>Gradle or Maven. A build-tool plugin is required only if you use mapper XML</td>
+<td>Gradle or Maven. You only need a build plugin if you use mapper XML</td>
 </tr>
 <tr>
 <td>Database</td>
-<td>Anything with a JDBC driver</td>
+<td>Any database with a standard JDBC driver</td>
 </tr>
 </tbody>
 </table>
@@ -1876,12 +1875,7 @@ processor that never reaches the application classpath.</p>
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>The flag makes javac keep real parameter names in the class file. Without it, an
-    incremental Gradle build can hand the processor a mapper method whose parameters are
-    called <code>arg0</code>, <code>arg1</code>, leaving <code>#{id}</code> nothing to resolve against. Annotating every
-    parameter with <code>@Param("...")</code> works too.
-    <a href="../usage/troubleshooting/#what-the-flag-actually-does">Troubleshooting</a> explains
-    why clean builds hide the problem.</li>
+<li>This flag tells javac to preserve parameter names in class files. Without it, Gradle incremental builds can pass compiled classes to the processor with parameters named <code>arg0</code>, <code>arg1</code>, breaking <code>#{id}</code> parameter binding. Alternatively, you can annotate every parameter with <code>@Param("...")</code>. See <a href="../usage/troubleshooting/#what-the-flag-actually-does">Troubleshooting</a> for why clean builds mask this issue.</li>
 </ol>
 <h2 id="maven">Maven<a class="headerlink" href="#maven" title="Permanent link">&para;</a></h2>
 <div class="language-xml highlight"><span class="filename">pom.xml</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&lt;dependencies&gt;</span>
@@ -1917,20 +1911,16 @@ processor that never reaches the application classpath.</p>
 </span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="nt">&lt;/build&gt;</span>
 </span></code></pre></div>
 <h2 id="spring-boot">Spring Boot<a class="headerlink" href="#spring-boot" title="Permanent link">&para;</a></h2>
-<p>One starter replaces the three declarations above, and there is no <code>@MapperScan</code>:</p>
+<p>A single starter replaces the runtime dependencies above, and you don't need <code>@MapperScan</code>:</p>
 <div class="language-kotlin highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-annotations:0.1.0"</span><span class="p">)</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0"</span><span class="p">)</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-processor:0.1.0"</span><span class="p">)</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><a href="spring-boot/">Spring Boot</a> has the full setup, and
-<a href="../usage/spring/">Spring Integration</a> covers what happens under it.</p>
+<p>See <a href="spring-boot/">Spring Boot</a> for full setup instructions, and <a href="../usage/spring/">Spring Integration</a> for how transactions and connections work under the hood.</p>
 <h2 id="mapper-xml">Mapper XML<a class="headerlink" href="#mapper-xml" title="Permanent link">&para;</a></h2>
-<p>If any of your statements live in mapper XML rather than in annotations, add the
-<a href="build-plugins/">build plugin</a> for your build tool. It passes the mapper directory to the
-processor and registers those XML files as compile inputs, without which an XML-only edit
-regenerates nothing.</p>
+<p>If any of your SQL statements live in mapper XML files instead of annotations, add the <a href="build-plugins/">build plugin</a> for your build tool. It passes your XML directory to the processor and registers those XML files as compilation inputs, ensuring XML edits trigger code regeneration.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Gradle</label><label for="__tabbed_1_2">Maven</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1951,16 +1941,12 @@ regenerates nothing.</p>
 </div>
 </div>
 </div>
-<h2 id="using-lombok-as-well">Using Lombok as well<a class="headerlink" href="#using-lombok-as-well" title="Permanent link">&para;</a></h2>
-<p>Declare <code>larkbatis-processor</code> <strong>after</strong> <code>org.projectlombok:lombok</code>. Lombok writes its
-getters and setters into the AST when its own processor runs, and javac runs discovered
-processors in classpath order. Declared first, LarkBatis sees a result class with no
-accessors at all.</p>
+<h2 id="using-lombok">Using Lombok<a class="headerlink" href="#using-lombok" title="Permanent link">&para;</a></h2>
+<p>Always declare <code>larkbatis-processor</code> <strong>after</strong> <code>org.projectlombok:lombok</code>. Lombok generates getters and setters into the AST during its own processor pass, and javac runs discovered processors in classpath order. If LarkBatis runs first, it sees a result class with no accessors.</p>
 <div class="language-kotlin highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"org.projectlombok:lombok"</span><span class="p">)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-processor:0.1.0"</span><span class="p">)</span><span class="w">  </span><span class="c1">// after</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">annotationProcessor</span><span class="p">(</span><span class="s">"io.github.larkbatis:larkbatis-processor:0.1.0"</span><span class="p">)</span><span class="w">  </span><span class="c1">// after lombok</span>
 </span></code></pre></div>
-<p>The build error names the problem when it spots a Lombok annotation on the class. The fix
-is that one line of ordering.</p>
+<p>The compiler error explicitly warns you if it spots Lombok annotations on a class missing accessors. Reordering the dependencies fixes it.</p>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p><a class="md-button md-button--primary" href="quick-start/">Write your first mapper <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg></span></a></p>
 

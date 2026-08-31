@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#api-runtime" class="md-skip">
+        <a href="#runtime-api" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1641,10 +1641,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phan-cap-ngoai-le-exceptions" class="md-nav__link">
+  <a href="#cay-exception" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phân cấp ngoại lệ (Exceptions)
+        Cây Exception
       
     </span>
   </a>
@@ -1910,10 +1910,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phan-cap-ngoai-le-exceptions" class="md-nav__link">
+  <a href="#cay-exception" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phân cấp ngoại lệ (Exceptions)
+        Cây Exception
       
     </span>
   </a>
@@ -1945,33 +1945,32 @@
   
 
 
-<h1 id="api-runtime">API Runtime<a class="headerlink" href="#api-runtime" title="Permanent link">&para;</a></h1>
-<p>Toàn bộ các interface và class trong package <code>io.github.larkbatis.runtime</code>. Không có bất kỳ dependency nào ngoài JDBC thuần, không kiểm tra kiểu bằng reflection, không resolve tên động và không tra cứu registry lúc runtime. Mọi thứ đã được xử lý xong từ pha build.</p>
+<h1 id="runtime-api">Runtime API<a class="headerlink" href="#runtime-api" title="Permanent link">&para;</a></h1>
+<p>Toàn bộ các class và interface công khai trong package <code>io.github.larkbatis.runtime</code>. Thư viện runtime của LarkBatis có kích thước siêu nhẹ (~1.500 dòng code), không phụ thuộc bên ngoài ngoài JDBC thuần, và không sử dụng reflection.</p>
 <h2 id="larkbatissession"><code>LarkBatisSession</code><a class="headerlink" href="#larkbatissession" title="Permanent link">&para;</a></h2>
-<p>Cung cấp toàn bộ môi trường thực thi mà mapper sinh ra cần tới.</p>
+<p>Interface trung tâm quản lý vòng đời kết nối JDBC và dịch mã lỗi:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">LarkBatisSession</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="nf">conn</span><span class="p">();</span><span class="w">                                    </span><span class="c1">// (1)!</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="p">);</span><span class="w">                           </span><span class="c1">// (2)!</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="n">RuntimeException</span><span class="w"> </span><span class="nf">translate</span><span class="p">(</span><span class="n">SQLException</span><span class="w"> </span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">sql</span><span class="p">);</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1">// loi thoat thu cong (escape hatch)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1">// Lối thoát thủ công (Escape hatch)</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w">   </span><span class="nf">query</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">);</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="w">         </span><span class="nf">queryOne</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">);</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">queryStream</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">);</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">int</span><span class="w">           </span><span class="nf">update</span><span class="p">(</span><span class="n">SqlFragment</span><span class="p">,</span><span class="w"> </span><span class="n">StatementBinder</span><span class="p">);</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="c1">// dung cho phuong thuc sinh san tra ve Stream</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="c1">// Dành cho phương thức trả về Stream</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">Connection</span><span class="p">,</span><span class="w"> </span><span class="n">PreparedStatement</span><span class="p">,</span><span class="w"> </span><span class="n">ResultSet</span><span class="p">,</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">);</span>
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">RuntimeException</span><span class="w"> </span><span class="nf">streamFailed</span><span class="p">(</span><span class="n">Connection</span><span class="p">,</span><span class="w"> </span><span class="n">PreparedStatement</span><span class="p">,</span><span class="w"> </span><span class="n">ResultSet</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">SQLException</span><span class="p">);</span>
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Mượn một connection. Khi ở trong scope transaction đang hoạt động, hàm trả về chính connection của transaction đó; ngược lại trả về một connection auto-commit mới.</li>
-<li>Trả lại connection đã mượn qua <code>conn()</code>. Hàm này là no-op (không làm gì) nếu connection thuộc về transaction đang hoạt động; đóng connection thật nếu ở ngoài transaction.</li>
+<li>Lấy một JDBC <code>Connection</code>. Nếu đang trong transaction, trả về connection của transaction đó; nếu không, mở một connection auto-commit.</li>
+<li>Giải phóng connection. Lệnh này không làm gì (no-op) nếu connection thuộc sở hữu của một transaction đang hoạt động.</li>
 </ol>
-<p>Hai bản hiện thực chính: <code>JdbcLarkBatisSession</code> (dùng độc lập với JDBC) và <code>SpringLarkBatisSession</code> (nằm trong <code>larkbatis-spring</code>).</p>
-<p>Các chữ ký của lối thoát thủ công không có bất kỳ overload nào nhận kiểu <code>String</code>. Mọi chuỗi SQL tuỳ ý chỉ được phép đưa vào thông qua <code>SqlFragment</code>.</p>
+<p>Hai triển khai chính: <code>JdbcLarkBatisSession</code> (JDBC thuần) và <code>SpringLarkBatisSession</code> (tích hợp Spring qua <code>DataSourceUtils</code>).</p>
 <h2 id="jdbclarkbatissession"><code>JdbcLarkBatisSession</code><a class="headerlink" href="#jdbclarkbatissession" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">JdbcLarkBatisSession</span><span class="p">(</span><span class="n">DataSource</span><span class="w"> </span><span class="n">dataSource</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
@@ -1980,7 +1979,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">hasActiveTransaction</span><span class="p">()</span>
 </span></code></pre></div>
 <h2 id="larkbatistx"><code>LarkBatisTx</code><a class="headerlink" href="#larkbatistx" title="Permanent link">&para;</a></h2>
-<p>Đại diện cho programmatic transaction scope (<code>AutoCloseable</code>), quản lý transaction boundary theo cơ chế vote-to-commit.</p>
+<p>Quản lý transaction độc lập qua scope <code>AutoCloseable</code>, áp dụng cơ chế vote-to-commit:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
@@ -1996,33 +1995,33 @@
 <tbody>
 <tr>
 <td><code>commit()</code></td>
-<td><strong>Bỏ phiếu</strong> (vote) để commit. Lệnh commit thực sự chỉ diễn ra khi scope ngoài cùng đóng lại. Ném <code>LarkBatisRollbackOnlyException</code> nếu một scope bên trong đã đánh dấu hỏng transaction</td>
+<td>Bỏ phiếu xác nhận commit. Commit vật lý xuống database chỉ xảy ra khi scope ngoài cùng đóng lại thành công</td>
 </tr>
 <tr>
 <td><code>rollbackOnly()</code></td>
-<td>Đánh dấu tường minh transaction ở trạng thái rollback-only</td>
+<td>Đánh dấu transaction ở trạng thái rollback-only</td>
 </tr>
 <tr>
 <td><code>close()</code></td>
-<td>Rời khỏi scope mà chưa gọi commit sẽ tự động đánh dấu toàn bộ transaction ở trạng thái rollback-only</td>
+<td>Kết thúc scope. Nếu scope chưa được gọi <code>commit()</code>, toàn bộ transaction sẽ bị đánh dấu rollback</td>
 </tr>
 </tbody>
 </table>
-<p>Các scope có thể lồng nhau: lệnh <code>begin()</code> ở scope bên trong sẽ tham gia vào transaction bên ngoài, và chỉ lệnh close của scope ngoài cùng mới tác động trực tiếp đến connection. <a href="../../usage/transactions/">Chi tiết</a></p>
+<p>Xem <a href="../../usage/transactions/">Transactions</a>.</p>
 <h2 id="sqlfragment"><code>SqlFragment</code><a class="headerlink" href="#sqlfragment" title="Permanent link">&para;</a></h2>
-<p>Cổng kiểm soát duy nhất cho phép đưa các đoạn câu SQL tuỳ biến vào câu truy vấn.</p>
+<p>Đối tượng đại diện cho các chuỗi SQL động an toàn:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">SqlFragment</span><span class="w"> </span><span class="nf">allowed</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">...</span><span class="w"> </span><span class="n">allowed</span><span class="p">)</span><span class="w">   </span><span class="c1">// (1)!</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">SqlFragment</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w">                    </span><span class="c1">// (2)!</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">SqlFragment</span><span class="w"> </span><span class="nf">unsafeRawSql</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w">                  </span><span class="c1">// (3)!</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">text</span><span class="p">()</span>
 </span></code></pre></div>
 <ol>
-<li>Kiểm tra theo danh sách cho phép (allow-list) cố định. Bất kỳ giá trị nào ngoài danh sách sẽ ném <code>LarkBatisRejectedException</code>. <strong>Khuyến nghị luôn ưu tiên dùng phương thức này.</strong></li>
-<li>Định danh SQL chuẩn: chữ cái, chữ số, dấu gạch dưới, hỗ trợ tiền tố chấm (dấu chấm).</li>
-<li>Nhận chuỗi bất kỳ. Đây là điểm duy nhất cần kiểm toán bảo mật trong toàn dự án: <code>grep -rn unsafeRawSql src/</code>.</li>
+<li>Kiểm tra giá trị với danh sách whitelist định sẵn. Ném <code>LarkBatisRejectedException</code> nếu không khớp.</li>
+<li>Chỉ chấp nhận tên định danh hợp lệ (chữ cái, chữ số, dấu gạch dưới và dấu chấm).</li>
+<li>Nhận chuỗi bất kỳ. Đây là điểm duy nhất trong dự án cần kiểm toán bảo mật (<code>grep -rn unsafeRawSql</code>).</li>
 </ol>
 <h2 id="larkbatissql"><code>LarkBatisSql</code><a class="headerlink" href="#larkbatissql" title="Permanent link">&para;</a></h2>
-<p>Các hàm tiện ích tĩnh (static helper) được code sinh ra gọi tới.</p>
+<p>Class tiện ích chứa các phương thức tĩnh hỗ trợ mã nguồn sinh ra:</p>
 <table>
 <thead>
 <tr>
@@ -2032,83 +2031,82 @@
 </thead>
 <tbody>
 <tr>
-<td><code>trackVariants(String statementId, String sql)</code></td>
-<td>Đếm số lượng biến thể câu SQL riêng biệt cho mỗi statement. Được sinh ra cho mọi statement có nội dung SQL không cố định lúc build</td>
+<td><code>trackVariants(statementId, sql)</code></td>
+<td>Đếm số lượng biến thể SQL động cho mỗi câu truy vấn</td>
 </tr>
 <tr>
-<td><code>maxSqlVariants(int limit)</code></td>
-<td>Ngưỡng giới hạn biến thể. Mặc định là <strong>64</strong>, hoặc cấu hình qua <code>-Dlarkbatis.maxSqlVariants</code></td>
+<td><code>maxSqlVariants(limit)</code></td>
+<td>Cấu hình ngưỡng cảnh báo số lượng biến thể SQL (mặc định 64)</td>
 </tr>
 <tr>
-<td><code>failOnUnboundedVariants(boolean)</code></td>
-<td>Ném exception thay vì chỉ ghi log cảnh báo khi vượt ngưỡng. Mặc định <code>false</code>, hoặc cấu hình qua <code>-Dlarkbatis.failOnUnboundedVariants</code></td>
+<td><code>failOnUnboundedVariants(bool)</code></td>
+<td>Bật chế độ ném exception khi vượt ngưỡng biến thể</td>
 </tr>
 <tr>
-<td><code>padPow2(int n)</code></td>
-<td>Làm tròn số lượng tham số lên luỹ thừa của 2 gần nhất, phục vụ <code>@PadPow2</code></td>
+<td><code>padPow2(n)</code></td>
+<td>Đệm số lượng tham số lên lũy thừa của 2 gần nhất</td>
 </tr>
 <tr>
-<td><code>sum(int[] updateCounts)</code></td>
-<td>Tính tổng số dòng bị ảnh hưởng từ mảng kết quả của <code>executeBatch()</code></td>
+<td><code>sum(updateCounts)</code></td>
+<td>Tính tổng số bản ghi bị ảnh hưởng từ mảng kết quả <code>executeBatch()</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="jdbccodec"><code>JdbcCodec</code><a class="headerlink" href="#jdbccodec" title="Permanent link">&para;</a></h2>
-<p>Tập hợp các helper đọc/ghi dữ liệu có xử lý null an toàn, là phần còn lại sau khi đã inline toàn bộ tầng <code>TypeHandler</code>. <em>Việc lựa chọn</em> hàm helper nào được quyết định từ lúc build; runtime chỉ thực thi việc chuyển đổi giá trị.</p>
+<p>Chứa các phương thức chuyển đổi dữ liệu JDBC có xử lý null an toàn cho kiểu primitive và <code>java.time</code>:</p>
 <p><strong>Đọc dữ liệu:</strong> <code>booleanOrNull</code>, <code>byteOrNull</code>, <code>shortOrNull</code>, <code>intOrNull</code>, <code>longOrNull</code>, <code>floatOrNull</code>, <code>doubleOrNull</code>, <code>instant</code>, <code>localDateTime</code>, <code>localDate</code>, <code>localTime</code>, <code>enumValue</code>.</p>
 <p><strong>Ghi dữ liệu:</strong> <code>setBoolean</code>, <code>setByte</code>, <code>setShort</code>, <code>setInt</code>, <code>setLong</code>, <code>setFloat</code>, <code>setDouble</code>, <code>setInstant</code>, <code>setLocalDateTime</code>, <code>setLocalDate</code>, <code>setLocalTime</code>, <code>setEnum</code>.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="nf">longOrNull</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">column</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">column</span><span class="p">);</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">wasNull</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w">   </span><span class="c1">// rs.getLong tra ve 0 khi gia tri la SQL NULL</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">wasNull</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Những kiểu dữ liệu mà phương thức của JDBC đã chuẩn xác sẵn (<code>String</code>, <code>BigDecimal</code>, <code>byte[]</code>, <code>java.sql.Timestamp</code>) được gọi trực tiếp và không cần đi qua helper này.</p>
 <h2 id="rowreadert-va-statementbinder"><code>RowReader&lt;T&gt;</code> và <code>StatementBinder</code><a class="headerlink" href="#rowreadert-va-statementbinder" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@FunctionalInterface</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">RowReader</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nd">@FunctionalInterface</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">StatementBinder</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">bind</span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Mỗi class đọc dòng sinh ra đều cung cấp sẵn hằng số <code>public static final RowReader&lt;T&gt; READER</code>. Nhờ đó, lối thoát thủ công có thể tái sử dụng trực tiếp reader sinh sẵn mà không cần reflection.</p>
-<h2 id="phan-cap-ngoai-le-exceptions">Phân cấp ngoại lệ (Exceptions)<a class="headerlink" href="#phan-cap-ngoai-le-exceptions" title="Permanent link">&para;</a></h2>
-<p>Tất cả đều là unchecked exception, kế thừa từ <code>LarkBatisException</code> và mang theo nội dung câu SQL tương ứng (hoặc mã giả định như <code>tx:commit</code>) qua phương thức <code>sql()</code>.</p>
+<p>Mỗi class đọc dòng sinh ra đều có sẵn một hằng số <code>public static final RowReader&lt;T&gt; READER</code> để dùng cho các truy vấn động.</p>
+<h2 id="cay-exception">Cây Exception<a class="headerlink" href="#cay-exception" title="Permanent link">&para;</a></h2>
+<p>Tất cả ngoại lệ đều là unchecked exception kế thừa từ <code>LarkBatisException</code>:</p>
 <table>
 <thead>
 <tr>
 <th>Ngoại lệ</th>
-<th>Điều kiện phát sinh</th>
+<th>Nguyên nhân phát sinh</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>LarkBatisException</code></td>
-<td>Ngoại lệ gốc, bọc một <code>SQLException</code> kèm câu SQL gây lỗi</td>
+<td>Ngoại lệ gốc, bọc <code>SQLException</code> kèm câu SQL gây lỗi</td>
 </tr>
 <tr>
 <td><code>LarkBatisRejectedException</code></td>
-<td>Giá trị đưa vào factory của <code>SqlFragment</code> hoặc câu lệnh switch <code>@OrderBy</code> bị từ chối; giá trị này chưa từng lọt vào chuỗi SQL</td>
+<td>Giá trị truyền vào <code>SqlFragment.allowed()</code> hoặc <code>@OrderBy</code> không nằm trong danh sách whitelist</td>
 </tr>
 <tr>
 <td><code>LarkBatisEmptyForeachException</code></td>
-<td>Collection trong thẻ <code>&lt;foreach&gt;</code> rỗng; nêu rõ tên statement và tên tham số</td>
+<td>Collection truyền vào <code>&lt;foreach&gt;</code> rỗng</td>
 </tr>
 <tr>
 <td><code>LarkBatisNoKeyException</code></td>
-<td>Statement yêu cầu Generated Keys nhưng JDBC driver không trả về khoá nào</td>
+<td>Cấu hình <code>useGeneratedKeys</code> nhưng JDBC driver không trả về khóa chính nào</td>
 </tr>
 <tr>
 <td><code>LarkBatisKeyCountMismatchException</code></td>
-<td>Thao tác batch insert nhận được số lượng Generated Keys ít hơn số dòng dữ liệu</td>
+<td>Số lượng khóa chính trả về trong batch insert ít hơn số bản ghi được chèn</td>
 </tr>
 <tr>
 <td><code>LarkBatisUnboundedVariantsException</code></td>
-<td>Statement vượt quá ngưỡng <code>max-sql-variants</code> và ứng dụng đang bật chế độ ném lỗi thay vì chỉ cảnh báo</td>
+<td>Số lượng biến thể câu SQL vượt quá ngưỡng <code>max-sql-variants</code> khi bật chế độ nghiêm ngặt</td>
 </tr>
 <tr>
 <td><code>LarkBatisRollbackOnlyException</code></td>
-<td>Gọi <code>commit()</code> trên một transaction đã bị scope bên trong đánh dấu rollback</td>
+<td>Gọi <code>commit()</code> trên một transaction đã bị đánh dấu rollback</td>
 </tr>
 </tbody>
 </table>
-<p>Khi chạy dưới môi trường Spring, phương thức <code>translate</code> sẽ chuyển đổi lỗi thành cây phân cấp <code>DataAccessException</code> của Spring. Lỗi vi phạm ràng buộc khoá duy nhất (unique constraint) sẽ xuất hiện dưới dạng <code>DuplicateKeyException</code>, hoàn toàn tương thích với <code>JdbcTemplate</code>. <a href="../errors/">Chi tiết</a></p>
+<p>Xem <a href="../errors/">Xử lý lỗi &amp; Exception</a>.</p>
 
 
 

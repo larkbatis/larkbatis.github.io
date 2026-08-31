@@ -1110,10 +1110,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-modules" class="md-nav__link">
+  <a href="#modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The modules
+        Modules
       
     </span>
   </a>
@@ -1132,10 +1132,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-runs-and-what-does-not" class="md-nav__link">
+  <a href="#feature-matrix" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What runs and what does not
+        Feature Matrix
       
     </span>
   </a>
@@ -1143,10 +1143,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#properties" class="md-nav__link">
+  <a href="#configuration-properties" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Properties
+        Configuration Properties
       
     </span>
   </a>
@@ -1154,10 +1154,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-the-defaults-do-not-fit" class="md-nav__link">
+  <a href="#advanced-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When the defaults do not fit
+        Advanced Configuration
       
     </span>
   </a>
@@ -1165,10 +1165,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#spring-boot-3-and-spring-boot-4" class="md-nav__link">
+  <a href="#spring-boot-3-and-spring-boot-4-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Spring Boot 3 and Spring Boot 4
+        Spring Boot 3 and Spring Boot 4 Compatibility
       
     </span>
   </a>
@@ -1176,21 +1176,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#spring-aot-and-native-image" class="md-nav__link">
+  <a href="#spring-aot-and-graalvm-native-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Spring AOT and native image
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#registration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Registration
+        Spring AOT and GraalVM Native Image
       
     </span>
   </a>
@@ -1833,10 +1822,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-modules" class="md-nav__link">
+  <a href="#modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The modules
+        Modules
       
     </span>
   </a>
@@ -1855,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-runs-and-what-does-not" class="md-nav__link">
+  <a href="#feature-matrix" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What runs and what does not
+        Feature Matrix
       
     </span>
   </a>
@@ -1866,10 +1855,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#properties" class="md-nav__link">
+  <a href="#configuration-properties" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Properties
+        Configuration Properties
       
     </span>
   </a>
@@ -1877,10 +1866,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-the-defaults-do-not-fit" class="md-nav__link">
+  <a href="#advanced-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When the defaults do not fit
+        Advanced Configuration
       
     </span>
   </a>
@@ -1888,10 +1877,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#spring-boot-3-and-spring-boot-4" class="md-nav__link">
+  <a href="#spring-boot-3-and-spring-boot-4-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Spring Boot 3 and Spring Boot 4
+        Spring Boot 3 and Spring Boot 4 Compatibility
       
     </span>
   </a>
@@ -1899,21 +1888,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#spring-aot-and-native-image" class="md-nav__link">
+  <a href="#spring-aot-and-graalvm-native-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Spring AOT and native image
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#registration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Registration
+        Spring AOT and GraalVM Native Image
       
     </span>
   </a>
@@ -1946,21 +1924,14 @@
 
 
 <h1 id="spring-integration">Spring Integration<a class="headerlink" href="#spring-integration" title="Permanent link">&para;</a></h1>
-<p>Half of <code>mybatis-spring</code> evaporates here, and knowing <em>which</em> half explains the whole
-integration. <code>mybatis-spring</code> exists to solve exactly two problems:</p>
+<p>To understand how LarkBatis integrates with Spring, it helps to see what <code>mybatis-spring</code> had to do. In standard MyBatis, <code>mybatis-spring</code> solved two distinct problems:</p>
 <ol>
-<li><strong>A mapper is an interface with no implementation</strong>, so Spring cannot create a bean for
-   it. Solved with <code>@MapperScan</code> → <code>ClassPathMapperScanner</code> → <code>MapperFactoryBean</code> →
-   <code>MapperProxy</code>.</li>
-<li><strong><code>SqlSession</code> must share its <code>Connection</code> with <code>@Transactional</code>.</strong> Solved with
-   <code>SqlSessionTemplate</code> + <code>SqlSessionUtils</code> + <code>SpringManagedTransaction</code>.</li>
+<li><strong>Mappers are bare interfaces without concrete classes.</strong> Spring cannot instantiate them on its own, requiring <code>@MapperScan</code> → <code>ClassPathMapperScanner</code> → <code>MapperFactoryBean</code> → <code>MapperProxy</code> dynamic JDK proxies.</li>
+<li><strong><code>SqlSession</code> must participate in <code>@Transactional</code>.</strong> Solved via <code>SqlSessionTemplate</code>, <code>SqlSessionUtils</code>, and <code>SpringManagedTransaction</code>.</li>
 </ol>
-<p><strong>Problem 1 is not a problem here.</strong> <code>AccountMapper$$Impl</code> is a real class with a real
-constructor, which is an ordinary bean. The scanner, the <code>FactoryBean</code> and the
-<code>BeanDefinition</code> post-processing all disappear, replaced by a generated <code>@Configuration</code>
-with one <code>@Bean</code> method per mapper.</p>
-<p><strong>Problem 2 is untouched</strong>, and it is very nearly the whole content of the integration.</p>
-<h2 id="the-modules">The modules<a class="headerlink" href="#the-modules" title="Permanent link">&para;</a></h2>
+<p><strong>In LarkBatis, Problem 1 doesn't exist.</strong> <code>AccountMapper$$Impl</code> is a concrete Java class with a standard public constructor. The entire classpath scanner, dynamic proxy layer, and runtime bean definition post-processing disappear. They are replaced by a compile-time generated <code>@Configuration</code> with standard <code>@Bean</code> methods.</p>
+<p><strong>Problem 2 is fully preserved</strong>, and is the primary focus of our Spring integration.</p>
+<h2 id="modules">Modules<a class="headerlink" href="#modules" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1971,146 +1942,127 @@ with one <code>@Bean</code> method per mapper.</p>
 <tbody>
 <tr>
 <td><code>larkbatis-spring</code></td>
-<td><code>SpringLarkBatisSession</code>: connections via <code>DataSourceUtils</code>, exception translation via <code>SQLExceptionTranslator</code></td>
+<td>Provides <code>SpringLarkBatisSession</code>: delegates connections to <code>DataSourceUtils</code> and translates exceptions via <code>SQLExceptionTranslator</code></td>
 </tr>
 <tr>
 <td><code>larkbatis-spring-boot-autoconfigure</code></td>
-<td><code>LarkBatisAutoConfiguration</code>, <code>LarkBatisProperties</code>, the <code>AutoConfiguration.imports</code> entry</td>
+<td>Auto-configuration: <code>LarkBatisAutoConfiguration</code>, properties, and <code>AutoConfiguration.imports</code></td>
 </tr>
 <tr>
 <td><code>larkbatis-spring-boot-starter</code></td>
-<td>Empty; dependencies only</td>
+<td>Dependency aggregator for Spring Boot applications</td>
 </tr>
 </tbody>
 </table>
 <h2 id="springlarkbatissession"><code>SpringLarkBatisSession</code><a class="headerlink" href="#springlarkbatissession" title="Permanent link">&para;</a></h2>
-<p>The one rule the class exists to enforce:</p>
+<p>The core integration delegates connection acquisition to Spring:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Override</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">Connection</span><span class="w"> </span><span class="nf">conn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DataSourceUtils</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">dataSource</span><span class="p">);</span><span class="w">   </span><span class="c1">// never dataSource.getConnection()</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DataSourceUtils</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">dataSource</span><span class="p">);</span><span class="w">   </span><span class="c1">// never calls dataSource.getConnection() directly</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>DataSourceUtils</code> hands back the connection already bound to the running transaction, and
-opens a fresh one only when there is none. <code>release()</code> does the reverse: a no-op inside a
-transaction, a real close outside one. Generated bodies therefore keep the <code>Connection</code>
-out of try-with-resources. See
-<a href="../transactions/#why-generated-code-never-closes-the-connection">Why generated code never closes the Connection</a>.</p>
-<p>The class holds no state beyond its two collaborators and is safe to share across
-threads. One bean per <code>DataSource</code>.</p>
-<p>Exception translation goes through Spring's <code>SQLExceptionTranslator</code>, defaulting to
-<code>SQLExceptionSubclassTranslator</code> (Spring's own default since 6.0), which reads the
-standard <code>SQLException</code> subclass tree and not a per-vendor error-code table. So your
-existing <code>DuplicateKeyException</code> handlers keep working unchanged.</p>
-<h2 id="what-runs-and-what-does-not">What runs and what does not<a class="headerlink" href="#what-runs-and-what-does-not" title="Permanent link">&para;</a></h2>
+<p><code>DataSourceUtils</code> returns the active connection bound to the running <code>@Transactional</code> scope, or opens a new connection if called outside a transaction. <code>release()</code> is a no-op during active transactions and closes the connection only when running standalone. This is why generated mapper methods do not close connections directly. See <a href="../transactions/#why-generated-code-never-closes-the-connection">Transactions</a>.</p>
+<p><code>SpringLarkBatisSession</code> is stateless and thread-safe.</p>
+<p>Exception translation uses Spring's <code>SQLExceptionTranslator</code> (<code>SQLExceptionSubclassTranslator</code> by default), mapping JDBC errors directly to Spring's <code>DataAccessException</code> tree (e.g. <code>DuplicateKeyException</code>).</p>
+<h2 id="feature-matrix">Feature Matrix<a class="headerlink" href="#feature-matrix" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Scenario</th>
-<th></th>
-<th>Why</th>
+<th>Feature</th>
+<th>Support</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>@Transactional</code> on a service, mapper called inside</td>
-<td>works</td>
-<td><code>DataSourceUtils</code> returns the transaction's connection</td>
+<td><code>@Transactional</code> on services</td>
+<td>Supported</td>
+<td><code>DataSourceUtils</code> returns the transaction's bound connection</td>
 </tr>
 <tr>
-<td><code>REQUIRES_NEW</code>, <code>NESTED</code>, rollback rules</td>
-<td>works</td>
-<td>Spring handles all of it</td>
+<td>Propagation rules (<code>REQUIRES_NEW</code>, <code>NESTED</code>)</td>
+<td>Supported</td>
+<td>Handled entirely by Spring</td>
 </tr>
 <tr>
 <td><code>readOnly = true</code></td>
-<td>works</td>
-<td>Spring sets the flag on that connection</td>
+<td>Supported</td>
+<td>Applied by Spring directly to the connection</td>
 </tr>
 <tr>
-<td>Mapper called outside any transaction</td>
-<td>works</td>
-<td>Auto-commit; <code>release</code> closes it immediately</td>
+<td>Standalone calls (no transaction)</td>
+<td>Supported</td>
+<td>Standard auto-commit per statement</td>
 </tr>
 <tr>
-<td>A <code>Stream</code>-returning mapper method</td>
-<td>works</td>
-<td>The stream holds a pooled connection until closed; inside a transaction <code>release</code> is a no-op. <code>try (Stream&lt;T&gt; …)</code> either way</td>
+<td><code>Stream&lt;T&gt;</code> returns</td>
+<td>Supported</td>
+<td>Stream holds connection until closed; no-op release inside transactions</td>
 </tr>
 <tr>
-<td>Sharing a transaction with <code>JdbcTemplate</code> or JPA</td>
-<td>works</td>
-<td>Same <code>DataSourceUtils</code>, same <code>DataSourceTransactionManager</code></td>
+<td>Interop with <code>JdbcTemplate</code> / JPA</td>
+<td>Supported</td>
+<td>Shares identical <code>DataSourceTransactionManager</code> context</td>
 </tr>
 <tr>
-<td>Spring AOP on a mapper bean</td>
-<td>works</td>
-<td>The mapper is a real bean</td>
+<td>Spring AOP on mappers</td>
+<td>Supported</td>
+<td>Mappers are regular Spring beans</td>
 </tr>
 <tr>
 <td>MyBatis <code>ExecutorType.BATCH</code></td>
-<td>absent</td>
-<td>There is no executor. Batch is a <a href="../foreach-and-batches/#jdbc-batches">method signature</a></td>
+<td>Replaced</td>
+<td>Batching is declared via <a href="../foreach-and-batches/#jdbc-batches">method signatures</a></td>
 </tr>
 <tr>
-<td>MyBatis plugins / interceptors</td>
-<td>absent</td>
-<td>Dropped: the four objects they wrap are what a generated body replaces. Spring AOP on the mapper bean works, and <a href="../../features/mybatis-differences/#what-replaces-a-plugin">there is a recipe per plugin kind</a></td>
+<td>MyBatis Interceptor plugins</td>
+<td>Replaced</td>
+<td>Replaced with explicit SQL, custom type handlers, or Spring AOP. <a href="../../features/mybatis-differences/#what-replaces-a-plugin">See recipes</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">&para;</a></h2>
+<h2 id="configuration-properties">Configuration Properties<a class="headerlink" href="#configuration-properties" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">larkbatis</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># distinct SQL texts per statement before a warning</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># true = throw instead of one warning</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># warning threshold for dynamic SQL variants</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># throw exception instead of warning</span>
 </span></code></pre></div>
-<p>Both are about the operational cost of <code>${}</code>: statement caches are keyed by SQL text, so
-a fragment whose value set is not bounded grows them without limit. See
-<a href="../raw-sql/#tracking-sql-variants">Raw SQL</a>.</p>
+<p>See <a href="../raw-sql/#tracking-sql-variants">Raw SQL</a> for details on SQL variant tracking.</p>
 <div class="admonition note">
-<p class="admonition-title"><code>log-sql</code> is not implemented</p>
-<p>Every generated body would have to carry a logging branch, and the generated shape
-has none.
-SQL logging belongs to the driver or the pool (<code>net.ttddyy:datasource-proxy</code>, p6spy)
-until there is a reason to change that.</p>
+<p class="admonition-title">SQL query logging</p>
+<p>LarkBatis does not inject runtime logging branches into generated method bytecode. Configure query logging at the connection pool or driver level (<code>datasource-proxy</code>, p6spy).</p>
 </div>
-<h2 id="when-the-defaults-do-not-fit">When the defaults do not fit<a class="headerlink" href="#when-the-defaults-do-not-fit" title="Permanent link">&para;</a></h2>
+<h2 id="advanced-configuration">Advanced Configuration<a class="headerlink" href="#advanced-configuration" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Situation</th>
-<th>What to do</th>
+<th>Requirement</th>
+<th>Solution</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Mappers outside the scanned packages</td>
-<td><code>-Alarkbatis.springConfigPackage=com.example.app</code>, or <code>@Import(LarkBatisMapperConfiguration.class)</code></td>
+<td>Mappers in non-standard packages</td>
+<td>Pass <code>-Alarkbatis.springConfigPackage=com.example.app</code> or use <code>@Import(LarkBatisMapperConfiguration.class)</code></td>
 </tr>
 <tr>
-<td>You want to declare the mapper beans yourself</td>
-<td><code>-Alarkbatis.springConfig=false</code></td>
+<td>Declare mapper beans manually</td>
+<td>Pass <code>-Alarkbatis.springConfig=false</code> to disable auto-generating <code>@Configuration</code></td>
 </tr>
 <tr>
-<td>More than one <code>DataSource</code></td>
-<td>Declare one <code>SpringLarkBatisSession</code> per <code>DataSource</code> and write the mapper <code>@Bean</code> methods yourself</td>
+<td>Multiple <code>DataSource</code> configurations</td>
+<td>Define a <code>SpringLarkBatisSession</code> per <code>DataSource</code> and declare mapper <code>@Bean</code> methods explicitly</td>
 </tr>
 </tbody>
 </table>
-<p>On multiple data sources: <code>@ConditionalOnSingleCandidate</code> makes the auto-configuration
-back off entirely instead of guessing, and the generated <code>@Configuration</code> takes a single
-<code>LarkBatisSession</code>, so mark one <code>@Primary</code> or suppress the generated class with the
-option above. Per-mapper <code>DataSource</code> selection is <strong>deferred</strong>: no design without a real
-service that needs it.</p>
-<h2 id="spring-boot-3-and-spring-boot-4">Spring Boot 3 and Spring Boot 4<a class="headerlink" href="#spring-boot-3-and-spring-boot-4" title="Permanent link">&para;</a></h2>
-<p>One jar works on both, and it took one decision to get there. Boot 4 moved
-<code>DataSourceAutoConfiguration</code> out of <code>spring-boot-autoconfigure</code> into the new
-<code>spring-boot-jdbc</code> module and renamed its package:</p>
+<h2 id="spring-boot-3-and-spring-boot-4-compatibility">Spring Boot 3 and Spring Boot 4 Compatibility<a class="headerlink" href="#spring-boot-3-and-spring-boot-4-compatibility" title="Permanent link">&para;</a></h2>
+<p>A single LarkBatis starter jar works on both Spring Boot 3 and Spring Boot 4.</p>
+<p>Spring Boot 4 moved <code>DataSourceAutoConfiguration</code> into <code>spring-boot-jdbc</code> under a new package:</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>Boot 3</th>
-<th>Boot 4</th>
+<th>Class</th>
+<th>Boot 3 Package</th>
+<th>Boot 4 Package</th>
 </tr>
 </thead>
 <tbody>
@@ -2122,40 +2074,19 @@ service that needs it.</p>
 <tr>
 <td><code>@AutoConfiguration</code>, <code>@ConditionalOn*</code></td>
 <td><code>org.springframework.boot.autoconfigure(.condition)</code></td>
-<td>unchanged</td>
+<td>Unchanged</td>
 </tr>
 <tr>
 <td><code>@ConfigurationProperties</code></td>
 <td><code>org.springframework.boot.context.properties</code></td>
-<td>unchanged</td>
+<td>Unchanged</td>
 </tr>
 </tbody>
 </table>
-<p>So <code>LarkBatisAutoConfiguration</code> declares its ordering with <code>afterName</code> and lists <strong>both</strong>
-package names.</p>
-<div class="admonition danger">
-<p class="admonition-title">Why this is not style</p>
-<p><code>after = DataSourceAutoConfiguration.class</code> compiled against Boot 3 cannot be resolved
-on Boot 4, and Spring's response is to drop the whole auto-configuration from the
-candidate list: no bean, no warning. Nothing goes wrong until something asks for a
-<code>LarkBatisSession</code> and the context fails to start.</p>
-<p>A name that matches nothing is simply ignored, which is what makes listing both safe.
-Verified by migrating a real Boot 4.1 service; a test asserts both names are still
-there, because "simplifying" it back to a class reference reintroduces a failure with
-no symptom.</p>
-</div>
-<h2 id="spring-aot-and-native-image">Spring AOT and native image<a class="headerlink" href="#spring-aot-and-native-image" title="Permanent link">&para;</a></h2>
-<p><code>@Bean AccountMapper accountMapper(LarkBatisSession s)</code> has a static return type, so AOT
-treats it like any other bean: no <code>getObjectType()</code> at runtime, no proxy hint, no
-<code>reflect-config.json</code> for the mapper layer. <code>MapperFactoryBean</code> is the opposite case: the
-bean type is only known at runtime and what it returns is a JDK proxy.</p>
-<p><code>proxyBeanMethods = false</code> on the generated <code>@Configuration</code> is load-bearing, not style:
-the default <code>true</code> makes Spring build a CGLIB subclass of that class at runtime, which is
-exactly the runtime bytecode generation this project exists to remove.</p>
-<h2 id="registration">Registration<a class="headerlink" href="#registration" title="Permanent link">&para;</a></h2>
-<p>The auto-configuration registers through
-<code>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</code>, not
-<code>spring.factories</code>.</p>
+<p><code>LarkBatisAutoConfiguration</code> orders itself using <code>afterName</code> listing <strong>both</strong> package names, ensuring correct ordering across both Spring Boot versions without class loading issues.</p>
+<h2 id="spring-aot-and-graalvm-native-image">Spring AOT and GraalVM Native Image<a class="headerlink" href="#spring-aot-and-graalvm-native-image" title="Permanent link">&para;</a></h2>
+<p>Generated mapper bean definitions like <code>@Bean AccountMapper accountMapper(LarkBatisSession s)</code> have static return types. Spring AOT processes them directly without needing runtime reflection metadata or proxy hints.</p>
+<p>Additionally, generated <code>@Configuration</code> classes declare <code>proxyBeanMethods = false</code> to avoid generating runtime CGLIB subclasses.</p>
 
 
 

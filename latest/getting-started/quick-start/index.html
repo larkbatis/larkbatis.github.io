@@ -664,10 +664,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-read-what-was-generated" class="md-nav__link">
+  <a href="#5-inspect-what-was-generated" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · Read what was generated
+        5 · Inspect what was generated
       
     </span>
   </a>
@@ -675,10 +675,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-to-go-next" class="md-nav__link">
+  <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where to go next
+        Next steps
       
     </span>
   </a>
@@ -1855,10 +1855,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-read-what-was-generated" class="md-nav__link">
+  <a href="#5-inspect-what-was-generated" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · Read what was generated
+        5 · Inspect what was generated
       
     </span>
   </a>
@@ -1866,10 +1866,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-to-go-next" class="md-nav__link">
+  <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where to go next
+        Next steps
       
     </span>
   </a>
@@ -1902,12 +1902,9 @@
 
 
 <h1 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h1>
-<p>Five minutes from an empty project to a working mapper, on the plain-JDBC path: no
-Spring, no XML. Everything here comes from the <code>larkbatis-sample</code> module of the core
-repository, which is also the native-image smoke-test subject.</p>
+<p>Here is how to go from an empty project to a working mapper in five minutes using plain JDBC—no Spring, no XML. Everything here comes straight from the <code>larkbatis-sample</code> module in the core repository.</p>
 <h2 id="1-a-result-class">1 · A result class<a class="headerlink" href="#1-a-result-class" title="Permanent link">&para;</a></h2>
-<p>An ordinary Java bean: a no-arg constructor and setters. There is no base class, no
-annotation, and no interface to implement.</p>
+<p>An ordinary Java bean with a no-arg constructor and standard getters/setters. No base class, no special annotations, and no interfaces to implement:</p>
 <div class="language-java highlight"><span class="filename">User.java</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.app</span><span class="p">;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.time.Instant</span><span class="p">;</span>
@@ -1932,9 +1929,7 @@ annotation, and no interface to implement.</p>
 </span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setCreatedAt</span><span class="p">(</span><span class="n">Instant</span><span class="w"> </span><span class="n">createdAt</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">createdAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Column names map to properties with <code>snake_case</code> → <code>camelCase</code>, applied <strong>at build time</strong>,
-always. <code>created_at</code> finds <code>setCreatedAt</code>. Where that convention is not enough, alias the
-column in the select list or declare a <a href="../../usage/result-maps/"><code>&lt;resultMap&gt;</code></a>.</p>
+<p>Column names map to properties using <code>snake_case</code> → <code>camelCase</code>, and this happens <strong>at build time</strong>, every time. <code>created_at</code> matches <code>setCreatedAt</code>. If that convention doesn't fit, alias the column in your SQL or define a <a href="../../usage/result-maps/"><code>&lt;resultMap&gt;</code></a>.</p>
 <h2 id="2-a-mapper-interface">2 · A mapper interface<a class="headerlink" href="#2-a-mapper-interface" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><span class="filename">UserMapper.java</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.app</span><span class="p">;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
@@ -1960,14 +1955,11 @@ column in the select list or declare a <a href="../../usage/result-maps/"><code>
 </span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
 </span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>No <code>@Mapper</code> marker is needed: an interface with statement annotations is found by the
-processor on its own. The marker exists for interfaces whose statements live entirely in
-<a href="../../usage/xml-mappers/">mapper XML</a>, which would otherwise never reach a processing
-round at all.</p>
+<p>You don't need a <code>@Mapper</code> annotation here: the processor picks up any interface with statement annotations on its own. <code>@Mapper</code> is only needed when an interface has all its statements in <a href="../../usage/xml-mappers/">mapper XML</a>, since javac wouldn't otherwise pass it to the processor.</p>
 <h2 id="3-compile">3 · Compile<a class="headerlink" href="#3-compile" title="Permanent link">&para;</a></h2>
 <div class="language-console highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>compileJava
 </span></code></pre></div>
-<p>Three files appear next to your sources, in the same package:</p>
+<p>Three source files are generated next to your code in the same package:</p>
 <table>
 <thead>
 <tr>
@@ -1982,25 +1974,21 @@ round at all.</p>
 </tr>
 <tr>
 <td><code>UserRow</code></td>
-<td>The row reader for <code>User</code>. One per result class, shared by every statement returning it</td>
+<td>Row reader for <code>User</code>. One per result class, shared by every query returning it</td>
 </tr>
 <tr>
 <td><code>LarkBatisMappers</code></td>
-<td>A static factory for every mapper in the compilation</td>
+<td>Static factory for all mappers in the compilation</td>
 </tr>
 </tbody>
 </table>
-<p>They are real source files, and reading them is part of the design. See
-<a href="../../wiki/generated-code/">Generated Code</a>.</p>
+<p>These are real Java source files, and stepping through them in your IDE is encouraged. See <a href="../../wiki/generated-code/">Generated Code</a>.</p>
 <div class="admonition tip">
 <p class="admonition-title">If nothing is generated</p>
-<p>Check that <code>larkbatis-processor</code> is on <code>annotationProcessor</code> (not <code>implementation</code>),
-and that you are compiling with javac. See <a href="../../usage/troubleshooting/">Troubleshooting</a>.</p>
+<p>Check that <code>larkbatis-processor</code> is configured under <code>annotationProcessor</code> (not <code>implementation</code>), and make sure you are compiling with javac. See <a href="../../usage/troubleshooting/">Troubleshooting</a>.</p>
 </div>
 <h2 id="4-wire-it-up-and-run">4 · Wire it up and run<a class="headerlink" href="#4-wire-it-up-and-run" title="Permanent link">&para;</a></h2>
-<p><code>LarkBatisSession</code> is the only thing a generated mapper needs: a way to borrow a
-<code>Connection</code>, a way to give it back, and exception translation. The standalone
-implementation takes a <code>DataSource</code>.</p>
+<p><code>LarkBatisSession</code> is the only dependency a generated mapper needs: it borrows a <code>Connection</code>, returns it, and translates SQLExceptions. The standalone version takes a <code>DataSource</code>:</p>
 <div class="language-java highlight"><span class="filename">SampleApp.java</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.app</span><span class="p">;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">io.github.larkbatis.runtime.JdbcLarkBatisSession</span><span class="p">;</span>
@@ -2011,7 +1999,7 @@ implementation takes a <code>DataSource</code>.</p>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SampleApp</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="n">DataSource</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* HikariCP, H2, whatever you already use */</span><span class="p">;</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="n">DataSource</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* HikariCP, H2, or whatever pool you use */</span><span class="p">;</span>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="n">JdbcLarkBatisSession</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JdbcLarkBatisSession</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
 </span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="n">UserMapper</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisMappers</span><span class="p">.</span><span class="na">userMapper</span><span class="p">(</span><span class="n">session</span><span class="p">);</span>
@@ -2026,20 +2014,15 @@ implementation takes a <code>DataSource</code>.</p>
 </span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="w">            </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
 </span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="w">        </span><span class="p">}</span>
 </span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a>
-</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span><span class="w">              </span><span class="c1">// filled in by useGeneratedKeys</span>
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span><span class="w">              </span><span class="c1">// populated by useGeneratedKeys</span>
 </span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span>
 </span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="na">countByName</span><span class="p">(</span><span class="s">"A%"</span><span class="p">));</span>
 </span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>session.begin()</code> opens a transaction scope meant for try-with-resources. <code>commit()</code> is
-a <strong>vote</strong>: the actual commit happens when the outermost scope closes, and leaving any
-scope without voting marks the whole transaction rollback-only. See
-<a href="../../usage/transactions/">Transactions</a>.</p>
-<h2 id="5-read-what-was-generated">5 · Read what was generated<a class="headerlink" href="#5-read-what-was-generated" title="Permanent link">&para;</a></h2>
-<p>Open <code>UserMapper$$Impl.java</code> in your IDE. The SQL is a <code>static final String</code> with <code>?</code>
-where <code>#{}</code> was, the parameters are bound in order, and the row is read positionally
-because the generator could parse the select list:</p>
+<p><code>session.begin()</code> opens a transaction scope designed for try-with-resources. Calling <code>commit()</code> is a <strong>vote</strong>: the real commit happens when the outermost block closes. If any scope exits without voting to commit, the whole transaction rolls back. See <a href="../../usage/transactions/">Transactions</a>.</p>
+<h2 id="5-inspect-what-was-generated">5 · Inspect what was generated<a class="headerlink" href="#5-inspect-what-was-generated" title="Permanent link">&para;</a></h2>
+<p>Open <code>UserMapper$$Impl.java</code> in your IDE. The SQL statement is a <code>static final String</code> where <code>#{}</code> has been replaced with <code>?</code>, parameters are bound by index, and rows are read positionally because the generator parsed the column list:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">SQL_findById</span><span class="w"> </span><span class="o">=</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">        </span><span class="s">"SELECT id, name, email, created_at FROM users WHERE id = ?"</span><span class="p">;</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
@@ -2067,23 +2050,18 @@ because the generator could parse the select list:</p>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Every column index and every accessor was chosen at build time. Nothing here inspects a
-type, resolves a property name or consults a registry.</p>
+<p>Every column index and getter/setter call was determined at build time. Nothing here inspects types at runtime, resolves property names, or looks up registries.</p>
 <div class="admonition note">
-<p class="admonition-title">The Connection is deliberately not in try-with-resources</p>
-<p>Only <code>s.release(c)</code> knows whether the connection may really be closed. Under a
-managed transaction, Spring's or LarkBatis's own, the connection belongs to that
-transaction and closing it would be wrong.
-<a href="../../usage/transactions/#why-generated-code-never-closes-the-connection">Transactions</a>
-has the full rule.</p>
+<p class="admonition-title">Why Connection is not in try-with-resources</p>
+<p>Only <code>s.release(c)</code> knows whether the connection can actually be closed. If you're inside an active transaction (Spring or LarkBatis), the connection belongs to that transaction and closing it would break it. See <a href="../../usage/transactions/#why-generated-code-never-closes-the-connection">Transactions</a> for details.</p>
 </div>
-<h2 id="where-to-go-next">Where to go next<a class="headerlink" href="#where-to-go-next" title="Permanent link">&para;</a></h2>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Statements with optional filters → <a href="../../usage/dynamic-sql/">Dynamic SQL</a></li>
 <li><code>WHERE id IN (...)</code> and batch inserts → <a href="../../usage/foreach-and-batches/">foreach and Batches</a></li>
-<li>Joining a parent and its children → <a href="../../usage/result-maps/">Result Maps and Joins</a></li>
-<li>A result set too big for a <code>List</code> → <a href="../../usage/streaming/">Streaming Results</a></li>
-<li>Spring Boot instead of <code>main()</code> → <a href="../spring-boot/">Spring Boot</a></li>
+<li>Joining parent and child entities → <a href="../../usage/result-maps/">Result Maps and Joins</a></li>
+<li>Large result sets without memory bloat → <a href="../../usage/streaming/">Streaming Results</a></li>
+<li>Using Spring Boot instead of <code>main()</code> → <a href="../spring-boot/">Spring Boot</a></li>
 </ul>
 
 

@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sql-tho-va-sqlfragment" class="md-skip">
+        <a href="#raw-sql-an-toan" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1057,7 +1057,7 @@
   <a href="#the-rule" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quy tắc bắt buộc
+        Nguyên tắc kiểu dữ liệu cho ${}
       
     </span>
   </a>
@@ -1088,10 +1088,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vi-sao-phuong-thuc-mang-ten-unsaferawsql" class="md-nav__link">
+  <a href="#kiem-toan-bao-mat-voi-unsaferawsql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao phương thức mang tên unsafeRawSql
+        Kiểm toán bảo mật với unsafeRawSql
       
     </span>
   </a>
@@ -1107,18 +1107,7 @@
   <a href="#tracking-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Theo dõi biến thể SQL
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#trong-select-list" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ${} trong select list
+        Theo dõi biến thể SQL (Tracking SQL Variants)
       
     </span>
   </a>
@@ -1129,7 +1118,7 @@
   <a href="#the-escape-hatch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lối thoát thủ công (Escape Hatch)
+        Lối thoát thủ công (s.query())
       
     </span>
   </a>
@@ -1831,7 +1820,7 @@
   <a href="#the-rule" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quy tắc bắt buộc
+        Nguyên tắc kiểu dữ liệu cho ${}
       
     </span>
   </a>
@@ -1862,10 +1851,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vi-sao-phuong-thuc-mang-ten-unsaferawsql" class="md-nav__link">
+  <a href="#kiem-toan-bao-mat-voi-unsaferawsql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vì sao phương thức mang tên unsafeRawSql
+        Kiểm toán bảo mật với unsafeRawSql
       
     </span>
   </a>
@@ -1881,18 +1870,7 @@
   <a href="#tracking-sql-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Theo dõi biến thể SQL
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#trong-select-list" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ${} trong select list
+        Theo dõi biến thể SQL (Tracking SQL Variants)
       
     </span>
   </a>
@@ -1903,7 +1881,7 @@
   <a href="#the-escape-hatch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lối thoát thủ công (Escape Hatch)
+        Lối thoát thủ công (s.query())
       
     </span>
   </a>
@@ -1935,15 +1913,15 @@
   
 
 
-<h1 id="sql-tho-va-sqlfragment">SQL thô và SqlFragment<a class="headerlink" href="#sql-tho-va-sqlfragment" title="Permanent link">&para;</a></h1>
-<p>Ký hiệu <code>#{}</code> biểu thị tham số bind (Prepared Statement). Ký hiệu <code>${}</code> chèn trực tiếp chuỗi vào câu SQL — nơi tiềm ẩn nguy cơ SQL Injection. LarkBatis không cấm <code>${}</code> vì các yêu cầu như sắp xếp động (<code>ORDER BY</code>) theo lựa chọn của người dùng là nhu cầu thực tế, nhưng bắt buộc mọi điểm chèn phải được kiểm soát kiểu tĩnh và có thể kiểm toán dễ dàng.</p>
-<h2 id="the-rule">Quy tắc bắt buộc<a class="headerlink" href="#the-rule" title="Permanent link">&para;</a></h2>
+<h1 id="raw-sql-an-toan">Raw SQL &amp; An toàn<a class="headerlink" href="#raw-sql-an-toan" title="Permanent link">&para;</a></h1>
+<p>Cú pháp <code>#{}</code> biểu thị tham số bind (<code>PreparedStatement</code>), trong khi <code>${}</code> biểu thị việc chèn trực tiếp chuỗi vào câu lệnh SQL — nguyên nhân hàng đầu gây lỗi bảo mật SQL Injection.</p>
+<p>LarkBatis không cấm <code>${}</code> vì các trường hợp như sắp xếp động (<code>ORDER BY</code>) là nhu cầu thực tế. Tuy nhiên, LarkBatis bắt buộc mọi điểm chèn <code>${}</code> phải được kiểm soát kiểu tĩnh an toàn.</p>
+<h2 id="the-rule">Nguyên tắc kiểu dữ liệu cho <code>${}</code><a class="headerlink" href="#the-rule" title="Permanent link">&para;</a></h2>
 <div class="admonition failure">
-<p class="admonition-title">Tham số <code>String</code> thô gắn vào <code>${}</code> là lỗi biên dịch</p>
+<p class="admonition-title">Cấm gán trực tiếp tham số <code>String</code> không kiểm soát vào <code>${}</code></p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users ORDER BY ${sort}"</span><span class="p">)</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">sort</span><span class="p">);</span><span class="w">        </span><span class="c1">// lỗi biên dịch</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">sort</span><span class="p">);</span><span class="w">        </span><span class="c1">// Lỗi biên dịch javac</span>
 </span></code></pre></div>
-<p>Thông báo lỗi sẽ nêu rõ tên tham số và liệt kê ba dạng kiểu dữ liệu hợp lệ được chấp nhận.</p>
 </div>
 <table>
 <thead>
@@ -1958,79 +1936,62 @@
 <td>Khởi tạo qua static factory đã whitelist giá trị, hoặc qua <code>unsafeRawSql</code> (điểm kiểm toán duy nhất)</td>
 </tr>
 <tr>
-<td>Kiểu dữ liệu tập giá trị đóng: <code>int</code>, <code>long</code>, <code>short</code>, <code>byte</code>, <code>boolean</code>, enum</td>
-<td>Toàn bộ không gian giá trị vốn dĩ an toàn trong cú pháp SQL</td>
+<td>Kiểu tập giá trị đóng (<code>int</code>, <code>long</code>, <code>boolean</code>, <code>enum</code>)</td>
+<td>Toàn bộ không gian giá trị đều an toàn về mặt cú pháp SQL</td>
 </tr>
 <tr>
-<td><code>String</code> kèm annotation <code>@OrderBy(allowed = {...})</code></td>
-<td>Biên dịch thành cấu trúc <code>switch</code> trên danh sách hằng số an toàn</td>
+<td><code>String</code> có gắn <code>@OrderBy(allowed = {...})</code></td>
+<td>Biên dịch thành câu lệnh <code>switch</code> kiểm tra whitelist trước khi thực thi</td>
 </tr>
 </tbody>
 </table>
 <h2 id="orderby"><code>@OrderBy</code><a class="headerlink" href="#orderby" title="Permanent link">&para;</a></h2>
-<p>Giải pháp thuận tiện nhất cho việc sắp xếp động mà không đòi hỏi xử lý phức tạp ở phía gọi:</p>
+<p>Giải pháp sắp xếp động an toàn và tiện lợi:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users ORDER BY ${sort}"</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="nd">@OrderBy</span><span class="p">(</span><span class="n">allowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="s">"name"</span><span class="p">,</span><span class="w"> </span><span class="s">"created_at"</span><span class="p">})</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">sort</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Bộ sinh code phát ra một <code>switch</code> trên ba hằng số này. Giá trị nằm ngoài danh sách sẽ bị từ chối bằng ngoại lệ <code>LarkBatisRejectedException</code> nêu rõ giá trị vi phạm và tập hợp hợp lệ. Giá trị không an toàn sẽ không bao giờ chạm tới câu SQL gửi xuống database.</p>
+<p>Processor sẽ sinh câu lệnh <code>switch</code> kiểm tra giá trị tham số <code>sort</code>. Nếu giá trị truyền vào không nằm trong whitelist, hệ thống lập tức ném ngoại lệ <code>LarkBatisRejectedException</code> và ngăn chặn SQL độc hại gửi xuống database.</p>
 <h2 id="sqlfragment"><code>SqlFragment</code><a class="headerlink" href="#sqlfragment" title="Permanent link">&para;</a></h2>
-<p>Ba phương thức khởi tạo tĩnh thể hiện ba mức độ kiểm soát khác nhau:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">allowed</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="s">"created_at"</span><span class="p">,</span><span class="w"> </span><span class="s">"name"</span><span class="p">)</span><span class="w">   </span><span class="c1">// (1)!</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">identifier</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w">                      </span><span class="c1">// (2)!</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w">                    </span><span class="c1">// (3)!</span>
+<p>Đối tượng đại diện cho chuỗi SQL tùy biến với 3 mức độ bảo mật:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">allowed</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="s">"created_at"</span><span class="p">,</span><span class="w"> </span><span class="s">"name"</span><span class="p">)</span><span class="w">   </span><span class="c1">// (1)! Whitelist đóng (Khuyến nghị dùng)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">identifier</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w">                      </span><span class="c1">// (2)! Chỉ cho phép định danh SQL chuẩn</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w">                    </span><span class="c1">// (3)! Chuỗi SQL thô (Điểm cần kiểm toán bảo mật)</span>
 </span></code></pre></div>
-<ol>
-<li>Danh sách whitelist đóng. Mọi giá trị khác đều ném <code>LarkBatisRejectedException</code>. <strong>Khuyến nghị ưu tiên sử dụng phương thức này.</strong></li>
-<li>Chỉ chấp nhận định danh SQL thuần (chữ cái, chữ số, dấu gạch dưới, dấu chấm phân cách) và từ chối mọi ký tự đặc biệt khác. Phù hợp cho tên bảng hoặc tên cột cấu hình động.</li>
-<li>Chấp nhận chuỗi bất kỳ. Đây là điểm kiểm toán duy nhất cho câu SQL tuỳ biến trong toàn bộ dự án.</li>
-</ol>
+<p>Sử dụng trong Mapper interface:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users WHERE ${predicate} ORDER BY id"</span><span class="p">)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">where</span><span class="p">(</span><span class="n">SqlFragment</span><span class="w"> </span><span class="n">predicate</span><span class="p">);</span>
 </span></code></pre></div>
-<h3 id="vi-sao-phuong-thuc-mang-ten-unsaferawsql">Vì sao phương thức mang tên <code>unsafeRawSql</code><a class="headerlink" href="#vi-sao-phuong-thuc-mang-ten-unsaferawsql" title="Permanent link">&para;</a></h3>
-<p>Tên gọi <code>unsafeRawSql</code> mang tính cảnh báo chủ đích. Để kiểm toán toàn bộ các điểm chèn SQL thô trong một dự án LarkBatis, bạn chỉ cần chạy:</p>
+<h3 id="kiem-toan-bao-mat-voi-unsaferawsql">Kiểm toán bảo mật với <code>unsafeRawSql</code><a class="headerlink" href="#kiem-toan-bao-mat-voi-unsaferawsql" title="Permanent link">&para;</a></h3>
+<p>Tất cả các điểm ghép chuỗi SQL thô trong toàn bộ dự án đều tập trung vào phương thức <code>unsafeRawSql</code>. Bạn có thể kiểm toán toàn bộ codebase chỉ bằng một lệnh grep:</p>
 <div class="language-console highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp">$ </span>grep<span class="w"> </span>-rn<span class="w"> </span><span class="s1">'unsafeRawSql'</span><span class="w"> </span>src/
 </span></code></pre></div>
-<p>Trong MyBatis, bạn không có điểm quy tụ tương đương: ký hiệu <code>${}</code> rải rác trong file XML và các chuỗi SQL trong <code>@SelectProvider</code> phân tán khắp nơi, buộc phải rà soát thủ công từng file.</p>
-<h2 id="tracking-sql-variants">Theo dõi biến thể SQL<a class="headerlink" href="#tracking-sql-variants" title="Permanent link">&para;</a></h2>
-<p>Statement cache của JDBC driver và database lấy <strong>chuỗi SQL</strong> làm khoá. Một fragment có tập giá trị không giới hạn sẽ làm bộ nhớ cache này phình to liên tục mà không thể phát hiện qua unit test.</p>
-<p>Hai loại statement có câu SQL không cố định từ lúc build gồm: điểm chèn <code>${}</code> và <code>&lt;foreach&gt;</code> có số phần tử thay đổi. Cả hai đều được tự động bổ sung lệnh theo dõi:</p>
+<h2 id="tracking-sql-variants">Theo dõi biến thể SQL (Tracking SQL Variants)<a class="headerlink" href="#tracking-sql-variants" title="Permanent link">&para;</a></h2>
+<p>Prepared statement cache của JDBC driver định danh câu truy vấn theo <strong>chuỗi SQL</strong>. Nếu một câu SQL động chứa <code>${}</code> hoặc <code>&lt;foreach&gt;</code> sinh ra vô số chuỗi khác nhau, statement cache sẽ bị phình to liên tục.</p>
+<p>LarkBatis tự động chèn lệnh theo dõi biến thể:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">trackVariants</span><span class="p">(</span><span class="n">STMT_findByIds</span><span class="p">,</span><span class="w"> </span><span class="n">sql</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Hệ thống đếm số biến thể SQL khác nhau cho mỗi statement. Khi vượt ngưỡng, hệ thống sẽ ghi <strong>một</strong> dòng log cảnh báo chỉ rõ tên statement và dừng lưu thêm chuỗi SQL mới vào bộ nhớ.</p>
+<p>Khi số lượng biến thể vượt quá ngưỡng (mặc định 64), hệ thống sẽ ghi log cảnh báo.</p>
 <div class="language-yaml highlight"><span class="filename">application.yml</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">larkbatis</span><span class="p">:</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># mặc định</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># mặc định</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">max-sql-variants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span><span class="w">                </span><span class="c1"># Ngưỡng số lượng chuỗi SQL tối đa</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">fail-on-unbounded-fragment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">   </span><span class="c1"># Ném exception nếu vượt ngưỡng (nên bật trên Staging)</span>
 </span></code></pre></div>
-<p>Ngoài Spring thì vẫn là những thiết lập đó dưới dạng system property (<code>-Dlarkbatis.maxSqlVariants=64</code>, <code>-Dlarkbatis.failOnUnboundedVariants=true</code>) hoặc các phương thức tĩnh <code>LarkBatisSql.maxSqlVariants(int)</code> và <code>LarkBatisSql.failOnUnboundedVariants(boolean)</code>.</p>
-<div class="admonition tip">
-<p class="admonition-title">Hãy bật <code>fail-on-unbounded-fragment</code> ở môi trường staging</p>
-<p>Một hệ thống production không nên ném lỗi chỉ vì xu hướng phân mảnh SQL, nên mặc định là cảnh báo. Bật <code>fail-on-unbounded-fragment</code> trên staging sẽ giúp phát hiện sớm các fragment có tập giá trị không bị giới hạn trước khi triển khai lên production.</p>
-</div>
-<p><code>@PadPow2</code> là giải pháp hữu hiệu cho <code>&lt;foreach&gt;</code>: chặn số biến thể bằng cấu trúc thay vì chỉ cảnh báo. Xem <a href="../foreach-and-batches/#padpow2-bounding-the-sql-variants">foreach và batch</a>.</p>
-<h2 id="trong-select-list"><code>${}</code> trong select list<a class="headerlink" href="#trong-select-list" title="Permanent link">&para;</a></h2>
-<p>Một <code>${}</code> nằm trong select list đồng nghĩa bộ sinh code không thể phân tích cú pháp tĩnh danh sách cột, do đó statement đó sẽ sử dụng cơ chế fallback: đọc theo tên cột từ <code>ResultSetMetaData</code> ở dòng đầu tiên. Xem <a href="../mappers/#positional-or-name-based-reads">Đọc theo vị trí hay theo tên</a>.</p>
-<h2 id="the-escape-hatch">Lối thoát thủ công (Escape Hatch)<a class="headerlink" href="#the-escape-hatch" title="Permanent link">&para;</a></h2>
-<p>Khi cần thực thi câu SQL ráp tay trong Java, phương thức <code>default</code> trên interface mapper là vị trí lý tưởng:</p>
+<h2 id="the-escape-hatch">Lối thoát thủ công (<code>s.query()</code>)<a class="headerlink" href="#the-escape-hatch" title="Permanent link">&para;</a></h2>
+<p>Khi cần thực thi các câu SQL động phức tạp được ghép trong mã Java, hãy viết phương thức <code>default</code> trên mapper interface và sử dụng <code>s.query()</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">recent</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">                    </span><span class="s">"SELECT id, name, email, created_at FROM users"</span>
 </span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">                            </span><span class="o">+</span><span class="w"> </span><span class="s">" ORDER BY created_at DESC LIMIT "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">limit</span><span class="p">),</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">            </span><span class="n">ps</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w">                 </span><span class="c1">// (1)!</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="n">UserRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span><span class="w">           </span><span class="c1">// (2)!</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">            </span><span class="n">ps</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w">                 </span><span class="c1">// StatementBinder: bind tham số nếu có</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="n">UserRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span><span class="w">           </span><span class="c1">// Tái sử dụng UserRow.READER sinh sẵn không cần reflection</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<ol>
-<li>Một <code>StatementBinder</code> (lambda trên <code>PreparedStatement</code>). Hãy bind các dấu <code>?</code> tại đây thay vì nối trực tiếp giá trị vào chuỗi SQL.</li>
-<li>Row reader <strong>được sinh sẵn</strong>. Không reflection, và kiểu kết quả luôn được javac kiểm tra kiểu tĩnh.</li>
-</ol>
-<p>Các phương thức thực thi SQL thô:</p>
+<p>Các phương thức thực thi thủ công:</p>
 <table>
 <thead>
 <tr>
 <th>Phương thức</th>
-<th>Trả về</th>
+<th>Kết quả trả về</th>
 </tr>
 </thead>
 <tbody>
@@ -2044,34 +2005,20 @@
 </tr>
 <tr>
 <td><code>s.queryStream(SqlFragment, StatementBinder, RowReader&lt;T&gt;)</code></td>
-<td><code>Stream&lt;T&gt;</code>, người gọi đóng</td>
+<td><code>Stream&lt;T&gt;</code> (người gọi có trách nhiệm đóng stream)</td>
 </tr>
 <tr>
 <td><code>s.update(SqlFragment, StatementBinder)</code></td>
-<td><code>int</code></td>
+<td><code>int</code> (số dòng bị ảnh hưởng)</td>
 </tr>
 </tbody>
 </table>
-<p>Không có phương thức overload nào nhận <code>String</code> thuần: mọi câu SQL tuỳ biến bắt buộc phải đi qua cổng <code>SqlFragment</code> đã được rà soát.</p>
-<p>Nếu một class chỉ dùng ở đây mà không xuất hiện làm <code>resultType</code> của statement nào, hãy đánh dấu bằng <a href="../../features/annotations/#larkbatisrow"><code>@LarkBatisRow</code></a>:</p>
+<p>Nếu một class POJO chỉ dùng cho các truy vấn thủ công ad-hoc, hãy gắn <code>@LarkBatisRow</code> để processor sinh <code>RowReader</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@LarkBatisRow</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DomainCount</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">domain</span><span class="p">;</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">total</span><span class="p">;</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="c1">// constructor không tham số + các setter</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">}</span>
-</span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DomainCount</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">countByDomain</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minimum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span><span class="s">"SELECT domain, COUNT(*) AS total FROM contacts"</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">                    </span><span class="o">+</span><span class="w"> </span><span class="s">" GROUP BY domain HAVING COUNT(*) &gt;= ?"</span><span class="p">),</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">            </span><span class="n">ps</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">minimum</span><span class="p">),</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">            </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>READER</code> đọc <strong>theo vị trí dựa trên thứ tự khai báo field trong class</strong>. Trường hợp SQL ráp tay không đảm bảo thứ tự đó, bạn có thể đọc theo tên:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">columns</span><span class="p">(</span><span class="n">rs</span><span class="p">);</span><span class="w">   </span><span class="c1">// lấy một lần từ ResultSetMetaData</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">DomainCount</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">}</span>
 </span></code></pre></div>
 
 

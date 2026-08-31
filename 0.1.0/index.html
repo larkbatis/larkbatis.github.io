@@ -462,24 +462,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -496,47 +478,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#why" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-it-costs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What it costs
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -1757,36 +1698,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#why" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-it-costs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What it costs
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1813,21 +1724,16 @@
 
 
 <h1 id="larkbatis">LarkBatis<a class="headerlink" href="#larkbatis" title="Permanent link">&para;</a></h1>
-<p><strong>An ahead-of-time MyBatis.</strong> The SQL text, the parameter positions, the type-handler
-choices, the column-to-setter mapping, the dynamic-SQL tree: everything derivable from the
-<em>shape</em> of a mapper is resolved at build time by a code generator. What ships at runtime is
-generated plain-Java mapper implementations plus a thin JDBC layer, roughly 1,500 lines with
-no dependencies beyond JDBC, no reflection, no proxies and no OGNL.</p>
-<p>You keep the MyBatis programming model you already have: mapper interfaces, <code>#{}</code>
-parameters, mapper XML, <code>&lt;if&gt;</code>/<code>&lt;where&gt;</code>/<code>&lt;foreach&gt;</code>, <code>&lt;resultMap&gt;</code>. What you lose is the
-interpreter underneath it.</p>
+<h1 id="larkbatis_1">LarkBatis<a class="headerlink" href="#larkbatis_1" title="Permanent link">&para;</a></h1>
+<p><strong>An ahead-of-time MyBatis.</strong> SQL text, parameter positions, type handlers, column-to-setter mappings, and dynamic SQL trees: everything about a mapper's <em>shape</em> is resolved at build time. What ships at runtime is plain generated Java mapper code plus a thin JDBC layer—roughly 1,500 lines with zero extra dependencies, no reflection, no proxies, and no OGNL.</p>
+<p>You keep the MyBatis programming model you already know: mapper interfaces, <code>#{}</code> parameters, mapper XML, <code>&lt;if&gt;</code>/<code>&lt;where&gt;</code>/<code>&lt;foreach&gt;</code>, and <code>&lt;resultMap&gt;</code>. What you lose is the runtime interpreter underneath.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">UserMapper</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users WHERE id = #{id}"</span><span class="p">)</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The build emits <code>UserMapper$$Impl</code>, and it is code you can read and set a breakpoint in:</p>
+<p>The build emits <code>UserMapper$$Impl</code>, and it's plain Java you can read, debug, and set breakpoints in:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Override</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
@@ -1847,34 +1753,25 @@ interpreter underneath it.</p>
 <ul>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27zM5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83s-2.05.78-2.83 0m-5.66 7.07-1.41-1.41zM6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22zM2 22h1.41l4.77-4.76-1.42-1.41L2 20.59zm0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76z"/></svg></span> <strong><a href="getting-started/">Getting Started</a></strong></p>
-<p>Install the annotations, the runtime and the annotation processor, then write your
-first mapper.</p>
+<p>Add the dependencies, configure the annotation processor, and write your first mapper.</p>
 </li>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> <strong><a href="usage/">Usage</a></strong></p>
-<p>Mapper interfaces, mapper XML, dynamic SQL, <code>&lt;foreach&gt;</code>, result maps, generated
-keys, streams, transactions.</p>
+<p>Mapper interfaces, mapper XML, dynamic SQL, <code>&lt;foreach&gt;</code>, result maps, generated keys, streams, and transactions.</p>
 </li>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2v6h2v3H5c-1.11 0-2 .89-2 2v3H1v6h6v-6H5v-3h6v3H9v6h6v-6h-2v-3h6v3h-2v6h6v-6h-2v-3c0-1.11-.89-2-2-2h-6V8h2V2z"/></svg></span> <strong><a href="wiki/">Wiki</a></strong></p>
-<p>How the two-phase architecture works, what the generated code looks like, and why
-each design line is drawn where it is.</p>
+<p>How the two-phase build works, what the generated code looks like, and why we drew each architectural line where we did.</p>
 </li>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2h12a2 2 0 0 1 2 2zm-6 4v2H4a2 2 0 0 1-2-2V7h2v13zm-3-6 7-7-1.41-1.41L13 11.17 9.91 8.09 8.5 9.5z"/></svg></span> <strong><a href="features/">Features</a></strong></p>
-<p>The support matrix: what LarkBatis does, what it narrows, and what it drops on
-purpose.</p>
+<p>Support matrix: what LarkBatis supports, what it restricts, and what it drops on purpose.</p>
 </li>
 </ul>
 </div>
 <h2 id="why">Why<a class="headerlink" href="#why" title="Permanent link">&para;</a></h2>
-<p>MyBatis resolves a mapper call at runtime. Every query goes through a JDK proxy, an OGNL
-evaluation of every <code>&lt;if test&gt;</code>, and a <code>TypeHandler</code> lookup per parameter. Then comes the
-expensive part: one reflective <code>setValue</code> per column per row, each allocating a
-<code>PropertyTokenizer</code> and an <code>Object[]</code> before it reaches what is really a <code>putfield</code>.</p>
-<p>None of that depends on the values. It depends on the <em>shape</em> of the mapper, which is fixed
-the moment you save the file. LarkBatis resolves the shape once, at build time, and emits
-the JDBC calls directly.</p>
+<p>MyBatis resolves mapper calls at runtime. Every query goes through a JDK dynamic proxy, evaluates OGNL for each <code>&lt;if test&gt;</code>, and looks up a <code>TypeHandler</code> for every parameter. Then comes the expensive part: reflective <code>setValue</code> calls for each column in every row, allocating a <code>PropertyTokenizer</code> and an <code>Object[]</code> before finally doing what is fundamentally a <code>putfield</code>.</p>
+<p>None of that actually depends on runtime values. It depends on the <em>shape</em> of the mapper, which is fixed the moment you write the code. LarkBatis resolves that shape once at compile time and emits direct JDBC calls.</p>
 <table>
 <thead>
 <tr>
@@ -1885,71 +1782,56 @@ the JDBC calls directly.</p>
 </thead>
 <tbody>
 <tr>
-<td>Lines on the runtime classpath</td>
+<td>Lines on runtime classpath</td>
 <td>~40,000</td>
 <td>~1,500</td>
 </tr>
 <tr>
 <td>Runtime dependencies</td>
 <td>ognl, javassist</td>
-<td>none beyond JDBC</td>
+<td>None beyond JDBC</td>
 </tr>
 <tr>
-<td>Reflection on the hot query path</td>
+<td>Reflection on hot query path</td>
 <td>4 groups of call sites</td>
-<td>none</td>
+<td>None</td>
 </tr>
 <tr>
 <td>Reflective operations per row</td>
 <td>1 per column</td>
-<td>none</td>
+<td>None</td>
 </tr>
 <tr>
 <td>Hand-written <code>native-image</code> metadata</td>
-<td>required</td>
-<td>none needed<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>Required</td>
+<td>None needed<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
-<td>Wrong parameter type caught at</td>
-<td>runtime</td>
-<td>compile time</td>
+<td>Parameter type mismatches caught at</td>
+<td>Runtime</td>
+<td>Compile time</td>
 </tr>
 <tr>
 <td>Auditing raw SQL splices</td>
-<td>read every mapper</td>
-<td>one <code>grep</code> for <code>unsafeRawSql</code></td>
+<td>Read every mapper</td>
+<td>A single <code>grep</code> for <code>unsafeRawSql</code></td>
 </tr>
 </tbody>
 </table>
-<p>The performance case is real but narrow, and it is worth being blunt about where it
-applies. Measured against MyBatis 3.5.19 on JDK 21, reading 10,000 rows of 12 columns goes
-from <strong>3.38 ms and 10.2 MB of allocation to 0.54 ms and 1.88 MB</strong>. Per row, 338 ns and
-1,018 B become 54 ns and 188 B. Cold start to the first row drops from 61.8 ms to 6.3 ms.</p>
-<p>The other half was measured over a real socket rather than assumed. A <code>findById</code> returning
-one row costs <strong>94.2 µs on MyBatis and 89.2 µs on LarkBatis</strong>: five percent, over loopback
-TCP, which is the cheapest round trip there is. A real database only shrinks the
-difference. <strong>LarkBatis pays for reporting queries, exports, batches and list screens. It
-changes almost nothing for single-record lookups.</strong> <a href="wiki/performance/">Performance</a> has
-the full tables, the method, and the two results that cut against the obvious guess.</p>
-<h2 id="what-it-costs">What it costs<a class="headerlink" href="#what-it-costs" title="Permanent link">&para;</a></h2>
-<p>Three honest trade-offs, in the order teams actually hit them:</p>
+<p>Let's be upfront about performance: the gains are real, but they apply where you have rows to process. Measured against MyBatis 3.5.19 on JDK 21, reading 10,000 rows with 12 columns drops from <strong>3.38 ms and 10.2 MB of allocations to 0.54 ms and 1.88 MB</strong>. Per row, that's 338 ns and 1,018 B down to 54 ns and 188 B. Cold start to first row drops from 61.8 ms to 6.3 ms.</p>
+<p>We also measured over a real network socket. A single-row <code>findById</code> lookup costs <strong>94.2 µs on MyBatis and 89.2 µs on LarkBatis</strong>—about a 5% difference over loopback TCP (the fastest round trip there is). Over a real network to a remote database, that difference shrinks even further. <strong>LarkBatis pays off on reporting queries, data exports, batches, and list views. It won't noticeably speed up single-record lookups.</strong> See <a href="wiki/performance/">Performance</a> for full benchmarks and methodology.</p>
+<h2 id="honest-trade-offs">Honest Trade-offs<a class="headerlink" href="#honest-trade-offs" title="Permanent link">&para;</a></h2>
+<p>Here are the three real trade-offs you'll hit:</p>
 <ol>
-<li><strong>Changing SQL means rebuilding.</strong> If your workflow is "edit mapper XML, restart", this
-   is a real change to how you work. What you get back is javac catching the type errors
-   that used to surface as a runtime exception.</li>
-<li><strong>Build time moves left.</strong> Generation is not free. Developers pay for it on every build
-   instead of production paying on every query.</li>
-<li><strong><code>${}</code> call sites have to change.</strong> A <code>String</code> parameter bound to <code>${}</code> is a compile
-   error. It becomes a <a href="usage/raw-sql/"><code>SqlFragment</code></a>, a closed-value type, or an
-   <code>@OrderBy(allowed = {...})</code> switch. That migration is the first time anyone actually
-   looks at every raw-SQL splice in the codebase.</li>
+<li><strong>Changing SQL requires recompilation.</strong> If your current workflow relies on editing mapper XML and immediately restarting without compiling, this changes how you work. In return, javac catches SQL type errors before they reach production.</li>
+<li><strong>Build times increase slightly.</strong> Code generation isn't free. You pay that small compile-time cost up front instead of paying reflection overhead on every query in production.</li>
+<li><strong><code>${}</code> call sites need updates.</strong> Binding a raw <code>String</code> parameter to <code>${}</code> is a compile error. You'll need to wrap it in <a href="usage/raw-sql/"><code>SqlFragment</code></a>, use an enum/closed-value type, or add an <code>@OrderBy(allowed = {...})</code> allowlist. Migrating these is usually the first time a team actually audits every dynamic SQL splice in their codebase.</li>
 </ol>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>Structural: there is no reflection to declare. A native-image build has not been run
-yet; see <a href="wiki/performance/#native-image">Performance</a>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>Structural: there is no reflection to declare. An actual native-image build has not been run yet; see <a href="wiki/performance/#native-image">Performance</a>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

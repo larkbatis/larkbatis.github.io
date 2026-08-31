@@ -34,7 +34,7 @@
     
     
       
-        <title>Wiki - LarkBatis</title>
+        <title>Architecture & Design Wiki - LarkBatis</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wiki" class="md-skip">
+        <a href="#architecture-design-wiki" class="md-skip">
           Skip to content
         </a>
       
@@ -125,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Wiki
+              Architecture &amp; Design Wiki
             
           </span>
         </div>
@@ -1698,10 +1698,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-premise-in-one-paragraph" class="md-nav__link">
+  <a href="#the-core-concept" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The premise in one paragraph
+        The Core Concept
       
     </span>
   </a>
@@ -1709,10 +1709,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-is-not-novel-here" class="md-nav__link">
+  <a href="#the-problem-we-solve" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What is not novel here
+        The Problem We Solve
       
     </span>
   </a>
@@ -1744,57 +1744,44 @@
   
 
 
-<h1 id="wiki">Wiki<a class="headerlink" href="#wiki" title="Permanent link">&para;</a></h1>
-<p>The reference pages tell you <em>what</em> LarkBatis does. These tell you <em>why</em> it is built the
-way it is, and what that costs.</p>
+<h1 id="architecture-design-wiki">Architecture &amp; Design Wiki<a class="headerlink" href="#architecture-design-wiki" title="Permanent link">&para;</a></h1>
+<p>The reference sections explain <em>how</em> to use LarkBatis. This wiki explains <em>why</em> LarkBatis is built the way it is, along with the technical trade-offs behind each design decision.</p>
 <div class="grid cards">
 <ul>
 <li>
 <p><strong><a href="architecture/">Architecture</a></strong></p>
-<p>Two phases, the module split, and the pipeline from mapper source to generated Java.</p>
+<p>The two-phase compile/runtime model, module breakdown, and internal pipeline from AST to emitted Java source.</p>
 </li>
 <li>
 <p><strong><a href="shape-vs-value/">Shape vs Value</a></strong></p>
-<p>The single cut that the whole design follows: the closed list of things allowed to be
-resolved at runtime.</p>
+<p>The core architectural principle: separating compile-time structural decisions from runtime value evaluation.</p>
 </li>
 <li>
 <p><strong><a href="generated-code/">Generated Code</a></strong></p>
-<p>What each emitted file looks like, and why readability counts as a feature.</p>
+<p>Anatomy of generated Java files and why readable generated code is a primary design goal.</p>
 </li>
 <li>
-<p><strong><a href="call-flow/">Life of a Call</a></strong></p>
-<p>One mapper call, step by step, against the MyBatis path that it replaces.</p>
+<p><strong><a href="call-flow/">Call Lifecycle</a></strong></p>
+<p>Tracing a single database query through LarkBatis versus the standard MyBatis call stack.</p>
 </li>
 <li>
-<p><strong><a href="design-rules/">Design Red Lines</a></strong></p>
-<p>Nine rules that hold in every change, and what breaks if one is relaxed.</p>
+<p><strong><a href="design-rules/">Design Rules</a></strong></p>
+<p>Nine non-negotiable architectural constraints that govern all LarkBatis code changes.</p>
 </li>
 <li>
-<p><strong><a href="performance/">Performance</a></strong></p>
-<p>The measured numbers, the unmeasured claims, and where the benefit genuinely does not
-apply.</p>
+<p><strong><a href="performance/">Performance &amp; Benchmarks</a></strong></p>
+<p>Microbenchmark results, realistic database latency comparisons, and scenarios where build-time compilation helps most.</p>
 </li>
 </ul>
 </div>
-<h2 id="the-premise-in-one-paragraph">The premise in one paragraph<a class="headerlink" href="#the-premise-in-one-paragraph" title="Permanent link">&para;</a></h2>
-<p>A MyBatis mapper call is resolved at runtime: the proxy dispatch, the OGNL evaluation of
-every <code>&lt;if test&gt;</code>, the <code>TypeHandler</code> lookup per parameter, the reflective <code>setValue</code> per
-column per row. None of that depends on the <em>values</em> flowing through the call. It depends
-on the <em>shape</em> of the mapper, which stopped changing the moment you saved the file. So
-resolve the shape once, at build time, and emit the JDBC calls directly. What remains at
-runtime is roughly 1,500 lines with no dependencies beyond JDBC, and no GraalVM
-reachability metadata to write, because there is no reflection anywhere.</p>
-<h2 id="what-is-not-novel-here">What is not novel here<a class="headerlink" href="#what-is-not-novel-here" title="Permanent link">&para;</a></h2>
-<p>LarkBatis is not a new idea. Micronaut Data compiles
-queries into code at build time with no reflection; jOOQ generates from a schema; Spring
-Data has an AOT branch. <strong>What none of them do is keep the MyBatis mapper model</strong>:
-mapper XML, <code>#{}</code>, <code>&lt;if&gt;</code>, <code>&lt;foreach&gt;</code> and <code>&lt;resultMap&gt;</code>, which thousands of codebases in
-Korea and Japan run on today.</p>
-<p>The value is in the migration path, not in the idea. That framing decides a lot of the
-design: it is why the XML frontend exists at all, why the differential test harness
-compares generated SQL against MyBatis's interpreted output, and why every dropped feature
-comes with a compile error naming the replacement, never silence.</p>
+<h2 id="the-core-concept">The Core Concept<a class="headerlink" href="#the-core-concept" title="Permanent link">&para;</a></h2>
+<p>In standard MyBatis, every query execution involves runtime overhead: dynamic JDK proxy dispatch, runtime OGNL expression evaluation for <code>&lt;if&gt;</code> tags, runtime <code>TypeHandler</code> registry lookups, and reflective bean setter calls for every single result row.</p>
+<p>None of that structural work actually depends on runtime data. The query shape and data model are completely fixed once you save your code.</p>
+<p>LarkBatis shifts that entire resolution phase into <code>javac</code>. It analyzes mapper interfaces and XML during compilation and emits plain, readable JDBC code. The runtime footprint is approximately 1,500 lines of code with zero reflection, zero bytecode manipulation, and native GraalVM compatibility out of the box.</p>
+<h2 id="the-problem-we-solve">The Problem We Solve<a class="headerlink" href="#the-problem-we-solve" title="Permanent link">&para;</a></h2>
+<p>Ahead-of-time compilation for database queries isn't new—frameworks like Micronaut Data and jOOQ have taken similar approaches.</p>
+<p>However, existing tools require rewriting your entire query layer into their custom DSLs or query methods. They don't support existing MyBatis XML mappers, dynamic SQL tags (<code>&lt;if&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;foreach&gt;</code>), and <code>#{}</code> / <code>${}</code> parameter bindings that vast enterprise codebases rely on.</p>
+<p>LarkBatis provides a direct upgrade path for MyBatis codebases: keep your existing mapper XML and SQL patterns, but replace runtime interpretation with compile-time generated code.</p>
 
 
 

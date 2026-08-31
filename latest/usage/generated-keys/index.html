@@ -970,10 +970,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#always-name-the-key-columns" class="md-nav__link">
+  <a href="#always-name-keycolumn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Always name the key columns
+        Always name keyColumn
       
     </span>
   </a>
@@ -981,10 +981,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#keyproperty-with-several-parameters" class="md-nav__link">
+  <a href="#keyproperty-with-multiple-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        keyProperty with several parameters
+        keyProperty with multiple parameters
       
     </span>
   </a>
@@ -992,10 +992,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#batch-inserts" class="md-nav__link">
+  <a href="#batch-inserts-and-generated-keys" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batch inserts
+        Batch inserts and generated keys
       
     </span>
   </a>
@@ -1014,10 +1014,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-no-key-comes-back" class="md-nav__link">
+  <a href="#when-no-key-is-returned" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When no key comes back
+        When no key is returned
       
     </span>
   </a>
@@ -1800,10 +1800,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#always-name-the-key-columns" class="md-nav__link">
+  <a href="#always-name-keycolumn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Always name the key columns
+        Always name keyColumn
       
     </span>
   </a>
@@ -1811,10 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#keyproperty-with-several-parameters" class="md-nav__link">
+  <a href="#keyproperty-with-multiple-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        keyProperty with several parameters
+        keyProperty with multiple parameters
       
     </span>
   </a>
@@ -1822,10 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#batch-inserts" class="md-nav__link">
+  <a href="#batch-inserts-and-generated-keys" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batch inserts
+        Batch inserts and generated keys
       
     </span>
   </a>
@@ -1844,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-no-key-comes-back" class="md-nav__link">
+  <a href="#when-no-key-is-returned" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When no key comes back
+        When no key is returned
       
     </span>
   </a>
@@ -1880,8 +1880,7 @@
 
 
 <h1 id="generated-keys">Generated Keys<a class="headerlink" href="#generated-keys" title="Permanent link">&para;</a></h1>
-<p><code>@Options(useGeneratedKeys = true, ...)</code> asks the driver for the key an <code>INSERT</code>
-produced and assigns it to a property of the parameter object.</p>
+<p><code>@Options(useGeneratedKeys = true, ...)</code> retrieves database-generated primary keys after an <code>INSERT</code> and sets them directly on your parameter object.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name, email, created_at) VALUES (#{name}, #{email}, #{createdAt})"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
@@ -1910,86 +1909,61 @@ produced and assigns it to a property of the parameter object.</p>
 </span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Explicit key <strong>column names</strong>, because <code>RETURN_GENERATED_KEYS</code> means different
-    things on different databases. See below.</li>
-<li>The setter and the accessor are both chosen at build time from <code>keyProperty</code> and the
-    property's declared type.</li>
+<li>Explicit key <strong>column names</strong>: <code>RETURN_GENERATED_KEYS</code> behaves inconsistently across database drivers (see below).</li>
+<li>The property accessor is chosen at build time based on <code>keyProperty</code> and its declared Java type.</li>
 </ol>
-<h2 id="always-name-the-key-columns">Always name the key columns<a class="headerlink" href="#always-name-the-key-columns" title="Permanent link">&para;</a></h2>
+<h2 id="always-name-keycolumn">Always name <code>keyColumn</code><a class="headerlink" href="#always-name-keycolumn" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
-<p class="admonition-title"><code>keyColumn</code> is optional in the annotation and effectively mandatory in practice</p>
-<p><code>prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)</code> is not portable:</p>
+<p class="admonition-title"><code>keyColumn</code> is practically mandatory in production</p>
+<p>Using <code>prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)</code> is not portable across drivers:</p>
 <ul>
-<li><strong>Oracle</strong> returns <code>ROWID</code>, not your sequence value.</li>
-<li><strong>PostgreSQL</strong> returns <em>every</em> column of the inserted row.</li>
+<li><strong>Oracle</strong> returns the database <code>ROWID</code>, not sequence IDs.</li>
+<li><strong>PostgreSQL</strong> returns <em>all</em> columns of the inserted row.</li>
 </ul>
-<p>Passing an explicit <code>String[]</code> of column names is the only form that means the same
-thing everywhere. When <code>keyColumn</code> is present the generator emits
-<code>prepareStatement(sql, String[])</code>. When it is missing it has no names to put in the
-array, so it falls back to <code>RETURN_GENERATED_KEYS</code> and raises a <strong>mandatory build
-warning</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>warning: useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS,
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>which returns ROWID on Oracle and all columns on PostgreSQL. Name the key column(s)
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>explicitly.
-</span></code></pre></div>
-<p>Treat that warning as an error in review. It is the difference between working on H2
-and working in production.</p>
+<p>Specifying explicit column names with <code>keyColumn</code> is the only way to get consistent behavior across all databases. If <code>keyColumn</code> is omitted, the generator falls back to <code>RETURN_GENERATED_KEYS</code> and prints a compiler warning.</p>
 </div>
-<p><code>keyProperty</code>, by contrast, is <strong>required</strong>: <code>useGeneratedKeys</code> without it is a compile
-error asking where the key should go.</p>
-<p>Composite keys are comma-separated on both attributes, and the two lists must be the
-same length, and a mismatch is a compile error naming both counts:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenantId,id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenant_id,id"</span><span class="p">)</span>
+<p><code>keyProperty</code> is <strong>mandatory</strong>: omitting it is a compile error because the generator must know where to store the returned key.</p>
+<p>For composite keys, provide comma-separated lists of matching length:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenantId,id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenant_id,id"</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="keyproperty-with-several-parameters"><code>keyProperty</code> with several parameters<a class="headerlink" href="#keyproperty-with-several-parameters" title="Permanent link">&para;</a></h2>
-<p>With more than one method parameter, <code>keyProperty</code> must name the parameter as well:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name) VALUES (#{u.name})"</span><span class="p">)</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"u.id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"u"</span><span class="p">)</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"audit"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">audit</span><span class="p">);</span>
+<h2 id="keyproperty-with-multiple-parameters"><code>keyProperty</code> with multiple parameters<a class="headerlink" href="#keyproperty-with-multiple-parameters" title="Permanent link">&para;</a></h2>
+<p>When a method accepts multiple arguments, prefix <code>keyProperty</code> with the parameter name:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name) VALUES (#{u.name})"</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"u.id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"u"</span><span class="p">)</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"audit"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">audit</span><span class="p">);</span>
 </span></code></pre></div>
-<p>A wrong name is a <strong>compile-time error</strong>, not a runtime <code>ReflectionException</code>.</p>
-<h2 id="batch-inserts">Batch inserts<a class="headerlink" href="#batch-inserts" title="Permanent link">&para;</a></h2>
-<p>An <code>@Insert</code> taking a <code>List&lt;T&gt;</code> compiles to <code>addBatch()</code> / <code>executeBatch()</code>, and the keys
-come back as one <code>ResultSet</code> that has to line up with the list:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">next</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="n">orders</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">setId</span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LarkBatisKeyCountMismatchException</span><span class="p">(</span><span class="n">STMT_insertAll</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">}</span>
+<p>Invalid property paths are caught as <strong>compile-time errors</strong>.</p>
+<h2 id="batch-inserts-and-generated-keys">Batch inserts and generated keys<a class="headerlink" href="#batch-inserts-and-generated-keys" title="Permanent link">&para;</a></h2>
+<p>Batch inserts taking a <code>List&lt;T&gt;</code> compile to JDBC <code>addBatch()</code> / <code>executeBatch()</code> calls:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">next</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="n">orders</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">setId</span><span class="p">(</span><span class="n">gk</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LarkBatisKeyCountMismatchException</span><span class="p">(</span><span class="n">STMT_insertAll</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The count check is not defensive programming for its own sake: drivers exist that return
-fewer keys than rows, and MyBatis documents the same failure mode. Silently accepting it
-would leave part of your batch with unset ids and nobody the wiser, so
-<code>LarkBatisKeyCountMismatchException</code> names the statement, the expected count and the
-actual one.</p>
+<p>Some database drivers return fewer generated keys than inserted rows. Instead of silently leaving trailing list elements with null or zero IDs, LarkBatis throws <code>LarkBatisKeyCountMismatchException</code> immediately.</p>
 <h2 id="selectkey-is-not-supported"><code>&lt;selectKey&gt;</code> is not supported<a class="headerlink" href="#selectkey-is-not-supported" title="Permanent link">&para;</a></h2>
-<p>Databases without generated-key support (or workflows that read a sequence <em>before</em> the
-insert) used <code>&lt;selectKey&gt;</code> in MyBatis. It is not implemented, because it is a second
-statement wearing the costume of an option. Write the second statement:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT user_seq.NEXTVAL FROM dual"</span><span class="p">)</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">nextUserId</span><span class="p">();</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (id, name) VALUES (#{id}, #{name})"</span><span class="p">)</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
+<p>MyBatis used <code>&lt;selectKey&gt;</code> to fetch sequence values before running an insert. In LarkBatis, write the two statements explicitly:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT user_seq.NEXTVAL FROM dual"</span><span class="p">)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">nextUserId</span><span class="p">();</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (id, name) VALUES (#{id}, #{name})"</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
 </span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="na">nextUserId</span><span class="p">());</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="na">nextUserId</span><span class="p">());</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The <a href="../../features/migration/">migration scanner</a> reports every <code>&lt;selectKey&gt;</code> it finds
-with this as the fix.</p>
-<h2 id="when-no-key-comes-back">When no key comes back<a class="headerlink" href="#when-no-key-comes-back" title="Permanent link">&para;</a></h2>
-<p>If a statement declares <code>useGeneratedKeys</code> and the driver returns nothing,
-<code>LarkBatisNoKeyException</code> is thrown naming the statement, instead of leaving a <code>0</code> id to
-travel through your code and fail somewhere unrelated.</p>
+<h2 id="when-no-key-is-returned">When no key is returned<a class="headerlink" href="#when-no-key-is-returned" title="Permanent link">&para;</a></h2>
+<p>If a statement declares <code>useGeneratedKeys = true</code> but the driver returns an empty <code>ResultSet</code>, LarkBatis throws <code>LarkBatisNoKeyException</code> to prevent uninitialized default IDs from propagating silently.</p>
 
 
 

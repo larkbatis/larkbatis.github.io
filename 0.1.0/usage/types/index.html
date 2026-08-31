@@ -1082,22 +1082,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-binds-without-help" class="md-nav__link">
+  <a href="#built-in-types" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What binds without help
+        Built-in types
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What binds without help">
+    <nav class="md-nav" aria-label="Built-in types">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#why-wrappers-go-through-jdbccodec" class="md-nav__link">
+  <a href="#why-boxed-primitives-use-jdbccodec" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why wrappers go through JdbcCodec
+        Why boxed primitives use JdbcCodec
       
     </span>
   </a>
@@ -1135,7 +1135,7 @@
   <a href="#column-naming" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Column naming
+        Column naming conventions
       
     </span>
   </a>
@@ -1155,10 +1155,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#naming-it" class="md-nav__link">
+  <a href="#declaring-type-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Naming it
+        Declaring type handlers
       
     </span>
   </a>
@@ -1166,10 +1166,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#what-is-still-not-there" class="md-nav__link">
+  <a href="#global-type-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What is still not there
+        Global type handlers
       
     </span>
   </a>
@@ -1182,10 +1182,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result-classes-once-more" class="md-nav__link">
+  <a href="#result-class-contract" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Result classes, once more
+        Result class contract
       
     </span>
   </a>
@@ -1856,22 +1856,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-binds-without-help" class="md-nav__link">
+  <a href="#built-in-types" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What binds without help
+        Built-in types
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What binds without help">
+    <nav class="md-nav" aria-label="Built-in types">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#why-wrappers-go-through-jdbccodec" class="md-nav__link">
+  <a href="#why-boxed-primitives-use-jdbccodec" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why wrappers go through JdbcCodec
+        Why boxed primitives use JdbcCodec
       
     </span>
   </a>
@@ -1909,7 +1909,7 @@
   <a href="#column-naming" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Column naming
+        Column naming conventions
       
     </span>
   </a>
@@ -1929,10 +1929,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#naming-it" class="md-nav__link">
+  <a href="#declaring-type-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Naming it
+        Declaring type handlers
       
     </span>
   </a>
@@ -1940,10 +1940,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#what-is-still-not-there" class="md-nav__link">
+  <a href="#global-type-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What is still not there
+        Global type handlers
       
     </span>
   </a>
@@ -1956,10 +1956,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result-classes-once-more" class="md-nav__link">
+  <a href="#result-class-contract" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Result classes, once more
+        Result class contract
       
     </span>
   </a>
@@ -1992,19 +1992,15 @@
 
 
 <h1 id="types-and-handlers">Types and Handlers<a class="headerlink" href="#types-and-handlers" title="Permanent link">&para;</a></h1>
-<p>The MyBatis <code>TypeHandler</code> layer is a runtime registry: for every parameter and every
-column, look up a handler by Java type and JDBC type, then call it. LarkBatis makes
-that choice at build time and inlines the result. What is left at runtime is
-<code>JdbcCodec</code>, a handful of static helpers for the types whose natural JDBC accessor is
-primitive or needs a conversion.</p>
-<h2 id="what-binds-without-help">What binds without help<a class="headerlink" href="#what-binds-without-help" title="Permanent link">&para;</a></h2>
-<p><code>#{}</code> and result properties handle these directly:</p>
+<p>In MyBatis, type handling happens through a runtime registry: every query parameter and column triggers a HashMap lookup matching the Java and JDBC types. LarkBatis makes that decision at compile time and emits direct Java method calls. At runtime, all that remains is <code>JdbcCodec</code>—a tiny set of static helpers handling primitive conversions and null checks.</p>
+<h2 id="built-in-types">Built-in types<a class="headerlink" href="#built-in-types" title="Permanent link">&para;</a></h2>
+<p>The following types bind out of the box with <code>#{}</code> and map directly to result properties:</p>
 <table>
 <thead>
 <tr>
-<th>Java type</th>
-<th>Read</th>
-<th>Write</th>
+<th>Java Type</th>
+<th>Read Operation</th>
+<th>Write Operation</th>
 </tr>
 </thead>
 <tbody>
@@ -2019,7 +2015,7 @@ primitive or needs a conversion.</p>
 <td><code>ps.setLong(i, v)</code> etc.</td>
 </tr>
 <tr>
-<td><code>Long</code>, <code>Integer</code>, … (wrappers)</td>
+<td><code>Long</code>, <code>Integer</code>, <code>Boolean</code>, … (wrappers)</td>
 <td><code>JdbcCodec.longOrNull(rs, i)</code></td>
 <td><code>JdbcCodec.setLong(ps, i, v)</code></td>
 </tr>
@@ -2035,8 +2031,8 @@ primitive or needs a conversion.</p>
 </tr>
 <tr>
 <td><code>java.sql.Date</code>, <code>Time</code>, <code>Timestamp</code></td>
-<td>direct</td>
-<td>direct</td>
+<td>Direct JDBC call</td>
+<td>Direct JDBC call</td>
 </tr>
 <tr>
 <td><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code>, <code>LocalDateTime</code></td>
@@ -2044,58 +2040,42 @@ primitive or needs a conversion.</p>
 <td><code>JdbcCodec.setInstant(ps, i, v)</code> etc.</td>
 </tr>
 <tr>
-<td>Any <code>enum</code></td>
+<td>Java <code>enum</code> types</td>
 <td><code>JdbcCodec.enumValue(...)</code></td>
 <td><code>JdbcCodec.setEnum(ps, i, v)</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="why-wrappers-go-through-jdbccodec">Why wrappers go through <code>JdbcCodec</code><a class="headerlink" href="#why-wrappers-go-through-jdbccodec" title="Permanent link">&para;</a></h3>
-<p><code>rs.getLong(i)</code> returns <code>0</code> for a SQL <code>NULL</code>. The wrapper helpers do what you actually
-meant:</p>
+<h3 id="why-boxed-primitives-use-jdbccodec">Why boxed primitives use <code>JdbcCodec</code><a class="headerlink" href="#why-boxed-primitives-use-jdbccodec" title="Permanent link">&para;</a></h3>
+<p>In JDBC, <code>rs.getLong(i)</code> returns <code>0</code> for SQL <code>NULL</code>. The wrapper methods handle nulls correctly:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="nf">longOrNull</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">column</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">column</span><span class="p">);</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">wasNull</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The choice between <code>rs.getLong(i)</code> and <code>JdbcCodec.longOrNull(rs, i)</code> is made at build
-time from the property's declared type. A <code>long</code> property gets the primitive read; a
-<code>Long</code> property gets the null-aware one. Declaring the property nullable is how you ask
-for null handling. No separate setting exists.</p>
-<p>On the write side, <code>JdbcCodec.setLong(ps, i, null)</code> calls <code>ps.setNull(i, Types.BIGINT)</code>
-with the right SQL type, which some drivers require.</p>
+<p>The choice between <code>rs.getLong(i)</code> and <code>JdbcCodec.longOrNull(rs, i)</code> is made at compile time based on your property type: primitive <code>long</code> gets direct reading; boxed <code>Long</code> gets null-safe handling.</p>
+<p>On write operations, <code>JdbcCodec.setLong(ps, i, null)</code> calls <code>ps.setNull(i, Types.BIGINT)</code> with the correct SQL type constant.</p>
 <h2 id="enums">Enums<a class="headerlink" href="#enums" title="Permanent link">&para;</a></h2>
-<p>Enums map to their <code>name()</code> by default, in both directions, with <code>null</code> handled:</p>
+<p>Enums are mapped to/from <code>name()</code> by default, with null safety handled automatically:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">NEW</span><span class="p">,</span><span class="w"> </span><span class="n">PAID</span><span class="p">,</span><span class="w"> </span><span class="n">SHIPPED</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, status, total FROM orders WHERE status = #{status}"</span><span class="p">)</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Order</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">byStatus</span><span class="p">(</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
 </span></code></pre></div>
-<p>An enum is also a <strong>closed-value type</strong>, so it is one of the few things that may be bound
-to <code>${}</code>, because its entire value space is known at build time. See
-<a href="../raw-sql/#the-rule">Raw SQL</a>.</p>
-<p>An enum stored as an ordinal or a custom code needs a <a href="#custom-type-handlers">custom handler</a>.</p>
+<p>Enums are <strong>closed-value types</strong>, making them safe to splice into <code>${}</code> expressions because the compiler knows all possible values at build time. See <a href="../raw-sql/#the-rule">Raw SQL</a>.</p>
+<p>If you store enums as integer ordinals or custom database codes, write a <a href="#custom-type-handlers">custom type handler</a>.</p>
 <h2 id="javatime"><code>java.time</code><a class="headerlink" href="#javatime" title="Permanent link">&para;</a></h2>
-<p><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code> and <code>LocalDateTime</code> convert through
-<code>java.sql.Timestamp</code> / <code>Date</code> / <code>Time</code>, which is what MyBatis's handlers do as well.
-<code>Instant</code> uses <code>Timestamp.toInstant()</code> and <code>Timestamp.from(...)</code>, so the value is
-absolute and the JVM default time zone does not enter into it.</p>
-<p>Zone-carrying types (<code>ZonedDateTime</code>, <code>OffsetDateTime</code>) are not built in. A column has no
-zone to carry, so the conversion needs a decision that belongs to your application.
-Store <code>Instant</code>, and convert at the edge of the mapper.</p>
-<h2 id="column-naming">Column naming<a class="headerlink" href="#column-naming" title="Permanent link">&para;</a></h2>
-<p>Columns find properties by <code>snake_case</code> → <code>camelCase</code>, applied at build time:
-<code>created_at</code> → <code>setCreatedAt</code>. It is on by default — MyBatis defaults it off — and
-<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> carries that default across. The choice is
-baked into the generated reader; there is no runtime setting either way. See
-<a href="../../features/configuration/#column-naming">Configuration</a>.</p>
-<p>Where the convention is not enough, a <code>&lt;resultMap&gt;</code> names the column explicitly:</p>
+<p><code>Instant</code>, <code>LocalDate</code>, <code>LocalTime</code>, and <code>LocalDateTime</code> convert via <code>java.sql.Timestamp</code>, <code>Date</code>, and <code>Time</code>. <code>Instant</code> uses <code>Timestamp.toInstant()</code> and <code>Timestamp.from(...)</code>, representing absolute UTC points without depending on the host machine's timezone.</p>
+<p>Zone-aware types (<code>ZonedDateTime</code>, <code>OffsetDateTime</code>) are intentionally not built-in because standard database columns don't carry timezone metadata. We recommend storing <code>Instant</code> in the database and converting to specific time zones in your application layer.</p>
+<h2 id="column-naming">Column naming conventions<a class="headerlink" href="#column-naming" title="Permanent link">&para;</a></h2>
+<p>Columns map to properties using <code>snake_case</code> → <code>camelCase</code> at build time: <code>created_at</code> maps to <code>setCreatedAt</code>. This is enabled by default. To preserve legacy MyBatis behavior, pass <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code>. See <a href="../../features/configuration/#column-naming">Configuration</a>.</p>
+<p>To override mapping for specific properties, use a <code>&lt;resultMap&gt;</code>:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"userMap"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&lt;id</span><span class="w">     </span><span class="na">property=</span><span class="s">"id"</span><span class="w">    </span><span class="na">column=</span><span class="s">"id"</span><span class="nt">/&gt;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&lt;result</span><span class="w"> </span><span class="na">property=</span><span class="s">"email"</span><span class="w"> </span><span class="na">column=</span><span class="s">"usr_email"</span><span class="nt">/&gt;</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nt">&lt;/resultMap&gt;</span>
 </span></code></pre></div>
-<p>Or <code>@Column</code> names it on the property itself, once, for every statement:</p>
+<p>Or annotate the Java property directly using <code>@Column</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">User</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"usr_email"</span><span class="p">)</span>
@@ -2104,16 +2084,9 @@ baked into the generated reader; there is no runtime setting either way. See
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setEmail</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">email</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The annotation is read on the <strong>field, the setter or the getter</strong>, whichever site you
-put it on. Two of them naming different columns for one property is a compile error, and
-so is two properties landing on the same column. See
-<a href="../../features/annotations/#column"><code>@Column</code></a>.</p>
-<p>A codebase that relied on <code>mapUnderscoreToCamelCase</code> being <em>off</em> either carries the
-setting across or gives the affected columns <code>@Column</code> or a <code>&lt;resultMap&gt;</code>; the
-<a href="../../features/migration/">migration scanner</a> reports the case either way.</p>
+<p>You can put <code>@Column</code> on the field, getter, or setter. See <a href="../../features/annotations/#column"><code>@Column</code></a>.</p>
 <h2 id="custom-type-handlers">Custom type handlers<a class="headerlink" href="#custom-type-handlers" title="Permanent link">&para;</a></h2>
-<p>Types the table above does not cover (your own <code>Money</code>, a JSON column, an enum stored as
-an ordinal) move through a handler you write:</p>
+<p>For domain types not listed above (e.g. <code>Money</code>, JSON wrappers, or custom enums), write a <code>LarkBatisTypeHandler</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MoneyHandler</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">LarkBatisTypeHandler</span><span class="o">&lt;</span><span class="n">Money</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nd">@Override</span>
@@ -2132,32 +2105,25 @@ an ordinal) move through a handler you write:</p>
 </span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Three rules, all checked during <code>javac</code>:</p>
+<p>Requirements checked at compile time:</p>
 <ul>
-<li><strong>Public, concrete, public no-arg constructor, and stateless.</strong> Generated code holds
-  one instance in a <code>static final</code> field and shares it. A handler that needs
-  construction arguments is a handler that is not stateless; use the
-  <a href="../raw-sql/#the-escape-hatch">escape hatch</a> instead.</li>
-<li><strong>The type argument is the value's own type</strong>, not a supertype. <code>read</code> has to return
-  something the setter accepts.</li>
-<li><strong>The handler owns <code>null</code></strong> in both directions. There is no <code>jdbcType</code> to fall back
-  on, so a handler that wants <code>setNull</code> calls it itself.</li>
+<li><strong>Must be public, concrete, stateless, with a public no-arg constructor.</strong> Generated code stores singletons in <code>static final</code> fields.</li>
+<li><strong>Type argument must match the target property type.</strong></li>
+<li><strong>Handler manages its own null handling.</strong></li>
 </ul>
-<h3 id="naming-it">Naming it<a class="headerlink" href="#naming-it" title="Permanent link">&para;</a></h3>
-<p>Three sites, all read at build time.</p>
-<p>On the property, meaning the field, the setter or the getter, as with <code>@Column</code>:</p>
+<h3 id="declaring-type-handlers">Declaring type handlers<a class="headerlink" href="#declaring-type-handlers" title="Permanent link">&para;</a></h3>
+<p>On a property (field, getter, or setter):</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Wallet</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Money</span><span class="w"> </span><span class="n">balance</span><span class="p">;</span>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>On a mapper parameter:</p>
+<p>On a mapper method parameter:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id FROM wallet WHERE balance &gt;= #{floor}"</span><span class="p">)</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">atLeast</span><span class="p">(</span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w"> </span><span class="n">Money</span><span class="w"> </span><span class="n">floor</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Or in mapper XML, which is the form a migrated MyBatis mapper already carries, where the
-bean needs no annotation at all:</p>
+<p>Or in mapper XML:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">&lt;resultMap</span><span class="w"> </span><span class="na">id=</span><span class="s">"entry"</span><span class="w"> </span><span class="na">type=</span><span class="s">"com.example.Entry"</span><span class="nt">&gt;</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">&lt;id</span><span class="w"> </span><span class="na">property=</span><span class="s">"id"</span><span class="w"> </span><span class="na">column=</span><span class="s">"id"</span><span class="nt">/&gt;</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&lt;result</span><span class="w"> </span><span class="na">property=</span><span class="s">"amount"</span><span class="w"> </span><span class="na">column=</span><span class="s">"amount"</span><span class="w"> </span><span class="na">typeHandler=</span><span class="s">"com.example.MoneyHandler"</span><span class="nt">/&gt;</span>
@@ -2168,29 +2134,10 @@ bean needs no annotation at all:</p>
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span>VALUES<span class="w"> </span>(#{id},<span class="w"> </span>#{amount,<span class="w"> </span>typeHandler=com.example.MoneyHandler})
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nt">&lt;/insert&gt;</span>
 </span></code></pre></div>
-<p>A handler also lifts the type whitelist for the value it moves: <code>Money</code> is not in the
-table above, and these compile anyway.</p>
-<h3 id="what-is-still-not-there">What is still not there<a class="headerlink" href="#what-is-still-not-there" title="Permanent link">&para;</a></h3>
-<p><strong>No discovery.</strong> No <code>@MappedTypes</code> scan, no package scan, no <code>(Type, JdbcType)</code> lookup.
-"Declare it once and it applies everywhere" is available, but written out rather than
-found: <code>-Alarkbatis.typeHandlers=com.example.Money:com.example.MoneyHandler</code> registers a
-default handler per Java type for the whole build, checked during <code>javac</code>. See
-<a href="../../features/configuration/#type-handlers-for-a-whole-build">Configuration</a>. What you
-get either way is a generated call site that javac type-checks and you can navigate to in
-the IDE.</p>
-<p><strong>One reading per result class.</strong> One row reader is generated per class, so a property
-has one handler. Two statements naming different handlers for the same property is a
-build error, because two readings would mean two result classes.</p>
-<p><strong>Not on a mapper method.</strong> <code>@Handler</code> on the method itself is rejected: a scalar result
-reads column 1 and has no property to hang a handler on. Return a bean, or use the
-escape hatch.</p>
-<h2 id="result-classes-once-more">Result classes, once more<a class="headerlink" href="#result-classes-once-more" title="Permanent link">&para;</a></h2>
-<p>The contract is small enough to restate: <strong>a no-arg constructor and setters</strong>. No base
-class, no annotation, no registration, no <code>&lt;constructor&gt;</code> mapping. A class with neither a
-no-arg constructor nor setters is a build error naming the class. If it carries Lombok
-annotations, the message says so, because the cause is nearly always processor ordering
-and not a missing accessor. See
-<a href="../troubleshooting/">Troubleshooting</a>.</p>
+<h3 id="global-type-handlers">Global type handlers<a class="headerlink" href="#global-type-handlers" title="Permanent link">&para;</a></h3>
+<p>To register a type handler globally across your entire project, configure <code>-Alarkbatis.typeHandlers=com.example.Money:com.example.MoneyHandler</code> during compilation. See <a href="../../features/configuration/#type-handlers-for-a-whole-build">Configuration</a>.</p>
+<h2 id="result-class-contract">Result class contract<a class="headerlink" href="#result-class-contract" title="Permanent link">&para;</a></h2>
+<p>The contract is simple: <strong>a public no-arg constructor and standard setters</strong>. No annotations, base classes, or runtime registrations needed. If a class uses Lombok, ensure the annotation processor order is correct in your build file. See <a href="../troubleshooting/">Troubleshooting</a>.</p>
 
 
 

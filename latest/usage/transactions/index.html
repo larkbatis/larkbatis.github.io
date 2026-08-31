@@ -1026,22 +1026,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#larkbatistx" class="md-nav__link">
+  <a href="#larkbatistx-standalone-java" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LarkBatisTx
+        LarkBatisTx (Standalone Java)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="LarkBatisTx">
+    <nav class="md-nav" aria-label="LarkBatisTx (Standalone Java)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#read-only" class="md-nav__link">
+  <a href="#read-only-scopes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Read-only
+        Read-only scopes
       
     </span>
   </a>
@@ -1049,10 +1049,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#checking" class="md-nav__link">
+  <a href="#active-transaction-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Checking
+        Active transaction checks
       
     </span>
   </a>
@@ -1065,10 +1065,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#under-spring" class="md-nav__link">
+  <a href="#spring-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Under Spring
+        Spring Integration
       
     </span>
   </a>
@@ -1079,7 +1079,7 @@
   <a href="#why-generated-code-never-closes-the-connection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why generated code never closes the Connection
+        Why generated code never closes Connections directly
       
     </span>
   </a>
@@ -1817,22 +1817,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#larkbatistx" class="md-nav__link">
+  <a href="#larkbatistx-standalone-java" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LarkBatisTx
+        LarkBatisTx (Standalone Java)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="LarkBatisTx">
+    <nav class="md-nav" aria-label="LarkBatisTx (Standalone Java)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#read-only" class="md-nav__link">
+  <a href="#read-only-scopes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Read-only
+        Read-only scopes
       
     </span>
   </a>
@@ -1840,10 +1840,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#checking" class="md-nav__link">
+  <a href="#active-transaction-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Checking
+        Active transaction checks
       
     </span>
   </a>
@@ -1856,10 +1856,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#under-spring" class="md-nav__link">
+  <a href="#spring-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Under Spring
+        Spring Integration
       
     </span>
   </a>
@@ -1870,7 +1870,7 @@
   <a href="#why-generated-code-never-closes-the-connection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why generated code never closes the Connection
+        Why generated code never closes Connections directly
       
     </span>
   </a>
@@ -1914,45 +1914,36 @@
 
 
 <h1 id="transactions">Transactions<a class="headerlink" href="#transactions" title="Permanent link">&para;</a></h1>
-<p>Outside Spring, <code>LarkBatisTx</code> is the transaction scope. Inside Spring, you use
-<code>@Transactional</code> and LarkBatis stays out of the way entirely.</p>
-<h2 id="larkbatistx"><code>LarkBatisTx</code><a class="headerlink" href="#larkbatistx" title="Permanent link">&para;</a></h2>
+<p>In standalone Java applications, <code>LarkBatisTx</code> manages transaction scopes. In Spring applications, you use standard <code>@Transactional</code> annotations and LarkBatis handles connection binding automatically.</p>
+<h2 id="larkbatistx-standalone-java"><code>LarkBatisTx</code> (Standalone Java)<a class="headerlink" href="#larkbatistx-standalone-java" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">updateBalance</span><span class="p">(</span><span class="n">account</span><span class="p">);</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Three rules, and they are all about making the safe outcome the default one:</p>
-<p><strong>1 · <code>commit()</code> is a vote, not the commit.</strong> The actual commit happens when the
-outermost scope closes. That is what lets scopes nest without an inner one committing
-work the outer one has not finished.</p>
-<p><strong>2 · Leaving a scope without voting marks the whole transaction rollback-only.</strong> An
-early <code>return</code>, a thrown exception, a forgotten <code>commit()</code>: all of them roll back. You
-never get half the work persisted because a path out of the block was overlooked.</p>
-<p><strong>3 · Committing a poisoned transaction throws.</strong> If an inner scope left without voting
-and the outer one then calls <code>commit()</code>, you get <code>LarkBatisRollbackOnlyException</code> rather
-than a silent rollback that looks like a successful commit to the caller.</p>
+<p>Key rules:</p>
+<p><strong>1. <code>commit()</code> votes to commit.</strong> The actual database commit executes only when the outermost transaction scope closes. This allows nested scopes without premature commits.</p>
+<p><strong>2. Exiting without voting marks the transaction rollback-only.</strong> Any unhandled exception, early <code>return</code>, or missing <code>commit()</code> call triggers an automatic rollback when the try-with-resources block exits.</p>
+<p><strong>3. Committing a poisoned transaction throws an exception.</strong> If an inner scope exits without voting and the outer scope calls <code>commit()</code>, LarkBatis throws <code>LarkBatisRollbackOnlyException</code> rather than silently rolling back.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">outer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// joins the outer transaction</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// joins outer transaction</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="n">inner</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                          </span><span class="c1">// votes</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="n">inner</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                          </span><span class="c1">// records vote</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">outer</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                              </span><span class="c1">// votes; the outermost close commits</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">outer</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span><span class="w">                              </span><span class="c1">// records vote; outermost close executes commit</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="read-only">Read-only<a class="headerlink" href="#read-only" title="Permanent link">&para;</a></h3>
+<h3 id="read-only-scopes">Read-only scopes<a class="headerlink" href="#read-only-scopes" title="Permanent link">&para;</a></h3>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">(</span><span class="kc">true</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mapper</span><span class="p">.</span><span class="na">findAll</span><span class="p">();</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="checking">Checking<a class="headerlink" href="#checking" title="Permanent link">&para;</a></h3>
-<p><code>session.hasActiveTransaction()</code> reports whether the calling thread is inside a scope.
-The method exists for diagnostics and for code that must behave differently in and out of
-a transaction, never as something generated code consults.</p>
-<h2 id="under-spring">Under Spring<a class="headerlink" href="#under-spring" title="Permanent link">&para;</a></h2>
-<p>Do not use <code>LarkBatisTx</code> in a Spring application. Use <code>@Transactional</code>:</p>
+<h3 id="active-transaction-checks">Active transaction checks<a class="headerlink" href="#active-transaction-checks" title="Permanent link">&para;</a></h3>
+<p><code>session.hasActiveTransaction()</code> checks whether the calling thread is inside an active transaction.</p>
+<h2 id="spring-integration">Spring Integration<a class="headerlink" href="#spring-integration" title="Permanent link">&para;</a></h2>
+<p>In Spring applications, do not use <code>LarkBatisTx</code>. Use standard <code>@Transactional</code> annotations:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Service</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AccountService</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -1973,52 +1964,42 @@ a transaction, never as something generated code consults.</p>
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>This works because <code>SpringLarkBatisSession.conn()</code> asks <code>DataSourceUtils</code>, which hands
-back the connection already bound to the running transaction and opens a fresh one only
-when there is none. <code>release()</code> is its mirror: a no-op inside a transaction, a real close
-outside one.</p>
+<p>This works because <code>SpringLarkBatisSession.conn()</code> delegates to Spring's <code>DataSourceUtils</code>, obtaining the connection bound to the active transaction. <code>release()</code> is a no-op during active transactions and closes the connection only outside transactions.</p>
 <table>
 <thead>
 <tr>
 <th>Scenario</th>
-<th></th>
-<th>Why</th>
+<th>Behavior</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>@Transactional</code> on a service, mapper called inside</td>
-<td>works</td>
+<td><code>@Transactional</code> on services</td>
 <td><code>DataSourceUtils</code> returns the transaction's connection</td>
 </tr>
 <tr>
-<td><code>REQUIRES_NEW</code>, <code>NESTED</code>, rollback rules</td>
-<td>works</td>
-<td>Spring handles all of it; LarkBatis only asks for a connection</td>
+<td>Propagation rules (<code>REQUIRES_NEW</code>, <code>NESTED</code>)</td>
+<td>Managed entirely by Spring Transaction Manager</td>
 </tr>
 <tr>
 <td><code>readOnly = true</code></td>
-<td>works</td>
-<td>Spring sets the flag on that connection</td>
+<td>Handled by Spring on the connection</td>
 </tr>
 <tr>
-<td>Mapper called outside any transaction</td>
-<td>works</td>
-<td>Auto-commit; the connection is closed immediately on release</td>
+<td>Outside transactions</td>
+<td>Standard auto-commit per statement</td>
 </tr>
 <tr>
-<td>Sharing a transaction with <code>JdbcTemplate</code> or JPA</td>
-<td>works</td>
-<td>Same <code>DataSourceUtils</code>, same <code>DataSourceTransactionManager</code></td>
+<td>Interop with <code>JdbcTemplate</code> / JPA</td>
+<td>Shares identical transaction context via <code>DataSourceTransactionManager</code></td>
 </tr>
 <tr>
-<td>A <code>Stream</code>-returning method</td>
-<td>works</td>
-<td>Inside a transaction <code>release</code> is a no-op and the transaction keeps the connection; <code>try (Stream&lt;T&gt; …)</code> either way</td>
+<td><code>Stream&lt;T&gt;</code> query methods</td>
+<td>Transaction manages connection lifecycle; caller closes the stream</td>
 </tr>
 </tbody>
 </table>
-<h2 id="why-generated-code-never-closes-the-connection">Why generated code never closes the Connection<a class="headerlink" href="#why-generated-code-never-closes-the-connection" title="Permanent link">&para;</a></h2>
+<h2 id="why-generated-code-never-closes-the-connection">Why generated code never closes Connections directly<a class="headerlink" href="#why-generated-code-never-closes-the-connection" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">PreparedStatement</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">prepareStatement</span><span class="p">(</span><span class="n">SQL</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// (1)!</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="p">...</span>
@@ -2027,26 +2008,17 @@ outside one.</p>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>The <strong>statement</strong> is in try-with-resources. The <strong>connection</strong> is not.</li>
-<li>Only <code>release</code> knows whether this connection may really be closed.</li>
+<li><strong>Statements</strong> are managed with try-with-resources.</li>
+<li><strong>Connections</strong> are released via <code>s.release(c)</code>.</li>
 </ol>
-<p>Putting the <code>Connection</code> in try-with-resources would close a connection that belongs to
-a running transaction, which is wrong under Spring and wrong under <code>LarkBatisTx</code>. This
-is a <a href="../../wiki/design-rules/">design red line</a>: every generated body takes this shape,
-and the emitter tests assert it.</p>
+<p>Closing a <code>Connection</code> directly inside try-with-resources would break active Spring or <code>LarkBatisTx</code> transactions. This is a core architectural rule: all generated methods use <code>s.release(c)</code>.</p>
 <h2 id="exception-translation">Exception translation<a class="headerlink" href="#exception-translation" title="Permanent link">&para;</a></h2>
-<p><code>s.translate(e, sql)</code> turns a checked <code>SQLException</code> into the unchecked tree, carrying
-the SQL text (or a pseudo-statement id such as <code>tx:commit</code>) that was executing.</p>
+<p><code>s.translate(e, sql)</code> converts checked <code>SQLException</code>s into runtime exception trees:</p>
 <ul>
-<li><strong>Standalone:</strong> <code>LarkBatisException</code> and its subclasses. <code>e.sql()</code> gives you the
-  statement text.</li>
-<li><strong>Spring:</strong> Spring's <code>SQLExceptionTranslator</code>, by default
-  <code>SQLExceptionSubclassTranslator</code>, which reads the standard <code>SQLException</code> subclass tree
-  and not a per-vendor error-code table. So a unique-constraint violation arrives as
-  <code>DuplicateKeyException</code>, exactly as it would from <code>JdbcTemplate</code>, and your existing
-  <code>@ExceptionHandler</code>s keep working.</li>
+<li><strong>Standalone</strong>: <code>LarkBatisException</code> and its subclasses. <code>e.sql()</code> provides the failed SQL query.</li>
+<li><strong>Spring</strong>: Spring's <code>SQLExceptionTranslator</code> translates errors into Spring's <code>DataAccessException</code> hierarchy (e.g. <code>DuplicateKeyException</code>), matching <code>JdbcTemplate</code> behavior.</li>
 </ul>
-<p>See <a href="../../features/errors/">Errors and Diagnostics</a> for the full exception list.</p>
+<p>See <a href="../../features/errors/">Errors and Diagnostics</a> for the complete list.</p>
 
 
 

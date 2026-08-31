@@ -34,7 +34,7 @@
     
     
       
-        <title>Sử dụng - LarkBatis</title>
+        <title>Hướng dẫn sử dụng - LarkBatis</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#su-dung" class="md-skip">
+        <a href="#huong-dan-su-dung" class="md-skip">
           Bỏ qua
         </a>
       
@@ -125,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Sử dụng
+              Hướng dẫn sử dụng
             
           </span>
         </div>
@@ -1698,10 +1698,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#hinh-hai-mot-project" class="md-nav__link">
+  <a href="#cau-truc-thu-muc-du-an" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hình hài một project
+        Cấu trúc thư mục dự án
       
     </span>
   </a>
@@ -1709,10 +1709,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-trang-trong-muc-nay" class="md-nav__link">
+  <a href="#muc-luc-huong-dan" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Các trang trong mục này
+        Mục lục hướng dẫn
       
     </span>
   </a>
@@ -1720,10 +1720,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hai-quy-tac-giai-thich-gan-het-nhung-ieu-bat-ngo" class="md-nav__link">
+  <a href="#hai-nguyen-tac-thiet-ke-cot-loi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hai quy tắc giải thích gần hết những điều bất ngờ
+        Hai nguyên tắc thiết kế cốt lõi
       
     </span>
   </a>
@@ -1755,100 +1755,81 @@
   
 
 
-<h1 id="su-dung">Sử dụng<a class="headerlink" href="#su-dung" title="Permanent link">&para;</a></h1>
-<p>Mọi thứ bạn viết trong LarkBatis chỉ là một trong hai thứ: một <strong>interface mapper</strong> có
-các phương thức mang annotation statement, hoặc một interface mapper đánh dấu <code>@Mapper</code>
-mà statement nằm trong <strong>mapper XML</strong>. Cả hai đều biên dịch ra cùng một lớp hiện thực;
-chúng là hai frontend cho cùng một IR, không phải hai đường code khác nhau.</p>
-<h2 id="hinh-hai-mot-project">Hình hài một project<a class="headerlink" href="#hinh-hai-mot-project" title="Permanent link">&para;</a></h2>
+<h1 id="huong-dan-su-dung">Hướng dẫn sử dụng<a class="headerlink" href="#huong-dan-su-dung" title="Permanent link">&para;</a></h1>
+<p>Trong LarkBatis, bạn định nghĩa các câu truy vấn qua <strong>mapper interface</strong> (sử dụng annotation như <code>@Select</code>, <code>@Insert</code>...) hoặc <strong>mapper XML</strong> (đánh dấu interface với <code>@Mapper</code>). Cả hai cách đều được processor biên dịch thành cùng một lớp Java triển khai JDBC trực tiếp.</p>
+<h2 id="cau-truc-thu-muc-du-an">Cấu trúc thư mục dự án<a class="headerlink" href="#cau-truc-thu-muc-du-an" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/main/java/com/example/app/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    User.java                 # lớp kết quả: constructor không tham số, các setter
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    UserMapper.java           # statement bằng annotation
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    UserSearchMapper.java     # @Mapper — statement nằm trong XML
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    User.java                 # POJO kết quả: constructor không tham số, các setter
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    UserMapper.java           # Mapper interface sử dụng annotation
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    UserSearchMapper.java     # Mapper interface sử dụng XML (gắn @Mapper)
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>src/main/resources/mappers/
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    UserSearchMapper.xml      # namespace = com.example.app.UserSearchMapper
 </span></code></pre></div>
-<p>Lúc build, processor phát ra, vào đúng package đó:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>UserMapper$$Impl.java              mỗi mapper một file
+<p>Khi biên dịch (<code>./gradlew compileJava</code> hoặc <code>mvn compile</code>), processor sinh ra các file Java trong cùng package:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>UserMapper$$Impl.java              # Lớp triển khai JDBC cho từng mapper interface
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>UserSearchMapper$$Impl.java
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>UserRow.java                       mỗi lớp kết quả một file
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>LarkBatisMappers.java             mỗi lần biên dịch một file
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>LarkBatisMapperConfiguration.java một file, nếu Spring có trên classpath lúc build
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>UserRow.java                       # Lớp đọc ResultSet cho từng POJO kết quả
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>LarkBatisMappers.java             # Factory khởi tạo các mapper
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>LarkBatisMapperConfiguration.java # Class @Configuration cho Spring (nếu có spring-context)
 </span></code></pre></div>
-<h2 id="cac-trang-trong-muc-nay">Các trang trong mục này<a class="headerlink" href="#cac-trang-trong-muc-nay" title="Permanent link">&para;</a></h2>
+<h2 id="muc-luc-huong-dan">Mục lục hướng dẫn<a class="headerlink" href="#muc-luc-huong-dan" title="Permanent link">&para;</a></h2>
 <div class="grid cards">
 <ul>
 <li>
-<p><strong><a href="mappers/">Interface mapper</a></strong></p>
-<p>Annotation statement, tham số <code>#{}</code>, <code>@Param</code>, lớp kết quả và cách các cột tìm ra
-setter của chúng.</p>
+<p><strong><a href="mappers/">Mapper Interfaces</a></strong></p>
+<p>Annotations truy vấn, liên kết tham số <code>#{}</code> / <code>${}</code>, <code>@Param</code>, POJO result classes và cơ chế ánh xạ cột sang setter.</p>
 </li>
 <li>
 <p><strong><a href="xml-mappers/">Mapper XML</a></strong></p>
-<p><code>@Mapper</code>, namespace, id của statement, <code>&lt;sql&gt;</code>/<code>&lt;include&gt;</code>, và cách một statement
-được gán cho mỗi phương thức.</p>
+<p>Khai báo <code>@Mapper</code>, cấu hình namespace, statement id, inlining <code>&lt;sql&gt;</code> / <code>&lt;include&gt;</code> và quy tắc ánh xạ phương thức.</p>
 </li>
 <li>
-<p><strong><a href="dynamic-sql/">SQL động</a></strong></p>
-<p><code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code>, <code>&lt;trim&gt;</code>, cùng cái ngữ pháp <code>test</code> hẹp thay
-cho OGNL.</p>
+<p><strong><a href="dynamic-sql/">Dynamic SQL</a></strong></p>
+<p>Các thẻ <code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code>, <code>&lt;trim&gt;</code> và ngữ pháp kiểm tra kiểu tĩnh an toàn.</p>
 </li>
 <li>
-<p><strong><a href="foreach-and-batches/">foreach và batch</a></strong></p>
-<p>Danh sách <code>IN</code>, <code>VALUES</code> nhiều dòng, vòng lặp lồng nhau, insert bằng <code>addBatch()</code> và
-<code>@PadPow2</code>.</p>
+<p><strong><a href="foreach-and-batches/">foreach &amp; Batching</a></strong></p>
+<p>Mệnh đề <code>WHERE IN</code>, <code>VALUES</code> nhiều dòng, JDBC batch <code>addBatch()</code>, tối ưu cache với <code>@PadPow2</code>.</p>
 </li>
 <li>
-<p><strong><a href="result-maps/">Result map và join</a></strong></p>
-<p><code>&lt;resultMap&gt;</code>, một cấp <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code>, và quy tắc sắp xếp khiến nó
-hoạt động.</p>
+<p><strong><a href="result-maps/">Result Maps</a></strong></p>
+<p>Cấu hình <code>&lt;resultMap&gt;</code>, join 1 cấp (<code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code>) và thuật toán gom nhóm single-pass.</p>
 </li>
 <li>
 <p><strong><a href="generated-keys/">Generated Keys</a></strong></p>
-<p><code>useGeneratedKeys</code>, vì sao <code>keyColumn</code> lại quan trọng, và việc đếm khoá ở chế độ
-batch.</p>
+<p>Cấu hình <code>useGeneratedKeys</code>, tầm quan trọng của <code>keyColumn</code> và lấy khóa tự tăng trong batch insert.</p>
 </li>
 <li>
-<p><strong><a href="streaming/">Stream kết quả</a></strong></p>
-<p>Kiểu trả về <code>Stream&lt;T&gt;</code> trên một con trỏ đang mở, và ai là người sở hữu tài nguyên.</p>
+<p><strong><a href="streaming/">Streaming</a></strong></p>
+<p>Truy vấn tập dữ liệu lớn qua <code>Stream&lt;T&gt;</code> kết nối trực tiếp con trỏ database và quản lý tài nguyên an toàn.</p>
 </li>
 <li>
-<p><strong><a href="transactions/">Transaction</a></strong></p>
-<p>Ngữ nghĩa bỏ-phiếu-để-commit của <code>LarkBatisTx</code>, việc lồng nhau, và <code>@Transactional</code>.</p>
+<p><strong><a href="transactions/">Transactions</a></strong></p>
+<p>Quản lý transaction độc lập qua <code>LarkBatisTx</code>, cơ chế vote-to-commit và tích hợp Spring <code>@Transactional</code>.</p>
 </li>
 <li>
-<p><strong><a href="raw-sql/">SQL thô và SqlFragment</a></strong></p>
-<p>Kỷ luật <code>${}</code>, <code>@OrderBy</code>, cửa thoát hiểm, và việc theo dõi biến thể SQL.</p>
+<p><strong><a href="raw-sql/">Raw SQL &amp; An toàn</a></strong></p>
+<p>Kỷ luật an toàn khi dùng <code>${}</code>, <code>@OrderBy</code>, lối thoát thủ công <code>SqlFragment</code> và theo dõi biến thể prepared statement.</p>
 </li>
 <li>
-<p><strong><a href="types/">Kiểu dữ liệu và handler</a></strong></p>
-<p><code>#{}</code> tự gắn được những gì, <code>JdbcCodec</code>, <code>@Column</code>, <code>@Handler</code>, enum và <code>java.time</code>.</p>
+<p><strong><a href="types/">Kiểu dữ liệu &amp; Type Handlers</a></strong></p>
+<p>Hệ thống kiểu dữ liệu hỗ trợ sẵn, <code>JdbcCodec</code>, <code>@Column</code>, custom <code>LarkBatisTypeHandler</code>, enum và <code>java.time</code>.</p>
 </li>
 <li>
 <p><strong><a href="spring/">Tích hợp Spring</a></strong></p>
-<p>Những gì <code>mybatis-spring</code> làm mà LarkBatis không cần, và những gì nó vẫn còn làm.</p>
+<p>Cơ chế hoạt động của Spring Boot Starter, tương thích Spring Boot 3 &amp; 4 và quản lý transaction qua <code>DataSourceUtils</code>.</p>
 </li>
 <li>
-<p><strong><a href="troubleshooting/">Xử lý sự cố</a></strong></p>
-<p>Không sinh ra gì, tên tham số thành <code>arg0</code>, thứ tự Lombok, XML không được nhận.</p>
+<p><strong><a href="troubleshooting/">Khắc phục sự cố</a></strong></p>
+<p>Chẩn đoán các lỗi thường gặp: processor không sinh code, lỗi tham số <code>arg0</code>, thứ tự nạp Lombok.</p>
 </li>
 </ul>
 </div>
-<h2 id="hai-quy-tac-giai-thich-gan-het-nhung-ieu-bat-ngo">Hai quy tắc giải thích gần hết những điều bất ngờ<a class="headerlink" href="#hai-quy-tac-giai-thich-gan-het-nhung-ieu-bat-ngo" title="Permanent link">&para;</a></h2>
-<p><strong>1 · Quyết định được lúc build thì quyết định luôn.</strong> Chỉ số cột, lựa chọn type
-handler, tiền tố của <code>&lt;trim&gt;</code>, thân của <code>&lt;include&gt;</code>, việc một phép so sánh là trên <code>long</code>
-hay <code>String</code>: không thứ nào trong đó bị đem ra soi lúc chạy. Nghĩa là sai ở bất kỳ chỗ
-nào trong số đó đều là lỗi biên dịch chứ không phải một stack trace, và thông báo lỗi
-gọi đúng tên phương thức mapper.</p>
-<p><strong>2 · Không quyết định được thì phải nói ra tường minh.</strong> Danh sách những thứ được resolve
-lúc chạy là ngắn và đóng: giá trị tham số, kết quả boolean của các test
-<code>&lt;if&gt;</code>/<code>&lt;when&gt;</code>, kích thước tập hợp trong <code>&lt;foreach&gt;</code>, các dòng trong <code>ResultSet</code>, số
-cột thật khi không phân tích được select list, và nội dung của một <code>SqlFragment</code>. Bất cứ
-thứ gì bạn muốn mà không nằm trong danh sách đó đều phải được viết rõ trong chữ ký của
-phương thức mapper. Đó là lý do một <code>String</code> bind vào <code>${}</code> là lỗi biên dịch, chứ không
-phải chuyện cho qua.</p>
-<p>Phát biểu đầy đủ về ranh giới này nằm trong wiki:
-<a href="../wiki/shape-vs-value/">Shape và value</a>.</p>
+<h2 id="hai-nguyen-tac-thiet-ke-cot-loi">Hai nguyên tắc thiết kế cốt lõi<a class="headerlink" href="#hai-nguyen-tac-thiet-ke-cot-loi" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Giải quyết mọi thứ có thể lúc biên dịch</strong>: Chỉ số cột trong <code>ResultSet</code>, lựa chọn setter, chuỗi SQL tĩnh, inlining <code>&lt;include&gt;</code> đều được chốt cố định lúc build. Mọi sai sót về kiểu dữ liệu hay cú pháp đều trở thành lỗi biên dịch <code>javac</code>.</li>
+<li><strong>Kiểm soát chặt chẽ các giá trị runtime</strong>: Danh sách các thành phần được đánh giá lúc runtime là cố định và đóng (tham số đầu vào, kết quả boolean của <code>&lt;if&gt;</code>, kích thước collection trong <code>&lt;foreach&gt;</code>, dữ liệu trả về từ database). Mọi chuỗi động ngoài danh sách này bắt buộc phải được bọc qua <code>SqlFragment</code> hoặc <code>@OrderBy</code>. Xem chi tiết tại <a href="../wiki/shape-vs-value/">Shape vs. Value</a>.</li>
+</ol>
 
 
 

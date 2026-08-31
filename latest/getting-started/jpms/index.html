@@ -726,10 +726,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#your-jdbc-driver-may-need-directives-of-its-own" class="md-nav__link">
+  <a href="#jdbc-driver-module-requirements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Your JDBC driver may need directives of its own
+        JDBC driver module requirements
       
     </span>
   </a>
@@ -1811,10 +1811,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#your-jdbc-driver-may-need-directives-of-its-own" class="md-nav__link">
+  <a href="#jdbc-driver-module-requirements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Your JDBC driver may need directives of its own
+        JDBC driver module requirements
       
     </span>
   </a>
@@ -1858,10 +1858,7 @@
 
 
 <h1 id="java-modules-jpms">Java Modules (JPMS)<a class="headerlink" href="#java-modules-jpms" title="Permanent link">&para;</a></h1>
-<p><code>larkbatis-annotations</code> and <code>larkbatis-runtime</code> ship <strong>real named modules</strong>, not
-automatic ones, and so do the three Spring artifacts. Generated mapper code is usable from
-a modular consumer, and the module path stays free of split packages. The project treats
-this as a requirement, not a nice-to-have.</p>
+<p><code>larkbatis-annotations</code> and <code>larkbatis-runtime</code> ship as <strong>real named modules</strong>, not automatic ones (and so do the Spring artifacts). Generated mapper code works cleanly in modular applications without split packages. We treat JPMS support as a hard requirement, not an afterthought.</p>
 <table>
 <thead>
 <tr>
@@ -1892,9 +1889,9 @@ this as a requirement, not a nice-to-have.</p>
 </tr>
 </tbody>
 </table>
-<p><code>larkbatis-processor</code> is build-only and never appears on a module path.</p>
+<p><code>larkbatis-processor</code> is build-only and never belongs on a module path.</p>
 <h2 id="the-consumer-descriptor">The consumer descriptor<a class="headerlink" href="#the-consumer-descriptor" title="Permanent link">&para;</a></h2>
-<p>Three directives. The third is the one that surprises people:</p>
+<p>Here are the module directives you need (the third one usually catches people off guard):</p>
 <div class="language-java highlight"><span class="filename">module-info.java</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">module</span> <span class="nc">com</span><span class="p">.</span><span class="na">example</span><span class="p">.</span><span class="na">app</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">runtime</span><span class="p">;</span><span class="w">             </span><span class="c1">// (1)!</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">annotations</span><span class="p">;</span><span class="w">  </span><span class="c1">// (2)!</span>
@@ -1902,62 +1899,43 @@ this as a requirement, not a nice-to-have.</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>What the generated bodies actually call: <code>LarkBatisSession</code>, <code>JdbcCodec</code>,
-    <code>RowReader</code>, <code>LarkBatisSql</code>.</li>
-<li>Every mapper annotation is <code>CLASS</code>-retention, so this is a compile-time-only edge.</li>
-<li>Every emitted source carries <code>@javax.annotation.processing.Generated</code>, which lives in
-    <code>java.compiler</code>. <code>SOURCE</code> retention makes it <code>static</code>.</li>
+<li>Runtime types called by generated code: <code>LarkBatisSession</code>, <code>JdbcCodec</code>, <code>RowReader</code>, <code>LarkBatisSql</code>.</li>
+<li>Mapper annotations have <code>CLASS</code> retention, so this is compile-time only (<code>requires static</code>).</li>
+<li>Generated files include <code>@javax.annotation.processing.Generated</code> from the <code>java.compiler</code> module.</li>
 </ol>
 <div class="admonition failure">
 <p class="admonition-title"><code>package javax.annotation.processing is not visible</code></p>
-<p>This is what you get without <code>requires static java.compiler</code>, and the error points at
-the <strong>generated</strong> file, which is why it is confusing the first time. Add the
-directive.</p>
+<p>If you omit <code>requires static java.compiler</code>, javac throws this error pointing at the generated source file. Adding the directive fixes it.</p>
 </div>
 <h2 id="what-you-do-not-need">What you do <em>not</em> need<a class="headerlink" href="#what-you-do-not-need" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>requires java.sql</code>.</strong> <code>io.github.larkbatis.runtime</code> requires it <em>transitively</em>,
-  because its own API hands you <code>Connection</code>, <code>ResultSet</code> and <code>PreparedStatement</code>. A
-  module that reads the runtime can already name those types.</li>
-<li><strong><code>opens</code>, anywhere.</strong> Neither LarkBatis module ever needs it. There is no reflection
-  to open anything for.</li>
-<li><strong>an <code>exports</code> for generated code.</strong> It lands in your own package, alongside the mapper
-  interface it implements.</li>
+<li><strong><code>requires java.sql</code>.</strong> <code>io.github.larkbatis.runtime</code> requires <code>java.sql</code> <em>transitively</em> because its API exposes <code>Connection</code>, <code>ResultSet</code>, and <code>PreparedStatement</code>. Any module requiring LarkBatis gets <code>java.sql</code> automatically.</li>
+<li><strong><code>opens</code> directives.</strong> LarkBatis uses zero reflection, so you never need to open packages.</li>
+<li><strong><code>exports</code> for generated code.</strong> Generated files are placed in your own packages alongside your mapper interfaces.</li>
 </ul>
-<h2 id="your-jdbc-driver-may-need-directives-of-its-own">Your JDBC driver may need directives of its own<a class="headerlink" href="#your-jdbc-driver-may-need-directives-of-its-own" title="Permanent link">&para;</a></h2>
-<p>That is the driver's business, not the mapper layer's, but it will land in your
-<code>module-info.java</code>. H2 is the common example:</p>
+<h2 id="jdbc-driver-module-requirements">JDBC driver module requirements<a class="headerlink" href="#jdbc-driver-module-requirements" title="Permanent link">&para;</a></h2>
+<p>Your JDBC driver might require its own module directives in <code>module-info.java</code>. H2 is a common example:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">module</span> <span class="nc">com</span><span class="p">.</span><span class="na">example</span><span class="p">.</span><span class="na">app</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">runtime</span><span class="p">;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="na">github</span><span class="p">.</span><span class="na">larkbatis</span><span class="p">.</span><span class="na">annotations</span><span class="p">;</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">compiler</span><span class="p">;</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="c1">// automatic module, named from the jar manifest — re-check with</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="c1">// `jar --describe-module` after an upgrade</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">h2database</span><span class="p">;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="c1">// H2's JdbcDataSource implements javax.naming.Referenceable, and an automatic</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="c1">// module cannot declare its own requires, so the consumer reads java.naming for it.</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">naming</span><span class="p">;</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="c1">// automatic module named from jar manifest</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">h2database</span><span class="p">;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="c1">// H2's JdbcDataSource implements javax.naming.Referenceable,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="c1">// so consumer modules need java.naming</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="kd">requires</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">naming</span><span class="p">;</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>An automatic module cannot declare <code>requires</code> of its own, so anything it needs and the
-platform does not give it by default becomes the consumer's problem. Run
-<code>jar --describe-module</code> against a driver jar after every upgrade: an automatic module's
-name comes from the manifest and can change.</p>
+<p>Because automatic modules cannot declare their own dependencies, transitive requirements fall to the application's <code>module-info.java</code>. You can check a driver jar's module name anytime using <code>jar --describe-module</code>.</p>
 <h2 id="native-image">Native image<a class="headerlink" href="#native-image" title="Permanent link">&para;</a></h2>
-<p>There is nothing for the mapper layer to declare. No <code>Proxy.newProxyInstance</code>, no
-<code>Class.forName</code>, no <code>setAccessible</code> anywhere in the runtime or in generated code, so there
-is no reachability metadata to write. Your JDBC driver may still ship or need its own,
-which is a driver concern.</p>
+<p>There's nothing you need to configure for the mapper layer. No dynamic proxies, no <code>Class.forName</code>, and no <code>setAccessible</code> calls anywhere in the runtime or generated code. That means zero reflection metadata to maintain for your mappers (though your JDBC driver may still need its own driver-specific configuration).</p>
 <div class="admonition warning">
-<p class="admonition-title">Not yet verified by a real build</p>
-<p>The claim is structural, and you can check it by reading the code. But a native-image
-build has <strong>not been run yet</strong>; it is open M5 work. Treat it as a well-founded
-expectation rather than a result. See <a href="../../wiki/performance/#native-image">Performance</a>.</p>
+<p class="admonition-title">Pending real-world verification</p>
+<p>This claim is structural: you can verify there is no reflection by inspecting the generated code. However, a native-image smoke test build is still scheduled for milestone M5. Treat this as an expectation based on code inspection rather than an executed benchmark. See <a href="../../wiki/performance/#native-image">Performance</a>.</p>
 </div>
-<p>The <code>larkbatis-sample</code> module of the core repository is a working modular consumer, and
-is the intended subject of that smoke test.</p>
+<p>The <code>larkbatis-sample</code> module in the core repository is a fully configured modular consumer used to verify module compatibility.</p>
 
 
 

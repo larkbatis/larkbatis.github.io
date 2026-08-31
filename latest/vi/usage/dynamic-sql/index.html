@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sql-ong" class="md-skip">
+        <a href="#dynamic-sql-sql-ong" class="md-skip">
           Bỏ qua
         </a>
       
@@ -886,10 +886,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#co-che-bien-dich" class="md-nav__link">
+  <a href="#co-che-bien-dich-ma-nguon" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cơ chế biên dịch
+        Cơ chế biên dịch mã nguồn
       
     </span>
   </a>
@@ -911,7 +911,7 @@
   <a href="#choose-when-otherwise" class="md-nav__link">
     <span class="md-ellipsis">
       
-        &lt;choose&gt; / &lt;when&gt; / &lt;otherwise&gt;
+        &lt;choose&gt;, &lt;when&gt;, &lt;otherwise&gt;
       
     </span>
   </a>
@@ -944,19 +944,19 @@
   <a href="#the-test-grammar" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ngữ pháp test
+        Ngữ pháp biểu thức test
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Ngữ pháp test">
+    <nav class="md-nav" aria-label="Ngữ pháp biểu thức test">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#quy-tac-xu-ly-null-co-inh" class="md-nav__link">
+  <a href="#bang-so-sanh-xu-ly-gia-tri-null" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quy tắc xử lý null cố định
+        Bảng so sánh xử lý giá trị null
       
     </span>
   </a>
@@ -969,21 +969,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sql-ong-va-statement-cache" class="md-nav__link">
+  <a href="#quan-ly-statement-cache-cho-dynamic-sql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SQL động và statement cache
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kiem-chung-oi-chieu-voi-mybatis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Kiểm chứng đối chiếu với MyBatis
+        Quản lý Statement Cache cho Dynamic SQL
       
     </span>
   </a>
@@ -1850,10 +1839,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#co-che-bien-dich" class="md-nav__link">
+  <a href="#co-che-bien-dich-ma-nguon" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cơ chế biên dịch
+        Cơ chế biên dịch mã nguồn
       
     </span>
   </a>
@@ -1875,7 +1864,7 @@
   <a href="#choose-when-otherwise" class="md-nav__link">
     <span class="md-ellipsis">
       
-        &lt;choose&gt; / &lt;when&gt; / &lt;otherwise&gt;
+        &lt;choose&gt;, &lt;when&gt;, &lt;otherwise&gt;
       
     </span>
   </a>
@@ -1908,19 +1897,19 @@
   <a href="#the-test-grammar" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ngữ pháp test
+        Ngữ pháp biểu thức test
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Ngữ pháp test">
+    <nav class="md-nav" aria-label="Ngữ pháp biểu thức test">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#quy-tac-xu-ly-null-co-inh" class="md-nav__link">
+  <a href="#bang-so-sanh-xu-ly-gia-tri-null" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quy tắc xử lý null cố định
+        Bảng so sánh xử lý giá trị null
       
     </span>
   </a>
@@ -1933,21 +1922,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sql-ong-va-statement-cache" class="md-nav__link">
+  <a href="#quan-ly-statement-cache-cho-dynamic-sql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SQL động và statement cache
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kiem-chung-oi-chieu-voi-mybatis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Kiểm chứng đối chiếu với MyBatis
+        Quản lý Statement Cache cho Dynamic SQL
       
     </span>
   </a>
@@ -1979,10 +1957,10 @@
   
 
 
-<h1 id="sql-ong">SQL động<a class="headerlink" href="#sql-ong" title="Permanent link">&para;</a></h1>
-<p>Các thẻ <code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code> và <code>&lt;trim&gt;</code> đều được hỗ trợ đầy đủ và không thành phần nào tồn tại dưới dạng cây AST lúc runtime. Trình biên dịch phẳng hoá (flatten) toàn bộ cấu trúc thẻ XML thành các biến điều kiện cục bộ (<code>condition locals</code>) và các lệnh nối chuỗi có điều kiện (<code>guarded appends</code>). Khi thực thi lúc runtime, chi phí tính toán duy nhất là việc đánh giá (evaluate) mỗi biểu thức <code>test</code> đúng một lần.</p>
-<h2 id="co-che-bien-dich">Cơ chế biên dịch<a class="headerlink" href="#co-che-bien-dich" title="Permanent link">&para;</a></h2>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"search"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
+<h1 id="dynamic-sql-sql-ong">Dynamic SQL (SQL động)<a class="headerlink" href="#dynamic-sql-sql-ong" title="Permanent link">&para;</a></h1>
+<p>Các thẻ <code>&lt;if&gt;</code>, <code>&lt;choose&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;set&gt;</code> và <code>&lt;trim&gt;</code> được hỗ trợ đầy đủ. Thay vì xây dựng và duyệt cây AST lúc runtime như MyBatis, LarkBatis phẳng hoá toàn bộ cấu trúc thẻ XML thành các biến điều kiện cục bộ (<code>condition locals</code>) và các lệnh nối chuỗi <code>StringBuilder</code> cố định.</p>
+<h2 id="co-che-bien-dich-ma-nguon">Cơ chế biên dịch mã nguồn<a class="headerlink" href="#co-che-bien-dich-ma-nguon" title="Permanent link">&para;</a></h2>
+<div class="language-xml highlight"><span class="filename">UserSearchMapper.xml</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;select</span><span class="w"> </span><span class="na">id=</span><span class="s">"search"</span><span class="w"> </span><span class="na">resultType=</span><span class="s">"com.example.app.User"</span><span class="nt">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>SELECT<span class="w"> </span>id,<span class="w"> </span>name,<span class="w"> </span>email,<span class="w"> </span>created_at<span class="w"> </span>FROM<span class="w"> </span>users
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&lt;where&gt;</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"name != null"</span><span class="nt">&gt;</span>AND<span class="w"> </span>name<span class="w"> </span>LIKE<span class="w"> </span>#{name}<span class="nt">&lt;/if&gt;</span>
@@ -1991,7 +1969,8 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span>ORDER<span class="w"> </span>BY<span class="w"> </span>id
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">&lt;/select&gt;</span>
 </span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Override</span>
+<p>Mã nguồn Java sinh ra tương ứng:</p>
+<div class="language-java highlight"><span class="filename">UserSearchMapper$$Impl.java</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Override</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="n">UserQuery</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="n">c0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w">          </span><span class="c1">// (1)!</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getMinAge</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
@@ -2017,23 +1996,23 @@
 </span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">            </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getMinAge</span><span class="p">());</span>
 </span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">        </span><span class="c1">// ... đọc các dòng</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">        </span><span class="c1">// ... đọc ResultSet</span>
 </span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Mỗi biểu thức <code>test</code> được đánh giá <strong>đúng một lần</strong> vào một biến cục bộ. Biến này điều khiển đồng thời cả việc ghép SQL lẫn việc gán tham số, đảm bảo hai bên luôn đồng bộ tuyệt đối.</li>
-<li>Dung lượng của <code>StringBuilder</code> được tính toán từ lúc build dựa trên chiều dài tối đa của câu SQL.</li>
-<li>Thẻ <code>&lt;where&gt;</code> được chuyển thành câu lệnh nối chuỗi có điều kiện, không quét chuỗi lúc runtime để tìm từ khoá <code>AND</code>/<code>OR</code>.</li>
-<li>Quy tắc xử lý từ khoá <code>AND</code>/<code>OR</code> ở đầu mệnh đề được gập hằng số thành toán tử ba ngôi trên các biến boolean đã tính sẵn.</li>
-<li>Quá trình gán tham số đi qua cùng các điều kiện theo đúng thứ tự đó, không cần bảng tra cứu trung gian.</li>
+<li>Mỗi biểu thức <code>test</code> được đánh giá <strong>đúng một lần</strong> vào biến boolean cục bộ. Biến này dùng chung cho cả khâu nối chuỗi SQL lẫn khâu bind tham số JDBC.</li>
+<li>Kích thước <code>StringBuilder</code> được tính toán trước từ lúc build.</li>
+<li>Thẻ <code>&lt;where&gt;</code> được biên dịch thành lệnh <code>if</code> thông thường, không quét chuỗi để xóa <code>AND</code>/<code>OR</code> lúc runtime.</li>
+<li>Tiền tố <code>AND</code>/<code>OR</code> được tối ưu thành toán tử ba ngôi (ternary operator) dựa trên các biến boolean.</li>
+<li>Khâu gán tham số <code>PreparedStatement</code> đi qua cùng thứ tự điều kiện, không cần bảng tra cứu động.</li>
 </ol>
 <h2 id="if"><code>&lt;if&gt;</code><a class="headerlink" href="#if" title="Permanent link">&para;</a></h2>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"email != null"</span><span class="nt">&gt;</span>AND<span class="w"> </span>email<span class="w"> </span>=<span class="w"> </span>#{email}<span class="nt">&lt;/if&gt;</span>
 </span></code></pre></div>
-<p>Nội dung bên trong được nối vào câu lệnh khi điều kiện đúng. Hỗ trợ lồng nhau, đặt ngang hàng, hoặc đặt bên trong thẻ <code>&lt;foreach&gt;</code>.</p>
-<h2 id="choose-when-otherwise"><code>&lt;choose&gt;</code> / <code>&lt;when&gt;</code> / <code>&lt;otherwise&gt;</code><a class="headerlink" href="#choose-when-otherwise" title="Permanent link">&para;</a></h2>
-<p>Đúng một nhánh được chọn, và tính loại trừ lẫn nhau được biên dịch thẳng vào mã nguồn:</p>
+<p>Nối đoạn SQL khi điều kiện đúng. Hỗ trợ lồng nhau và đặt bên trong thẻ <code>&lt;foreach&gt;</code>.</p>
+<h2 id="choose-when-otherwise"><code>&lt;choose&gt;</code>, <code>&lt;when&gt;</code>, <code>&lt;otherwise&gt;</code><a class="headerlink" href="#choose-when-otherwise" title="Permanent link">&para;</a></h2>
+<p>Tương đương câu lệnh <code>switch</code> / <code>if-else</code>:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;choose&gt;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&lt;when</span><span class="w"> </span><span class="na">test=</span><span class="s">"status != null"</span><span class="nt">&gt;</span>AND<span class="w"> </span>status<span class="w"> </span>=<span class="w"> </span>#{status}<span class="nt">&lt;/when&gt;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&lt;otherwise&gt;</span>AND<span class="w"> </span>status<span class="w"> </span>=<span class="w"> </span>'NEW'<span class="nt">&lt;/otherwise&gt;</span>
@@ -2043,7 +2022,7 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">c0</span><span class="p">;</span><span class="w">                       </span><span class="c1">// &lt;otherwise&gt; là phủ định của nhánh trên</span>
 </span></code></pre></div>
 <h2 id="where-va-set"><code>&lt;where&gt;</code> và <code>&lt;set&gt;</code><a class="headerlink" href="#where-va-set" title="Permanent link">&para;</a></h2>
-<p><code>&lt;where&gt;</code> chỉ phát sinh từ khoá nếu phần thân có nội dung, và tự động loại bỏ <code>AND</code>/<code>OR</code> đứng đầu của nhánh đầu tiên được chọn. <code>&lt;set&gt;</code> hoạt động tương tự với từ khoá <code>SET</code> và dấu phẩy ở cuối:</p>
+<p><code>&lt;where&gt;</code> chỉ chèn từ khóa <code>WHERE</code> nếu có ít nhất một điều kiện con thỏa mãn, và tự động bỏ từ khóa <code>AND</code>/<code>OR</code> ở nhánh đầu tiên. <code>&lt;set&gt;</code> hoạt động tương tự với từ khóa <code>SET</code> và dấu phẩy ở cuối câu:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&lt;update</span><span class="w"> </span><span class="na">id=</span><span class="s">"rename"</span><span class="nt">&gt;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>UPDATE<span class="w"> </span>users
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&lt;set&gt;</span>
@@ -2058,15 +2037,14 @@
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" email = ?"</span><span class="p">);</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" WHERE id = ?"</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Bộ sinh code xác định chính xác nhánh nào là nhánh cuối cùng của từng tổ hợp điều kiện để chỉ phát dấu phẩy khi chắc chắn còn nhánh phía sau, không cần thao tác cắt chuỗi lúc runtime.</p>
 <h2 id="trim"><code>&lt;trim&gt;</code><a class="headerlink" href="#trim" title="Permanent link">&para;</a></h2>
-<p>Được hỗ trợ với <strong>thuộc tính hằng</strong> (<code>prefix</code>, <code>suffix</code>, <code>prefixOverrides</code>, <code>suffixOverrides</code>) và được xử lý gập hằng số lúc build. <code>&lt;where&gt;</code> và <code>&lt;set&gt;</code> thực chất là các dạng đặc biệt của <code>&lt;trim&gt;</code> với thuộc tính cố định.</p>
-<h2 id="the-test-grammar">Ngữ pháp <code>test</code><a class="headerlink" href="#the-test-grammar" title="Permanent link">&para;</a></h2>
-<p>Đây là điểm khác biệt có chủ ý lớn nhất với MyBatis. Thuộc tính <code>test</code> <strong>không</strong> sử dụng OGNL, mà sử dụng một ngữ pháp biểu thức thu hẹp được kiểm tra kiểu tĩnh dựa trên các tham số của phương thức mapper:</p>
+<p>Hỗ trợ các thuộc tính hằng số (<code>prefix</code>, <code>suffix</code>, <code>prefixOverrides</code>, <code>suffixOverrides</code>) và được tối ưu hóa lúc compile.</p>
+<h2 id="the-test-grammar">Ngữ pháp biểu thức <code>test</code><a class="headerlink" href="#the-test-grammar" title="Permanent link">&para;</a></h2>
+<p>Khác với MyBatis (dùng OGNL runtime), LarkBatis sử dụng ngữ pháp kiểm tra kiểu tĩnh:</p>
 <table>
 <thead>
 <tr>
-<th>Biểu thức được chấp nhận</th>
+<th>Biểu thức hỗ trợ</th>
 <th>Ví dụ</th>
 </tr>
 </thead>
@@ -2076,15 +2054,15 @@
 <td><code>name != null</code>, <code>probe.email == null</code></td>
 </tr>
 <tr>
-<td>So sánh trên property có kiểu</td>
+<td>So sánh giá trị</td>
 <td><code>age &gt;= 18</code>, <code>status == 'NEW'</code>, <code>id != other.id</code></td>
 </tr>
 <tr>
-<td>Toán tử boolean</td>
-<td><code>and</code>, <code>or</code>, <code>not</code>, dấu ngoặc đơn</td>
+<td>Toán tử logic</td>
+<td><code>and</code>, <code>or</code>, <code>not</code>, dấu ngoặc <code>()</code></td>
 </tr>
 <tr>
-<td>Kích thước và kiểm tra rỗng</td>
+<td>Kiểm tra độ dài / collection</td>
 <td><code>ids.size() &gt; 0</code>, <code>name.length() &gt; 3</code>, <code>!ids.isEmpty()</code></td>
 </tr>
 <tr>
@@ -2092,22 +2070,20 @@
 <td><code>user.isActive()</code></td>
 </tr>
 <tr>
-<td>Biến boolean thuần</td>
-<td><code>active</code> (với điều kiện <code>active</code> là property <code>boolean</code>/<code>Boolean</code>)</td>
+<td>Biến boolean</td>
+<td><code>active</code> (với <code>active</code> có kiểu <code>boolean</code> hoặc <code>Boolean</code>)</td>
 </tr>
 </tbody>
 </table>
-<p>Mọi biểu thức nằm ngoài danh sách trên đều là <strong>lỗi biên dịch nêu rõ token gây lỗi</strong>.</p>
+<p>Mọi biểu thức nằm ngoài danh sách trên sẽ <strong>báo lỗi biên dịch</strong>.</p>
 <div class="admonition failure">
-<p class="admonition-title">Không tái tạo cơ chế truthiness kiểu OGNL</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"count"</span><span class="nt">&gt;</span><span class="w">      </span><span class="cm">&lt;!-- lỗi biên dịch --&gt;</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"user"</span><span class="nt">&gt;</span><span class="w">       </span><span class="cm">&lt;!-- lỗi biên dịch --&gt;</span>
+<p class="admonition-title">Không hỗ trợ truthiness kiểu OGNL</p>
+<div class="language-xml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"count"</span><span class="nt">&gt;</span><span class="w">      </span><span class="cm">&lt;!-- Lỗi biên dịch --&gt;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">&lt;if</span><span class="w"> </span><span class="na">test=</span><span class="s">"user"</span><span class="nt">&gt;</span><span class="w">       </span><span class="cm">&lt;!-- Lỗi biên dịch --&gt;</span>
 </span></code></pre></div>
-<p>MyBatis coi giá trị khác null, khác 0, khác rỗng là true. LarkBatis yêu cầu viết tường minh: <code>count != 0</code>, <code>user != null</code>, hoặc <code>!list.isEmpty()</code>.</p>
-<p>Đây là sự khắt khe có chủ đích: biểu thức <code>test="count"</code> trong MyBatis gây nhập nhằng giữa "count khác null" và "count khác 0", và hai trường hợp này có ý nghĩa nghiệp vụ hoàn toàn khác nhau.</p>
+<p>Trong LarkBatis, bạn phải viết rõ ràng: <code>count != 0</code>, <code>user != null</code>, hoặc <code>!list.isEmpty()</code>.</p>
 </div>
-<h3 id="quy-tac-xu-ly-null-co-inh">Quy tắc xử lý null cố định<a class="headerlink" href="#quy-tac-xu-ly-null-co-inh" title="Permanent link">&para;</a></h3>
-<p>Ngữ pháp của LarkBatis không tự động ép kiểu. Các quy tắc được xác định nhất quán:</p>
+<h3 id="bang-so-sanh-xu-ly-gia-tri-null">Bảng so sánh xử lý giá trị null<a class="headerlink" href="#bang-so-sanh-xu-ly-gia-tri-null" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2119,31 +2095,23 @@
 <tbody>
 <tr>
 <td><code>a == null</code> / <code>a != null</code></td>
-<td>Lan truyền null an toàn qua các thuộc tính con</td>
+<td>Lan truyền null an toàn</td>
 <td>Như nhau</td>
 </tr>
 <tr>
-<td><code>age &lt;= 18</code> khi <code>age</code> là null</td>
-<td><strong><code>false</code></strong> (bất kỳ toán hạng nào là null làm phép so sánh thành false)</td>
-<td><code>true</code> (null bị ép kiểu thành 0)</td>
-</tr>
-<tr>
-<td><code>a != b</code></td>
-<td>Tương đương <code>!(a == b)</code></td>
-<td>Như nhau</td>
-</tr>
-<tr>
-<td><code>user.isActive()</code> khi <code>user</code> là null</td>
+<td><code>age &lt;= 18</code> khi <code>age</code> là <code>null</code></td>
 <td><strong><code>false</code></strong></td>
-<td>Ném ngoại lệ</td>
+<td><code>true</code> (OGNL tự ép <code>null</code> thành 0)</td>
+</tr>
+<tr>
+<td><code>user.isActive()</code> khi <code>user</code> là <code>null</code></td>
+<td><strong><code>false</code></strong></td>
+<td>Ném ngoại lệ <code>NullPointerException</code></td>
 </tr>
 </tbody>
 </table>
-<p>Dòng thứ hai là điểm cần lưu ý nhất khi migration: phép so sánh <code>null &lt;= 18</code> âm thầm mang giá trị true trong MyBatis sẽ trở thành <strong>false</strong> trong LarkBatis. <a href="../../features/migration/">Trình quét mã cũ</a> sẽ tự động gắn cờ các biểu thức này.</p>
-<h2 id="sql-ong-va-statement-cache">SQL động và statement cache<a class="headerlink" href="#sql-ong-va-statement-cache" title="Permanent link">&para;</a></h2>
-<p>Statement có nội dung SQL phụ thuộc vào điều kiện runtime sẽ sinh ra nhiều chuỗi SQL khác nhau. Với <em>n</em> thẻ <code>&lt;if&gt;</code> độc lập, số biến thể tối đa là 2ⁿ chuỗi (đã biết trước lúc build). Những statement chứa <code>${}</code> hoặc <code>&lt;foreach&gt;</code> có số phần tử thay đổi sẽ được chèn thêm lệnh <code>LarkBatisSql.trackVariants</code>. Xem <a href="../raw-sql/#tracking-sql-variants">SQL thô</a>.</p>
-<h2 id="kiem-chung-oi-chieu-voi-mybatis">Kiểm chứng đối chiếu với MyBatis<a class="headerlink" href="#kiem-chung-oi-chieu-voi-mybatis" title="Permanent link">&para;</a></h2>
-<p>Repository lõi tích hợp sẵn harness kiểm thử vi sai: cùng một mapper được chạy qua cả hai luồng (thông dịch của MyBatis và code sinh sẵn của LarkBatis) trên cùng một <code>DataSource</code> ghi nhận dữ liệu, sau đó so sánh từng câu SQL và từng tham số được bind. Quá trình quét toàn bộ kho mapper XML mẫu của MyBatis đảm bảo độ bao phủ thực tế của ngữ pháp.</p>
+<h2 id="quan-ly-statement-cache-cho-dynamic-sql">Quản lý Statement Cache cho Dynamic SQL<a class="headerlink" href="#quan-ly-statement-cache-cho-dynamic-sql" title="Permanent link">&para;</a></h2>
+<p>Mỗi tổ hợp điều kiện tạo ra một chuỗi SQL riêng biệt. Với <em>n</em> thẻ <code>&lt;if&gt;</code> độc lập, số lượng biến thể tối đa là 2ⁿ chuỗi. LarkBatis tự động theo dõi số lượng biến thể qua <code>LarkBatisSql.trackVariants()</code> để ngăn chặn tràn bộ nhớ cache. Xem <a href="../raw-sql/#tracking-sql-variants">Raw SQL &amp; An toàn</a>.</p>
 
 
 

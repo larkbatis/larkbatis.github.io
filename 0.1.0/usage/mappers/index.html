@@ -875,10 +875,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#positional-or-name-based-reads" class="md-nav__link">
+  <a href="#positional-vs-name-based-reads" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Positional or name-based reads
+        Positional vs Name-Based Reads
       
     </span>
   </a>
@@ -1873,10 +1873,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#positional-or-name-based-reads" class="md-nav__link">
+  <a href="#positional-vs-name-based-reads" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Positional or name-based reads
+        Positional vs Name-Based Reads
       
     </span>
   </a>
@@ -1936,10 +1936,7 @@
 
 
 <h1 id="mapper-interfaces">Mapper Interfaces<a class="headerlink" href="#mapper-interfaces" title="Permanent link">&para;</a></h1>
-<p>A mapper is an ordinary Java interface. There is no base type, no marker on the methods
-beyond the statement annotation, and no runtime proxy. The build emits a
-<code>final class UserMapper$$Impl implements UserMapper</code> with a public constructor taking a
-<code>LarkBatisSession</code>.</p>
+<p>A mapper is just a plain Java interface. You don't need base interfaces, special marker annotations on methods beyond statement annotations, or runtime proxies. The compiler generates <code>final class UserMapper$$Impl implements UserMapper</code> with a public constructor accepting a <code>LarkBatisSession</code>.</p>
 <h2 id="statement-annotations">Statement annotations<a class="headerlink" href="#statement-annotations" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1967,8 +1964,7 @@ beyond the statement annotation, and no runtime proxy. The build emits a
 </tr>
 </tbody>
 </table>
-<p>Each takes <code>String[]</code>, so a long statement can be written as several lines that are
-joined with a single space:</p>
+<p>Each takes <code>String[]</code>, so long SQL statements can be split cleanly across multiple lines and are joined with a single space:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Select</span><span class="p">({</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="s">"SELECT id, name, email, created_at"</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="s">"FROM users"</span><span class="p">,</span>
@@ -1976,16 +1972,13 @@ joined with a single space:</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">})</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">User</span><span class="w"> </span><span class="nf">findByEmail</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">);</span>
 </span></code></pre></div>
-<p>An interface carrying at least one statement annotation is discovered on its own. Add
-<a href="../../features/annotations/#mapper"><code>@Mapper</code></a> only when the statements live in
-<a href="../xml-mappers/">XML</a>.</p>
+<p>Any interface containing statement annotations is discovered automatically. You only need <a href="../../features/annotations/#mapper"><code>@Mapper</code></a> if the interface statements live entirely in <a href="../xml-mappers/">mapper XML</a>.</p>
 <h2 id="parameters-and">Parameters and <code>#{}</code><a class="headerlink" href="#parameters-and" title="Permanent link">&para;</a></h2>
-<p><code>#{name}</code> becomes a <code>?</code> in the prepared statement and a <code>ps.setXxx</code> call at the matching
-position. What <code>name</code> resolves against depends on the method signature:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">One parameter</label><label for="__tabbed_1_2">Several parameters</label><label for="__tabbed_1_3">Property paths</label></div>
+<p><code>#{name}</code> becomes a <code>?</code> in the prepared statement and an indexed <code>ps.setXxx</code> call in generated code. How <code>name</code> is resolved depends on your method signature:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Single parameter</label><label for="__tabbed_1_2">Multiple parameters</label><label for="__tabbed_1_3">Property paths</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>The name is the parameter name, or a property path into it.</p>
+<p>The name matches the parameter name or a property path on the parameter object:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users WHERE id = #{id}"</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">User</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -1994,13 +1987,13 @@ position. What <code>name</code> resolves against depends on the method signatur
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>Every parameter needs a name the SQL can use: the declared name, or <code>@Param</code>.</p>
+<p>Parameters need names for SQL binding—either from compiled parameter names or <code>@Param</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users WHERE name LIKE #{pattern} AND id &gt; #{after}"</span><span class="p">)</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">page</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"pattern"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pattern</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"after"</span><span class="p">)</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">after</span><span class="p">);</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>Dotted paths walk getters, and are resolved and type-checked at build time.</p>
+<p>Dotted paths navigate getters and are strictly type-checked at build time:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id FROM users WHERE email = #{probe.email}"</span><span class="p">)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">byProbe</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"probe"</span><span class="p">)</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">probe</span><span class="p">);</span>
 </span></code></pre></div>
@@ -2008,21 +2001,16 @@ position. What <code>name</code> resolves against depends on the method signatur
 </div>
 </div>
 <div class="admonition warning">
-<p class="admonition-title">Name your parameters, or compile with <code>-parameters</code></p>
-<p>Gradle's incremental compilation can re-run the processor against <strong>class files</strong>,
-where parameter names survive only if the class was compiled with <code>-parameters</code>.
-Without either, <code>#{id}</code> has nothing to resolve against. See
-<a href="../troubleshooting/">Troubleshooting</a>.</p>
+<p class="admonition-title">Compile with <code>-parameters</code> or use <code>@Param</code></p>
+<p>Gradle incremental builds can pass compiled class files to the processor where parameter names are stripped unless compiled with <code>-parameters</code>. Without it, parameters appear as <code>arg0</code>, <code>arg1</code>, breaking <code>#{id}</code> resolution. See <a href="../troubleshooting/">Troubleshooting</a>.</p>
 </div>
-<p>A name that does not resolve is a <strong>compile error</strong> naming the method and the offending
-expression. There is no <code>Map</code> or <code>Object</code> parameter: there would be no type to resolve
-<code>#{}</code> against, and the whole point is that there always is one.</p>
+<p>Unresolvable parameter names trigger a <strong>compile error</strong> showing the method and invalid expression. Untyped <code>Map</code> or <code>Object</code> parameters are not supported because the compiler requires concrete types to generate parameter bindings.</p>
 <h2 id="return-types">Return types<a class="headerlink" href="#return-types" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Signature</th>
-<th>Generated body</th>
+<th>Generated method body</th>
 </tr>
 </thead>
 <tbody>
@@ -2036,11 +2024,11 @@ expression. There is no <code>Map</code> or <code>Object</code> parameter: there
 </tr>
 <tr>
 <td><code>Stream&lt;User&gt; streamAll()</code></td>
-<td>An open cursor; the caller closes it. See <a href="../streaming/">Streaming</a></td>
+<td>Returns cursor stream; caller closes it. See <a href="../streaming/">Streaming</a></td>
 </tr>
 <tr>
 <td><code>long countByName(String)</code></td>
-<td>Column 1, read as a <code>long</code></td>
+<td>Reads column 1 directly as <code>long</code></td>
 </tr>
 <tr>
 <td><code>int insert(User)</code></td>
@@ -2048,56 +2036,37 @@ expression. There is no <code>Map</code> or <code>Object</code> parameter: there
 </tr>
 <tr>
 <td><code>void delete(long)</code></td>
-<td><code>ps.executeUpdate()</code>, result discarded</td>
+<td><code>ps.executeUpdate()</code> (result discarded)</td>
 </tr>
 </tbody>
 </table>
-<p>Scalar results read column 1 directly, with no bean and no reader:</p>
+<p>Scalar queries read column 1 directly without allocating bean objects or row readers:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT COUNT(*) FROM users WHERE name LIKE #{pattern}"</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">countByName</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"pattern"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pattern</span><span class="p">);</span>
 </span></code></pre></div>
 <h2 id="result-classes">Result classes<a class="headerlink" href="#result-classes" title="Permanent link">&para;</a></h2>
-<p>A result class needs a no-arg constructor and setters, and nothing further: no
-annotations, no interface, no registration.</p>
+<p>A result class needs a no-arg constructor and standard getters/setters:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">User</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="c1">// getters and setters</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="c1">// standard getters and setters</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Columns find properties by <code>snake_case</code> → <code>camelCase</code>, <strong>applied at build time</strong>:
-<code>created_at</code> → <code>setCreatedAt</code>. It is on by default — MyBatis defaults it off — and
-<code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> carries that default across. The choice is
-baked into the generated reader; there is no runtime setting either way. See
-<a href="../../features/configuration/#column-naming">Configuration</a>.</p>
-<p>Where the convention is not enough, name the column on the property with
-<a href="../../features/annotations/#column"><code>@Column</code></a> on the field, the setter or the getter,
-alias it in the select list, or declare a <a href="../result-maps/"><code>&lt;resultMap&gt;</code></a>. See
-<a href="../types/#column-naming">Types and Handlers</a>.</p>
-<h3 id="positional-or-name-based-reads">Positional or name-based reads<a class="headerlink" href="#positional-or-name-based-reads" title="Permanent link">&para;</a></h3>
-<p>When the generator can parse the select list, column indexes are constants:</p>
+<p>Columns are mapped to properties using <code>snake_case</code> → <code>camelCase</code> <strong>at build time</strong>: <code>created_at</code> maps to <code>setCreatedAt</code>. This is enabled by default. To preserve legacy MyBatis behavior (where underscore mapping was off by default), pass <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code>. See <a href="../../features/configuration/#column-naming">Configuration</a>.</p>
+<p>To override mapping for specific columns, use <a href="../../features/annotations/#column"><code>@Column</code></a> on the field/getter/setter, alias the column in your SQL, or define a <a href="../result-maps/"><code>&lt;resultMap&gt;</code></a>. See <a href="../types/#column-naming">Types and Handlers</a>.</p>
+<h3 id="positional-vs-name-based-reads">Positional vs Name-Based Reads<a class="headerlink" href="#positional-vs-name-based-reads" title="Permanent link">&para;</a></h3>
+<p>When the generator can parse your select list, column indexes are hardcoded as constants:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">u</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 </span></code></pre></div>
-<p>When it cannot parse the list, that one statement falls back to a name-based reader that
-resolves indexes from <code>ResultSetMetaData</code> <strong>once, on the first row</strong>, and then reads
-positionally for the rest. Three things stop it parsing: <code>SELECT *</code>, a <code>${}</code> splice inside
-the select list, and an unaliased expression. The fallback is correct and measurably slower,
-and the build tells you which statement took it. See <a href="../../wiki/generated-code/#row-readers">Generated
-Code</a>.</p>
+<p>If the generator cannot parse the select list, that statement falls back to a name-based reader. It resolves column indexes from <code>ResultSetMetaData</code> <strong>once on the first row</strong> and reads by index for the rest. Three things trigger this fallback: <code>SELECT *</code>, a <code>${}</code> splice in the select list, or an unaliased expression. The fallback is fully correct but slightly slower, and javac outputs a build note when it happens. See <a href="../../wiki/generated-code/#row-readers">Generated Code</a>.</p>
 <div class="admonition note">
 <p class="admonition-title"><code>@LarkBatisRow</code></p>
-<p>A class that never appears as a statement's <code>resultType</code>, such as one used only by
-the <a href="../raw-sql/#the-escape-hatch">escape hatch</a>, has nothing to trigger a reader.
-Mark it <a href="../../features/annotations/#larkbatisrow"><code>@LarkBatisRow</code></a> and it gets one
-anyway. Its declaration order is the canonical column order, there being no select
-list to take an order from.</p>
+<p>If a class is never used as a statement's <code>resultType</code> (for example, ad-hoc queries run via the <a href="../raw-sql/#the-escape-hatch">escape hatch</a>), annotate it with <a href="../../features/annotations/#larkbatisrow"><code>@LarkBatisRow</code></a> to generate a row reader for it.</p>
 </div>
 <h2 id="default-methods">Default methods<a class="headerlink" href="#default-methods" title="Permanent link">&para;</a></h2>
-<p>A <code>default</code> method on a mapper interface is left alone: it is compiled into the
-interface like any other, and the generated implementation inherits it. This is where
-hand-assembled SQL lives:</p>
+<p><code>default</code> methods on mapper interfaces remain intact and are inherited by generated implementation classes. This is the recommended place for hand-assembled dynamic queries:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">recent</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span>
@@ -2107,19 +2076,13 @@ hand-assembled SQL lives:</p>
 </span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="n">UserRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Note what stays type-safe even here: the rows are read by the <strong>generated</strong> <code>UserRow</code>
-reader, so there is still no reflection and the result type is still checked by javac.
-See <a href="../raw-sql/">Raw SQL and SqlFragment</a>.</p>
+<p>Notice that row reading remains completely type-safe: rows are read by the generated <code>UserRow.READER</code> with zero reflection. See <a href="../raw-sql/">Raw SQL and SqlFragment</a>.</p>
 <h2 id="the-generated-registry">The generated registry<a class="headerlink" href="#the-generated-registry" title="Permanent link">&para;</a></h2>
-<p>Every mapper in the compilation appears in one <code>LarkBatisMappers</code> class:</p>
+<p>Every mapper in a compilation module is registered in a static <code>LarkBatisMappers</code> factory:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">UserMapper</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisMappers</span><span class="p">.</span><span class="na">userMapper</span><span class="p">(</span><span class="n">session</span><span class="p">);</span>
 </span></code></pre></div>
-<p><code>LarkBatisMappers</code> is a static factory over a closed set known at compile time. No
-<code>addMapper()</code> and no runtime registration, because there is nothing to register. Under
-Spring you never touch it: the generated <code>@Configuration</code> declares the same
-constructors as beans.</p>
-<p>By default the registry lands in the common package prefix of all mappers; override with
-<code>-Alarkbatis.registryPackage=com.example.app</code>.</p>
+<p><code>LarkBatisMappers</code> is a static factory over a fixed set of mappers known at compile time. In Spring applications, you don't need to call this directly because the generated <code>@Configuration</code> exposes each mapper as a Spring bean automatically.</p>
+<p>By default, the registry is generated in the common package prefix of all mappers. You can customize this with <code>-Alarkbatis.registryPackage=com.example.app</code>.</p>
 
 
 

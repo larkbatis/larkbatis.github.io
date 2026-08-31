@@ -1813,15 +1813,15 @@
 
 
 <h1 id="larkbatis">LarkBatis<a class="headerlink" href="#larkbatis" title="Permanent link">&para;</a></h1>
-<p><strong>Một MyBatis biên dịch sẵn.</strong> Câu SQL, vị trí tham số, lựa chọn type handler, ánh xạ cột sang setter, cây SQL động: mọi thứ suy ra được từ <em>shape</em> của mapper đều được bộ sinh code giải quyết xong ngay lúc build. Khi thực thi lúc runtime, ứng dụng chỉ chạy các class mapper Java thuần sinh sẵn cùng một tầng JDBC mỏng khoảng 1.500 dòng, không phụ thuộc thư viện ngoài, không reflection, không dynamic proxy, không OGNL.</p>
-<p>Bạn giữ nguyên mô hình lập trình quen thuộc của MyBatis: interface mapper, tham số <code>#{}</code> / <code>${}</code>, mapper XML, các thẻ <code>&lt;if&gt;</code>/<code>&lt;where&gt;</code>/<code>&lt;foreach&gt;</code>, <code>&lt;resultMap&gt;</code>. Thứ bị loại bỏ là tầng thông dịch nặng nề lúc runtime.</p>
+<p><strong>MyBatis được biên dịch sẵn tại thời điểm build.</strong> Câu lệnh SQL, thứ tự tham số, lựa chọn type handler, ánh xạ cột sang setter, cây SQL động: mọi thứ suy ra được từ cấu trúc (shape) của mapper đều được xử lý xong ngay lúc biên dịch (<code>javac</code>). Khi chạy ở runtime, ứng dụng chỉ thực thi các class Java thuần được sinh sẵn cùng tầng JDBC mỏng khoảng 1.500 dòng code—không phụ thuộc thư viện ngoài, không reflection, không dynamic proxy và không OGNL.</p>
+<p>Bạn giữ nguyên mô hình làm việc quen thuộc của MyBatis: mapper interface, tham số <code>#{}</code> / <code>${}</code>, mapper XML, các thẻ <code>&lt;if&gt;</code>/<code>&lt;where&gt;</code>/<code>&lt;foreach&gt;</code>, và <code>&lt;resultMap&gt;</code>. Thứ duy nhất được loại bỏ là tầng thông dịch nặng nề lúc runtime.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">UserMapper</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users WHERE id = #{id}"</span><span class="p">)</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Quá trình build sinh ra <code>UserMapper$$Impl</code>: mã nguồn hoàn toàn minh bạch, có thể đọc và đặt breakpoint debug trực tiếp trong IDE:</p>
+<p>Quá trình build sinh ra <code>UserMapper$$Impl</code>: mã nguồn rõ ràng, có thể đọc và đặt breakpoint debug trực tiếp trong IDE:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Override</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">conn</span><span class="p">();</span>
@@ -1841,84 +1841,84 @@
 <ul>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27zM5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83s-2.05.78-2.83 0m-5.66 7.07-1.41-1.41zM6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22zM2 22h1.41l4.77-4.76-1.42-1.41L2 20.59zm0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76z"/></svg></span> <strong><a href="getting-started/">Bắt đầu</a></strong></p>
-<p>Cài annotations, runtime và annotation processor, rồi viết mapper đầu tiên.</p>
+<p>Cài đặt annotations, runtime và annotation processor, rồi viết mapper đầu tiên.</p>
 </li>
 <li>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> <strong><a href="usage/">Sử dụng</a></strong></p>
-<p>Interface mapper, mapper XML, SQL động, <code>&lt;foreach&gt;</code>, result map, Generated Keys, stream, transaction.</p>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> <strong><a href="usage/">Hướng dẫn sử dụng</a></strong></p>
+<p>Mapper interface, mapper XML, dynamic SQL, <code>&lt;foreach&gt;</code>, result map, Generated Keys, stream và transaction.</p>
 </li>
 <li>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2v6h2v3H5c-1.11 0-2 .89-2 2v3H1v6h6v-6H5v-3h6v3H9v6h6v-6h-2v-3h6v3h-2v6h6v-6h-2v-3c0-1.11-.89-2-2-2h-6V8h2V2z"/></svg></span> <strong><a href="wiki/">Wiki</a></strong></p>
-<p>Kiến trúc hai pha hoạt động ra sao, code sinh ra trông thế nào, và lý do cho từng lằn ranh thiết kế.</p>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2v6h2v3H5c-1.11 0-2 .89-2 2v3H1v6h6v-6H5v-3h6v3H9v6h6v-6h-2v-3h6v3h-2v6h6v-6h-2v-3c0-1.11-.89-2-2-2h-6V8h2V2z"/></svg></span> <strong><a href="wiki/">Kiến trúc &amp; Thiết kế</a></strong></p>
+<p>Cách thức hoạt động của mô hình hai pha, giải thích mã nguồn sinh ra và các nguyên tắc thiết kế cốt lõi.</p>
 </li>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2h12a2 2 0 0 1 2 2zm-6 4v2H4a2 2 0 0 1-2-2V7h2v13zm-3-6 7-7-1.41-1.41L13 11.17 9.91 8.09 8.5 9.5z"/></svg></span> <strong><a href="features/">Tính năng</a></strong></p>
-<p>Bảng hỗ trợ chi tiết: LarkBatis làm được gì, thu hẹp phạm vi những gì, và chủ động loại bỏ những gì.</p>
+<p>Ma trận hỗ trợ chi tiết: những gì LarkBatis hỗ trợ, giới hạn hoặc chủ động loại bỏ.</p>
 </li>
 </ul>
 </div>
 <h2 id="ly-do-thiet-ke">Lý do thiết kế<a class="headerlink" href="#ly-do-thiet-ke" title="Permanent link">&para;</a></h2>
-<p>MyBatis resolve lời gọi mapper lúc runtime. Mỗi truy vấn phải đi qua một JDK dynamic proxy, một lần OGNL đánh giá từng <code>&lt;if test&gt;</code>, và một lần tra cứu <code>TypeHandler</code> cho mỗi tham số. Phần tốn kém nhất nằm ở khâu đọc dữ liệu: mỗi cột trên mỗi dòng đều gọi <code>setValue</code> qua reflection, kéo theo việc cấp phát <code>PropertyTokenizer</code> cùng mảng <code>Object[]</code> chỉ để thực hiện một thao tác gán trường (<code>putfield</code>).</p>
-<p>Không phần nào trong quy trình trên phụ thuộc vào giá trị dữ liệu lúc chạy. Chúng phụ thuộc vào <em>shape</em> của mapper — thứ vốn đã cố định ngay từ lúc lưu mã nguồn. LarkBatis resolve shape một lần duy nhất lúc build và phát ra trực tiếp các lời gọi JDBC.</p>
+<p>MyBatis thông dịch mapper lúc runtime. Mỗi truy vấn phải đi qua một JDK dynamic proxy, bộ phân tích OGNL đánh giá từng thẻ <code>&lt;if test&gt;</code>, và tra cứu <code>TypeHandler</code> cho mỗi tham số. Phần tốn tài nguyên nhất nằm ở khâu đọc dữ liệu: mỗi cột trên mỗi dòng đều gọi <code>setValue</code> qua reflection, kéo theo việc cấp phát <code>PropertyTokenizer</code> cùng mảng <code>Object[]</code> chỉ để thực hiện một lệnh gán trường dữ liệu (<code>putfield</code>).</p>
+<p>Các thông tin trên đều đã cố định ngay khi bạn lưu file mã nguồn. LarkBatis xử lý cấu trúc này một lần duy nhất lúc build và phát ra trực tiếp các lệnh gọi JDBC tối ưu.</p>
 <table>
 <thead>
 <tr>
-<th>Chỉ số</th>
+<th>Tiêu chí</th>
 <th>MyBatis</th>
 <th>LarkBatis</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Số dòng mã nguồn trên classpath lúc chạy</td>
+<td>Số dòng code trên runtime classpath</td>
 <td>~40.000 dòng</td>
 <td>~1.500 dòng</td>
 </tr>
 <tr>
-<td>Phụ thuộc thư viện lúc chạy</td>
+<td>Phụ thuộc thư viện runtime</td>
 <td>ognl, javassist</td>
 <td>Không có gì ngoài JDBC thuần</td>
 </tr>
 <tr>
-<td>Reflection trên đường dẫn truy vấn nóng</td>
+<td>Điểm gọi reflection trên luồng truy vấn</td>
 <td>4 nhóm điểm gọi</td>
-<td>Hoàn toàn không</td>
+<td>Không có</td>
 </tr>
 <tr>
 <td>Thao tác reflection trên mỗi dòng dữ liệu</td>
 <td>1 lần cho mỗi cột</td>
-<td>Hoàn toàn không</td>
+<td>Không có</td>
 </tr>
 <tr>
-<td>Metadata <code>native-image</code> viết tay</td>
+<td>Cấu hình <code>native-image</code> thủ công</td>
 <td>Bắt buộc</td>
 <td>Không cần<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td>Bắt lỗi sai kiểu tham số</td>
 <td>Lúc runtime</td>
-<td>Lúc biên dịch</td>
+<td>Ngay lúc biên dịch</td>
 </tr>
 <tr>
-<td>Rà soát điểm chèn SQL thô</td>
-<td>Đọc từng mapper</td>
-<td>Chỉ cần một lệnh <code>grep</code> tìm <code>unsafeRawSql</code></td>
+<td>Rà soát điểm chèn SQL động</td>
+<td>Đọc từng mapper XML</td>
+<td>Một lệnh <code>grep</code> tìm <code>unsafeRawSql</code></td>
 </tr>
 </tbody>
 </table>
-<p>Lợi ích hiệu năng là có thật và cần nêu rõ phạm vi áp dụng thực tế. Đo lường với MyBatis 3.5.19 trên JDK 21, truy vấn 10.000 dòng × 12 cột giảm từ <strong>3,38 ms và 10,2 MB cấp phát xuống còn 0,54 ms và 1,88 MB</strong>. Tính trên mỗi dòng: 338 ns và 1.018 B giảm còn 54 ns và 188 B. Thời gian khởi động nguội (cold startup) tới dòng đầu tiên giảm từ 61,8 ms xuống 6,3 ms.</p>
-<p>Nửa còn lại được đo lường qua kết nối mạng thực tế. Một truy vấn <code>findById</code> trả về 1 dòng mất <strong>94,2 µs trên MyBatis và 89,2 µs trên LarkBatis</strong>: mức chênh lệch khoảng 5% đo trên TCP loopback. Đối với database đặt ở máy chủ từ xa, khoảng cách thời gian này sẽ còn nhỏ hơn nữa. <strong>LarkBatis mang lại giá trị vượt trội cho các truy vấn báo cáo, xuất dữ liệu (export), xử lý batch và danh sách nhiều dòng. Đối với thao tác tra cứu một bản ghi đơn lẻ, hệ thống hầu như không tạo ra sự khác biệt về độ trễ.</strong> <a href="wiki/performance/">Hiệu năng</a> cung cấp đầy đủ số liệu và phương pháp đo kiểm chứng.</p>
+<p>Các đo lường thực tế với MyBatis 3.5.19 trên JDK 21: truy vấn 10.000 dòng × 12 cột giảm từ <strong>3,38 ms và 10,2 MB bộ nhớ xuống còn 0,54 ms và 1,88 MB</strong> (trên mỗi dòng: 338 ns / 1.018 B giảm còn 54 ns / 188 B). Thời gian khởi động nguội (cold startup) tới dòng kết quả đầu tiên giảm từ 61,8 ms xuống 6,3 ms.</p>
+<p>Khi chạy qua kết nối mạng, truy vấn <code>findById</code> trả về 1 dòng mất <strong>94,2 µs trên MyBatis và 89,2 µs trên LarkBatis</strong> (chênh lệch ~5% đo trên TCP loopback). <strong>LarkBatis mang lại lợi thế vượt trội cho các truy vấn báo cáo, xuất dữ liệu (export), xử lý batch và danh sách nhiều dòng. Đối với tra cứu một bản ghi đơn lẻ qua mạng, sự khác biệt về độ trễ là không đáng kể.</strong> Xem chi tiết tại trang <a href="wiki/performance/">Hiệu năng &amp; Benchmark</a>.</p>
 <h2 id="ba-iem-anh-oi-ky-thuat">Ba điểm đánh đổi kỹ thuật<a class="headerlink" href="#ba-iem-anh-oi-ky-thuat" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Sửa SQL đồng nghĩa với việc phải build lại.</strong> Nếu quy trình làm việc cũ là sửa mapper XML rồi restart ngay, đây là một thay đổi thực tế. Đổi lại, javac sẽ bắt toàn bộ lỗi sai kiểu dữ liệu vốn trước đây chỉ lộ ra lúc runtime.</li>
-<li><strong>Thời gian xử lý chuyển dịch sang pha build (shift-left).</strong> Quá trình sinh code đòi hỏi chi phí biên dịch: lập trình viên trả chi phí này một lần lúc build thay vì để hệ thống production gánh chịu trên từng truy vấn.</li>
-<li><strong>Cần cập nhật các vị trí gọi <code>${}</code>.</strong> Tham số kiểu <code>String</code> gắn trực tiếp vào <code>${}</code> là lỗi biên dịch. Giá trị này bắt buộc phải dùng <a href="usage/raw-sql/"><code>SqlFragment</code></a>, kiểu dữ liệu tập giá trị đóng, hoặc <code>@OrderBy(allowed = {...})</code>.</li>
+<li><strong>Sửa SQL yêu cầu phải biên dịch lại.</strong> Thay vì sửa XML rồi restart ứng dụng, bạn cần build lại project. Đổi lại, <code>javac</code> sẽ bắt toàn bộ lỗi cú pháp và sai kiểu dữ liệu ngay lập tức.</li>
+<li><strong>Chuyển dịch thời gian xử lý sang pha build (shift-left).</strong> Chi phí phân tích và sinh code được thực hiện một lần khi build máy developer hoặc CI, giải phóng hoàn toàn gánh nặng cho production.</li>
+<li><strong>Tuân thủ kỷ luật an toàn cho <code>${}</code>.</strong> Gán trực tiếp biến <code>String</code> vào <code>${}</code> sẽ báo lỗi biên dịch. Bạn cần dùng <a href="usage/raw-sql/"><code>SqlFragment</code></a>, kiểu dữ liệu tập đóng (enum/số), hoặc <code>@OrderBy(allowed = {...})</code> để ngăn ngừa SQL injection.</li>
 </ol>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>Đây là hệ quả cấu trúc: runtime không dùng reflection nên không cần metadata. Tuy nhiên bản build native image thực tế vẫn chưa được thực hiện; xem <a href="wiki/performance/#native-image">Hiệu năng</a>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>Đây là hệ quả cấu trúc: runtime không dùng reflection nên không cần cấu hình metadata. Tuy nhiên bản build native image thực tế vẫn đang trong quá trình kiểm thử; xem <a href="wiki/performance/#native-image">Hiệu năng</a>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

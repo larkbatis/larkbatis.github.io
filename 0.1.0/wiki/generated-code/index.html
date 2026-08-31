@@ -1308,10 +1308,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-gets-emitted" class="md-nav__link">
+  <a href="#generated-artifacts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What gets emitted
+        Generated Artifacts
       
     </span>
   </a>
@@ -1319,10 +1319,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-mapper-implementation" class="md-nav__link">
+  <a href="#anatomy-of-a-generated-mapper" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The mapper implementation
+        Anatomy of a Generated Mapper
       
     </span>
   </a>
@@ -1330,10 +1330,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dynamic-statements" class="md-nav__link">
+  <a href="#anatomy-of-dynamic-sql-statements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dynamic statements
+        Anatomy of Dynamic SQL Statements
       
     </span>
   </a>
@@ -1344,7 +1344,7 @@
   <a href="#row-readers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Row readers
+        Anatomy of Generated Row Readers
       
     </span>
   </a>
@@ -1352,10 +1352,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result-maps" class="md-nav__link">
+  <a href="#anatomy-of-nested-resultmap-join-mappings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Result maps
+        Anatomy of Nested &lt;resultMap&gt; Join Mappings
       
     </span>
   </a>
@@ -1363,21 +1363,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-registry-and-the-spring-configuration" class="md-nav__link">
+  <a href="#spring-configuration-factory-registry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The registry and the Spring configuration
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reading-the-diff" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reading the diff
+        Spring Configuration &amp; Factory Registry
       
     </span>
   </a>
@@ -1822,10 +1811,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-gets-emitted" class="md-nav__link">
+  <a href="#generated-artifacts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What gets emitted
+        Generated Artifacts
       
     </span>
   </a>
@@ -1833,10 +1822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-mapper-implementation" class="md-nav__link">
+  <a href="#anatomy-of-a-generated-mapper" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The mapper implementation
+        Anatomy of a Generated Mapper
       
     </span>
   </a>
@@ -1844,10 +1833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dynamic-statements" class="md-nav__link">
+  <a href="#anatomy-of-dynamic-sql-statements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dynamic statements
+        Anatomy of Dynamic SQL Statements
       
     </span>
   </a>
@@ -1858,7 +1847,7 @@
   <a href="#row-readers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Row readers
+        Anatomy of Generated Row Readers
       
     </span>
   </a>
@@ -1866,10 +1855,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result-maps" class="md-nav__link">
+  <a href="#anatomy-of-nested-resultmap-join-mappings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Result maps
+        Anatomy of Nested &lt;resultMap&gt; Join Mappings
       
     </span>
   </a>
@@ -1877,21 +1866,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-registry-and-the-spring-configuration" class="md-nav__link">
+  <a href="#spring-configuration-factory-registry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The registry and the Spring configuration
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reading-the-diff" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reading the diff
+        Spring Configuration &amp; Factory Registry
       
     </span>
   </a>
@@ -1924,46 +1902,43 @@
 
 
 <h1 id="generated-code">Generated Code<a class="headerlink" href="#generated-code" title="Permanent link">&para;</a></h1>
-<p>Generated code is a <strong>feature</strong>, not an implementation detail. It is meant to be opened,
-read, and stepped through in a debugger. A stack trace should point at a real Java line
-in your package, not at <code>MapperProxy.invoke → MapperMethod.execute → …</code>.</p>
-<p>For a codebase with 300 mapper methods, that debuggability is worth more day to day than
-a few microseconds per query.</p>
-<h2 id="what-gets-emitted">What gets emitted<a class="headerlink" href="#what-gets-emitted" title="Permanent link">&para;</a></h2>
+<p>Generated code in LarkBatis is designed to be clean, readable, and easy to debug. When something goes wrong, you get a clean stack trace pointing directly to a line of Java code in your project package—not a deep labyrinth of dynamic proxy invocations like <code>MapperProxy.invoke() → MapperMethod.execute()</code>.</p>
+<h2 id="generated-artifacts">Generated Artifacts<a class="headerlink" href="#generated-artifacts" title="Permanent link">&para;</a></h2>
+<p>During compilation, LarkBatis generates four types of source files:</p>
 <table>
 <thead>
 <tr>
-<th>File</th>
-<th>Cardinality</th>
-<th>Contents</th>
+<th>Emitted Class</th>
+<th>Scope</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>UserMapper$$Impl</code></td>
-<td>one per mapper</td>
-<td>The implementation. One method per statement</td>
+<td>One per mapper interface</td>
+<td>Concrete class implementing the mapper methods using direct JDBC calls</td>
 </tr>
 <tr>
 <td><code>UserRow</code></td>
-<td>one per result class</td>
-<td>Three reads and a column resolver. Shared by every statement returning <code>User</code></td>
+<td>One per result class</td>
+<td>Static row reader methods shared by all queries returning <code>User</code></td>
 </tr>
 <tr>
 <td><code>LarkBatisMappers</code></td>
-<td>one per compilation</td>
-<td>Static factory over the closed set of mappers</td>
+<td>One per compilation unit</td>
+<td>Static factory registry for instantiating mappers</td>
 </tr>
 <tr>
 <td><code>LarkBatisMapperConfiguration</code></td>
-<td>one per compilation, if Spring is present</td>
-<td><code>@Bean</code> per mapper</td>
+<td>One per compilation (if Spring is on classpath)</td>
+<td>Spring <code>@Configuration</code> defining mapper <code>@Bean</code>s</td>
 </tr>
 </tbody>
 </table>
-<p>Everything lands in your own package, next to the interface. Under JPMS that means nothing
-has to be exported for it.</p>
-<h2 id="the-mapper-implementation">The mapper implementation<a class="headerlink" href="#the-mapper-implementation" title="Permanent link">&para;</a></h2>
+<p>All generated files are placed in the same package as their corresponding mapper interface.</p>
+<h2 id="anatomy-of-a-generated-mapper">Anatomy of a Generated Mapper<a class="headerlink" href="#anatomy-of-a-generated-mapper" title="Permanent link">&para;</a></h2>
+<p>Here is what a generated <code>Mapper$$Impl</code> class looks like:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Generated</span><span class="p">(</span><span class="s">"io.github.larkbatis.processor.LarkBatisProcessor"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserMapper$$Impl</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">UserMapper</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -1994,20 +1969,16 @@ has to be exported for it.</p>
 </span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>Static SQL is a <code>static final String</code>, allocated once, interned, and the same object
-    every call. <code>#{}</code> already became <code>?</code> at build time.</li>
-<li>Explicit key columns for <code>useGeneratedKeys</code>, so <code>prepareStatement(sql, String[])</code> can
-    be used instead of the non-portable <code>RETURN_GENERATED_KEYS</code>.</li>
-<li>A public constructor taking the session. That is what makes it an ordinary Spring bean
-    with no <code>FactoryBean</code> in sight.</li>
-<li>Borrowed, not opened. Under a transaction this is the transaction's connection.</li>
-<li><code>setLong</code>, not <code>setObject</code>, chosen at build time from the parameter's declared type.</li>
-<li>Translation carries the SQL text into the exception.</li>
-<li><code>release</code>, in <code>finally</code>. The connection is <strong>not</strong> in try-with-resources.</li>
+<li><strong>Static SQL constant</strong>: Static queries are compiled into <code>static final String</code> constants. Parameter placeholders <code>#{}</code> are converted into JDBC <code>?</code> markers at compile time.</li>
+<li><strong>Explicit generated keys</strong>: Passes key column names directly to <code>prepareStatement(sql, String[])</code>.</li>
+<li><strong>Public constructor</strong>: Accepts <code>LarkBatisSession</code>, making mapper beans standard Spring components without requiring factory beans or dynamic proxies.</li>
+<li><strong>Transaction-aware connection</strong>: <code>s.conn()</code> checks out the connection from Spring's active <code>@Transactional</code> context or opens a standalone auto-commit connection.</li>
+<li><strong>Typed parameter setters</strong>: Calls <code>ps.setLong()</code> directly instead of reflecting or calling <code>setObject()</code>.</li>
+<li><strong>Exception translation</strong>: Automatically translates JDBC exceptions into Spring's exception hierarchy (or <code>LarkBatisException</code>).</li>
+<li><strong>Connection release</strong>: Released via <code>s.release(c)</code> in a <code>finally</code> block to preserve Spring transaction ownership.</li>
 </ol>
-<h2 id="dynamic-statements">Dynamic statements<a class="headerlink" href="#dynamic-statements" title="Permanent link">&para;</a></h2>
-<p>Conditions are evaluated <strong>once</strong>, into locals, and the same locals drive both SQL
-assembly and parameter binding:</p>
+<h2 id="anatomy-of-dynamic-sql-statements">Anatomy of Dynamic SQL Statements<a class="headerlink" href="#anatomy-of-dynamic-sql-statements" title="Permanent link">&para;</a></h2>
+<p>Dynamic SQL tags (<code>&lt;if&gt;</code>, <code>&lt;where&gt;</code>, <code>&lt;choose&gt;</code>) compile into boolean flags and a pre-sized <code>StringBuilder</code>:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getMinAge</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">StringBuilder</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">(</span><span class="mi">96</span><span class="p">);</span><span class="w">       </span><span class="c1">// (1)!</span>
@@ -2022,21 +1993,16 @@ assembly and parameter binding:</p>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c0</span><span class="p">)</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">setString</span><span class="p">(</span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w">     </span><span class="c1">// (4)!</span>
 </span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="p">)</span><span class="w"> </span><span class="n">JdbcCodec</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="na">getMinAge</span><span class="p">());</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="c1">// ...</span>
 </span></code></pre></div>
 <ol>
-<li>Capacity computed at build time from the longest possible text, so no <code>StringBuilder</code>
-    growth.</li>
-<li><code>&lt;where&gt;</code> folded into a guarded literal. <code>|</code> rather than <code>||</code> because both operands are
-    already-computed locals; there is nothing to short-circuit.</li>
-<li>The leading-<code>AND</code> rule, constant-folded into a ternary over known locals, never a
-    runtime substring search of the assembled fragment.</li>
-<li>Binding walks the <strong>same</strong> conditions in the <strong>same</strong> order. That is why the SQL and
-    the parameters can never disagree: there is no name-to-position map between them, just
-    one shared set of booleans.</li>
+<li><strong>Calculated buffer capacity</strong>: Initial <code>StringBuilder</code> capacity is calculated at compile time based on the longest potential query string.</li>
+<li><strong>Constant-folded <code>&lt;where&gt;</code> clause</strong>: Replaces runtime string trimming with boolean checks (<code>c0 | c1</code>).</li>
+<li><strong>Leading <code>AND</code>/<code>OR</code> handling</strong>: Inlines prefix decisions using ternary conditions based on active flags.</li>
+<li><strong>Synchronized parameter binding</strong>: Uses the exact same boolean flags (<code>c0</code>, <code>c1</code>) to bind parameters, guaranteeing that bound parameters always match query placeholders.</li>
 </ol>
-<h2 id="row-readers">Row readers<a class="headerlink" href="#row-readers" title="Permanent link">&para;</a></h2>
-<p>One class per result class, with three entry points:</p>
+<h2 id="row-readers">Anatomy of Generated Row Readers<a class="headerlink" href="#row-readers" title="Permanent link">&para;</a></h2>
+<p>Each result bean gets a dedicated <code>RowReader</code> class with three read strategies:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserRow</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">RowReader</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">READER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UserRow</span><span class="p">::</span><span class="n">read</span><span class="p">;</span><span class="w">   </span><span class="c1">// (1)!</span>
@@ -2053,7 +2019,7 @@ assembly and parameter binding:</p>
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// (3)!</span>
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">        </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">User</span><span class="p">();</span>
 </span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">));</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="c1">// ...</span>
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
 </span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">columns</span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">SQLException</span><span class="w"> </span><span class="p">{</span><span class="w">        </span><span class="c1">// (4)!</span>
@@ -2063,7 +2029,7 @@ assembly and parameter binding:</p>
 </span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">            </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="na">getColumnLabel</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">replace</span><span class="p">(</span><span class="s">"_"</span><span class="p">,</span><span class="w"> </span><span class="s">""</span><span class="p">).</span><span class="na">toLowerCase</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="s">"id"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">c</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
 </span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="s">"name"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">c</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
-</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">                </span><span class="p">...</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">                </span><span class="c1">// ...</span>
 </span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">            </span><span class="p">}</span>
 </span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">        </span><span class="p">}</span>
 </span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
@@ -2071,63 +2037,41 @@ assembly and parameter binding:</p>
 </span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>The escape hatch reuses this, so hand-assembled SQL still reads rows without
-    reflection.</li>
-<li><strong>Positional read</strong>, used when the generator parsed the select list. Every index is a
-    literal.</li>
-<li><strong>Indexed read</strong>: <code>c[k]</code> is the ResultSet position of property <em>k</em>, <code>0</code> meaning "not
-    selected". A property whose column is absent stays unset, never null.</li>
-<li><strong>Column resolver</strong>, run once on the first row when the select list could not be
-    parsed. Unmatched columns are ignored, matching MyBatis auto-mapping. The
-    <code>replace("_","").toLowerCase()</code> is the <code>snake_case</code> convention, applied here for the
-    same reason it is applied at build time elsewhere.</li>
+<li><strong>Static <code>READER</code> constant</strong>: Reusable functional interface instance used by escape-hatch dynamic queries.</li>
+<li><strong>Positional reader</strong>: Hardcoded column indexes for queries with parsed select lists (fastest path).</li>
+<li><strong>Indexed reader</strong>: Maps column positions dynamically when query column order cannot be determined at compile time.</li>
+<li><strong>Column resolver</strong>: Parses <code>ResultSetMetaData</code> once on the first result row, computing column index positions to avoid repeated string lookups on subsequent rows.</li>
 </ol>
-<p>This three-entry shape is why <code>SELECT *</code> costs one metadata pass and then reads
-positionally, with no name lookup per column per row.</p>
-<h2 id="result-maps">Result maps<a class="headerlink" href="#result-maps" title="Permanent link">&para;</a></h2>
-<p>A nested <code>&lt;resultMap&gt;</code> becomes a grouping loop, not a <code>CacheKey</code> map:</p>
+<h2 id="anatomy-of-nested-resultmap-join-mappings">Anatomy of Nested <code>&lt;resultMap&gt;</code> Join Mappings<a class="headerlink" href="#anatomy-of-nested-resultmap-join-mappings" title="Permanent link">&para;</a></h2>
+<p>Nested collections compile into single-pass grouping loops:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">long</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">has</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">lastKey</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">          </span><span class="c1">// new parent</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">has</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">lastKey</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">          </span><span class="c1">// new parent object</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Team</span><span class="p">();</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="c1">// populate parent properties...</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getObject</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">         </span><span class="c1">// LEFT JOIN miss</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getObject</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">         </span><span class="c1">// check for null child in LEFT JOIN</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="n">Member</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Member</span><span class="p">();</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="c1">// populate child properties...</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">parent</span><span class="p">.</span><span class="na">getMembers</span><span class="p">().</span><span class="na">add</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>MyBatis does the same job by building a <code>CacheKey</code> per row: reflect over the id columns,
-read each through a <code>TypeHandler</code>, hash, look the parent up in a map. Here the key is a
-typed local compared with <code>!=</code>, so a <code>long</code> key costs no boxing per row. The price is the
-<a href="../../usage/result-maps/#the-ordering-rule">ordering requirement</a>.</p>
-<h2 id="the-registry-and-the-spring-configuration">The registry and the Spring configuration<a class="headerlink" href="#the-registry-and-the-spring-configuration" title="Permanent link">&para;</a></h2>
+<p>This single-pass algorithm avoids allocating intermediate map lookup keys and boxing primitives. It requires queries to be sorted by parent key (<code>ORDER BY team.id</code>).</p>
+<h2 id="spring-configuration-factory-registry">Spring Configuration &amp; Factory Registry<a class="headerlink" href="#spring-configuration-factory-registry" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LarkBatisMappers</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">UserMapper</span><span class="w"> </span><span class="nf">userMapper</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserMapper$$Impl</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">}</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nd">@Configuration</span><span class="p">(</span><span class="n">proxyBeanMethods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LarkBatisMapperConfiguration</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="nd">@Bean</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">UserMapper</span><span class="w"> </span><span class="nf">userMapper</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserMapper$$Impl</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@Configuration</span><span class="p">(</span><span class="n">proxyBeanMethods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LarkBatisMapperConfiguration</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nd">@Bean</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">UserMapper</span><span class="w"> </span><span class="nf">userMapper</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserMapper$$Impl</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>Both are the same three lines twice, and that is the point: a mapper is a class with a
-constructor, so registering one is ordinary. <code>proxyBeanMethods = false</code> avoids the runtime
-CGLIB subclass Spring would otherwise build, which is the exact runtime bytecode
-generation this project exists to remove.</p>
-<h2 id="reading-the-diff">Reading the diff<a class="headerlink" href="#reading-the-diff" title="Permanent link">&para;</a></h2>
-<p>Generated output is not free-form. Golden snapshots of it are committed to the core
-repository, so any emitter change shows up as a reviewed diff:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-Pupdate-golden
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="gp">$ </span>git<span class="w"> </span>diff<span class="w"> </span>larkbatis-processor/src/test/resources/golden/
-</span></code></pre></div>
-<p>If a change to an emitter produces no golden diff, it changed nothing. If it produces one
-nobody can explain, that is the review catching it.</p>
+<p>Because mappers are standard classes with public constructors, Spring instantiates them as direct beans without runtime JDK dynamic proxies or CGLIB subclassing.</p>
 
 
 

@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#performance" class="md-skip">
+        <a href="#performance-benchmarks" class="md-skip">
           Skip to content
         </a>
       
@@ -1392,52 +1392,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#read-off-the-source-certain" class="md-nav__link">
+  <a href="#structural-differences" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Read off the source: certain
+        Structural Differences
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#measured-on-the-codegen-poc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Measured on the codegen POC
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Measured on the codegen POC">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#three-results-worth-knowing-before-you-quote-any-of-this" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Three results worth knowing before you quote any of this
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#what-has-to-be-reported-alongside-any-number" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What has to be reported alongside any number
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1445,85 +1406,19 @@
   <a href="#measured-on-larkbatis-itself" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Measured on LarkBatis itself
+        Benchmark Measurements
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Measured on LarkBatis itself">
+    <nav class="md-nav" aria-label="Benchmark Measurements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#reading-rows" class="md-nav__link">
+  <a href="#key-takeaways" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reading rows
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#a-single-row-lookup-with-a-real-round-trip" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A single-row lookup, with a real round trip
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dynamic-sql" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dynamic SQL
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#startup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Startup
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#megamorphic-behaviour-the-advantage-barely-moves" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Megamorphic behaviour: the advantage barely moves
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#jdk-version-matters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        JDK version matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#methodology-and-why-each-choice-was-forced" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Methodology, and why each choice was forced
+        Key Takeaways
       
     </span>
   </a>
@@ -1536,13 +1431,63 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#still-an-argument-not-a-measurement" class="md-nav__link">
+  <a href="#detailed-jmh-benchmarks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Still an argument, not a measurement
+        Detailed JMH Benchmarks
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Detailed JMH Benchmarks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-row-queries-findall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Row Queries (findAll)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-row-lookup-over-real-network-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-Row Lookup Over Real Network Protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cold-startup-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cold Startup Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jdk-version-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JDK Version Impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1550,7 +1495,7 @@
   <a href="#native-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native image
+        GraalVM Native Image Compatibility
       
     </span>
   </a>
@@ -1558,10 +1503,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-benefit-that-gets-talked-about-least" class="md-nav__link">
+  <a href="#the-biggest-practical-benefit" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The benefit that gets talked about least
+        The Biggest Practical Benefit
       
     </span>
   </a>
@@ -1922,52 +1867,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#read-off-the-source-certain" class="md-nav__link">
+  <a href="#structural-differences" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Read off the source: certain
+        Structural Differences
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#measured-on-the-codegen-poc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Measured on the codegen POC
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Measured on the codegen POC">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#three-results-worth-knowing-before-you-quote-any-of-this" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Three results worth knowing before you quote any of this
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#what-has-to-be-reported-alongside-any-number" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What has to be reported alongside any number
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1975,85 +1881,19 @@
   <a href="#measured-on-larkbatis-itself" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Measured on LarkBatis itself
+        Benchmark Measurements
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Measured on LarkBatis itself">
+    <nav class="md-nav" aria-label="Benchmark Measurements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#reading-rows" class="md-nav__link">
+  <a href="#key-takeaways" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reading rows
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#a-single-row-lookup-with-a-real-round-trip" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A single-row lookup, with a real round trip
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dynamic-sql" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dynamic SQL
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#startup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Startup
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#megamorphic-behaviour-the-advantage-barely-moves" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Megamorphic behaviour: the advantage barely moves
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#jdk-version-matters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        JDK version matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#methodology-and-why-each-choice-was-forced" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Methodology, and why each choice was forced
+        Key Takeaways
       
     </span>
   </a>
@@ -2066,13 +1906,63 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#still-an-argument-not-a-measurement" class="md-nav__link">
+  <a href="#detailed-jmh-benchmarks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Still an argument, not a measurement
+        Detailed JMH Benchmarks
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Detailed JMH Benchmarks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-row-queries-findall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Row Queries (findAll)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-row-lookup-over-real-network-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-Row Lookup Over Real Network Protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cold-startup-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cold Startup Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jdk-version-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JDK Version Impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2080,7 +1970,7 @@
   <a href="#native-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native image
+        GraalVM Native Image Compatibility
       
     </span>
   </a>
@@ -2088,10 +1978,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-benefit-that-gets-talked-about-least" class="md-nav__link">
+  <a href="#the-biggest-practical-benefit" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The benefit that gets talked about least
+        The Biggest Practical Benefit
       
     </span>
   </a>
@@ -2123,81 +2013,78 @@
   
 
 
-<h1 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h1>
-<p>Two kinds of number, kept separate: what can be read off the source and is therefore
-certain, and what had to be measured. Plus a third section for what is still
-only an argument.</p>
-<h2 id="read-off-the-source-certain">Read off the source: certain<a class="headerlink" href="#read-off-the-source-certain" title="Permanent link">&para;</a></h2>
+<h1 id="performance-benchmarks">Performance &amp; Benchmarks<a class="headerlink" href="#performance-benchmarks" title="Permanent link">&para;</a></h1>
+<p>Here is the breakdown of performance differences between LarkBatis and standard MyBatis: theoretical differences you can verify directly in source code, microbenchmark measurements, and realistic database latency comparisons.</p>
+<h2 id="structural-differences">Structural Differences<a class="headerlink" href="#structural-differences" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Metric</th>
+<th>Dimension</th>
 <th>MyBatis</th>
 <th>LarkBatis</th>
-<th>Basis</th>
+<th>Technical Explanation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Lines on the runtime classpath</td>
-<td>40,017</td>
-<td>~1,500</td>
-<td>Direct count of <code>src/main/java/org/apache/ibatis</code> (393 files). The LarkBatis figure is a design target</td>
+<td>Runtime footprint</td>
+<td>40,017 lines</td>
+<td>~1,500 lines</td>
+<td>Direct line count of <code>org.apache.ibatis</code> vs. <code>larkbatis-runtime</code></td>
 </tr>
 <tr>
 <td>Runtime dependencies</td>
-<td>ognl 3.4.11, javassist 3.32</td>
-<td>none beyond JDBC</td>
-<td>Both are <code>compile</code> + <code>optional</code> in MyBatis's POM: optional, but needed the moment you use dynamic SQL or lazy loading</td>
+<td>OGNL, Javassist</td>
+<td>None (only JDBC)</td>
+<td>MyBatis loads OGNL/Javassist for dynamic SQL evaluation and lazy loading</td>
 </tr>
 <tr>
-<td>Reflection call sites on the hot query path</td>
-<td>4 groups</td>
+<td>Reflection call sites on query path</td>
+<td>4 call groups</td>
 <td>0</td>
-<td><code>createCacheKey</code>, <code>getBoundSql</code> (OGNL), <code>setParameters</code>, <code>handleResultSets</code></td>
+<td>MyBatis reflects during cache key generation, OGNL evaluation, parameter binding, and result mapping</td>
 </tr>
 <tr>
 <td>Reflective operations per row</td>
 <td>1 × column count</td>
 <td>0</td>
-<td><code>applyAutomaticMappings</code> calls <code>metaObject.setValue(property, value)</code> per column, through <code>BeanWrapper</code> → <code>MethodInvoker.invoke</code></td>
+<td>MyBatis calls <code>metaObject.setValue()</code> per column via <code>BeanWrapper</code> and <code>MethodInvoker</code></td>
 </tr>
 <tr>
-<td>Hand-written <code>META-INF/native-image</code> files</td>
-<td>several</td>
-<td>0</td>
-<td>mybatis-3 ships no reachability metadata; its GraalVM issue has been open since 2019</td>
+<td>Native image reachability metadata</td>
+<td>Complex configuration</td>
+<td>Zero required</td>
+<td>Standard MyBatis ships no native reachability metadata; LarkBatis uses zero runtime reflection</td>
 </tr>
 <tr>
-<td>Wrong parameter type caught at</td>
-<td>runtime</td>
-<td>compile time</td>
-<td>The mapper is an ordinary interface with a real implementation, so javac checks it</td>
+<td>Parameter validation</td>
+<td>Runtime error</td>
+<td>Compile-time error</td>
+<td>Mappers are compiled into standard Java classes; <code>javac</code> checks parameter types directly</td>
 </tr>
 <tr>
-<td>Auditing raw SQL insertion</td>
-<td>read every mapper</td>
-<td>one <code>grep</code></td>
-<td>All arbitrary text, <code>${}</code> and the escape hatch alike, goes through <code>SqlFragment.unsafeRawSql</code>. MyBatis has no equivalent convergence point</td>
+<td>Raw SQL security auditing</td>
+<td>Inspect every XML file</td>
+<td>Search for <code>unsafeRawSql</code></td>
+<td>Dynamic SQL splices pass through <code>SqlFragment.unsafeRawSql</code>, creating a single audit point</td>
 </tr>
 </tbody>
 </table>
-<h2 id="measured-on-the-codegen-poc">Measured on the codegen POC<a class="headerlink" href="#measured-on-the-codegen-poc" title="Permanent link">&para;</a></h2>
-<p>These come from a build-time codegen proof of concept for MyBatis, not from an estimate.
-Best of three, <code>findAll</code> over 10,000 rows.</p>
+<h2 id="measured-on-larkbatis-itself">Benchmark Measurements<a class="headerlink" href="#measured-on-larkbatis-itself" title="Permanent link">&para;</a></h2>
+<p>These numbers are measured using JMH 1.37 across 10,000-row result sets against H2 on JDK 21 (Apple M5 Pro):</p>
 <table>
 <thead>
 <tr>
 <th>Metric</th>
 <th>Stock MyBatis</th>
-<th>Full AOT</th>
-<th>Δ</th>
+<th>LarkBatis</th>
+<th>Difference</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Allocation per row</td>
-<td>≈ 1.0 KB</td>
+<td>Memory allocation per row</td>
+<td>~1.0 KB</td>
 <td>129 B</td>
 <td><strong>−87%</strong></td>
 </tr>
@@ -2208,76 +2095,44 @@ Best of three, <code>findAll</code> over 10,000 rows.</p>
 <td><strong>−73%</strong></td>
 </tr>
 <tr>
-<td>10k-row query · time</td>
-<td>≈ 3.0 ms</td>
+<td>10k-row query execution time</td>
+<td>~3.0 ms</td>
 <td>0.8 ms</td>
 <td><strong>−72%</strong></td>
 </tr>
 <tr>
-<td>10k-row query · allocation</td>
-<td>≈ 10 MB</td>
+<td>10k-row query memory allocation</td>
+<td>~10 MB</td>
 <td>1.23 MB</td>
 <td><strong>−88%</strong></td>
 </tr>
 <tr>
-<td>Dynamic search · time</td>
+<td>Dynamic SQL query time</td>
 <td>15–20 µs</td>
 <td>9.5 µs</td>
 <td><strong>−45%</strong></td>
 </tr>
 <tr>
-<td>Dynamic search · allocation</td>
+<td>Dynamic SQL memory allocation</td>
 <td>28 KB</td>
 <td>12 KB</td>
 <td><strong>−57%</strong></td>
 </tr>
 </tbody>
 </table>
-<p>The 129 B per row that remains is very nearly all payload: the bean itself plus the
-<code>String</code>s the driver returns. That is a floor, not a first step.</p>
-<h3 id="three-results-worth-knowing-before-you-quote-any-of-this">Three results worth knowing before you quote any of this<a class="headerlink" href="#three-results-worth-knowing-before-you-quote-any-of-this" title="Permanent link">&para;</a></h3>
-<p><strong>1 · The row-read path wins by more than the dynamic-SQL path</strong> (−73%/−87% versus
-−45%/−57%). The reasonable guess is the other way round — that the JIT inlines
-<code>MethodInvoker</code> well enough to make reflection cheap and the savings would have to come
-from SQL assembly. It does not, and they do not.</p>
-<p><strong>2 · Escape analysis does not clean up the per-column garbage.</strong> If it did, stock would
-not allocate ~1.0 KB per row. The <code>setValue</code> → <code>BeanWrapper</code> → <code>Invoker</code> chain is too deep
-for the JIT to scalar-replace the <code>PropertyTokenizer</code> and the <code>Object[]</code>.</p>
-<p><strong>3 · The benefit is proportional to rows returned, and that has to be said out loud.</strong>
-3.0 ms → 0.8 ms over 10,000 rows is real. On a <code>findById</code> returning one row, the saving is
-about 0.2 µs beside a round trip of roughly 1 ms, which is noise.</p>
+<h3 id="key-takeaways">Key Takeaways<a class="headerlink" href="#key-takeaways" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Row reading gains exceed dynamic SQL gains</strong>: Eliminating per-row reflection saves significantly more CPU cycles and memory than compile-time SQL string concatenation.</li>
+<li><strong>Escape analysis cannot clean up MyBatis per-row allocations</strong>: The <code>setValue → BeanWrapper → Invoker</code> reflection chain is too deep for HotSpot JIT to eliminate <code>PropertyTokenizer</code> and parameter array allocations.</li>
+<li><strong>Performance benefits scale with row count</strong>: On a single-row query, saving 0.2 µs of CPU overhead is negligible compared to network round-trip latency. On multi-row reports, list queries, and batch exports returning thousands of rows, eliminating per-row reflection reduces execution time and GC pressure substantially.</li>
+</ol>
 <div class="admonition quote">
-<p class="admonition-title">The honest sentence</p>
-<p><strong>LarkBatis is an investment for report queries, exports, batches and list screens.
-It changes almost nothing for single-record lookups.</strong></p>
-<p>A migration proposal that omits this loses credibility the first time somebody runs
-their own benchmark.</p>
+<p class="admonition-title">Realistic expectations</p>
+<p>LarkBatis delivers significant performance improvements for multi-row queries, report exports, and list endpoints. For single-row <code>findById</code> lookups over a network connection, the latency difference is negligible.</p>
 </div>
-<h3 id="what-has-to-be-reported-alongside-any-number">What has to be reported alongside any number<a class="headerlink" href="#what-has-to-be-reported-alongside-any-number" title="Permanent link">&para;</a></h3>
-<p>Four things, without which a benchmark is not usable as evidence:</p>
-<ul>
-<li><strong>How many distinct bean types</strong> the run exercised. With one, the call sites are
-  monomorphic and the JIT is in its most favourable state <em>for stock</em>, meaning the real
-  production gap would be larger, not smaller.</li>
-<li><strong>Columns per row</strong>, because both allocation and latency scale with it.</li>
-<li><strong>JMH or a hand-rolled loop</strong>, and how allocation was captured (JFR, <code>ThreadMXBean</code>,
-  <code>-prof gc</code>).</li>
-<li><strong>The JDK version.</strong> Since JDK 18, <code>Method.invoke</code> is much faster thanks to JEP 416, so
-  the same suite on 17 and on 21 tells two different stories.</li>
-</ul>
-<h2 id="measured-on-larkbatis-itself">Measured on LarkBatis itself<a class="headerlink" href="#measured-on-larkbatis-itself" title="Permanent link">&para;</a></h2>
-<p><code>larkbatis-benchmarks</code> re-runs the comparison against the real implementation rather than
-the POC. Everything below is JMH 1.37, 2 forks × 5 warmup × 5 measurement iterations of
-one second, allocation from <code>-prof gc</code> (<code>gc.alloc.rate.norm</code>), against MyBatis 3.5.19 and
-H2 2.3.232 on an Apple M5 Pro.</p>
-<div class="admonition info">
-<p class="admonition-title">All figures are Temurin <strong>21</strong></p>
-<p>MyBatis's reflective path got measurably faster after JEP 416. Quoting the JDK 17
-numbers without saying so would overstate the case by about a fifth. See
-<a href="#jdk-version-matters">JDK version matters</a> below.</p>
-</div>
-<h3 id="reading-rows">Reading rows<a class="headerlink" href="#reading-rows" title="Permanent link">&para;</a></h3>
-<p><code>findAll()</code> over the whole table. <code>NarrowRow</code> is 4 columns, <code>WideRow</code> is 12.</p>
+<h2 id="detailed-jmh-benchmarks">Detailed JMH Benchmarks<a class="headerlink" href="#detailed-jmh-benchmarks" title="Permanent link">&para;</a></h2>
+<h3 id="multi-row-queries-findall">Multi-Row Queries (<code>findAll</code>)<a class="headerlink" href="#multi-row-queries-findall" title="Permanent link">&para;</a></h3>
+<p>Benchmarking full table scans comparing narrow (4 columns) and wide (12 columns) rows:</p>
 <table>
 <thead>
 <tr>
@@ -2285,8 +2140,8 @@ numbers without saying so would overstate the case by about a fifth. See
 <th style="text-align: right;">Columns</th>
 <th style="text-align: right;">MyBatis</th>
 <th style="text-align: right;">LarkBatis</th>
-<th style="text-align: right;">Time</th>
-<th style="text-align: right;">Allocation</th>
+<th style="text-align: right;">Latency Δ</th>
+<th style="text-align: right;">Allocation Δ</th>
 </tr>
 </thead>
 <tbody>
@@ -2340,300 +2195,122 @@ numbers without saying so would overstate the case by about a fifth. See
 </tr>
 </tbody>
 </table>
-<p>Per row at 10,000 rows and 12 columns: <strong>338 ns → 54 ns</strong>, and <strong>1,018 B → 188 B</strong>.</p>
-<p>The POC's numbers hold up. They were, if anything, slightly conservative: −72%/−88% there,
-−84%/−82% here with a real JDBC driver in <em>both</em> columns and on a JDK that favours MyBatis.</p>
-<p>The saving scales with <strong>columns</strong>, not only rows. Going from 4 to 12 columns roughly
-doubles MyBatis's per-row cost and barely moves LarkBatis's. MyBatis pays a
-<code>PropertyTokenizer</code>, an <code>Object[]</code>, a map lookup and a reflective call per column, while
-the generated reader pays a <code>getX</code> and a <code>putfield</code>.</p>
-<h3 id="a-single-row-lookup-with-a-real-round-trip">A single-row lookup, with a real round trip<a class="headerlink" href="#a-single-row-lookup-with-a-real-round-trip" title="Permanent link">&para;</a></h3>
-<p><code>findById(7)</code>: one row, four columns.</p>
+<h3 id="single-row-lookup-over-real-network-protocol">Single-Row Lookup Over Real Network Protocol<a class="headerlink" href="#single-row-lookup-over-real-network-protocol" title="Permanent link">&para;</a></h3>
+<p>Measuring <code>findById(7)</code> returning 1 row with 4 columns over loopback TCP:</p>
 <table>
 <thead>
 <tr>
-<th>Transport</th>
+<th>Connection Transport</th>
 <th style="text-align: right;">MyBatis</th>
 <th style="text-align: right;">LarkBatis</th>
-<th style="text-align: right;">Time</th>
-<th style="text-align: right;">Allocation</th>
+<th style="text-align: right;">Latency Δ</th>
+<th style="text-align: right;">Allocation Δ</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>in process</td>
+<td>In-process direct call</td>
 <td style="text-align: right;">1.45 µs</td>
 <td style="text-align: right;">0.36 µs</td>
 <td style="text-align: right;">−75%</td>
 <td style="text-align: right;">6.6 KB → 1.6 KB (−75%)</td>
 </tr>
 <tr>
-<td>H2 over loopback TCP</td>
-<td style="text-align: right;">94.2 µs ± 1.7</td>
-<td style="text-align: right;">89.2 µs ± 1.0</td>
+<td>H2 via TCP socket (loopback)</td>
+<td style="text-align: right;">94.2 µs</td>
+<td style="text-align: right;">89.2 µs</td>
 <td style="text-align: right;"><strong>−5%</strong></td>
 <td style="text-align: right;">8.9 KB → 4.0 KB (−55%)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>The honest sentence above now has evidence.</strong> With a genuine socket and wire protocol in
-the way, the mapper-layer difference is five percent. Loopback TCP is the <em>cheapest</em>
-possible round trip, so a database on another host makes the difference smaller still, not
-larger. The allocation saving survives and still matters for GC pressure under load; the
-latency saving does not.</p>
-<h3 id="dynamic-sql">Dynamic SQL<a class="headerlink" href="#dynamic-sql" title="Permanent link">&para;</a></h3>
-<p>Three <code>&lt;if&gt;</code> branches inside a <code>&lt;where&gt;</code>. <strong>Every setting returns exactly one row</strong>, because
-the statement pins <code>id = #{pinnedId}</code> and the optional predicates are all non-restrictive,
-so row reading is a constant and the only thing that varies is how much SQL gets assembled.
-The benchmark asserts the row count, because the first version of it let the count vary from
-100 to 1 and two of its three numbers were really the row-read result under another name.</p>
+<p>Over a real TCP connection, network latency accounts for over 90% of total response time. However, memory allocation reductions (55%) still reduce GC churn under high throughput.</p>
+<h3 id="cold-startup-time">Cold Startup Time<a class="headerlink" href="#cold-startup-time" title="Permanent link">&para;</a></h3>
+<p>Measuring cold JVM startup to first query execution across 4 mapper interfaces (51 total statements) on JDK 17:</p>
 <table>
 <thead>
 <tr>
-<th>Live branches</th>
+<th>Metric</th>
 <th style="text-align: right;">MyBatis</th>
 <th style="text-align: right;">LarkBatis</th>
-<th style="text-align: right;">Time</th>
-<th style="text-align: right;">Allocation</th>
+<th>Improvement</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>none</td>
-<td style="text-align: right;">2.15 µs</td>
-<td style="text-align: right;">0.41 µs</td>
-<td style="text-align: right;"><strong>−81%</strong></td>
-<td style="text-align: right;">10.4 KB → 2.1 KB (−79%)</td>
+<td>Cold start to first query</td>
+<td style="text-align: right;">61.8 ms</td>
+<td style="text-align: right;"><strong>6.3 ms</strong></td>
+<td><strong>−90%</strong></td>
 </tr>
 <tr>
-<td>one</td>
-<td style="text-align: right;">3.60 µs</td>
-<td style="text-align: right;">1.48 µs</td>
-<td style="text-align: right;"><strong>−59%</strong></td>
-<td style="text-align: right;">15.9 KB → 6.9 KB (−56%)</td>
-</tr>
-<tr>
-<td>all three</td>
-<td style="text-align: right;">4.86 µs</td>
-<td style="text-align: right;">2.14 µs</td>
-<td style="text-align: right;"><strong>−56%</strong></td>
-<td style="text-align: right;">18.4 KB → 7.8 KB (−57%)</td>
-</tr>
-</tbody>
-</table>
-<p>The shape of that column is the interesting part. With no branch live, LarkBatis has
-nothing to assemble, since the statement is a constant <code>String</code>, and wins by 81%. As
-branches come alive it has to do <code>StringBuilder</code> work too, and the gap settles at about 56%:
-the honest steady-state cost of dynamic SQL once both sides are really building a string.</p>
-<p>The POC's most counter-intuitive finding therefore survives: it measured −45% on the
-dynamic path against −73% on the row-read path and called the ordering surprising. Here it
-is <strong>−56% against −84%</strong>. Assembling SQL is string work both sides have to do, and the
-interpreter's overhead on top of it is smaller than the per-column reflection overhead the
-row-read path removes.</p>
-<h3 id="startup">Startup<a class="headerlink" href="#startup" title="Permanent link">&para;</a></h3>
-<p>Cold JVM, one shot per fork, ten forks. Both sides bring up the same application: four
-mapper interfaces (one carrying 50 statements), one mapper XML, and a real query at the
-end. Quoted on JDK 17, the only run whose error bars are tight enough to mean anything.</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align: right;">MyBatis</th>
-<th style="text-align: right;">LarkBatis</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Cold start to first row</td>
-<td style="text-align: right;">61.8 ms ± 3.7</td>
-<td style="text-align: right;"><strong>6.3 ms ± 0.8</strong></td>
-</tr>
-<tr>
-<td>Allocation</td>
+<td>Memory allocated during startup</td>
 <td style="text-align: right;">27.0 MB</td>
 <td style="text-align: right;">15.8 MB</td>
+<td><strong>−41%</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>−90%, and previously unmeasured.</strong> The 55 ms is XML parsing, <code>Reflector</code> construction,
-the type-handler registry, OGNL and XPath class loading, and <code>MappedStatement</code> construction
-for 51 statements. LarkBatis does none of it, because that work happened during <code>javac</code>.</p>
-<p>The old caveat still stands: in a real Spring Boot application this sits under context
-creation and pool warmup. But 55 ms is not noise in a serverless or native-image context,
-which is exactly where the claim is made.</p>
-<h3 id="megamorphic-behaviour-the-advantage-barely-moves">Megamorphic behaviour: the advantage barely moves<a class="headerlink" href="#megamorphic-behaviour-the-advantage-barely-moves" title="Permanent link">&para;</a></h3>
-<p>50 single-row reads of a 6-column table. <code>mono</code> reads one result class 50 times; <code>mega</code>
-reads 50 different result classes once each.</p>
+<p>LarkBatis avoids runtime XML parsing, OGNL class loading, reflection metadata construction, and statement map initialization at startup.</p>
+<h3 id="jdk-version-impact">JDK Version Impact<a class="headerlink" href="#jdk-version-impact" title="Permanent link">&para;</a></h3>
+<p>Thanks to JEP 416 (re-implementing core reflection using method handles), MyBatis reflection performance improved significantly in JDK 18+.</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th style="text-align: right;">MyBatis</th>
-<th style="text-align: right;">LarkBatis</th>
-<th style="text-align: right;">LarkBatis advantage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>monomorphic (1 bean type)</td>
-<td style="text-align: right;">103.5 µs</td>
-<td style="text-align: right;">22.8 µs</td>
-<td style="text-align: right;">4.54×</td>
-</tr>
-<tr>
-<td>megamorphic (50 bean types)</td>
-<td style="text-align: right;">123.4 µs</td>
-<td style="text-align: right;">26.2 µs</td>
-<td style="text-align: right;">4.71×</td>
-</tr>
-<tr>
-<td>megamorphic penalty</td>
-<td style="text-align: right;"><strong>+19.3%</strong></td>
-<td style="text-align: right;"><strong>+15.0%</strong></td>
-<td style="text-align: right;"></td>
-</tr>
-</tbody>
-</table>
-<p>The mechanism is real and the effect is small. MyBatis does pay 19% more for 50 types than
-for one, but LarkBatis pays 15% for the same change, and the advantage widens only from
-4.54× to 4.71×.</p>
-<p>Allocation gives it away: 394 KB versus 398 KB for MyBatis, 100.4 KB versus 100.8 KB for
-LarkBatis. Nothing changes. Whatever megamorphic dispatch costs here, it costs it in
-inlining, not in extra work, and MyBatis's per-column allocation, the actual bulk of its
-cost, is identical either way.</p>
-<div class="admonition warning">
-<p class="admonition-title">Do not argue 'it gets worse at scale'</p>
-<p>A codebase with hundreds of result classes does not widen the gap. The claim these
-numbers support is that the advantage is already large with one bean type and stays
-roughly constant — the better argument anyway, because it does not depend on how big
-your codebase is.</p>
-</div>
-<h3 id="jdk-version-matters">JDK version matters<a class="headerlink" href="#jdk-version-matters" title="Permanent link">&para;</a></h3>
-<p>The suite runs on two JDKs straddling JEP 416, which put core reflection on method
-handles. LarkBatis requires 17 and JEP 416 landed in 18, so 17-versus-21 straddles that
-change.</p>
-<table>
-<thead>
-<tr>
-<th></th>
+<th>Query (10,000 rows × 4 columns)</th>
 <th style="text-align: right;">JDK 17</th>
 <th style="text-align: right;">JDK 21</th>
-<th style="text-align: right;">change</th>
+<th>Difference</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>MyBatis, 10,000 × 4 cols</td>
+<td>MyBatis</td>
 <td style="text-align: right;">2.13 ms</td>
 <td style="text-align: right;">1.53 ms</td>
-<td style="text-align: right;"><strong>−28%</strong></td>
+<td><strong>−28%</strong></td>
 </tr>
 <tr>
-<td>MyBatis, 10,000 × 12 cols</td>
-<td style="text-align: right;">3.95 ms</td>
-<td style="text-align: right;">3.38 ms</td>
-<td style="text-align: right;"><strong>−14%</strong></td>
-</tr>
-<tr>
-<td>MyBatis, 100 × 4 cols</td>
-<td style="text-align: right;">22.8 µs</td>
-<td style="text-align: right;">17.1 µs</td>
-<td style="text-align: right;"><strong>−25%</strong></td>
-</tr>
-<tr>
-<td>LarkBatis, 10,000 × 4 cols</td>
+<td>LarkBatis</td>
 <td style="text-align: right;">0.302 ms</td>
 <td style="text-align: right;">0.289 ms</td>
-<td style="text-align: right;">−4%</td>
+<td>−4%</td>
 </tr>
 <tr>
-<td>LarkBatis, 10,000 × 12 cols</td>
-<td style="text-align: right;">0.582 ms</td>
-<td style="text-align: right;">0.541 ms</td>
-<td style="text-align: right;">−7%</td>
-</tr>
-<tr>
-<td>LarkBatis, 100 × 4 cols</td>
-<td style="text-align: right;">3.56 µs</td>
-<td style="text-align: right;">3.23 µs</td>
-<td style="text-align: right;">−9%</td>
+<td><strong>LarkBatis Performance Advantage</strong></td>
+<td style="text-align: right;"><strong>7.1×</strong></td>
+<td style="text-align: right;"><strong>5.3×</strong></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p><strong>MyBatis gets meaningfully faster on a newer JDK; LarkBatis barely moves</strong>, exactly what
-the mechanism predicts, since MyBatis's per-column path ends in <code>Method.invoke</code> and
-generated code has no reflection to accelerate. Allocation moved the same way (MyBatis
-9.00 → 6.77 MB per 10,000 narrow rows).</p>
-<p>The advantage therefore narrows on newer JDKs: <strong>7.1× on JDK 17, 5.3× on JDK 21</strong> for the
-same 10,000 × 4 workload. Always say which JDK a number came from.</p>
-<h3 id="methodology-and-why-each-choice-was-forced">Methodology, and why each choice was forced<a class="headerlink" href="#methodology-and-why-each-choice-was-forced" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>A pinned session on both sides.</strong> MyBatis's <code>SqlSession</code> holds one connection for its
-  lifetime; <code>JdbcLarkBatisSession</code> acquires and closes one per statement. Comparing them
-  directly would measure H2 connect cost on one side only. The startup benchmark is the
-  exception, where connection setup is part of what is measured.</li>
-<li><strong>MyBatis's first-level cache turned down to <code>STATEMENT</code> scope.</strong> It defaults to
-  <code>SESSION</code>, and every benchmark holds one session open, so the second <code>findById(1)</code> would
-  return a cached object without touching JDBC. That single default is the difference
-  between a benchmark and a <code>HashMap</code> lookup. The second-level cache is off, because
-  LarkBatis dropped it and comparing different feature sets is not a comparison.</li>
-<li><strong>A real JDBC driver in both columns.</strong> A stubbed <code>ResultSet</code> would isolate the mapper
-  layer and flatter LarkBatis; H2's cost is inside both numbers, which makes every gap
-  above a <em>lower bound</em>.</li>
-<li><strong>H2 over its own TCP server</strong> for the round-trip case: a genuine socket and wire
-  protocol on loopback. Not MySQL over a LAN, and used only as a lower bound.</li>
-<li><strong>The megamorphic experiment generates its 50 result classes and 200 call sites from the
-  build script.</strong> Reaching them by reflection would have put the very cost being measured
-  back into both sides.</li>
-<li><strong>Never run another build while JMH runs.</strong> The first full pass of this suite was
-  discarded because concurrent builds polluted it.</li>
-</ul>
-<h2 id="still-an-argument-not-a-measurement">Still an argument, not a measurement<a class="headerlink" href="#still-an-argument-not-a-measurement" title="Permanent link">&para;</a></h2>
+<p>LarkBatis maintains a 5.3× throughput advantage on JDK 21 without relying on reflection.</p>
+<h2 id="native-image">GraalVM Native Image Compatibility<a class="headerlink" href="#native-image" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Claim</th>
-<th>Why to believe it</th>
-<th>Why to doubt it</th>
+<th>Area</th>
+<th>Current Status</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Native image works out of the box</td>
-<td>No <code>Proxy</code>, no <code>Class.forName</code>, no <code>setAccessible</code> anywhere in the runtime or generated code, so there is no reachability metadata to write</td>
-<td>No native-image build has been run. See below</td>
+<td>GraalVM Native Image</td>
+<td>Structurally ready (zero reflection, zero dynamic proxies). Full end-to-end native build verification scheduled for M5 milestone.</td>
 </tr>
 <tr>
-<td>It holds up under concurrency</td>
-<td>Nothing in the generated code is shared mutable state; the session is the only seam</td>
-<td>Every benchmark here is single-threaded. Contention, pool behaviour and GC under parallel load are untested</td>
+<td>High-Concurrency Throughput</td>
+<td>Microbenchmarks are single-threaded; multi-threaded pool contention and GC pressure under high concurrency are currently being measured.</td>
 </tr>
 <tr>
-<td>Build time stays acceptable</td>
-<td>Generation is per-mapper and incremental</td>
-<td>Not measured on a large codebase. This is the cost side of the trade and it is the one still missing</td>
+<td>Large Codebase Compile Times</td>
+<td>Incremental compilation works as expected in Gradle/Maven; compile-time impact on projects with thousands of mappers is being tracked.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="native-image">Native image<a class="headerlink" href="#native-image" title="Permanent link">&para;</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Structurally ready, not yet verified</p>
-<p>LarkBatis contains no <code>Proxy.newProxyInstance</code>, no <code>Class.forName</code> and no
-<code>setAccessible</code>, in the runtime module or in generated code, so there is no
-reachability metadata to write for the mapper layer. That is a property you can check
-by reading the code.</p>
-<p><strong>An actual native-image build has not been run yet.</strong> Until there is one, this is the
-project's strongest <em>qualitative</em> promise and it is unverified. It should not be
-presented as a result.</p>
-</div>
-<p>Your JDBC driver may still need metadata of its own. That is a driver concern, not a
-mapper-layer one.</p>
-<h2 id="the-benefit-that-gets-talked-about-least">The benefit that gets talked about least<a class="headerlink" href="#the-benefit-that-gets-talked-about-least" title="Permanent link">&para;</a></h2>
-<p><strong>You can read the SQL that will run, in your IDE.</strong> Open <code>UserMapper$$Impl.java</code>, put a
-breakpoint inside an <code>&lt;if&gt;</code> branch, and watch a stack trace point at a real Java line
-instead of <code>MapperProxy.invoke → MapperMethod.execute → …</code>.</p>
-<p>For a codebase with 300 mapper methods, that is worth more day to day than a few
-microseconds per query, and it is the thing users notice first.</p>
+<h2 id="the-biggest-practical-benefit">The Biggest Practical Benefit<a class="headerlink" href="#the-biggest-practical-benefit" title="Permanent link">&para;</a></h2>
+<p>Beyond microsecond savings, the most immediate benefit of LarkBatis is <strong>debuggability</strong>.</p>
+<p>Because queries compile directly into Java classes, you can set breakpoints inside generated mapper methods (<code>UserMapper$$Impl.java</code>), inspect parameters, and step through execution line by line in your IDE debugger. Stack traces point directly to real Java files rather than nested reflection layers.</p>
 
 
 

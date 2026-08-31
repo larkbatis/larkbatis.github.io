@@ -858,10 +858,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-mapper-is-needed-here" class="md-nav__link">
+  <a href="#why-mapper-is-required-here" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why @Mapper is needed here
+        Why @Mapper is required here
       
     </span>
   </a>
@@ -869,10 +869,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statement-resolution-is-per-method" class="md-nav__link">
+  <a href="#statement-resolution-per-method" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement resolution is per method
+        Statement resolution per method
       
     </span>
   </a>
@@ -880,10 +880,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-the-xml-is-found" class="md-nav__link">
+  <a href="#locating-xml-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where the XML is found
+        Locating XML files
       
     </span>
   </a>
@@ -891,10 +891,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-elements" class="md-nav__link">
+  <a href="#supported-xml-elements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported elements
+        Supported XML elements
       
     </span>
   </a>
@@ -902,10 +902,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sql-and-include" class="md-nav__link">
+  <a href="#reusable-sql-with-sql-and-include" class="md-nav__link">
     <span class="md-ellipsis">
       
-        &lt;sql&gt; and &lt;include&gt;
+        Reusable SQL with &lt;sql&gt; and &lt;include&gt;
       
     </span>
   </a>
@@ -913,10 +913,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#whitespace" class="md-nav__link">
+  <a href="#whitespace-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Whitespace
+        Whitespace handling
       
     </span>
   </a>
@@ -924,10 +924,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#annotations-that-still-apply" class="md-nav__link">
+  <a href="#method-annotations-with-xml-statements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Annotations that still apply
+        Method annotations with XML statements
       
     </span>
   </a>
@@ -1822,10 +1822,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-mapper-is-needed-here" class="md-nav__link">
+  <a href="#why-mapper-is-required-here" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why @Mapper is needed here
+        Why @Mapper is required here
       
     </span>
   </a>
@@ -1833,10 +1833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statement-resolution-is-per-method" class="md-nav__link">
+  <a href="#statement-resolution-per-method" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement resolution is per method
+        Statement resolution per method
       
     </span>
   </a>
@@ -1844,10 +1844,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-the-xml-is-found" class="md-nav__link">
+  <a href="#locating-xml-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where the XML is found
+        Locating XML files
       
     </span>
   </a>
@@ -1855,10 +1855,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-elements" class="md-nav__link">
+  <a href="#supported-xml-elements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported elements
+        Supported XML elements
       
     </span>
   </a>
@@ -1866,10 +1866,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sql-and-include" class="md-nav__link">
+  <a href="#reusable-sql-with-sql-and-include" class="md-nav__link">
     <span class="md-ellipsis">
       
-        &lt;sql&gt; and &lt;include&gt;
+        Reusable SQL with &lt;sql&gt; and &lt;include&gt;
       
     </span>
   </a>
@@ -1877,10 +1877,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#whitespace" class="md-nav__link">
+  <a href="#whitespace-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Whitespace
+        Whitespace handling
       
     </span>
   </a>
@@ -1888,10 +1888,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#annotations-that-still-apply" class="md-nav__link">
+  <a href="#method-annotations-with-xml-statements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Annotations that still apply
+        Method annotations with XML statements
       
     </span>
   </a>
@@ -1924,8 +1924,7 @@
 
 
 <h1 id="mapper-xml">Mapper XML<a class="headerlink" href="#mapper-xml" title="Permanent link">&para;</a></h1>
-<p>An interface annotated <code>@Mapper</code> takes each method's SQL from the mapper XML statement
-with the same id. The namespace is the interface's fully-qualified name.</p>
+<p>An interface annotated with <code>@Mapper</code> pairs each method with the mapper XML statement having the matching <code>id</code>. The XML <code>namespace</code> must match the fully-qualified name of the interface.</p>
 <div class="language-java highlight"><span class="filename">UserSearchMapper.java</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.app</span><span class="p">;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">io.github.larkbatis.annotations.Mapper</span><span class="p">;</span>
@@ -1964,35 +1963,24 @@ with the same id. The namespace is the interface's fully-qualified name.</p>
 </span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>
 </span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="nt">&lt;/mapper&gt;</span>
 </span></code></pre></div>
-<p>The DTD reference is kept so existing files parse unchanged and editors keep completing.
-The build neither fetches it nor validates against it.</p>
-<h2 id="why-mapper-is-needed-here">Why <code>@Mapper</code> is needed here<a class="headerlink" href="#why-mapper-is-needed-here" title="Permanent link">&para;</a></h2>
-<p>Purely annotation-based mappers do not need the marker: the processor finds them because
-their methods carry <code>@Select</code> and friends. An XML-only interface has no annotation
-anywhere, so without <code>@Mapper</code> it would never reach a processing round at all. That is
-the marker's whole job.</p>
-<h2 id="statement-resolution-is-per-method">Statement resolution is per method<a class="headerlink" href="#statement-resolution-is-per-method" title="Permanent link">&para;</a></h2>
-<p>Each abstract method takes its SQL from <strong>either</strong> its annotation <strong>or</strong> the XML.
-Having both, or having neither, is a compile error naming the method. So a mapper can mix
-freely:</p>
+<p>The DTD declaration is preserved so existing XML files parse without edits and IDE autocomplete keeps working. The build does not make network calls to fetch or validate the DTD.</p>
+<h2 id="why-mapper-is-required-here">Why <code>@Mapper</code> is required here<a class="headerlink" href="#why-mapper-is-required-here" title="Permanent link">&para;</a></h2>
+<p>Purely annotation-based mappers don't need <code>@Mapper</code>: javac discovers them because their methods carry <code>@Select</code>, <code>@Insert</code>, etc. However, an XML-only interface has no annotations at all, so without <code>@Mapper</code>, javac wouldn't pass it to the annotation processor. That is the annotation's only purpose.</p>
+<h2 id="statement-resolution-per-method">Statement resolution per method<a class="headerlink" href="#statement-resolution-per-method" title="Permanent link">&para;</a></h2>
+<p>Each method must have its SQL defined in <strong>either</strong> an annotation <strong>or</strong> XML. Having both or neither is a compile error. You can freely mix annotations and XML within the same interface:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Mapper</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">UserMapper</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users WHERE id = #{id}"</span><span class="p">)</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">          </span><span class="c1">// from the annotation</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">          </span><span class="c1">// from annotation</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="n">UserSearch</span><span class="w"> </span><span class="n">q</span><span class="p">);</span><span class="w"> </span><span class="c1">// from UserMapper.xml</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="where-the-xml-is-found">Where the XML is found<a class="headerlink" href="#where-the-xml-is-found" title="Permanent link">&para;</a></h2>
-<p>The processor scans the directories given by <code>-Alarkbatis.mapperDir</code>. The
-<a href="../../getting-started/build-plugins/">build plugins</a> pass it for you, defaulting to
-<code>src/main/resources</code>, and register the files as compile inputs so an XML edit
-regenerates.</p>
-<p>Only files whose <strong>root element is <code>&lt;mapper&gt;</code></strong> are read, so Spring configuration,
-logback settings and anything else in the same tree is ignored. A mapper XML whose
-<code>namespace</code> names an interface in another module is skipped with a build warning.</p>
-<h2 id="supported-elements">Supported elements<a class="headerlink" href="#supported-elements" title="Permanent link">&para;</a></h2>
+<h2 id="locating-xml-files">Locating XML files<a class="headerlink" href="#locating-xml-files" title="Permanent link">&para;</a></h2>
+<p>The processor scans directories configured via <code>-Alarkbatis.mapperDir</code>. The <a href="../../getting-started/build-plugins/">build plugins</a> configure this for you (defaulting to <code>src/main/resources</code>) and track XML files as compilation inputs.</p>
+<p>The processor only parses XML files whose <strong>root tag is <code>&lt;mapper&gt;</code></strong>, automatically skipping Spring configs, logback files, or other resources. If an XML file has a <code>namespace</code> matching an interface in a different module, it is skipped with a build warning.</p>
+<h2 id="supported-xml-elements">Supported XML elements<a class="headerlink" href="#supported-xml-elements" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2003,39 +1991,37 @@ logback settings and anything else in the same tree is ignored. A mapper XML who
 <tbody>
 <tr>
 <td><code>&lt;select&gt;</code> <code>&lt;insert&gt;</code> <code>&lt;update&gt;</code> <code>&lt;delete&gt;</code></td>
-<td>Full</td>
+<td>Full support</td>
 </tr>
 <tr>
 <td><code>&lt;sql&gt;</code> / <code>&lt;include&gt;</code></td>
-<td>Static <code>refid</code> only, inlined at build time</td>
+<td>Static <code>refid</code> only (inlined at compile time)</td>
 </tr>
 <tr>
 <td><code>&lt;if&gt;</code> <code>&lt;choose&gt;</code>/<code>&lt;when&gt;</code>/<code>&lt;otherwise&gt;</code></td>
-<td>Full, with the <a href="../dynamic-sql/#the-test-grammar">narrow test grammar</a></td>
+<td>Full support using the <a href="../dynamic-sql/#the-test-grammar">type-checked test grammar</a></td>
 </tr>
 <tr>
 <td><code>&lt;where&gt;</code> <code>&lt;set&gt;</code> <code>&lt;trim&gt;</code></td>
-<td>Literal attributes only, constant-folded at build time</td>
+<td>Literal attributes only (constant-folded at build time)</td>
 </tr>
 <tr>
 <td><code>&lt;foreach&gt;</code></td>
-<td>Statically-typed collections, arrays and maps. <a href="../foreach-and-batches/">See here</a></td>
+<td>Statically-typed collections, arrays, and maps. <a href="../foreach-and-batches/">Details</a></td>
 </tr>
 <tr>
 <td><code>&lt;resultMap&gt;</code></td>
-<td>One level of <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code>. <a href="../result-maps/">See here</a></td>
+<td>1-level <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code> joins. <a href="../result-maps/">Details</a></td>
 </tr>
 <tr>
 <td><code>&lt;bind&gt;</code> <code>&lt;discriminator&gt;</code> <code>&lt;parameterMap&gt;</code> <code>&lt;cache&gt;</code> <code>&lt;selectKey&gt;</code></td>
-<td>Not supported; see <a href="../../features/mybatis-differences/">MyBatis Differences</a></td>
+<td>Not supported. <a href="../../features/mybatis-differences/">See differences</a></td>
 </tr>
 </tbody>
 </table>
-<p><code>resultType</code> and <code>resultMap</code> take <strong>fully-qualified class names</strong>. There is no type-alias
-registry: an alias is a runtime lookup table, and this is a build.</p>
-<h2 id="sql-and-include"><code>&lt;sql&gt;</code> and <code>&lt;include&gt;</code><a class="headerlink" href="#sql-and-include" title="Permanent link">&para;</a></h2>
-<p><code>refid</code> is resolved and inlined at build time, so it must be a literal. A computed
-<code>refid</code> is a compile error.</p>
+<p><code>resultType</code> and <code>resultMap</code> require <strong>fully-qualified class names</strong>. Type aliases are not supported because they depend on runtime registries.</p>
+<h2 id="reusable-sql-with-sql-and-include">Reusable SQL with <code>&lt;sql&gt;</code> and <code>&lt;include&gt;</code><a class="headerlink" href="#reusable-sql-with-sql-and-include" title="Permanent link">&para;</a></h2>
+<p><code>&lt;include refid="..."&gt;</code> tags are inlined directly at compile time. The <code>refid</code> must be a literal string:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;sql</span><span class="w"> </span><span class="na">id=</span><span class="s">"teamMemberJoin"</span><span class="nt">&gt;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>SELECT<span class="w"> </span>t.id<span class="w"> </span>AS<span class="w"> </span>t_id,<span class="w"> </span>t.name<span class="w"> </span>AS<span class="w"> </span>t_name,
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">         </span>m.id<span class="w"> </span>AS<span class="w"> </span>m_id,<span class="w"> </span>m.name<span class="w"> </span>AS<span class="w"> </span>m_name,<span class="w"> </span>m.jersey<span class="w"> </span>AS<span class="w"> </span>m_jersey
@@ -2049,19 +2035,11 @@ registry: an alias is a runtime lookup table, and this is a build.</p>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span>ORDER<span class="w"> </span>BY<span class="w"> </span>t.id,<span class="w"> </span>m.jersey
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="nt">&lt;/select&gt;</span>
 </span></code></pre></div>
-<p>After inlining, the statement is indistinguishable from one written out in full,
-including for select-list parsing, so <code>&lt;include&gt;</code> does not cost you positional row
-reads.</p>
-<h2 id="whitespace">Whitespace<a class="headerlink" href="#whitespace" title="Permanent link">&para;</a></h2>
-<p>Fragments are joined with exactly one space and the result is trimmed. The policy is
-documented and fixed, and it does not reproduce MyBatis's incidental whitespace, which
-differs between MyBatis versions in <code>&lt;trim&gt;</code> handling. If you are comparing generated SQL
-against MyBatis output character by character, expect whitespace to differ and semantics not
-to.</p>
-<h2 id="annotations-that-still-apply">Annotations that still apply<a class="headerlink" href="#annotations-that-still-apply" title="Permanent link">&para;</a></h2>
-<p>XML statements are still bound to a Java method, so method-level and interface-level
-annotations still work: <code>@PadPow2</code> on a <code>&lt;foreach&gt;</code> statement, <code>@Param</code> on the
-parameters, <code>@Options</code> on an <code>&lt;insert&gt;</code>:</p>
+<p>Because <code>&lt;include&gt;</code> is inlined during AST construction, the resulting query is parsed just like a full query string, preserving fast positional column reads.</p>
+<h2 id="whitespace-handling">Whitespace handling<a class="headerlink" href="#whitespace-handling" title="Permanent link">&para;</a></h2>
+<p>SQL fragments are joined with a single space and trimmed. This behavior is consistent across builds. If you compare LarkBatis SQL output character-by-character with MyBatis, whitespace may differ slightly, but SQL semantics are identical.</p>
+<h2 id="method-annotations-with-xml-statements">Method annotations with XML statements<a class="headerlink" href="#method-annotations-with-xml-statements" title="Permanent link">&para;</a></h2>
+<p>Because XML statements are bound directly to Java methods, method-level annotations work as expected: <code>@PadPow2</code> for <code>&lt;foreach&gt;</code> padding, <code>@Param</code> for parameter naming, and <code>@Options</code> for generated keys:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Mapper</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">UserBatchMapper</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>

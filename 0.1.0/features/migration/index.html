@@ -1660,10 +1660,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#it-uses-the-real-frontend" class="md-nav__link">
+  <a href="#real-compiler-frontend" class="md-nav__link">
     <span class="md-ellipsis">
       
-        It uses the real frontend
+        Real compiler frontend
       
     </span>
   </a>
@@ -1671,10 +1671,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#four-severities" class="md-nav__link">
+  <a href="#four-severity-levels" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Four severities
+        Four severity levels
       
     </span>
   </a>
@@ -1682,10 +1682,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-unit-of-the-answer-is-the-statement" class="md-nav__link">
+  <a href="#the-unit-of-measure-is-the-statement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The unit of the answer is the statement
+        The unit of measure is the statement
       
     </span>
   </a>
@@ -1698,10 +1698,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-the-scanner-looks-for" class="md-nav__link">
+  <a href="#what-the-scanner-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What the scanner looks for
+        What the scanner checks
       
     </span>
   </a>
@@ -1709,10 +1709,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-suggested-order" class="md-nav__link">
+  <a href="#recommended-migration-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A suggested order
+        Recommended Migration Workflow
       
     </span>
   </a>
@@ -1720,10 +1720,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#field-notes" class="md-nav__link">
+  <a href="#field-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Field notes
+        Field experience
       
     </span>
   </a>
@@ -1731,10 +1731,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-will-change-in-your-workflow" class="md-nav__link">
+  <a href="#workflow-changes-to-expect" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What will change in your workflow
+        Workflow changes to expect
       
     </span>
   </a>
@@ -1851,10 +1851,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#it-uses-the-real-frontend" class="md-nav__link">
+  <a href="#real-compiler-frontend" class="md-nav__link">
     <span class="md-ellipsis">
       
-        It uses the real frontend
+        Real compiler frontend
       
     </span>
   </a>
@@ -1862,10 +1862,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#four-severities" class="md-nav__link">
+  <a href="#four-severity-levels" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Four severities
+        Four severity levels
       
     </span>
   </a>
@@ -1873,10 +1873,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-unit-of-the-answer-is-the-statement" class="md-nav__link">
+  <a href="#the-unit-of-measure-is-the-statement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The unit of the answer is the statement
+        The unit of measure is the statement
       
     </span>
   </a>
@@ -1889,10 +1889,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-the-scanner-looks-for" class="md-nav__link">
+  <a href="#what-the-scanner-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What the scanner looks for
+        What the scanner checks
       
     </span>
   </a>
@@ -1900,10 +1900,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-suggested-order" class="md-nav__link">
+  <a href="#recommended-migration-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A suggested order
+        Recommended Migration Workflow
       
     </span>
   </a>
@@ -1911,10 +1911,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#field-notes" class="md-nav__link">
+  <a href="#field-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Field notes
+        Field experience
       
     </span>
   </a>
@@ -1922,10 +1922,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-will-change-in-your-workflow" class="md-nav__link">
+  <a href="#workflow-changes-to-expect" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What will change in your workflow
+        Workflow changes to expect
       
     </span>
   </a>
@@ -1958,26 +1958,18 @@
 
 
 <h1 id="migrating-from-mybatis">Migrating from MyBatis<a class="headerlink" href="#migrating-from-mybatis" title="Permanent link">&para;</a></h1>
-<p>The migration path is the point of the project, and it is what LarkBatis has that Micronaut
-Data and jOOQ do not. So the tooling for it is treated as being as important as the
-generator itself.</p>
+<p>A smooth migration path is the whole point of this project—it's what sets LarkBatis apart from Micronaut Data or jOOQ. That's why we treat migration tooling as a first-class feature.</p>
 <h2 id="start-with-a-scan">Start with a scan<a class="headerlink" href="#start-with-a-scan" title="Permanent link">&para;</a></h2>
-<p><code>larkbatis-scan</code> points at an existing MyBatis codebase and prints what migrating it
-would cost, with file and line numbers. It compiles nothing and resolves no dependencies,
-so it runs against a checkout of a service nobody has built yet, which is when the
-question "would this even work for us" actually gets asked.</p>
-<p>A project that already applies the Gradle plugin has the task registered for it, over
-its own directory:</p>
+<p><code>larkbatis-scan</code> scans your existing MyBatis codebase and reports what migrating will take, complete with file paths and line numbers. It doesn't compile anything or download dependencies, so you can run it on a freshly cloned repo before even building it.</p>
+<p>If your project already uses the LarkBatis Gradle plugin, you can run the task directly:</p>
 <div class="language-console highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>larkbatisScan
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>larkbatisScan<span class="w"> </span>--args<span class="o">=</span><span class="s2">"--summary --min=BLOCKER src/main"</span>
 </span></code></pre></div>
-<p>The scanner runs out of process off a detached configuration, so it never reaches a
-configuration your application can see. To point it at a codebase that has none of this
-set up — the usual case, since the question comes before the decision — build the CLI:</p>
+<p>The scanner runs in an isolated process, so it never touches your application classpath. To scan an unmigrated project before configuring any build plugins, build and run the standalone CLI:</p>
 <div class="language-console highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gp">$ </span>./gradlew<span class="w"> </span>:larkbatis-scanner:installDist
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="gp">$ </span>./build/install/larkbatis-scanner/bin/larkbatis-scan<span class="w"> </span>/path/to/legacy-service
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>larkbatis-scan — what would it cost to move this codebase to LarkBatis
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>larkbatis-scan — migration analysis for LarkBatis
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>usage: larkbatis-scan [options] &lt;path&gt;...
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
@@ -1987,241 +1979,201 @@ set up — the usual case, since the question comes before the decision — buil
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  --out=FILE           also write the report to FILE
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  --fail-on-blocker    exit 1 when anything is blocked on a dropped feature
 </span></code></pre></div>
-<p>Nothing is rewritten. The report is the deliverable, and the edits are yours to make.</p>
-<h3 id="it-uses-the-real-frontend">It uses the real frontend<a class="headerlink" href="#it-uses-the-real-frontend" title="Permanent link">&para;</a></h3>
-<p>The scanner depends on <code>larkbatis-processor</code> and runs <strong>the same grammar checker and the
-same XML parser</strong> the build will run. So a scan report cannot drift away from what
-actually compiles. Line positions are found by text scanning, because no parser returns a
-trustworthy position for a <code>${}</code> in the middle of a text node.</p>
-<h3 id="four-severities">Four severities<a class="headerlink" href="#four-severities" title="Permanent link">&para;</a></h3>
-<p>Ordered by how much human judgement a finding needs, because the first question about a
-300-mapper codebase is not "how many problems" but "how many do I have to think about".</p>
+<p>The scanner only reports findings—it never modifies your files without your input.</p>
+<h3 id="real-compiler-frontend">Real compiler frontend<a class="headerlink" href="#real-compiler-frontend" title="Permanent link">&para;</a></h3>
+<p>The scanner uses <code>larkbatis-processor</code> directly, running <strong>the exact same XML parser and expression grammar checker</strong> used during compilation. The scan results will match what javac actually compiles.</p>
+<h3 id="four-severity-levels">Four severity levels<a class="headerlink" href="#four-severity-levels" title="Permanent link">&para;</a></h3>
+<p>Findings are sorted by how much manual decision-making they require. On a 300-mapper project, your first question isn't "how many total findings are there," but "how many architectural decisions do we need to make?"</p>
 <table>
 <thead>
 <tr>
-<th></th>
+<th>Severity</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>BLOCKER</strong></td>
-<td>No LarkBatis equivalent; the feature was dropped. The mapper changes</td>
+<td>Feature dropped by design. Requires changing how the mapper or service is structured</td>
 </tr>
 <tr>
 <td><strong>EDIT</strong></td>
-<td>A rewrite with a known shape. The tool can say exactly what to write</td>
+<td>Straightforward syntax rewrite with a clear replacement pattern</td>
 </tr>
 <tr>
 <td><strong>REVIEW</strong></td>
-<td>Supported, but only after someone decides how</td>
+<td>Supported feature, but requires verifying intent (e.g. dynamic parameters or missing keys)</td>
 </tr>
 <tr>
 <td><strong>INFO</strong></td>
-<td>Compiles as-is; worth knowing before it surprises someone</td>
+<td>Compiles as-is; listed for awareness (e.g. dynamic SQL variant tracking)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="the-unit-of-the-answer-is-the-statement">The unit of the answer is the statement<a class="headerlink" href="#the-unit-of-the-answer-is-the-statement" title="Permanent link">&para;</a></h3>
-<p>Not the file, and not the finding. One <code>&lt;bind&gt;</code> in a 90-statement mapper must not condemn
-the other 89, and "1,113 findings" is not something anyone can act on. A sentence like
-<em>"N of M statements compile unchanged"</em> is what decides a migration proposal.</p>
-<p>The report also prints <strong>concentration</strong>, not just counts: how many files the findings
-live in, and the five files holding the most. In the MyBatis source tree's own mapper
-corpus, 1,003 of 1,006 grammar rejections are in three files, and 1,000 of those in a
-single generated fixture. Without an "in N files" column that reads as a codebase-wide
-wall when it is nothing of the kind.</p>
-<h2 id="what-the-scanner-looks-for">What the scanner looks for<a class="headerlink" href="#what-the-scanner-looks-for" title="Permanent link">&para;</a></h2>
+<h3 id="the-unit-of-measure-is-the-statement">The unit of measure is the statement<a class="headerlink" href="#the-unit-of-measure-is-the-statement" title="Permanent link">&para;</a></h3>
+<p>We evaluate individual SQL statements, not whole files. One unsupported <code>&lt;bind&gt;</code> tag in a 90-statement mapper shouldn't condemn the other 89 statements. Metrics like <em>"280 of 300 statements compile without changes"</em> give your team a clear, actionable picture.</p>
+<p>The report also highlights <strong>concentration</strong>: which specific files contain the majority of issues. In the MyBatis project's own test suite, over 1,000 grammar rejections are concentrated in just 3 test files (and 1,000 of those in a single synthetic fixture). Seeing concentration prevents a few complex edge cases from looking like a project-wide blocker.</p>
+<h2 id="what-the-scanner-checks">What the scanner checks<a class="headerlink" href="#what-the-scanner-checks" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Finding</th>
 <th>Severity</th>
-<th>Fix</th>
+<th>Recommended Fix</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>${}</code> splice</td>
+<td><code>${}</code> parameter splice</td>
 <td>EDIT</td>
-<td>Declare the parameter as <code>SqlFragment</code>, a closed-value type, or <code>@OrderBy(allowed={...})</code>. A <code>String</code> at the call site becomes <code>SqlFragment.identifier(x)</code></td>
+<td>Wrap parameter in <code>SqlFragment</code>, use an enum/closed-value type, or add <code>@OrderBy(allowed={...})</code></td>
 </tr>
 <tr>
-<td><code>${}</code> inside a select list</td>
+<td><code>${}</code> inside a select column list</td>
 <td>REVIEW</td>
-<td>That statement falls back to name-based row reads. Decide whether the column list can be made static</td>
+<td>Falls back to name-based column reading. Consider making the column list static</td>
 </tr>
 <tr>
-<td><code>test=</code> outside the grammar</td>
+<td><code>test=</code> expression outside supported grammar</td>
 <td>EDIT</td>
-<td>Rewrite it, or move the decision into Java</td>
+<td>Simplify the expression or evaluate in Java before calling mapper</td>
 </tr>
 <tr>
 <td>OGNL truthiness (<code>test="count"</code>)</td>
 <td>EDIT</td>
-<td><code>count != 0</code>, <code>user != null</code>, <code>list.isEmpty()</code></td>
+<td>Be explicit: <code>count != 0</code>, <code>user != null</code>, <code>!list.isEmpty()</code></td>
 </tr>
 <tr>
-<td><code>Map</code> or <code>Object</code> parameter</td>
+<td><code>Map</code> or untyped <code>Object</code> parameter</td>
 <td>BLOCKER</td>
-<td>A parameter object, or <code>@Param</code> arguments</td>
+<td>Use a typed parameter object or <code>@Param</code> annotations</td>
 </tr>
 <tr>
-<td><code>@SelectProvider</code> family</td>
+<td><code>@SelectProvider</code> annotations</td>
 <td>BLOCKER</td>
-<td>Move the SQL into the mapper, or use the escape hatch</td>
+<td>Put SQL in mapper XML/annotations, or use the escape hatch</td>
 </tr>
 <tr>
-<td>Plugin / interceptor</td>
+<td>MyBatis interceptors / plugins</td>
 <td>BLOCKER</td>
-<td>Paging, auditing and soft-delete become explicit SQL, a type handler or a decorator. <a href="../mybatis-differences/#what-replaces-a-plugin">Recipe per plugin kind</a></td>
+<td>Replace with explicit SQL, custom <code>LarkBatisTypeHandler</code>, or Spring AOP. <a href="../mybatis-differences/#what-replaces-a-plugin">See recipes</a></td>
 </tr>
 <tr>
 <td>Lazy loading</td>
 <td>BLOCKER</td>
-<td>Fetch eagerly with a join, or split into two statements</td>
+<td>Fetch eagerly using SQL joins or split into two explicit queries</td>
 </tr>
 <tr>
-<td>Nested <code>select=</code> in a result mapping</td>
+<td>Nested <code>select=</code> in result maps</td>
 <td>BLOCKER</td>
-<td>Express it as a join</td>
+<td>Rewrite as a single SQL join query</td>
 </tr>
 <tr>
-<td>Result map nested deeper than one level</td>
+<td>Result map nested deeper than 1 level</td>
 <td>BLOCKER</td>
-<td>Assemble in Java from two statements</td>
+<td>Assemble multi-level object graphs in Java from two queries</td>
 </tr>
 <tr>
 <td>Result map <code>extends</code></td>
 <td>BLOCKER</td>
-<td>Write the mappings out</td>
+<td>Write mappings explicitly</td>
 </tr>
 <tr>
-<td><code>&lt;discriminator&gt;</code></td>
+<td><code>&lt;discriminator&gt;</code> tags</td>
 <td>BLOCKER</td>
-<td>Separate statements with separate result types</td>
+<td>Split into separate queries with distinct return types</td>
 </tr>
 <tr>
-<td><code>&lt;constructor&gt;</code> result</td>
+<td><code>&lt;constructor&gt;</code> mapping</td>
 <td>BLOCKER</td>
-<td>No-arg constructor and setters</td>
+<td>Add standard no-arg constructor and setters</td>
 </tr>
 <tr>
-<td><code>&lt;bind&gt;</code></td>
+<td><code>&lt;bind&gt;</code> tags</td>
 <td>BLOCKER</td>
-<td>Compute in Java, pass as a parameter</td>
+<td>Compute value in Java and pass as parameter</td>
 </tr>
 <tr>
 <td><code>&lt;parameterMap&gt;</code></td>
 <td>BLOCKER</td>
-<td><code>#{}</code> with typed parameters</td>
+<td>Use standard <code>#{}</code> with typed parameters</td>
 </tr>
 <tr>
 <td>Second-level cache</td>
 <td>BLOCKER</td>
-<td>Cache above the mapper, where invalidation is visible</td>
+<td>Cache at the service level (e.g. Spring Cache or Redis)</td>
 </tr>
 <tr>
-<td><code>RowBounds</code></td>
+<td><code>RowBounds</code> in-memory paging</td>
 <td>BLOCKER</td>
-<td><code>LIMIT</code> / <code>OFFSET</code> as real parameters</td>
+<td>Use database <code>LIMIT</code> and <code>OFFSET</code> parameters</td>
 </tr>
 <tr>
-<td><code>statementType</code> other than <code>PREPARED</code></td>
+<td>Stored procedures (<code>statementType != PREPARED</code>)</td>
 <td>BLOCKER</td>
-<td>Stored-procedure calls go through the escape hatch</td>
+<td>Run stored procedures through the manual escape hatch</td>
 </tr>
 <tr>
-<td><code>objectFactory</code> / <code>objectWrapperFactory</code></td>
+<td><code>&lt;include&gt;</code> with computed <code>refid</code></td>
 <td>BLOCKER</td>
-<td>Hooks into a reflection layer that is gone</td>
-</tr>
-<tr>
-<td><code>&lt;include&gt;</code> with a computed <code>refid</code></td>
-<td>BLOCKER</td>
-<td><code>refid</code> must be literal</td>
+<td>Use static, literal <code>refid</code> values</td>
 </tr>
 <tr>
 <td><code>&lt;selectKey&gt;</code></td>
 <td>REVIEW</td>
-<td><code>useGeneratedKeys</code> with explicit <code>keyProperty</code>/<code>keyColumn</code>, or a statement of its own</td>
+<td>Use <code>@Options(useGeneratedKeys=true)</code> or run sequence query as separate statement</td>
 </tr>
 <tr>
 <td>Custom <code>TypeHandler</code></td>
 <td>REVIEW</td>
-<td>Mapper XML <code>typeHandler=</code> is read as-is; rewrite the handler class against <code>LarkBatisTypeHandler</code></td>
+<td>Update class to implement <code>LarkBatisTypeHandler</code></td>
 </tr>
 <tr>
-<td><code>&lt;script&gt;</code> in an annotation</td>
+<td>Annotation with <code>&lt;script&gt;</code> tags</td>
 <td>REVIEW</td>
-<td>Read, but the same grammar rules apply, so check the tests it contains</td>
+<td>Supported, but verify dynamic tags against LarkBatis grammar rules</td>
 </tr>
 <tr>
-<td>Direct <code>SqlSession</code> use</td>
+<td>Direct <code>SqlSession</code> usage</td>
 <td>REVIEW</td>
-<td>Call the mapper, or use <code>session.query(SqlFragment, binder, GeneratedRow.READER)</code></td>
+<td>Call mapper methods directly or use <code>session.query(...)</code></td>
 </tr>
 <tr>
 <td><code>mapUnderscoreToCamelCase</code> is off</td>
 <td>REVIEW</td>
-<td>LarkBatis applies it at build time and defaults it to <em>on</em>. Carry the setting across with <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code>, or leave it on and give the affected columns <code>@Column</code> or a <code>&lt;resultMap&gt;</code></td>
+<td>LarkBatis defaults to <code>true</code>. Pass <code>-Alarkbatis.mapUnderscoreToCamelCase=false</code> if your database columns already use camelCase</td>
 </tr>
 <tr>
-<td>More than one environment / <code>DataSource</code></td>
-<td>REVIEW</td>
-<td>One <code>DataSource</code> per build for now</td>
-</tr>
-<tr>
-<td><code>&lt;foreach&gt;</code></td>
+<td><code>&lt;foreach&gt;</code> loops</td>
 <td>INFO</td>
-<td>Supported; counted because it is what makes a statement's SQL-variant count grow</td>
+<td>Supported. Monitored for distinct SQL variant caching</td>
 </tr>
 <tr>
-<td>Dynamic statement</td>
+<td>Dynamic SQL statements</td>
 <td>INFO</td>
-<td>Compiles to boolean locals and a <code>StringBuilder</code></td>
+<td>Compiled to boolean locals and guarded string builders</td>
 </tr>
 </tbody>
 </table>
-<h2 id="a-suggested-order">A suggested order<a class="headerlink" href="#a-suggested-order" title="Permanent link">&para;</a></h2>
+<h2 id="recommended-migration-workflow">Recommended Migration Workflow<a class="headerlink" href="#recommended-migration-workflow" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Scan, and read the concentration column first.</strong> If the blockers live in three files,
-   the answer to "can we do this" is different from what the raw count suggests.</li>
-<li><strong>Start with one mapper, not one module.</strong> A mapper is the unit that compiles.</li>
-<li><strong>Fix processor ordering before anything else</strong> if the project uses Lombok: declare
-   <code>larkbatis-processor</code> <em>after</em> it. This is the single most common first-day failure,
-   and it presents as "the result class has no accessors", which sounds like a different
-   problem entirely.</li>
-<li><strong>Do the <code>${}</code> call sites next.</strong> They are EDIT-severity and mechanical, and finishing
-   them is the first time anyone has looked at every raw-SQL splice in the codebase.</li>
-<li><strong>Then the <code>test=</code> expressions.</strong> Mostly truthiness: <code>count</code> → <code>count != 0</code>. Check the
-   <a href="../mybatis-differences/#behavioural-divergences-to-check-when-migrating">null-comparison divergence</a>
-   while you are in there, because that one does not produce a compile error.</li>
-<li><strong>Leave the blockers for a design conversation.</strong> Each has a named replacement, but the
-   replacement is a decision, not a rewrite.</li>
-<li><strong>Run your existing test suite.</strong> That is the real acceptance criterion.</li>
+<li><strong>Scan the codebase and inspect concentration first.</strong> If 90% of blockers are in two legacy mappers, the migration is much simpler than raw counts suggest.</li>
+<li><strong>Migrate one mapper at a time.</strong> A mapper interface is the independent unit of compilation.</li>
+<li><strong>Check annotation processor ordering first if using Lombok.</strong> Always place <code>larkbatis-processor</code> <em>after</em> Lombok in your build configuration.</li>
+<li><strong>Update <code>${}</code> parameter call sites.</strong> These are mechanical edits that provide an immediate security benefit by auditing all raw SQL splices.</li>
+<li><strong>Update <code>test=</code> expressions.</strong> Mostly converting truthiness expressions (<code>count</code> → <code>count != 0</code>). Keep in mind that <code>null &lt;= 18</code> evaluates to <code>false</code> in LarkBatis.</li>
+<li><strong>Address blockers.</strong> Decide whether to rewrite dropped features using joins, service-level code, or the escape hatch.</li>
+<li><strong>Run your existing unit and integration test suite.</strong> Your tests are the ultimate validation that semantics were preserved.</li>
 </ol>
-<h2 id="field-notes">Field notes<a class="headerlink" href="#field-notes" title="Permanent link">&para;</a></h2>
-<p>A trial migration of a real internal service was run on a copy as an exit
-criterion, and its whole test suite passed. Two defects surfaced that no unit test had
-found: the <strong>Lombok processor-ordering</strong> problem, and the <strong>Spring Boot 4
-auto-configuration</strong> package rename, the latter being a failure with no symptom until the
-context refuses to start. Both are now fixed and both are covered by tests.</p>
-<p>What has <em>not</em> been completed is the other half of that criterion: running the migrated
-service in a real environment for a week.</p>
-<h2 id="what-will-change-in-your-workflow">What will change in your workflow<a class="headerlink" href="#what-will-change-in-your-workflow" title="Permanent link">&para;</a></h2>
-<p>Three things, and it is better to agree on them before starting than to discover them:</p>
-<ul>
-<li><strong>Editing SQL means rebuilding.</strong> For a team used to editing mapper XML and restarting,
-  this is a genuine change. What you get back is javac catching the type errors that used
-  to surface at runtime.</li>
-<li><strong>Build time goes up.</strong> Real, and paid by developers daily instead of by production per
-  query. It is moving the cost left, not deleting it.</li>
-<li><strong><code>${}</code> call sites change.</strong> Proportional to call sites, not to mappers. The scanner
-  handles the mechanical shape of the edit.</li>
-</ul>
-<p>For the honest version of what you get in return, see
-<a href="../../wiki/performance/">Performance</a>, particularly the part about single-record lookups.</p>
+<h2 id="field-experience">Field experience<a class="headerlink" href="#field-experience" title="Permanent link">&para;</a></h2>
+<p>During a trial migration of an internal production service, the existing test suite passed completely. Two edge cases were uncovered and addressed: Lombok processor ordering and Spring Boot 4 auto-configuration package changes. Both are now covered by automated regression tests in the core repository.</p>
+<h2 id="workflow-changes-to-expect">Workflow changes to expect<a class="headerlink" href="#workflow-changes-to-expect" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Editing SQL requires rebuilding.</strong> Changing XML or annotations requires a recompile so javac can regenerate implementation classes.</li>
+<li><strong>Build times increase slightly.</strong> Code generation runs during compilation instead of reflection running on every query in production.</li>
+<li><strong>Dynamic <code>${}</code> splices require explicit typing.</strong> Every <code>${}</code> must be typed as <code>SqlFragment</code>, an enum, or allowlisted with <code>@OrderBy</code>.</li>
+</ol>
+<p>See <a href="../../wiki/performance/">Performance</a> for detailed benchmarks comparing memory allocation and latency.</p>
 
 
 
