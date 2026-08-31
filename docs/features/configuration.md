@@ -11,9 +11,9 @@ Passed to javac as `-A<name>=<value>`.
 | Option | Meaning | Default |
 |---|---|---|
 | `larkbatis.registryPackage` | Package for the generated `LarkBatisMappers` | The common package prefix of all mappers |
-| `larkbatis.mapperDir` | Directories of mapper XML, comma- or path-separator-separated — one option however many directories, since a repeated `-A` of the same name is the last one javac reads, not the union. Only files whose root element is `<mapper>` are read | Set by the build plugin to `src/main/resources` |
-| `larkbatis.mapUnderscoreToCamelCase` | `false` makes underscores significant when a column label is matched to a property — MyBatis's own default. Anything that is not `true` or `false` is a build error | `true` |
-| `larkbatis.typeHandlers` | A default handler per Java type, `javaType:handlerClass` pairs separated by commas — the build-time answer to a `<typeHandlers>` block | none |
+| `larkbatis.mapperDir` | Directories of mapper XML, comma- or path-separator-separated. Use one option for all directories, since a repeated `-A` of the same name is the last one javac reads, not the union. Only files whose root element is `<mapper>` are read | Set by the build plugin to `src/main/resources` |
+| `larkbatis.mapUnderscoreToCamelCase` | `false` makes underscores significant when a column label is matched to a property, which is MyBatis's own default. Anything that is not `true` or `false` is a build error | `true` |
+| `larkbatis.typeHandlers` | A default handler per Java type, `javaType:handlerClass` pairs separated by commas: the build-time answer to a `<typeHandlers>` block | none |
 | `larkbatis.springConfig` | `false` suppresses the generated Spring `@Configuration` | Emitted when spring-context is on the build classpath |
 | `larkbatis.springConfigPackage` | Package for the generated `LarkBatisMapperConfiguration` | Same as `registryPackage` |
 
@@ -61,12 +61,12 @@ build keeps the semantics it had under MyBatis, whose own default is *off*:
 Leaving it on is a behaviour change for a codebase migrating from a MyBatis config that
 never set it: columns MyBatis left unmapped start being read. Switching it off makes the
 build **name every column that stops reaching a property**, and the property it stops
-reaching — MyBatis leaves that silent, and a null in production is a bad place to find
+reaching. MyBatis leaves that silent, and a null in production is a bad place to find
 out:
 
 ```text
 UserMapper.all: mapUnderscoreToCamelCase is off, so these columns reach no property and
-their properties keep their defaults — user_name → userName. Alias the column in the SQL,
+their properties keep their defaults: user_name → userName. Alias the column in the SQL,
 or name it with @Column.
 ```
 
@@ -88,7 +88,7 @@ Each entry applies to every property and every `#{}` of that type that does not 
 handler of its own. `@Handler` and a `typeHandler` attribute both still win, because
 naming it at the site is the more specific answer.
 
-Every entry is checked while the build runs — the java type and the handler class must
+Every entry is checked while the build runs: the java type and the handler class must
 both be on the compilation classpath, and the handler must implement
 `LarkBatisTypeHandler<ThatType>`, be public and concrete, and have a public no-argument
 constructor. What it produces is the same generated shape `@Handler` produces: one
@@ -97,7 +97,7 @@ constructor. What it produces is the same generated shape `@Handler` produces: o
 !!! tip "An entry that moves nothing is a build warning"
 
     A registered type that no property or `#{}` in the compilation has is exactly what a
-    typo in the java-type half looks like — no property changes, no error, no handler.
+    typo in the java-type half looks like: no property changes, no error, no handler.
     That entry is named in a warning rather than left silent.
 
 | Not carried across | |
@@ -139,7 +139,7 @@ constructor. What it produces is the same generated shape `@Handler` produces: o
 | `mapperDir` / `<mapperDir>` | `src/main/resources` | One directory of mapper XML |
 | `mapperDirs` / `<mapperDirs>` | empty | More of them, see below |
 | `addProcessorDependency` / `<addProcessorPath>` | `true` | Whether `larkbatis-processor` is put on the annotation processor path |
-| `addParametersFlag` / `<addParameters>` | `true` | Whether `-parameters` is turned on. Switching it off needs `@Param` on every mapper parameter — see the next section for why. Maven honours an explicit `<parameters>false</parameters>` and warns instead of overriding it |
+| `addParametersFlag` / `<addParameters>` | `true` | Whether `-parameters` is turned on. Switching it off needs `@Param` on every mapper parameter (see the next section for why). Maven honours an explicit `<parameters>false</parameters>` and warns instead of overriding it |
 
 Maven additionally requires `<extensions>true</extensions>` on the plugin declaration.
 Without it nothing happens, and nothing says so. See [Build
