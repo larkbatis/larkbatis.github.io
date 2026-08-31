@@ -1,7 +1,6 @@
 # Kiến trúc
 
-Hai pha và một IR. Mọi thứ ở pha build đều bị vứt đi trước khi ứng dụng chạy; mọi thứ ở
-pha runtime đều là code đọc được.
+Hai pha và một mô hình trung gian (IR). Mọi thành phần ở pha build đều được giải phóng trước khi ứng dụng thực thi; toàn bộ thành phần ở pha runtime đều là mã nguồn Java thuần minh bạch.
 
 ```mermaid
 flowchart LR

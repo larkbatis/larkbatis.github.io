@@ -97,7 +97,6 @@ long countByName(@Param("pattern") String pattern);
 ## Lớp kết quả
 
 Một lớp kết quả cần constructor không tham số và các setter, ngoài ra không cần gì thêm:
-không annotation, không interface, không đăng ký.
 
 ```java
 public class User {
@@ -108,47 +107,28 @@ public class User {
 }
 ```
 
-Cột tìm ra property theo `snake_case` → `camelCase`, **áp dụng lúc build**:
-`created_at` → `setCreatedAt`. Mặc định là bật — MyBatis thì mặc định tắt — và
-`-Alarkbatis.mapUnderscoreToCamelCase=false` mang mặc định của MyBatis sang. Lựa chọn
-này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
-Xem [Cấu hình](../features/configuration.md#column-naming).
+Tên cột được tự động ánh xạ sang property theo quy ước `snake_case` → `camelCase` **trực tiếp lúc build** (ví dụ `created_at` → `setCreatedAt`). Quy ước này mặc định được bật trong LarkBatis (trong khi MyBatis mặc định tắt). Nếu cần giữ nguyên hành vi của MyBatis, bạn có thể truyền cờ `-Alarkbatis.mapUnderscoreToCamelCase=false`. Ánh xạ này được biên dịch thẳng vào row reader sinh sẵn; hoàn toàn không có tuỳ chọn tra cứu lúc runtime. Xem [Cấu hình](../features/configuration.md#column-naming).
 
-Chỗ nào quy ước đó không đủ thì đặt tên cột ngay trên property bằng
-[`@Column`](../features/annotations.md#column) trên field, setter hoặc getter, hoặc đặt
-alias cho cột trong select list, hoặc khai báo một
-[`<resultMap>`](result-maps.md). Xem [Kiểu dữ liệu và handler](types.md#column-naming).
+Trường hợp tên cột khác biệt hoặc quy ước trên không đáp ứng được, bạn có thể dùng [`@Column`](../features/annotations.md#column) đặt trực tiếp trên field, setter hoặc getter, hoặc đặt alias cho cột trong câu SELECT, hoặc khai báo [`<resultMap>`](result-maps.md). Xem [Kiểu dữ liệu và handler](types.md#column-naming).
 
 ### Đọc theo vị trí hay theo tên { #positional-or-name-based-reads }
 
-Khi bộ sinh code phân tích được select list, chỉ số cột là hằng số:
+Khi bộ sinh code phân tích được danh sách SELECT, chỉ số cột sẽ là các hằng số tĩnh:
 
 ```java
 u.setId(rs.getLong(1));
 u.setName(rs.getString(2));
 ```
 
-Khi không phân tích được, riêng statement đó lùi về dùng reader theo tên: reader này lấy
-chỉ số từ `ResultSetMetaData` **một lần duy nhất, ở dòng đầu tiên**, rồi đọc theo vị trí
-cho phần còn lại. Có ba thứ làm nó không phân tích được: `SELECT *`, một chỗ chèn `${}`
-nằm trong select list, và một biểu thức không đặt alias. Cách lùi này vẫn đúng, chậm hơn
-ở mức đo được, và bản build sẽ cho bạn biết statement nào rơi vào trường hợp đó. Xem
-[Code sinh ra](../wiki/generated-code.md#row-readers).
+Khi không thể phân tích cú pháp tĩnh danh sách SELECT (do `SELECT *`, chèn `${}` trong select list, hoặc biểu thức tính toán không đặt alias), statement đó sẽ sử dụng cơ chế fallback: đọc vị trí cột từ `ResultSetMetaData` **đúng một lần duy nhất ở dòng đầu tiên**, sau đó tiếp tục đọc dữ liệu theo vị trí cho các dòng còn lại. Cơ chế này đảm bảo tính chính xác và trình biên dịch sẽ thông báo rõ statement nào rơi vào trường hợp fallback. Xem [Code sinh ra](../wiki/generated-code.md#row-readers).
 
 !!! note "`@LarkBatisRow`"
 
-    Một lớp không bao giờ xuất hiện làm `resultType` của statement nào, chẳng hạn lớp
-    chỉ dùng bởi [cửa thoát hiểm](raw-sql.md#the-escape-hatch), thì không có gì kích hoạt
-    việc sinh reader cho nó. Đánh dấu nó bằng
-    [`@LarkBatisRow`](../features/annotations.md#larkbatisrow) là có reader. Thứ tự
-    khai báo của lớp chính là thứ tự cột chuẩn, bởi ở đây không có select list nào để
-    lấy thứ tự ra cả.
+    Với những class không bao giờ xuất hiện làm `resultType` của statement nào (chẳng hạn class chỉ dùng cho [lối thoát thủ công](raw-sql.md#the-escape-hatch)), bạn hãy đánh dấu class đó bằng [`@LarkBatisRow`](../features/annotations.md#larkbatisrow) để kích hoạt sinh row reader. Thứ tự khai báo field trong class chính là thứ tự cột chuẩn.
 
 ## Phương thức `default`
 
-Một phương thức `default` trên interface mapper được để yên: nó được biên dịch vào
-interface như mọi phương thức khác, và lớp hiện thực sinh ra thừa kế nó. Đây là chỗ để
-SQL ráp tay:
+Phương thức `default` trên interface mapper được giữ nguyên: javac biên dịch trực tiếp vào interface và class `$$Impl` sinh ra sẽ kế thừa phương thức đó. Đây là vị trí lý tưởng để viết các truy vấn SQL tuỳ biến:
 
 ```java
 default List<User> recent(LarkBatisSession s, int limit) {
@@ -161,22 +141,16 @@ default List<User> recent(LarkBatisSession s, int limit) {
 }
 ```
 
-Để ý xem thứ gì vẫn an toàn kiểu ngay cả ở đây: các dòng vẫn được đọc bởi reader
-`UserRow` **được sinh ra**, nên vẫn không có reflection nào và kiểu kết quả vẫn được
-javac kiểm tra. Xem [SQL thô và SqlFragment](raw-sql.md).
+Các dòng dữ liệu vẫn được đọc an toàn qua `UserRow.READER` sinh sẵn: hoàn toàn không sử dụng reflection và kiểu kết quả luôn được javac kiểm tra kiểu tĩnh. Xem [SQL thô và SqlFragment](raw-sql.md).
 
 ## Registry sinh ra
 
-Mọi mapper trong lần biên dịch đều xuất hiện trong một lớp `LarkBatisMappers` duy nhất:
+Tất cả các mapper trong một lần biên dịch đều được tập hợp trong class static factory `LarkBatisMappers`:
 
 ```java
 UserMapper mapper = LarkBatisMappers.userMapper(session);
 ```
 
-`LarkBatisMappers` là một factory tĩnh trên một tập đóng đã biết lúc biên dịch. Không có
-`addMapper()` và không có đăng ký lúc chạy, bởi vì chẳng có gì để đăng ký. Dưới Spring bạn
-không bao giờ động tới nó: lớp `@Configuration` sinh ra khai báo chính những constructor đó
-thành bean.
+`LarkBatisMappers` là một static factory cho tập hợp mapper cố định đã biết lúc compile. Không có phương thức `addMapper()` động lúc runtime vì mọi mapper đều đã được xác định trước. Khi dùng Spring Boot, bạn không cần gọi trực tiếp class này vì class `@Configuration` sinh ra sẽ tự động đăng ký các bean tương ứng.
 
-Mặc định registry rơi vào tiền tố package chung của tất cả mapper; ghi đè bằng
-`-Alarkbatis.registryPackage=com.example.app`.
+Mặc định, registry nằm tại package prefix chung của các mapper; bạn có thể ghi đè vị trí này bằng cờ `-Alarkbatis.registryPackage=com.example.app`.

@@ -1,7 +1,6 @@
 # Mapper XML
 
-Một interface chú thích `@Mapper` lấy SQL cho từng phương thức từ statement trong mapper
-XML có cùng id. Namespace chính là tên đầy đủ của interface.
+Một interface chú thích `@Mapper` lấy SQL cho từng phương thức từ statement trong mapper XML có cùng id. Namespace chính là tên đầy đủ (FQN) của interface.
 
 ```java title="UserSearchMapper.java"
 package com.example.app;
@@ -45,21 +44,15 @@ public interface UserSearchMapper {
 </mapper>
 ```
 
-Phần khai báo DTD được giữ lại để các file sẵn có vẫn parse được nguyên trạng và editor
-vẫn gợi ý được. Nó không bị tải về hay đem ra kiểm tra lúc build.
+Phần khai báo DTD được giữ lại để các file sẵn có vẫn parse được nguyên trạng và editor vẫn hỗ trợ gợi ý cú pháp. Khai báo này không bị tải về hay kiểm tra lúc build.
 
-## Vì sao ở đây cần `@Mapper`
+## Vì sao cần annotation `@Mapper`
 
-Mapper thuần annotation không cần đánh dấu: processor tìm ra chúng vì các phương thức
-mang `@Select` và họ hàng. Một interface chỉ dùng XML thì chẳng có annotation nào cả,
-nên thiếu `@Mapper` nó sẽ không bao giờ lọt vào một vòng xử lý nào. Toàn bộ nhiệm vụ của
-cái đánh dấu này là vậy.
+Mapper thuần annotation không cần đánh dấu: processor tự động nhận diện vì các phương thức mang `@Select` và các annotation statement tương ứng. Một interface chỉ dùng XML thì không có annotation statement nào trên phương thức, do đó cần `@Mapper` để processor nhận biết và đưa vào vòng xử lý.
 
 ## Gán statement cho từng phương thức
 
-Mỗi phương thức trừu tượng lấy SQL **hoặc** từ annotation của nó **hoặc** từ XML. Có cả
-hai, hay không có cái nào, đều là lỗi biên dịch nêu rõ tên phương thức. Nhờ vậy một
-mapper có thể trộn thoải mái:
+Mỗi phương thức trừu tượng lấy SQL **hoặc** từ annotation của nó **hoặc** từ XML. Khai báo cả hai, hoặc không khai báo ở đâu, đều là lỗi biên dịch nêu rõ tên phương thức. Nhờ vậy một mapper có thể kết hợp linh hoạt cả hai cách:
 
 ```java
 @Mapper
@@ -72,31 +65,25 @@ public interface UserMapper {
 }
 ```
 
-## XML được tìm ở đâu
+## Vị trí quét file XML
 
-Processor quét các thư mục cho bởi `-Alarkbatis.mapperDir`. Các
-[plugin build](../getting-started/build-plugins.md) truyền giúp bạn tham số đó, mặc định
-là `src/main/resources`, và đăng ký các file làm đầu vào biên dịch để sửa XML thì sinh
-lại code.
+Processor quét các thư mục được cấu hình qua `-Alarkbatis.mapperDir`. Các [build plugin](../getting-started/build-plugins.md) truyền sẵn tham số này (mặc định là `src/main/resources`), đồng thời đăng ký các file XML làm đầu vào biên dịch để tự động kích hoạt sinh lại code khi XML thay đổi.
 
-Chỉ những file có **phần tử gốc là `<mapper>`** mới được đọc, nên cấu hình Spring, thiết
-lập logback và mọi thứ khác trong cùng cây thư mục đều bị bỏ qua. Một mapper XML có
-`namespace` trỏ tới interface ở module khác sẽ bị bỏ qua kèm một cảnh báo build.
+Chỉ những file có **thẻ gốc là `<mapper>`** mới được xử lý, các file cấu hình Spring hay logback trong cùng thư mục đều được bỏ qua an toàn. Mapper XML có `namespace` trỏ tới interface ở module khác sẽ bị bỏ qua kèm một cảnh báo build.
 
-## Các phần tử được hỗ trợ
+## Các thẻ XML được hỗ trợ
 
-| Phần tử | Mức hỗ trợ |
+| Thẻ | Mức độ hỗ trợ |
 |---|---|
-| `<select>` `<insert>` `<update>` `<delete>` | Đầy đủ |
-| `<sql>` / `<include>` | Chỉ `refid` tĩnh, được chèn thẳng vào lúc build |
-| `<if>` `<choose>`/`<when>`/`<otherwise>` | Đầy đủ, với [ngữ pháp test hẹp](dynamic-sql.md#the-test-grammar) |
-| `<where>` `<set>` `<trim>` | Chỉ thuộc tính hằng, gấp thành hằng lúc build |
-| `<foreach>` | Tập hợp, mảng và map có kiểu tĩnh. [Xem tại đây](foreach-and-batches.md) |
-| `<resultMap>` | Một cấp `<association>` / `<collection>`. [Xem tại đây](result-maps.md) |
-| `<bind>` `<discriminator>` `<parameterMap>` `<cache>` `<selectKey>` | Không hỗ trợ; xem [Khác biệt với MyBatis](../features/mybatis-differences.md) |
+| `<select>`, `<insert>`, `<update>`, `<delete>` | Đầy đủ |
+| `<sql>`, `<include>` | Chỉ hỗ trợ `refid` tĩnh, được chèn thẳng lúc build |
+| `<if>`, `<choose>`/`<when>`/`<otherwise>` | Đầy đủ, với [ngữ pháp test thu hẹp](dynamic-sql.md#the-test-grammar) |
+| `<where>`, `<set>`, `<trim>` | Chỉ hỗ trợ thuộc tính hằng, gập hằng số lúc build |
+| `<foreach>` | Tập hợp, mảng và Map có kiểu tĩnh rõ ràng. [Xem chi tiết](foreach-and-batches.md) |
+| `<resultMap>` | Hỗ trợ 1 cấp `<association>` / `<collection>`. [Xem chi tiết](result-maps.md) |
+| `<bind>`, `<discriminator>`, `<parameterMap>`, `<cache>`, `<selectKey>` | Không hỗ trợ; xem [Khác biệt với MyBatis](../features/mybatis-differences.md) |
 
-`resultType` và `resultMap` nhận **tên lớp đầy đủ**. Không có registry type-alias: alias
-là một bảng tra lúc chạy, còn đây là lúc build.
+`resultType` và `resultMap` nhận **tên class đầy đủ (FQN)**. Không hỗ trợ type-alias registry lúc runtime vì mọi kiểu dữ liệu đều được resolve lúc build.
 
 ## `<sql>` và `<include>`
 

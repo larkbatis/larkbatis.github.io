@@ -1,7 +1,6 @@
 # Khoá tự sinh
 
-`@Options(useGeneratedKeys = true, ...)` hỏi driver lấy khoá mà một `INSERT` sinh ra rồi
-gán nó vào một property của đối tượng tham số.
+`@Options(useGeneratedKeys = true, ...)` yêu cầu JDBC driver trả về khoá tự sinh sau câu lệnh `INSERT` và gán trực tiếp vào property của đối tượng tham số.
 
 ```java
 @Insert("INSERT INTO users (name, email, created_at) VALUES (#{name}, #{email}, #{createdAt})")
@@ -34,24 +33,19 @@ public int insert(User u) {
 }
 ```
 
-1.  **Tên cột** khoá viết tường minh, bởi vì `RETURN_GENERATED_KEYS` mang ý nghĩa khác
-    nhau trên các database khác nhau. Xem bên dưới.
-2.  Cả setter lẫn accessor đều được chọn lúc build từ `keyProperty` và kiểu khai báo của
-    property đó.
+1.  **Tên cột** khoá được khai báo tường minh vì `RETURN_GENERATED_KEYS` có hành vi không đồng nhất giữa các hệ quản trị database. Xem chi tiết bên dưới.
+2.  Cả setter lẫn accessor đều được xác định tĩnh lúc build từ `keyProperty` và kiểu dữ liệu của property đó.
 
-## Luôn gọi tên các cột khoá
+## Luôn khai báo tên cột khoá tường minh
 
-!!! warning "`keyColumn` là tuỳ chọn trong annotation nhưng trên thực tế gần như bắt buộc"
+!!! warning "`keyColumn` là tuỳ chọn trong annotation nhưng gần như bắt buộc trên production"
 
-    `prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)` không khả chuyển:
+    `prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)` không đảm bảo tính di động (portable):
 
-    - **Oracle** trả về `ROWID`, không phải giá trị sequence của bạn.
-    - **PostgreSQL** trả về *mọi* cột của dòng vừa chèn.
+    - **Oracle** trả về `ROWID` thay vì giá trị sequence thực tế.
+    - **PostgreSQL** trả về *toàn bộ* các cột của dòng vừa chèn.
 
-    Truyền một `String[]` tên cột tường minh là dạng duy nhất mang cùng một nghĩa ở mọi
-    nơi. Khi có `keyColumn`, bộ sinh code phát ra `prepareStatement(sql, String[])`. Khi
-    thiếu nó, chẳng có tên nào để bỏ vào mảng, nên nó lùi về `RETURN_GENERATED_KEYS` và
-    đưa ra một **cảnh báo build bắt buộc**:
+    Truyền một mảng `String[]` tên cột tường minh là cách duy nhất mang lại hành vi nhất quán trên mọi database. Khi có `keyColumn`, bộ sinh code phát ra `prepareStatement(sql, String[])`. Khi thiếu nó, hệ thống buộc phải fallback về `RETURN_GENERATED_KEYS` và phát ra một **cảnh báo build bắt buộc**:
 
     ```text
     warning: useGeneratedKeys without keyColumn falls back to RETURN_GENERATED_KEYS,
@@ -59,14 +53,11 @@ public int insert(User u) {
     explicitly.
     ```
 
-    Hãy coi cảnh báo đó là lỗi khi review. Nó là khác biệt giữa "chạy được trên H2" và
-    "chạy được trên production".
+    Hãy xử lý cảnh báo này trong quá trình code review để đảm bảo ứng dụng vận hành chính xác trên môi trường production.
 
-Ngược lại, `keyProperty` là **bắt buộc**: `useGeneratedKeys` mà thiếu nó là lỗi biên
-dịch, hỏi rằng khoá thì nên đi đâu.
+`keyProperty` là **thuộc tính bắt buộc**: bật `useGeneratedKeys` mà thiếu `keyProperty` là lỗi biên dịch.
 
-Khoá tổ hợp thì viết cách nhau bằng dấu phẩy ở cả hai thuộc tính, và hai danh sách phải
-dài bằng nhau, và lệch nhau là lỗi biên dịch nêu rõ cả hai con số:
+Với khoá tổ hợp (composite keys), hãy phân tách các tên bằng dấu phẩy ở cả hai thuộc tính; hai danh sách phải có cùng số lượng phần tử:
 
 ```java
 @Options(useGeneratedKeys = true, keyProperty = "tenantId,id", keyColumn = "tenant_id,id")
@@ -74,7 +65,7 @@ dài bằng nhau, và lệch nhau là lỗi biên dịch nêu rõ cả hai con s
 
 ## `keyProperty` khi có nhiều tham số
 
-Khi phương thức có nhiều hơn một tham số, `keyProperty` phải gọi tên cả tham số:
+Khi phương thức có nhiều hơn một tham số, `keyProperty` phải chỉ rõ tên tham số tiền tố:
 
 ```java
 @Insert("INSERT INTO users (name) VALUES (#{u.name})")
@@ -82,12 +73,11 @@ Khi phương thức có nhiều hơn một tham số, `keyProperty` phải gọi
 int insert(@Param("u") User u, @Param("audit") String audit);
 ```
 
-Sai tên là **lỗi lúc biên dịch**, không phải một `ReflectionException` lúc chạy.
+Tên tham số không tồn tại sẽ bị bắt ngay **lúc biên dịch**, không phải lỗi `ReflectionException` lúc runtime.
 
 ## Insert theo batch
 
-Một `@Insert` nhận `List<T>` biên dịch thành `addBatch()` / `executeBatch()`, và các khoá
-quay về dưới dạng một `ResultSet` duy nhất phải khớp hàng với danh sách:
+Một `@Insert` nhận `List<T>` biên dịch thành `addBatch()` / `executeBatch()`, và các khoá trả về dưới dạng một `ResultSet` duy nhất được ánh xạ tương ứng vào từng phần tử của danh sách:
 
 ```java
 int n = LarkBatisSql.sum(ps.executeBatch());
@@ -103,17 +93,11 @@ try (ResultSet gk = ps.getGeneratedKeys()) {
 }
 ```
 
-Phép kiểm số lượng này không phải lập trình phòng thủ cho có: có những driver trả về ít
-khoá hơn số dòng, và MyBatis cũng ghi nhận đúng kiểu hỏng đó. Âm thầm chấp nhận sẽ để
-lại một phần batch với id chưa được gán mà chẳng ai hay, nên
-`LarkBatisKeyCountMismatchException` gọi tên statement, số lượng mong đợi và số lượng
-thực tế.
+Phép kiểm tra số lượng này đảm bảo an toàn: một số JDBC driver trả về ít khoá hơn số dòng chèn thực tế. Việc bỏ qua lỗi này sẽ khiến một phần dữ liệu trong batch có id không được gán mà không ai hay biết. `LarkBatisKeyCountMismatchException` sẽ chỉ rõ tên statement, số lượng khoá kỳ vọng và số lượng thực tế nhận được.
 
 ## `<selectKey>` không được hỗ trợ { #selectkey-is-not-supported }
 
-Những database không hỗ trợ khoá tự sinh (hoặc những quy trình đọc sequence *trước* khi
-insert) vẫn dùng `<selectKey>` trong MyBatis. Nó không được hiện thực, bởi vì nó là một
-statement thứ hai đội lốt một tuỳ chọn. Hãy viết statement thứ hai đó ra:
+Những database không hỗ trợ khoá tự sinh (hoặc quy trình đọc sequence *trước* khi insert) thường dùng `<selectKey>` trong MyBatis. Tính năng này không được hỗ trợ vì thực chất nó là một câu lệnh thứ hai chạy ngầm ẩn dưới dạng tuỳ chọn. Hãy viết tường minh câu lệnh thứ hai đó ra:
 
 ```java
 @Select("SELECT user_seq.NEXTVAL FROM dual")
@@ -131,11 +115,8 @@ try (LarkBatisTx tx = session.begin()) {
 }
 ```
 
-[Trình quét mã cũ](../features/migration.md) báo cáo mọi `<selectKey>` mà nó tìm thấy kèm
-đúng cách sửa này.
+[Trình quét mã cũ](../features/migration.md) sẽ tự động phát hiện mọi thẻ `<selectKey>` và gợi ý đoạn code thay thế tương ứng.
 
-## Khi không có khoá nào quay về
+## Khi không có khoá nào trả về
 
-Nếu một statement khai báo `useGeneratedKeys` mà driver chẳng trả về gì,
-`LarkBatisNoKeyException` được ném ra kèm tên statement, thay vì để một id `0` đi lang
-thang trong code của bạn rồi chết ở một chỗ chẳng liên quan.
+Nếu một statement khai báo `useGeneratedKeys` mà JDBC driver không trả về khoá nào, `LarkBatisNoKeyException` sẽ được ném ra kèm tên statement, ngăn ngừa việc giá trị mặc định `0` lan truyền trong ứng dụng và gây lỗi ở tầng nghiệp vụ khác.

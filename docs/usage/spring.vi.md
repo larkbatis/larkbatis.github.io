@@ -1,99 +1,76 @@
 # Tích hợp Spring
 
-Một nửa `mybatis-spring` bốc hơi ở đây, và biết *nửa nào* thì hiểu được toàn bộ phần tích
-hợp. `mybatis-spring` tồn tại để giải đúng hai bài toán:
+Khối lượng cấu hình phức tạp của `mybatis-spring` được giản lược tối đa trong LarkBatis. `mybatis-spring` vốn cần giải quyết hai bài toán:
 
-1. **Một mapper là interface không có phần hiện thực**, nên Spring không tạo bean cho nó
-   được. Giải bằng `@MapperScan` → `ClassPathMapperScanner` → `MapperFactoryBean` →
-   `MapperProxy`.
-2. **`SqlSession` phải dùng chung `Connection` với `@Transactional`.** Giải bằng
-   `SqlSessionTemplate` + `SqlSessionUtils` + `SpringManagedTransaction`.
+1. **Interface mapper không có phần hiện thực**, khiến Spring không thể trực tiếp khởi tạo bean. Phải giải quyết qua `@MapperScan` → `ClassPathMapperScanner` → `MapperFactoryBean` → `MapperProxy`.
+2. **`SqlSession` phải dùng chung `Connection` với `@Transactional`.** Phải giải quyết qua `SqlSessionTemplate` → `SqlSessionUtils` → `SpringManagedTransaction`.
 
-**Bài toán 1 ở đây không còn là bài toán.** `AccountMapper$$Impl` là một lớp thật với
-constructor thật, tức là một bean bình thường. Bộ quét, `FactoryBean` và phần hậu xử lý
-`BeanDefinition` đều biến mất, thay bằng một `@Configuration` được sinh ra với mỗi mapper
-một phương thức `@Bean`.
+**Bài toán 1 không còn tồn tại trong LarkBatis.** `AccountMapper$$Impl` là một class Java thông thường với constructor nhận `LarkBatisSession`, đóng vai trò như một Spring bean tiêu chuẩn. Toàn bộ cơ chế quét class, `FactoryBean` và xử lý `BeanDefinition` được thay thế bằng class `@Configuration` sinh sẵn với mỗi mapper là một phương thức `@Bean`.
 
-**Bài toán 2 thì không đụng tới**, và nó gần như là toàn bộ nội dung của phần tích hợp.
+**Bài toán 2 được giải quyết gọn gàng**, và đó là nội dung chính của tầng tích hợp Spring.
 
 ## Các module
 
 | Module | Vai trò |
 |---|---|
-| `larkbatis-spring` | `SpringLarkBatisSession`: connection qua `DataSourceUtils`, dịch exception qua `SQLExceptionTranslator` |
-| `larkbatis-spring-boot-autoconfigure` | `LarkBatisAutoConfiguration`, `LarkBatisProperties`, mục trong `AutoConfiguration.imports` |
-| `larkbatis-spring-boot-starter` | Rỗng; chỉ có phụ thuộc |
+| `larkbatis-spring` | `SpringLarkBatisSession`: lấy connection qua `DataSourceUtils`, dịch ngoại lệ qua `SQLExceptionTranslator` |
+| `larkbatis-spring-boot-autoconfigure` | `LarkBatisAutoConfiguration`, `LarkBatisProperties`, khai báo trong `AutoConfiguration.imports` |
+| `larkbatis-spring-boot-starter` | Starter module quản lý dependency |
 
 ## `SpringLarkBatisSession`
 
-Quy tắc duy nhất mà lớp này sinh ra để cưỡng chế:
+Quy tắc lấy kết nối duy nhất mà class này thực thi:
 
 ```java
 @Override
 public Connection conn() {
-    return DataSourceUtils.getConnection(dataSource);   // không bao giờ dataSource.getConnection()
+    return DataSourceUtils.getConnection(dataSource);   // không bao giờ gọi trực tiếp dataSource.getConnection()
 }
 ```
 
-`DataSourceUtils` trả về đúng connection đã gắn vào transaction đang chạy, và chỉ mở một
-connection mới khi chưa có cái nào. `release()` làm ngược lại: lệnh rỗng khi ở
-trong transaction, một lần đóng thật khi ở ngoài. Vì vậy các thân phương thức sinh ra giữ
-`Connection` nằm ngoài try-with-resources. Xem
-[Vì sao code sinh ra không bao giờ đóng Connection](transactions.md#why-generated-code-never-closes-the-connection).
+`DataSourceUtils` trả về đúng connection đang gắn với transaction Spring hiện tại và chỉ mở kết nối mới khi chưa có transaction nào. `release()` đóng vai trò ngược lại: là no-op khi ở trong transaction, và đóng kết nối thực sự khi ở ngoài transaction. Vì vậy các thân phương thức sinh ra luôn giữ `Connection` nằm ngoài khối try-with-resources. Xem [Vì sao code sinh ra không bao giờ đóng Connection](transactions.md#why-generated-code-never-closes-the-connection).
 
-Lớp này không giữ trạng thái gì ngoài hai cộng tác viên của nó và dùng chung giữa các
-luồng được. Mỗi `DataSource` một bean.
+`SpringLarkBatisSession` là thread-safe và được đăng ký như một Spring bean duy nhất cho mỗi `DataSource`.
 
-Việc dịch exception đi qua `SQLExceptionTranslator` của Spring, mặc định là
-`SQLExceptionSubclassTranslator` (cũng là mặc định của chính Spring từ 6.0). Bộ dịch này
-đọc cây lớp con `SQLException` chuẩn chứ không dùng bảng mã lỗi riêng theo từng hãng. Nhờ
-vậy các handler `DuplicateKeyException` sẵn có của bạn vẫn chạy nguyên.
+Việc dịch exception sử dụng `SQLExceptionTranslator` của Spring (mặc định là `SQLExceptionSubclassTranslator` từ Spring 6.0). Nhờ vậy, các exception nghiệp vụ như `DuplicateKeyException` hay `DataIntegrityViolationException` được ném ra nhất quán, giúp các `@ExceptionHandler` sẵn có của bạn hoạt động trơn tru.
 
-## Cái gì chạy và cái gì không
+## Khả năng tương thích tính năng
 
-| Tình huống | | Vì sao |
+| Tình huống | Kết quả | Cơ chế hoạt động |
 |---|---|---|
-| `@Transactional` trên service, mapper được gọi bên trong | chạy | `DataSourceUtils` trả về connection của transaction |
-| `REQUIRES_NEW`, `NESTED`, các quy tắc rollback | chạy | Spring lo hết |
-| `readOnly = true` | chạy | Spring đặt cờ đó lên connection |
-| Mapper được gọi ngoài mọi transaction | chạy | Auto-commit; `release` đóng nó ngay |
-| Phương thức mapper trả về `Stream` | chạy | Stream giữ một connection của pool cho tới khi đóng; trong transaction thì `release` là lệnh rỗng. Dùng `try (Stream<T> …)` trong mọi trường hợp |
-| Chia sẻ transaction với `JdbcTemplate` hoặc JPA | chạy | Cùng `DataSourceUtils`, cùng `DataSourceTransactionManager` |
-| Spring AOP trên một bean mapper | chạy | Mapper là một bean thật |
-| `ExecutorType.BATCH` của MyBatis | không có | Làm gì có executor. Batch là một [chữ ký phương thức](foreach-and-batches.md#jdbc-batches) |
-| Plugin / interceptor của MyBatis | không có | Đã bỏ: bốn đối tượng mà chúng bọc chính là thứ mà thân phương thức sinh ra thay thế. Spring AOP trên bean mapper vẫn chạy, và [có công thức thay thế cho từng loại plugin](../features/mybatis-differences.md#what-replaces-a-plugin) |
+| `@Transactional` trên service | Hoạt động | `DataSourceUtils` trả về connection của transaction hiện tại |
+| `REQUIRES_NEW`, `NESTED`, rollback rules | Hoạt động | Spring Transaction Manager xử lý toàn diện |
+| `readOnly = true` | Hoạt động | Spring đặt cờ readOnly lên Connection |
+| Mapper gọi ngoài transaction | Hoạt động | Chế độ auto-commit; `release` đóng kết nối ngay lập tức |
+| Phương thức mapper trả về `Stream` | Hoạt động | Stream giữ connection cho tới khi đóng; trong transaction `release` là no-op; luôn dùng `try (Stream<T> …)` |
+| Chia sẻ transaction với `JdbcTemplate` hoặc JPA | Hoạt động | Dùng chung `DataSourceUtils` và cùng một `PlatformTransactionManager` |
+| Spring AOP trên bean mapper | Hoạt động | Mapper là Spring bean thông thường |
+| `ExecutorType.BATCH` của MyBatis | Không có | Thay bằng [chữ ký phương thức batch](foreach-and-batches.md#jdbc-batches) |
+| Plugin / interceptor của MyBatis | Không có | Đã lược bỏ; thay thế bằng Spring AOP trên bean mapper hoặc DataSource proxy. Xem [Công thức thay thế plugin](../features/mybatis-differences.md#what-replaces-a-plugin) |
 
-## Các property
+## Cấu hình thuộc tính
 
 ```yaml
 larkbatis:
   max-sql-variants: 64                # số câu SQL khác nhau cho mỗi statement trước khi cảnh báo
-  fail-on-unbounded-fragment: false   # true = ném lỗi thay vì một cảnh báo
+  fail-on-unbounded-fragment: false   # true = ném lỗi thay vì chỉ cảnh báo
 ```
 
-Cả hai đều xoay quanh cái giá vận hành của `${}`: statement cache được đánh khoá bằng văn
-bản SQL, nên một fragment có tập giá trị không bị chặn sẽ làm chúng phình ra vô hạn. Xem
-[SQL thô](raw-sql.md#tracking-sql-variants).
+Cả hai thuộc tính này giúp kiểm soát statement cache tránh bị phình to do `${}` hoặc `<foreach>`. Xem [SQL thô](raw-sql.md#tracking-sql-variants).
 
-!!! note "`log-sql` chưa được hiện thực"
+!!! note "Chưa hỗ trợ `log-sql` trực tiếp"
 
-    Mọi thân phương thức sinh ra sẽ phải mang thêm một nhánh ghi log, mà hình dạng sinh
-    ra thì không có nhánh nào như vậy. Việc ghi log SQL thuộc về driver hoặc pool
-    (`net.ttddyy:datasource-proxy`, p6spy) cho tới khi có lý do đổi điều đó.
+    Để ghi log SQL, hãy sử dụng giải pháp ở tầng DataSource hoặc Connection Pool (như `net.ttddyy:datasource-proxy`, p6spy). Điều này giúp thân phương thức sinh ra không phải gánh thêm rẽ nhánh ghi log không cần thiết.
 
-## Khi mặc định không vừa
+## Tuỳ biến nâng cao
 
-| Tình huống | Làm gì |
+| Tình huống | Hướng xử lý |
 |---|---|
-| Mapper nằm ngoài các package được quét | `-Alarkbatis.springConfigPackage=com.example.app`, hoặc `@Import(LarkBatisMapperConfiguration.class)` |
-| Bạn muốn tự khai báo các bean mapper | `-Alarkbatis.springConfig=false` |
-| Có nhiều hơn một `DataSource` | Khai báo mỗi `DataSource` một `SpringLarkBatisSession` rồi tự viết các phương thức `@Bean` cho mapper |
+| Mapper nằm ngoài package quét mặc định | `-Alarkbatis.springConfigPackage=com.example.app`, hoặc `@Import(LarkBatisMapperConfiguration.class)` |
+| Tự khai báo bean mapper thủ công | `-Alarkbatis.springConfig=false` |
+| Sử dụng nhiều `DataSource` | Khai báo mỗi `DataSource` một bean `SpringLarkBatisSession` và tự viết các phương thức `@Bean` khởi tạo mapper |
 
-Về chuyện nhiều data source: `@ConditionalOnSingleCandidate` khiến auto-configuration lùi
-hẳn lại thay vì đoán mò, còn `@Configuration` sinh ra thì nhận đúng một
-`LarkBatisSession`, nên hãy đánh dấu một cái là `@Primary`, hoặc tắt lớp sinh ra bằng
-tuỳ chọn ở trên. Việc chọn `DataSource` theo từng mapper được **để lại**: chưa thiết kế
-khi chưa có một service thật cần đến nó.
+Khi có nhiều `DataSource`, `@ConditionalOnSingleCandidate` sẽ tự động tắt auto-configuration để tránh cấu hình nhầm lẫn. Bạn chỉ cần đánh dấu một DataSource là `@Primary` hoặc tự định nghĩa bean mapper tương ứng.
 
 ## Spring Boot 3 và Spring Boot 4
 

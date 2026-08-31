@@ -1,8 +1,6 @@
 # Result map và join
 
-Một `<resultMap>` khai báo mỗi property lấy từ cột nào, và có thể lấp đầy **một** cấp
-lồng `<association>` (một đối tượng con duy nhất) hoặc `<collection>` (một `List`) từ
-chính cái join đó.
+Thẻ `<resultMap>` định nghĩa ánh xạ tường minh giữa cột và property, đồng thời hỗ trợ nạp dữ liệu cho **một** cấp lồng nhau (`<association>` cho quan hệ 1-1, `<collection>` cho quan hệ 1-N) từ chính câu lệnh JOIN đó.
 
 ```xml
 <resultMap id="teamWithMembers" type="com.example.app.Team">
@@ -23,7 +21,7 @@ chính cái join đó.
 </select>
 ```
 
-`<association>` hoạt động y hệt cho một đối tượng con đơn lẻ:
+`<association>` hoạt động tương tự cho một đối tượng con đơn lẻ:
 
 ```xml
 <resultMap id="teamWithCoach" type="com.example.app.Team">
@@ -36,10 +34,9 @@ chính cái join đó.
 </resultMap>
 ```
 
-## Nó biên dịch thành cái gì
+## Cơ chế biên dịch
 
-Một vòng lặp mở đối tượng cha mới mỗi khi cột `<id>` đổi giá trị, và bỏ qua đối tượng
-con khi cột `<id>` của nó là `NULL`, tức là một cú `LEFT JOIN` trượt:
+Bộ sinh code phát sinh một vòng lặp gom nhóm: khởi tạo đối tượng cha mới mỗi khi giá trị cột `<id>` thay đổi, và bỏ qua đối tượng con nếu khoá của bảng con nhận giá trị `NULL` (trường hợp `LEFT JOIN` không khớp dữ liệu con):
 
 ```java
 List<Team> out = new ArrayList<>();
@@ -67,76 +64,53 @@ while (rs.next()) {
 }
 ```
 
-1.  MyBatis làm việc này bằng cách dựng một `CacheKey` cho mỗi dòng: dùng reflection duyệt
-    các cột id, đọc từng cột qua một `TypeHandler`, băm, rồi tra đối tượng cha trong một
-    map. Ở đây khoá là một biến cục bộ có kiểu, so sánh bằng `!=`, nên một khoá `long`
-    không tốn lần boxing nào cho mỗi dòng.
-2.  Phép kiểm tra `LEFT JOIN` trượt. Không có nó, một đối tượng cha không khớp sẽ có thêm
-    một đứa con toàn null.
+1.  MyBatis xử lý việc này bằng cách tạo `CacheKey` cho từng dòng: dùng reflection duyệt các cột id, băm giá trị và tra cứu đối tượng cha trong `Map`. LarkBatis lưu khoá cha trong biến cục bộ có kiểu tĩnh và so sánh trực tiếp bằng `!=`, giúp loại bỏ hoàn toàn chi phí boxing và tra map.
+2.  Phép kiểm tra khoá con khác null giúp tránh khởi tạo đối tượng con rỗng khi `LEFT JOIN` không khớp.
 
 ## Quy tắc sắp xếp { #the-ordering-rule }
 
-!!! warning "ResultSet phải được sắp theo khoá của cha"
+!!! warning "ResultSet bắt buộc phải sắp xếp theo khoá của bảng cha"
 
-    Đó là cái giá của việc không giữ một map. Những dòng quay lại một khoá **sau khi đã
-    đi qua các dòng của một cha khác** sẽ tạo ra một đối tượng cha thứ hai thay vì gộp
-    vào cái đầu tiên.
+    Đây là điều kiện kỹ thuật bắt buộc để vòng lặp gom nhóm hoạt động mà không cần lưu cache map. Nếu dữ liệu của cùng một cha bị ngắt quãng bởi dòng của một cha khác, vòng lặp sẽ tạo ra hai đối tượng cha riêng biệt thay vì gộp lại.
 
     ```sql
-    ORDER BY t.id, m.jersey   -- khoá của cha đứng trước
+    ORDER BY t.id, m.jersey   -- khoá của cha luôn đứng trước
     ```
 
-    Một statement dùng result map lồng nhau mà **không có `ORDER BY` nào cả** sẽ nhận một
-    ghi chú lúc build. Còn một `ORDER BY` sai thì không phát hiện được lúc build, nên cái
-    đó thuộc về bạn.
+    Statement dùng result map lồng nhau mà **thiếu mệnh đề `ORDER BY`** sẽ nhận một cảnh báo lúc build.
 
-## Không có auto-mapping
+## Không dùng auto-mapping trong `<resultMap>`
 
-Một result map ánh xạ **đúng những gì nó khai báo**. Không có `autoMapping` và không có
-việc khớp cột ngầm định bên trong một `<resultMap>`.
+Một result map chỉ ánh xạ **đúng những gì được khai báo tường minh**. Không có `autoMapping` và không có việc khớp cột ngầm định bên trong một `<resultMap>`.
 
-- Một `<result>` có cột không xuất hiện trong select list là một **cảnh báo build**, và
-  property đó bị bỏ trống.
-- Một `<id>` có cột không xuất hiện là một **lỗi build**, bởi chính cột đó là thứ vòng
-  lặp đọc vào.
+- Thẻ `<result>` có cột không xuất hiện trong danh sách SELECT là **cảnh báo build**, và property đó sẽ giữ giá trị mặc định.
+- Thẻ `<id>` có cột không xuất hiện trong danh sách SELECT là **lỗi build**, vì đây là cột bắt buộc để điều khiển vòng lặp gom nhóm.
 
-Nếu bạn muốn cột được khớp với tên property theo quy ước, hãy dùng `resultType` thay
-thế. Đường đó *có* áp dụng `snake_case` → `camelCase`, ngay lúc build. Hai thứ này là
-hai công cụ khác nhau: `resultType` cho "ánh xạ cái nào khớp", `resultMap` cho "ánh xạ
-đúng cái tôi nói".
+Nếu muốn tự động ánh xạ cột sang property theo quy ước `snake_case` → `camelCase`, hãy sử dụng `resultType`. `resultType` dành cho "tự động ánh xạ những gì khớp", còn `resultMap` dành cho "ánh xạ chính xác những gì khai báo".
 
 ## Vị trí cột
 
-Khi select list phân tích được, vị trí là hằng số. Khi không, riêng statement đó nhận một
-bộ resolver sinh riêng, đọc `ResultSetMetaData` một lần ở dòng đầu tiên rồi khớp theo tên
-cột mà result map đã khai báo. Cách nào cũng đúng, và bản build cho bạn biết đã rơi vào
-trường hợp nào. Xem
-[Đọc theo vị trí hay theo tên](mappers.md#positional-or-name-based-reads).
+Khi danh sách SELECT phân tích cú pháp tĩnh được, vị trí cột là hằng số. Khi không phân tích được, statement đó sẽ dùng resolver sinh riêng để đọc `ResultSetMetaData` đúng một lần ở dòng đầu tiên. Xem [Đọc theo vị trí hay theo tên](mappers.md#positional-or-name-based-reads).
 
-## Result map không làm được gì { #narrowed-on-purpose }
+## Các tính năng result map không hỗ trợ { #narrowed-on-purpose }
 
-Mỗi mục dưới đây là một **lỗi biên dịch có nêu tên thứ thay thế**:
+Mỗi mục dưới đây là một **lỗi biên dịch nêu rõ giải pháp thay thế**:
 
-| Không hỗ trợ | Thay bằng |
+| Không hỗ trợ | Giải pháp thay thế |
 |---|---|
-| Lồng quá một cấp, hoặc hai ánh xạ lồng trong cùng một map | Một cú join, một khoá gom nhóm |
-| `select=` trên `<association>` / `<collection>` (nested select) | Hãy viết cú join; nested select *chính là* cái N+1 mà nó tưởng đang tránh |
-| `resultMap=` bên trong một ánh xạ lồng | Viết thẳng `<id>`/`<result>` của con ra, để giới hạn một cấp luôn nhìn thấy được |
-| `columnPrefix` | Đặt alias cho các cột con ngay trong select list |
-| `extends` | Viết thẳng các ánh xạ ra |
-| `<constructor>` | Lớp kết quả được dựng bằng constructor không tham số và các setter |
-| `<discriminator>` | Tách thành các statement riêng với kiểu kết quả riêng |
-| `autoMapping` | Khai báo các ánh xạ, hoặc dùng `resultType` |
+| Lồng quá một cấp, hoặc hai ánh xạ lồng trong cùng một map | Một câu lệnh join, một khoá gom nhóm |
+| `select=` trên `<association>` / `<collection>` (nested select) | Viết câu lệnh join tường minh (nested select chính là nguyên nhân gây lỗi N+1) |
+| `resultMap=` bên trong một ánh xạ lồng | Khai báo trực tiếp `<id>`/`<result>` của con để duy trì giới hạn một cấp rõ ràng |
+| `columnPrefix` | Đặt alias cho các cột con ngay trong danh sách SELECT |
+| `extends` | Khai báo tường minh tất cả các ánh xạ |
+| `<constructor>` | Result class được khởi tạo bằng constructor không tham số và các setter |
+| `<discriminator>` | Tách thành các statement riêng biệt với kiểu kết quả tương ứng |
+| `autoMapping` | Khai báo ánh xạ tường minh, hoặc dùng `resultType` |
 | `<id column="x"/>` mà không có `property` | Ánh xạ khoá vào một property rồi đánh dấu `<id>` cho nó |
-| Type alias trong `type` / `ofType` / `javaType` | Tên lớp đầy đủ |
+| Type alias trong `type` / `ofType` / `javaType` | Dùng tên class đầy đủ (FQN) |
 
-Đồ thị đối tượng sâu hơn thì được ráp bằng Java từ hai statement: vẫn đúng bấy nhiêu lượt
-đi về, mà phần ráp nối thì hiện ra trong đoạn code bạn đọc được.
+Đồ thị đối tượng sâu hơn hai cấp nên được ghép trong Java từ hai statement độc lập: số lượt round-trip xuống database không đổi mà logic ghép nối lại hoàn toàn minh bạch.
 
 ## `Stream` và result map lồng nhau
 
-Kiểu trả về `Stream` trên một `<resultMap>` lồng nhau là **lỗi biên dịch**. Một đối tượng
-cha trải trên nhiều dòng, nên nó chỉ hoàn chỉnh khi đối tượng cha tiếp theo bắt đầu; trả
-lời điều đó từ một con trỏ đọc-từng-dòng đồng nghĩa với việc đệm toàn bộ kết quả, mà đó
-đúng là thứ kiểu trả về `Stream` được chọn để tránh. Xem
-[Stream kết quả](streaming.md).
+Khai báo kiểu trả về `Stream` trên một `<resultMap>` lồng nhau là **lỗi biên dịch**. Một đối tượng cha trải trên nhiều dòng nên chỉ hoàn chỉnh khi đối tượng cha tiếp theo bắt đầu. Việc trả về `Stream` từ con trỏ đọc từng dòng đòi hỏi phải đệm dữ liệu vào bộ nhớ, làm mất đi ý nghĩa tiết kiệm RAM của `Stream`. Xem [Stream kết quả](streaming.md).

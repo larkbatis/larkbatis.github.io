@@ -1,9 +1,6 @@
 # foreach và batch
 
-`<foreach>` là ca khó nhất trong SQL động, bởi vì số lượng placeholder đúng là thứ duy
-nhất về câu SQL mà thật sự không biết được trước lúc chạy. LarkBatis biên dịch nó
-thành **hai vòng lặp duyệt cùng những phần tử đó theo cùng thứ tự đó**: một vòng nối
-placeholder, một vòng gắn giá trị.
+`<foreach>` là trường hợp phức tạp nhất trong SQL động vì số lượng placeholder chỉ được xác định lúc runtime. LarkBatis biên dịch nó thành **hai vòng lặp duyệt qua cùng tập phần tử theo đúng thứ tự**: một vòng dựng chuỗi placeholder (`?, ?, ?`), một vòng gán giá trị tham số vào `PreparedStatement`.
 
 ```xml
 <select id="findByIds" resultType="com.example.app.User">
@@ -40,12 +37,10 @@ public List<User> findByIds(List<Long> ids) {
 ```
 
 1.  Xem [Tập hợp rỗng](#empty-collections) bên dưới.
-2.  Số phần tử của tập hợp làm đổi câu SQL, nên statement này được theo dõi y như một
-    chỗ chèn `${}`.
-3.  Vòng lặp thứ hai. Không có tầng đặt tên `__frch_id_0` nào để dẫn giá trị đi qua, vì
-    chỉ số vòng lặp đã nối placeholder thứ *k* với giá trị thứ *k* rồi.
+2.  Số lượng phần tử thay đổi làm thay đổi chuỗi câu SQL, nên statement này được theo dõi biến thể tương tự như một điểm chèn `${}`.
+3.  Vòng lặp thứ hai gán trực tiếp giá trị theo chỉ số vòng lặp, không cần biến trung gian `__frch_id_0`.
 
-## Những gì lặp được
+## Các kiểu dữ liệu hỗ trợ lặp
 
 | Kiểu tập hợp | `item` | `index` |
 |---|---|---|
@@ -53,10 +48,9 @@ public List<User> findByIds(List<Long> ids) {
 | `T[]` | phần tử | vị trí |
 | `Map<K, V>` | **giá trị** | **khoá** |
 
-Tất cả đều phải **có kiểu tĩnh**: `List<Long>`, không phải `List`. Chính kiểu phần tử là
-thứ quyết định chọn `ps.setLong` thay vì `ps.setString` ngay lúc build.
+Tất cả đều phải **định kiểu tĩnh rõ ràng**: `List<Long>`, không dùng raw type `List`. Kiểu phần tử là cơ sở để bộ sinh code chọn gọi `ps.setLong` thay vì `ps.setString` ngay lúc build.
 
-Vòng lặp lồng được, và `item` của vòng ngoài có thể làm `collection` của vòng trong:
+Hỗ trợ vòng lặp lồng nhau, và `item` của vòng ngoài có thể làm `collection` của vòng trong:
 
 ```xml
 <select id="findByIdGroups" resultType="com.example.app.User">
@@ -73,13 +67,11 @@ Vòng lặp lồng được, và `item` của vòng ngoài có thể làm `colle
 List<User> findByIdGroups(List<List<Long>> groups);
 ```
 
-Các vòng lặp ngang hàng có thể dùng lại cùng một tên `index`; bộ sinh code tự đổi tên
-tách chúng ra.
+Các vòng lặp ngang hàng có thể dùng lại cùng một tên `index`; bộ sinh code sẽ tự động phân tách phạm vi biến.
 
-## Dùng `index`
+## Sử dụng `index`
 
-`index` là vị trí (hoặc khoá của map), và nó bind được như mọi giá trị khác. Đây
-chính là chiêu "giữ nguyên thứ tự đầu vào" quen thuộc:
+`index` là vị trí (hoặc khoá của map), và có thể bind như mọi tham số khác. Đây là kỹ thuật quen thuộc để giữ nguyên thứ tự đầu vào:
 
 ```xml
 <select id="findByIdsOrdered" resultType="com.example.app.User">
@@ -101,9 +93,9 @@ Với `Map`, `index` là khoá còn `item` là giá trị:
 </foreach>
 ```
 
-## Gắn một property của phần tử
+## Gán thuộc tính của phần tử
 
-Thân vòng lặp không nhất thiết phải gắn chính phần tử đó:
+Thân vòng lặp có thể gán property của phần tử thay vì chính phần tử đó:
 
 ```xml
 <foreach collection="probes" item="p" open="(" separator="," close=")">#{p.email}</foreach>
@@ -111,7 +103,7 @@ Thân vòng lặp không nhất thiết phải gắn chính phần tử đó:
 
 ## Tập hợp rỗng { #empty-collections }
 
-!!! danger "`<foreach>` rỗng thì ném exception"
+!!! danger "`<foreach>` rỗng sẽ ném exception"
 
     ```text
     LarkBatisEmptyForeachException:
@@ -119,13 +111,11 @@ Thân vòng lặp không nhất thiết phải gắn chính phần tử đó:
       wrap the loop in an <if> testing the collection if an empty one should drop the fragment instead
     ```
 
-MyBatis đóng góp *hoàn toàn không gì cả* cho một tập hợp rỗng, kể cả `open` và `close`.
-Kết cục là `... WHERE id IN` đi thẳng xuống
-database rồi chết ở đó, với một lỗi cú pháp không gọi tên cả mapper lẫn tham số. Chết
-ngay tại đây thì gọi tên được cả hai, đúng ở chỗ gọi đang giữ cái danh sách rỗng ấy.
+    MyBatis không chèn bất kỳ chuỗi nào (kể cả `open` và `close`) khi tập hợp rỗng, dẫn đến câu SQL lỗi cú pháp `... WHERE id IN` gửi xuống database mà không chỉ rõ mapper hay tham số nào.
 
-Nếu bạn thật sự muốn mảnh SQL đó biến mất, hãy nói ra, và bạn giữ được đúng hành vi của
-MyBatis:
+    LarkBatis chủ động ném `LarkBatisEmptyForeachException` ngay tại chỗ gọi kèm đầy đủ thông tin.
+
+Nếu bạn muốn đoạn SQL đó biến mất khi danh sách rỗng, hãy bọc trong thẻ `<if>` để giữ đúng hành vi của MyBatis:
 
 ```xml
 <if test="ids != null and !ids.isEmpty()">
@@ -134,13 +124,9 @@ MyBatis:
 </if>
 ```
 
-## `@PadPow2`: chặn số biến thể SQL { #padpow2-bounding-the-sql-variants }
+## `@PadPow2`: Giới hạn số biến thể SQL { #padpow2-bounding-the-sql-variants }
 
-Câu SQL của một statement có `<foreach>` thay đổi theo số phần tử, nên statement cache
-của driver và của database sẽ phình lên theo **mọi số phần tử từng gặp**. `@PadPow2`
-làm tròn số placeholder lên luỹ thừa của hai gần nhất bằng cách lặp lại phần tử cuối,
-qua đó chặn con số kia ở log₂(n) biến thể thay vì n. Hibernate gọi đúng chiêu này là
-`in_clause_parameter_padding`.
+Câu SQL của một statement có `<foreach>` thay đổi theo số phần tử, khiến statement cache của JDBC driver và database bị phình to theo từng kích thước danh sách. `@PadPow2` làm tròn số placeholder lên luỹ thừa của 2 gần nhất bằng cách lặp lại phần tử cuối cùng, qua đó chặn số biến thể ở mức log₂(n) thay vì n. Trong Hibernate, kỹ thuật tương đương có tên là `in_clause_parameter_padding`.
 
 ```java
 @PadPow2
@@ -160,15 +146,11 @@ for (int k0 = n0; k0 < p0; k0++) {
 }
 ```
 
-Đặt trên interface thì áp cho mọi statement; đặt trên một phương thức thì chỉ cho phương
-thức đó.
+Đặt trên interface thì áp dụng cho mọi statement; đặt trên phương thức thì chỉ áp dụng cho phương thức đó.
 
-!!! warning "Phải tự bật, và có kiểm soát"
+!!! warning "Quy tắc an toàn bắt buộc"
 
-    Lặp lại phần tử cuối chỉ vô hình ở chỗ mà giá trị trùng không làm đổi kết quả, tức
-    là một danh sách `IN`. Bộ sinh code cưỡng chế điều đó: thân `<foreach>` phải là đúng
-    một lần bind `#{}` và statement không được là `INSERT`. Ngược lại thì việc chèn thêm
-    là **lỗi biên dịch**, chứ không phải âm thầm nhân đôi các dòng.
+    Việc lặp lại phần tử cuối cùng chỉ an toàn tuyệt đối trong mệnh đề `IN`. Bộ sinh code kiểm tra nghiêm ngặt: thân `<foreach>` phải chứa duy nhất một liên kết `#{}` và câu lệnh không phải là `INSERT`. Nằm ngoài các điều kiện này, việc pad sẽ **báo lỗi biên dịch**.
 
 ## `VALUES` nhiều dòng
 
@@ -185,9 +167,7 @@ Một `<foreach>` trong `INSERT` dựng nên một statement với nhiều bộ 
 
 ## Batch của JDBC { #jdbc-batches }
 
-Batch không phải một chế độ executor mà bạn cấu hình, bởi làm gì có executor nào. Nó là một
-**chữ ký phương thức**: một `@Insert` có tham số là `List<T>` sẽ biên dịch thành
-`addBatch()` / `executeBatch()`.
+Batch trong LarkBatis không phải là một chế độ cấu hình Executor như trong MyBatis, mà được định nghĩa trực tiếp qua **chữ ký phương thức**: một phương thức `@Insert` nhận tham số `List<T>` sẽ tự động biên dịch thành luồng JDBC `addBatch()` / `executeBatch()`.
 
 ```java
 @Insert("INSERT INTO orders (status, total, placed_at) VALUES (#{status}, #{total}, #{placedAt})")
@@ -228,13 +208,9 @@ public int insertAll(List<Order> orders) {
 }
 ```
 
-1.  Một batch rỗng là lệnh rỗng trả về 0. Khác với `<foreach>` rỗng, ở đây không sinh ra
-    câu SQL méo mó nào cần bảo vệ bạn khỏi.
-2.  Có những driver trả về ít khoá hơn số dòng. Làm ngơ chuyện đó sẽ để lại một phần
-    batch mang id null mà chẳng ai hay. Xem [Khoá tự sinh](generated-keys.md).
+1.  Batch rỗng sẽ trả về 0 ngay lập tức mà không gửi lệnh nào xuống database.
+2.  Một số JDBC driver trả về ít khoá hơn số dòng. Kiểm tra này giúp phát hiện lỗi thiếu ID trong batch. Xem [Khoá tự sinh](generated-keys.md).
 
-!!! note "Batch và SQL động không đi cùng nhau"
+!!! note "Batch không đi cùng với SQL động"
 
-    Câu SQL của một statement batch phải giống hệt nhau cho mọi dòng, và chính điều đó
-    làm nó thành một prepared statement duy nhất. Một phương thức batch mà statement có
-    chứa thẻ động là lỗi biên dịch.
+    Câu SQL của statement batch phải giống hệt nhau cho mọi dòng dữ liệu để sử dụng chung một PreparedStatement duy nhất. Phương thức batch có chứa thẻ động là lỗi biên dịch.

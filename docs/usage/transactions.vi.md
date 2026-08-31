@@ -1,7 +1,6 @@
 # Transaction
 
-Ngoài Spring, `LarkBatisTx` là phạm vi transaction. Trong Spring, bạn dùng
-`@Transactional` còn LarkBatis đứng hẳn sang một bên.
+Trong ứng dụng độc lập, `LarkBatisTx` quản lý phạm vi transaction. Khi tích hợp với Spring, bạn sử dụng `@Transactional` chuẩn và LarkBatis sẽ tự động đồng bộ kết nối qua Spring Transaction Manager.
 
 ## `LarkBatisTx`
 
@@ -13,34 +12,26 @@ try (LarkBatisTx tx = session.begin()) {
 }
 ```
 
-Ba quy tắc, và cả ba đều nhằm biến kết cục an toàn thành kết cục mặc định:
+Ba nguyên tắc cốt lõi giúp đảm bảo an toàn dữ liệu mặc định:
 
-**1 · `commit()` là một lá phiếu, không phải lệnh commit.** Việc commit thật sự xảy ra
-khi phạm vi ngoài cùng đóng lại. Chính điều đó cho phép các phạm vi lồng nhau mà phạm vi
-bên trong không commit mất phần việc mà phạm vi ngoài chưa làm xong.
+**1 · `commit()` là một lá phiếu (vote), không phải lệnh commit tức thì.** Việc commit thực sự chỉ diễn ra khi phạm vi ngoài cùng đóng lại. Cơ chế này cho phép lồng các scope transaction mà phạm vi bên trong không vô tình commit dở dang công việc của phạm vi bên ngoài.
 
-**2 · Rời một phạm vi mà không bỏ phiếu sẽ đánh dấu cả transaction là chỉ-rollback.** Một
-lệnh `return` sớm, một exception được ném ra, một `commit()` bị quên: tất cả đều
-rollback. Bạn không bao giờ rơi vào cảnh một nửa công việc đã lưu chỉ vì bỏ sót một lối
-ra khỏi khối lệnh.
+**2 · Rời khỏi một scope mà không gọi `commit()` sẽ đánh dấu toàn bộ transaction là rollback-only.** Một lệnh `return` sớm, một exception không bắt, hoặc quên gọi `tx.commit()`: tất cả đều kích hoạt rollback an toàn. Bạn không bao giờ rơi vào tình huống lưu dữ liệu dở dang do thoát khối lệnh bất ngờ.
 
-**3 · Commit một transaction đã bị đánh dấu hỏng thì ném exception.** Nếu một phạm vi bên
-trong rời đi mà không bỏ phiếu rồi phạm vi ngoài gọi `commit()`, bạn nhận
-`LarkBatisRollbackOnlyException` chứ không phải một lần rollback âm thầm trông y như
-một lần commit thành công dưới mắt người gọi.
+**3 · Gọi commit trên transaction đã bị đánh dấu hỏng sẽ ném ngoại lệ ngay lập tức.** Nếu một scope bên trong kết thúc mà không commit rồi scope ngoài gọi `commit()`, hệ thống sẽ ném `LarkBatisRollbackOnlyException` thay vì âm thầm rollback khiến lập trình viên tưởng nhầm là đã lưu thành công.
 
 ```java
 try (LarkBatisTx outer = session.begin()) {
-    try (LarkBatisTx inner = session.begin()) {  // nhập vào transaction ngoài
+    try (LarkBatisTx inner = session.begin()) {  // tham gia vào transaction ngoài
         mapper.insert(a);
-        inner.commit();                          // bỏ phiếu
+        inner.commit();                          // bỏ phiếu hợp lệ
     }
     mapper.insert(b);
-    outer.commit();                              // bỏ phiếu; lần đóng ngoài cùng mới commit
+    outer.commit();                              // bỏ phiếu; đóng scope ngoài cùng mới commit xuống DB
 }
 ```
 
-### Chỉ đọc
+### Transaction chỉ đọc (Read-Only)
 
 ```java
 try (LarkBatisTx tx = session.begin(true)) {
@@ -48,15 +39,13 @@ try (LarkBatisTx tx = session.begin(true)) {
 }
 ```
 
-### Kiểm tra
+### Kiểm tra trạng thái transaction
 
-`session.hasActiveTransaction()` cho biết luồng đang gọi có nằm trong một phạm vi hay
-không. Phương thức này có mặt để chẩn đoán và cho những đoạn code phải hành xử khác nhau
-trong và ngoài transaction, chứ không phải để code sinh ra tra cứu.
+`session.hasActiveTransaction()` cho biết luồng hiện tại có đang nằm trong transaction hay không. Phương thức này phục vụ mục đích chẩn đoán hoặc cho các đoạn code cần phân biệt logic trong và ngoài transaction.
 
-## Dưới Spring
+## Sử dụng trong Spring
 
-Đừng dùng `LarkBatisTx` trong một ứng dụng Spring. Hãy dùng `@Transactional`:
+Trong ứng dụng Spring, không dùng `LarkBatisTx` mà sử dụng `@Transactional`:
 
 ```java
 @Service
@@ -80,33 +69,30 @@ public class AccountService {
 }
 ```
 
-Nó chạy được vì `SpringLarkBatisSession.conn()` đi hỏi `DataSourceUtils`. Hàm đó trả về
-đúng connection đã gắn vào transaction đang chạy, và chỉ mở một connection mới khi chưa
-có cái nào. `release()` làm ngược lại: lệnh rỗng khi ở trong
-transaction, một lần đóng thật khi ở ngoài.
+Cơ chế này hoạt động vì `SpringLarkBatisSession.conn()` lấy kết nối qua `DataSourceUtils`. Phương thức này trả về đúng `Connection` đang gắn với transaction Spring hiện tại và chỉ mở kết nối mới khi chưa có transaction nào. `release()` đóng vai trò ngược lại: là no-op khi ở trong transaction, và đóng kết nối thực sự khi ở ngoài transaction.
 
-| Tình huống | | Vì sao |
+| Tình huống | Kết quả | Cơ chế hoạt động |
 |---|---|---|
-| `@Transactional` trên service, mapper được gọi bên trong | chạy | `DataSourceUtils` trả về connection của transaction |
-| `REQUIRES_NEW`, `NESTED`, các quy tắc rollback | chạy | Spring lo hết; LarkBatis chỉ đi xin một connection |
-| `readOnly = true` | chạy | Spring đặt cờ đó lên connection |
-| Mapper được gọi ngoài mọi transaction | chạy | Auto-commit; connection được đóng ngay khi release |
-| Chia sẻ transaction với `JdbcTemplate` hoặc JPA | chạy | Cùng `DataSourceUtils`, cùng `DataSourceTransactionManager` |
-| Phương thức trả về `Stream` | chạy | Trong transaction thì `release` là lệnh rỗng và transaction giữ connection; dùng `try (Stream<T> …)` trong mọi trường hợp |
+| `@Transactional` trên service | Hoạt động | `DataSourceUtils` trả về connection của transaction hiện tại |
+| `REQUIRES_NEW`, `NESTED`, rollback rules | Hoạt động | Spring Transaction Manager xử lý; LarkBatis chỉ mượn Connection |
+| `readOnly = true` | Hoạt động | Spring tự động đặt cờ readOnly trên Connection |
+| Mapper gọi ngoài transaction | Hoạt động | Chế độ auto-commit; Connection được đóng và hoàn trả về pool ngay khi gọi `release` |
+| Chia sẻ transaction với `JdbcTemplate` hoặc JPA | Hoạt động | Cùng dùng chung `DataSourceUtils` và `PlatformTransactionManager` |
+| Phương thức trả về `Stream` | Hoạt động | Trong transaction thì `release` là no-op; luôn bọc `Stream` trong `try-with-resources` |
 
-## Vì sao code sinh ra không bao giờ đóng Connection { #why-generated-code-never-closes-the-connection }
+## Vì sao code sinh ra không bao giờ đóng Connection trực tiếp { #why-generated-code-never-closes-the-connection }
 
 ```java
 Connection c = s.conn();
 try (PreparedStatement ps = c.prepareStatement(SQL)) {   // (1)!
-    ...
+    // ...
 } finally {
     s.release(c);                                        // (2)!
 }
 ```
 
 1.  **Statement** nằm trong try-with-resources. **Connection** thì không.
-2.  Chỉ `release` mới biết connection này có thực sự được phép đóng hay không.
+2.  Chỉ `s.release(c)` mới biết connection này có thực sự được phép đóng hay không.
 
 Đặt `Connection` vào try-with-resources sẽ đóng mất một connection đang thuộc về một
 transaction đang chạy, và điều đó sai dưới Spring cũng như sai dưới `LarkBatisTx`. Đây

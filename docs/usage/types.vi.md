@@ -1,30 +1,25 @@
 # Kiểu dữ liệu và handler
 
-Tầng `TypeHandler` của MyBatis là một registry lúc chạy: với mỗi tham số và mỗi cột, tra
-một handler theo kiểu Java và kiểu JDBC, rồi gọi nó. LarkBatis đưa ra lựa chọn đó ngay
-lúc build rồi chèn thẳng kết quả vào code sinh ra. Còn lại lúc chạy là `JdbcCodec`, một
-nhúm hàm tĩnh cho những kiểu mà accessor JDBC tự nhiên của chúng là kiểu nguyên thuỷ hoặc
-cần một phép chuyển đổi.
+Tầng `TypeHandler` của MyBatis vận hành như một registry động lúc runtime: với mỗi tham số và mỗi cột, hệ thống tra cứu handler theo cặp (javaType, jdbcType) và gọi qua reflection. LarkBatis định hình toàn bộ các ánh xạ này từ lúc build và phát ra trực tiếp các lệnh gọi tương ứng. Khi chạy, runtime chỉ sử dụng `JdbcCodec` — tập hợp các static helper xử lý null an toàn cho các kiểu dữ liệu cơ bản hoặc cần chuyển đổi.
 
-## Những gì gắn được mà không cần trợ giúp
+## Các kiểu dữ liệu hỗ trợ sẵn
 
-`#{}` và các property kết quả xử lý trực tiếp những kiểu sau:
+Ký hiệu `#{}` và các property kết quả hỗ trợ trực tiếp các kiểu sau:
 
-| Kiểu Java | Đọc | Ghi |
+| Kiểu Java | Đọc dữ liệu | Ghi dữ liệu |
 |---|---|---|
 | `String` | `rs.getString(i)` | `ps.setString(i, v)` |
 | `long`, `int`, `short`, `byte`, `boolean`, `float`, `double` | `rs.getLong(i)` v.v. | `ps.setLong(i, v)` v.v. |
-| `Long`, `Integer`, … (kiểu bọc) | `JdbcCodec.longOrNull(rs, i)` | `JdbcCodec.setLong(ps, i, v)` |
+| `Long`, `Integer`, … (kiểu wrapper) | `JdbcCodec.longOrNull(rs, i)` | `JdbcCodec.setLong(ps, i, v)` |
 | `BigDecimal`, `BigInteger` | `rs.getBigDecimal(i)` | `ps.setBigDecimal(i, v)` |
 | `byte[]` | `rs.getBytes(i)` | `ps.setBytes(i, v)` |
-| `java.sql.Date`, `Time`, `Timestamp` | trực tiếp | trực tiếp |
+| `java.sql.Date`, `Time`, `Timestamp` | trực tiếp qua JDBC | trực tiếp qua JDBC |
 | `Instant`, `LocalDate`, `LocalTime`, `LocalDateTime` | `JdbcCodec.instant(rs, i)` v.v. | `JdbcCodec.setInstant(ps, i, v)` v.v. |
 | Mọi `enum` | `JdbcCodec.enumValue(...)` | `JdbcCodec.setEnum(ps, i, v)` |
 
-### Vì sao các kiểu bọc phải đi qua `JdbcCodec`
+### Cơ chế xử lý null của kiểu wrapper qua `JdbcCodec`
 
-`rs.getLong(i)` trả về `0` cho một `NULL` của SQL. Các hàm trợ giúp cho kiểu bọc làm đúng
-điều bạn thật sự muốn:
+`rs.getLong(i)` mặc định trả về `0` cho giá trị `NULL` trong database. Các hàm helper cho kiểu wrapper đảm bảo trả về đúng `null`:
 
 ```java
 public static Long longOrNull(ResultSet rs, int column) throws SQLException {
@@ -33,17 +28,13 @@ public static Long longOrNull(ResultSet rs, int column) throws SQLException {
 }
 ```
 
-Việc chọn giữa `rs.getLong(i)` và `JdbcCodec.longOrNull(rs, i)` được quyết lúc build từ
-kiểu khai báo của property. Property kiểu `long` nhận phép đọc nguyên thuỷ; property kiểu
-`Long` nhận phép đọc có nhận biết null. Khai báo property cho phép null chính là cách bạn
-yêu cầu xử lý null. Không có thiết lập riêng nào cả.
+Việc chọn giữa `rs.getLong(i)` và `JdbcCodec.longOrNull(rs, i)` được quyết định tĩnh lúc build dựa trên kiểu khai báo của property: kiểu `long` nguyên thuỷ dùng đọc trực tiếp, kiểu `Long` wrapper dùng helper nhận biết null.
 
-Ở phía ghi, `JdbcCodec.setLong(ps, i, null)` gọi `ps.setNull(i, Types.BIGINT)` với đúng
-kiểu SQL, điều mà một số driver bắt buộc phải có.
+Khi ghi dữ liệu, `JdbcCodec.setLong(ps, i, null)` sẽ gọi `ps.setNull(i, Types.BIGINT)` với đúng kiểu SQL tương ứng.
 
 ## Enum
 
-Enum ánh xạ theo `name()` của nó mặc định, theo cả hai chiều, và có xử lý `null`:
+Enum được ánh xạ theo `name()` mặc định cho cả hai chiều và hỗ trợ an toàn `null`:
 
 ```java
 public enum Status { NEW, PAID, SHIPPED }
@@ -54,33 +45,21 @@ public enum Status { NEW, PAID, SHIPPED }
 List<Order> byStatus(Status status);
 ```
 
-Enum cũng là một **kiểu giá trị đóng**, nên nó là một trong số ít thứ được phép bind vào
-`${}`, vì toàn bộ không gian giá trị của nó đã biết từ lúc build. Xem
-[SQL thô](raw-sql.md#the-rule).
+Enum là một **kiểu dữ liệu có tập giá trị đóng**, do đó nó được phép bind trực tiếp vào `${}` vì toàn bộ không gian giá trị đã biết trước lúc build. Xem [SQL thô](raw-sql.md#the-rule).
 
-Một enum lưu dưới dạng ordinal hoặc một mã tuỳ biến thì cần
-[handler riêng](#custom-type-handlers).
+Nếu cần lưu enum dưới dạng số thứ tự (ordinal) hoặc mã tuỳ biến, bạn cần khai báo [type handler riêng](#custom-type-handlers).
 
 ## `java.time`
 
-`Instant`, `LocalDate`, `LocalTime` và `LocalDateTime` chuyển đổi qua
-`java.sql.Timestamp` / `Date` / `Time`, đúng như các handler của MyBatis vẫn làm.
-`Instant` dùng `Timestamp.toInstant()` và `Timestamp.from(...)`, nên giá trị là tuyệt đối
-và múi giờ mặc định của JVM không xen vào.
+`Instant`, `LocalDate`, `LocalTime` và `LocalDateTime` được chuyển đổi qua `java.sql.Timestamp` / `Date` / `Time`. `Instant` sử dụng `Timestamp.toInstant()` và `Timestamp.from(...)`, đảm bảo giá trị là tuyệt đối và không bị ảnh hưởng bởi múi giờ mặc định của JVM.
 
-Các kiểu mang theo múi giờ (`ZonedDateTime`, `OffsetDateTime`) không được dựng sẵn. Một
-cột thì chẳng có múi giờ nào để mang, nên phép chuyển đổi cần một quyết định vốn thuộc về
-ứng dụng của bạn. Hãy lưu `Instant`, và chuyển đổi ở rìa của mapper.
+Các kiểu dữ liệu kèm múi giờ (`ZonedDateTime`, `OffsetDateTime`) không được tích hợp sẵn vì cột database chuẩn không lưu thông tin timezone. Khuyến nghị lưu trữ `Instant` (UTC) và chuyển đổi timezone ở tầng service.
 
 ## Đặt tên cột { #column-naming }
 
-Cột tìm ra property theo `snake_case` → `camelCase`, áp dụng lúc build:
-`created_at` → `setCreatedAt`. Mặc định là bật — MyBatis thì mặc định tắt — và
-`-Alarkbatis.mapUnderscoreToCamelCase=false` mang mặc định của MyBatis sang. Lựa chọn
-này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
-Xem [Cấu hình](../features/configuration.md#column-naming).
+Tên cột được tự động ánh xạ sang property theo quy ước `snake_case` → `camelCase` lúc build (`created_at` → `setCreatedAt`). Mặc định được bật; bạn có thể dùng `-Alarkbatis.mapUnderscoreToCamelCase=false` để tắt. Xem [Cấu hình](../features/configuration.md#column-naming).
 
-Chỗ nào quy ước không đủ thì một `<resultMap>` gọi tên cột tường minh:
+Khi cần ánh xạ tuỳ biến, bạn có thể dùng `<resultMap>`:
 
 ```xml
 <resultMap id="userMap" type="com.example.app.User">
@@ -89,7 +68,7 @@ Chỗ nào quy ước không đủ thì một `<resultMap>` gọi tên cột tư
 </resultMap>
 ```
 
-Hoặc `@Column` đặt tên cột ngay trên property, một lần, dùng cho mọi statement:
+Hoặc sử dụng `@Column` trực tiếp trên property:
 
 ```java
 public class User {

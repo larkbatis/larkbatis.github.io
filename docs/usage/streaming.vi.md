@@ -1,8 +1,6 @@
 # Stream kết quả
 
-Một phương thức mapper có thể trả về `Stream<T>` thay cho `List<T>`. Khi đó các dòng đến
-lần lượt từng dòng một từ một con trỏ đang mở, và đó chính là mục đích: một tập kết quả
-quá lớn để giữ trong bộ nhớ sẽ không bao giờ trở thành một danh sách.
+Phương thức mapper có thể khai báo kiểu trả về `Stream<T>` thay vì `List<T>`. Dữ liệu được đọc tuần tự từng dòng từ con trỏ `ResultSet` đang mở, giúp xử lý các tập dữ liệu lớn mà không gây tràn bộ nhớ (Out Of Memory).
 
 ```java
 @Select("SELECT id, name, email, created_at FROM users ORDER BY id")
@@ -15,20 +13,16 @@ try (Stream<User> rows = mapper.streamAll()) {
 }
 ```
 
-## Người gọi sở hữu tài nguyên
+## Trách nhiệm đóng tài nguyên thuộc về phía gọi
 
-!!! danger "`try`-with-resources ở đây không phải tuỳ chọn"
+!!! danger "Bắt buộc sử dụng try-with-resources khi gọi Stream"
 
-    Đây là hình dạng sinh ra duy nhất mà tài nguyên JDBC sống lâu hơn chính phương thức
-    đã mở chúng, nên thân sinh ra **không có `finally`**. Đóng stream chính là thứ đóng
-    `ResultSet` và `PreparedStatement` rồi trả `Connection` về.
+    Đây là trường hợp duy nhất mà tài nguyên JDBC sống lâu hơn chính phương thức mapper mở chúng, do đó thân phương thức sinh ra **không thể có khối `finally` đóng kết nối**. Việc đóng stream (`close()`) chính là thao tác đóng `ResultSet`, `PreparedStatement` và giải phóng `Connection`.
 
-    - **Ngoài transaction**, một stream không bao giờ được đóng sẽ giữ một `Connection`
-      của pool chừng nào nó còn với tới được. Đó là rò rỉ pool.
-    - **Trong transaction**, connection vẫn thuộc về transaction, còn stream giữ
-      statement và con trỏ cho tới khi nó kết thúc.
+    - **Ngoài transaction**: nếu không đóng stream, `Connection` sẽ bị giữ vô thời hạn cho đến khi GC thu hồi đối tượng. Đây là lỗi rò rỉ connection pool nghiêm trọng.
+    - **Trong transaction**: connection được quản lý bởi transaction, nhưng stream vẫn giữ statement và con trỏ mở cho đến khi hoàn tất.
 
-Thân sinh ra làm cho quyền sở hữu đó hiện rõ:
+Mã nguồn sinh ra thể hiện rõ quyền sở hữu tài nguyên này:
 
 ```java
 @Override
@@ -47,33 +41,27 @@ public Stream<Order> streamByStatus(Status status) {
 }
 ```
 
-1.  Trao cả ba tài nguyên cho stream, và stream sẽ nhả chúng ra khi `close()`.
-2.  Nhánh xử lý lỗi, tức bất cứ thứ gì ném lỗi *trước khi* stream tồn tại, sẽ tự tay gỡ
-    lại toàn bộ, với lỗi dọn dẹp được nén vào lỗi thật chứ không thay thế nó.
+1.  Chuyển giao toàn bộ ba tài nguyên cho stream; stream sẽ đóng tất cả khi gọi `close()`.
+2.  Khối catch xử lý các lỗi xảy ra *trước khi* khởi tạo stream thành công: dọn dẹp các tài nguyên đã mở dở dang và đính kèm lỗi dọn dẹp vào ngoại lệ chính (suppressed exception).
 
-## Vì sao stream là tuần tự
+## Vì sao Stream trong LarkBatis là tuần tự (sequential)
 
-Stream trả về là tuần tự và không tách nhánh được. Song song hoá một con trỏ nghĩa là
-đọc trước vào bộ nhớ, mà đó đúng là thứ kiểu trả về `Stream` được chọn để tránh. Nếu bạn
-muốn song song, hãy gom một khúc có giới hạn rồi song song hoá khúc đó.
+Stream trả về luôn là tuần tự và không hỗ trợ tách nhánh (`spliterator` không song song). Song song hoá một con trỏ JDBC bắt buộc phải nạp trước toàn bộ dữ liệu vào RAM — điều đi ngược lại mục đích tiết kiệm bộ nhớ của `Stream`. Nếu cần xử lý song song, hãy đọc dữ liệu theo từng batch có kích thước giới hạn rồi xử lý song song trên từng batch đó.
 
-## Những gì stream được
+## Khả năng hỗ trợ stream
 
-| | |
-|---|---|
-| `Stream<User>` trên một bean | Được, dùng row reader sinh ra |
-| `Stream<String>`, `Stream<Long>` (vô hướng) | Được, đọc cột 1, không bean, không reader |
-| `SELECT *` | Được, chỉ số lấy từ `ResultSetMetaData` trước dòng đầu tiên |
-| Một `<resultMap>` lồng nhau | **Lỗi biên dịch** |
+| Kiểu dữ liệu | Hỗ trợ | Cơ chế xử lý |
+|---|---|---|
+| `Stream<User>` trên một bean | Có | Sử dụng row reader sinh sẵn |
+| `Stream<String>`, `Stream<Long>` (vô hướng) | Có | Đọc trực tiếp cột 1, không cần bean hay reader |
+| `SELECT *` | Có | Đọc vị trí từ `ResultSetMetaData` ở dòng đầu tiên |
+| `<resultMap>` lồng nhau | **Không** | Lỗi biên dịch |
 
-Mục cuối đáng để hiểu hơn là để lách. Một đối tượng cha trải trên nhiều dòng, nên nó chỉ
-hoàn chỉnh khi đối tượng cha *tiếp theo* bắt đầu. Trả lời điều đó từ một con trỏ
-đọc-từng-dòng nghĩa là phải đệm, và như vậy là mất hết ý nghĩa. Hãy stream các dòng
-phẳng rồi tự gom nhóm, hoặc dùng `List` và chấp nhận tốn bộ nhớ.
+Đối tượng cha trong result map lồng nhau trải dài trên nhiều dòng và chỉ hoàn chỉnh khi dòng của đối tượng cha kế tiếp xuất hiện. Xử lý điều này trên con trỏ đọc tuần tự buộc phải đệm dữ liệu vào bộ nhớ. Với dữ liệu lồng nhau, hãy stream các dòng phẳng rồi tự gom nhóm, hoặc dùng `List` nếu kích thước dữ liệu cho phép.
 
-## Cửa thoát hiểm cũng stream được
+## Lối thoát thủ công cũng hỗ trợ stream
 
-`LarkBatisSession.queryStream` là bản stream tương ứng của `query`:
+`LarkBatisSession.queryStream` là phiên bản stream tương ứng của `query`:
 
 ```java
 default Stream<User> streamRecent(LarkBatisSession s, int limit) {
@@ -86,11 +74,11 @@ default Stream<User> streamRecent(LarkBatisSession s, int limit) {
 }
 ```
 
-Cùng một quy tắc sở hữu: người gọi phải đóng. Xem [SQL thô](raw-sql.md#the-escape-hatch).
+Quy tắc đóng tài nguyên không đổi: bên gọi bắt buộc phải đóng stream trong try-with-resources. Xem [SQL thô](raw-sql.md#the-escape-hatch).
 
-## Dưới Spring
+## Sử dụng trong Spring
 
-`@Transactional` và stream đi cùng nhau được, quy tắc sở hữu không đổi:
+`@Transactional` và `Stream` hoạt động hoàn toàn tương thích với nhau:
 
 ```java
 @Transactional(readOnly = true)

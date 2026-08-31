@@ -19,7 +19,7 @@ Những tính năng này đòi hỏi một cơ chế không còn tồn tại tro
 | **Cache cấp 2** | Không có cơ chế tương đương, và việc vô hiệu hoá cache ở tầng này luôn phức tạp | Đặt cache ở tầng service phía trên mapper, nơi việc invalidate cache rõ ràng và kiểm soát được |
 | **Gọi `addMapper()` lúc runtime** | Danh sách mapper được chốt cố định lúc biên dịch | Không cần xử lý; tập mapper đóng giúp tối ưu hoá toàn bộ quá trình build |
 | **`RowBounds`** | Phân trang trên bộ nhớ từ ResultSet đầy đủ | Phân trang trực tiếp trong SQL bằng `LIMIT` và `OFFSET` dưới dạng tham số |
-| **`<selectKey>`** | Đội lốt một tuỳ chọn nhưng thực chất là một statement thứ hai chạy ngầm | Viết tường minh statement thứ hai. [Ví dụ](../usage/generated-keys.md#selectkey-is-not-supported) |
+| **`<selectKey>`** | Bản chất là một statement thứ hai chạy ngầm ẩn dưới dạng một tuỳ chọn cấu hình | Viết tường minh statement thứ hai. [Ví dụ](../usage/generated-keys.md#selectkey-is-not-supported) |
 | **Constructor mapping (`<constructor>`)** | Class kết quả được khởi tạo bằng constructor không tham số và setter | Dùng setter |
 | **`<parameterMap>`** | Đã bị deprecated ngay trong MyBatis | Dùng `#{}` với các tham số có kiểu rõ ràng |
 | **`objectFactory` / `objectWrapperFactory`** | Hook can thiệp vào tầng reflection nay đã không còn | |

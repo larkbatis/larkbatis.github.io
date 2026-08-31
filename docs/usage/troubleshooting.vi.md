@@ -1,51 +1,31 @@
 # Xử lý sự cố
 
-## Không có gì được sinh ra
+## Không có file nào được sinh ra
 
-Kiểm tra theo đúng thứ tự này:
+Hãy kiểm tra theo thứ tự các bước sau:
 
-1. **Processor có nằm đúng configuration không?** `annotationProcessor` trong Gradle,
-   `annotationProcessorPaths` trong Maven, chứ không phải `implementation` /
-   `<dependencies>`.
-2. **Bạn có đang biên dịch bằng javac không?** ECJ / trình biên dịch batch của Eclipse
-   không được hỗ trợ. Processor dựa vào hành vi của javac: thứ tự khai báo của các phần
-   tử, và việc resolve nhiều vòng cho các kiểu được sinh ra.
-3. **Interface đó có annotation statement hoặc `@Mapper` không?** Đó là hai kiểu kích
-   hoạt duy nhất. Một interface chỉ dùng XML mà thiếu `@Mapper` sẽ không bao giờ lọt vào
-   một vòng xử lý nào.
-4. **Dùng JDK 23+ với `addProcessorPath=false`?** javac không còn tự tìm processor từ
-   classpath biên dịch nữa, và `-Alarkbatis.mapperDir` cũng không được tính là lời yêu
-   cầu xử lý annotation. Hãy thêm processor vào `annotationProcessorPaths` hoặc đặt
-   `<proc>full</proc>`.
+1. **Annotation processor đã đặt đúng configuration chưa?** Sử dụng `annotationProcessor` trong Gradle, hoặc `<annotationProcessorPaths>` trong Maven compiler plugin (không phải `implementation` hay `<dependencies>`).
+2. **Bạn có đang biên dịch bằng javac không?** Eclipse Compiler for Java (ECJ) không được hỗ trợ. Processor dựa vào hành vi chuẩn của javac (thứ tự khai báo phần tử trong AST và khả năng resolve qua nhiều round xử lý).
+3. **Interface mapper có annotation statement hoặc `@Mapper` không?** Đây là hai điều kiện kích hoạt duy nhất. Một interface thuần XML mà thiếu `@Mapper` sẽ bị processor bỏ qua.
+4. **Sử dụng JDK 23+ với cấu hình `addProcessorPath=false`?** javac từ JDK 23 không còn tự động tìm processor từ compile classpath. Hãy thêm processor vào `annotationProcessorPaths` hoặc khai báo `<proc>full</proc>`.
 
-## `#{id}` không resolve được, và tham số mang tên `arg0`, `arg1`
+## `#{id}` không resolve được và tham số nhận tên `arg0`, `arg1`
 
 ```text
 error: no parameter or property named 'id' in findById(long)
 ```
 
-Một bản build **incremental** của Gradle chạy lại các aggregating processor trên những
-mapper không đổi từ **file class** của chúng, nơi tên tham số chỉ sống sót nếu lớp đó
-được biên dịch với `-parameters`. Build sạch thì đọc AST và chạy tốt; bản incremental
-ngay sau đó thì không. Gradle đã ghi nhận hạn chế này, và nó không phải lỗi của
-LarkBatis.
+Quá trình biên dịch **tăng dần (incremental build)** của Gradle chạy lại các aggregating processor trên những mapper không thay đổi từ **file .class** đã biên dịch trước đó. Mặc định javac không lưu tên tham số vào bytecode, do đó processor chỉ thấy các tên tổng hợp `arg0`, `arg1`.
 
-### Cờ đó thật ra làm gì { #what-the-flag-actually-does }
+### Cờ `-parameters` có tác dụng gì { #what-the-flag-actually-does }
 
-Mặc định javac vứt bỏ tên tham số. `findById(long id)` biên dịch ra một phương thức có
-tham số không tên, và thứ gì đọc lại từ file class sẽ chỉ thấy cái tên tổng hợp `arg0`.
-Cờ `-parameters` bảo javac ghi kèm mỗi phương thức một attribute `MethodParameters`, nhờ
-đó tên thật còn lại trong bytecode.
+Mặc định javac loại bỏ tên tham số khỏi bytecode để tiết kiệm dung lượng. `findById(long id)` biên dịch ra bytecode sẽ mất tên `id`. Cờ `-parameters` yêu cầu javac ghi thêm thuộc tính `MethodParameters` vào class file, giúp giữ lại tên thật của tham số trong bytecode.
 
-Điều đó quan trọng ở đây vì processor xử lý `#{id}` bằng cách tìm một tham số tên `id`.
-Với build sạch, nó đọc tên từ AST, mà AST thì lúc nào cũng có, nên không có gì sai. Với
-build incremental, Gradle đưa cho nó những mapper mà nó không biên dịch lại, và cái tên
-duy nhất còn dùng được là cái mà file class giữ lại.
+Khi build sạch (clean build), processor đọc tên từ AST nên luôn chính xác. Nhưng khi build tăng dần, Gradle truyền lại các class file cũ, nên processor chỉ có thể lấy lại tên tham số nếu class file có attribute này.
 
-Cái giá là vài byte mỗi phương thức trong jar, và không tốn gì lúc chạy. Spring Boot,
-Jackson và Micronaut đều đòi đúng cờ này, nên đa số project đã có sẵn.
+Chi phí chỉ tốn vài byte trong mỗi file .class và hoàn toàn không ảnh hưởng tới hiệu năng runtime. Các framework lớn như Spring Boot, Jackson và Micronaut đều yêu cầu cờ này.
 
-=== "Cách 1: biên dịch kèm `-parameters`"
+=== "Cách 1: Biên dịch kèm cờ `-parameters`"
 
     ```kotlin title="build.gradle.kts"
     tasks.withType<JavaCompile>().configureEach {   // (1)!
@@ -53,50 +33,33 @@ Jackson và Micronaut đều đòi đúng cờ này, nên đa số project đã 
     }
     ```
 
-    1.  `withType(...).configureEach` với tới mọi task biên dịch trong project, kể cả
-        `compileTestJava` và các source set thêm vào sau này. Chỉ cấu hình riêng
-        `compileJava` thì những task còn lại không có cờ.
-    2.  Bên Maven tương đương với `<parameters>true</parameters>` trong
-        `maven-compiler-plugin`, và [trang cài đặt](../getting-started/index.md#maven)
-        đã đặt sẵn giúp bạn.
+    1.  `configureEach` áp dụng cờ cho toàn bộ các compile task trong project (kể cả test và custom source set).
+    2.  Bên Maven tương đương cấu hình `<parameters>true</parameters>` trong `maven-compiler-plugin`.
 
-=== "Cách 2: đặt tên cho mọi tham số"
+=== "Cách 2: Khai báo `@Param` tường minh cho mọi tham số"
 
     ```java
     User findById(@Param("id") long id);
     ```
 
-    `@Param` đặt cái tên vào trong annotation, mà annotation thì được lưu trong file class
-    bất kể cờ biên dịch là gì. Cách này gõ nhiều hơn, đổi lại nó sống sót qua cả những bản
-    build do người khác cấu hình.
+    `@Param` lưu tên tham số trực tiếp trong metadata của annotation nên luôn tồn tại trong bytecode bất kể cờ biên dịch nào.
 
-## `Lombok has not run yet` / lớp kết quả không có accessor nào
+## Lỗi liên quan đến Lombok / Class kết quả không có accessor nào
 
-Lombok ghi getter và setter của nó vào AST khi processor của **chính nó** chạy, còn javac
-thì chạy các processor tìm được theo đúng thứ tự trên classpath. Khai báo trước,
-LarkBatis sẽ nhìn thấy một lớp kết quả không có lấy một accessor nào.
+Lombok chèn getter và setter vào AST khi processor của chính nó chạy. Do đó, `larkbatis-processor` bắt buộc phải được cấu hình chạy **sau** Lombok trong chuỗi `annotationProcessor`:
 
 ```kotlin
 annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")  // sau
+annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")  // đặt sau Lombok
 ```
 
-Thông báo lỗi có nói rõ điều đó khi nó phát hiện annotation của Lombok trên lớp, nhưng
-cách sửa vẫn chỉ là một dòng thứ tự.
+## Sửa mapper XML nhưng code không sinh lại
 
-## Sửa mapper XML mà chẳng thay đổi gì
+Processor đọc mapper XML trực tiếp từ file hệ thống thay vì qua `Filer` của compiler, vì vậy build tool cần được cấu hình để nhận diện các file XML là đầu vào biên dịch:
 
-Processor đọc mapper XML bằng `java.io` thuần, nằm ngoài `Filer` của trình biên dịch, nên
-phải nói cho công cụ build biết rằng những file đó là đầu vào biên dịch.
-
-- **Đang dùng [plugin build](../getting-started/build-plugins.md)?** Gradle đăng ký các
-  file làm đầu vào của `compileJava`; goal `larkbatis:refresh` của Maven chạm vào file
-  nguồn của interface mapper có băm nội dung XML thay đổi. Cả hai đều phải chạy được ngay.
-- **Dùng Maven mà chẳng thấy gì xảy ra?** Gần như chắc chắn bạn đã bỏ quên
-  `<extensions>true</extensions>`, và thiếu nó thì mọi thứ hỏng trong **im lặng**. Hãy chạy
-  `mvn larkbatis:check`.
-- **Đang tự truyền tay `-Alarkbatis.mapperDir`?** Vậy thì chẳng có gì đăng ký đầu vào
-  cả. Hãy chạy `clean` sau khi chỉ sửa XML.
+- **Khi dùng [build plugin](../getting-started/build-plugins.md)?** Gradle plugin tự động đăng ký các file XML làm input của `compileJava`; Maven plugin qua goal `larkbatis:refresh` sẽ tự động chạm (touch) các file Java tương ứng khi hash của XML thay đổi.
+- **Dùng Maven nhưng không thấy code cập nhật?** Kiểm tra xem đã bật `<extensions>true</extensions>` trong cấu hình plugin chưa. Nếu thiếu, extension lifecycle sẽ không chạy. Chạy `mvn larkbatis:check` để kiểm tra.
+- **Truyền thủ công `-Alarkbatis.mapperDir`?** Khi không dùng plugin, hãy chạy `clean` trước khi biên dịch lại sau khi sửa XML.
 
 Cũng kiểm tra xem phần tử gốc của file có phải `<mapper>` không, vì mọi thứ khác trong
 thư mục đều bị bỏ qua, và xem `namespace` của nó có gọi tên một interface **trong cùng
