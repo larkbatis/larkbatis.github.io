@@ -1,6 +1,6 @@
 # SQL động
 
-Các thẻ `<if>`, `<choose>`, `<where>`, `<set>` và `<trim>` đều được hỗ trợ đầy đủ, nhưng không thẻ nào tồn tại dưới dạng cây AST lúc runtime. Bộ sinh code chuyển đổi cấu trúc XML thành các biến boolean điều kiện cục bộ và các lệnh nối chuỗi `StringBuilder` tối ưu. Yếu tố duy nhất được đánh giá lúc chạy là các biểu thức `test`, mỗi biểu thức đúng một lần.
+Các thẻ `<if>`, `<choose>`, `<where>`, `<set>` và `<trim>` đều được hỗ trợ đầy đủ và không thành phần nào tồn tại dưới dạng cây AST lúc runtime. Trình biên dịch phẳng hoá (flatten) toàn bộ cấu trúc thẻ XML thành các biến điều kiện cục bộ (`condition locals`) và các lệnh nối chuỗi có điều kiện (`guarded appends`). Khi thực thi lúc runtime, chi phí tính toán duy nhất là việc đánh giá (evaluate) mỗi biểu thức `test` đúng một lần.
 
 ## Cơ chế biên dịch
 

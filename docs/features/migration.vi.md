@@ -86,7 +86,7 @@ Bản báo cáo cũng hiển thị **mức độ tập trung** của các vấn 
 | Cấu hình `mapUnderscoreToCamelCase` đang tắt | REVIEW | LarkBatis áp dụng lúc build và mặc định bật. Giữ nguyên hành vi cũ với `-Alarkbatis.mapUnderscoreToCamelCase=false`, hoặc gắn `@Column` / `<resultMap>` cho các cột bị ảnh hưởng |
 | Nhiều môi trường / nhiều `DataSource` | REVIEW | Mỗi lần build hiện tại hỗ trợ một `DataSource` chính |
 | Thẻ `<foreach>` | INFO | Được hỗ trợ; thống kê để theo dõi số lượng biến thể SQL có thể sinh ra |
-| Statement động | INFO | Được biên dịch thành các biến boolean cục bộ và `StringBuilder` |
+| Statement động | INFO | Được biên dịch thành các biến điều kiện cục bộ (`condition locals`) và `StringBuilder` |
 
 ## Thứ tự thực hiện khuyến nghị
 
