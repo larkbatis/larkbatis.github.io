@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#annotations" class="md-skip">
+        <a href="#annotation" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1517,15 +1517,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#statement-annotations" class="md-nav__link">
+  <a href="#annotation-cho-statement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement annotations
+        Annotation cho statement
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Statement annotations">
+    <nav class="md-nav" aria-label="Annotation cho statement">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1815,15 +1815,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#statement-annotations" class="md-nav__link">
+  <a href="#annotation-cho-statement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statement annotations
+        Annotation cho statement
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Statement annotations">
+    <nav class="md-nav" aria-label="Annotation cho statement">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1947,7 +1947,7 @@
 
 
   
-    <a href="https://github.com/larkbatis/larkbatis.github.io/edit/main/docs/features/annotations.md" title="Chỉnh sửa" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/larkbatis/larkbatis.github.io/edit/main/docs/features/annotations.vi.md" title="Chỉnh sửa" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1955,16 +1955,14 @@
   
 
 
-<h1 id="annotations">Annotations<a class="headerlink" href="#annotations" title="Permanent link">&para;</a></h1>
-<p>Everything in <code>io.github.larkbatis.annotations</code>. All of them are <code>CLASS</code>-retention: they
-exist for the compiler and never appear at runtime, which is why a modular consumer
-declares the artifact <code>requires static</code>.</p>
-<h2 id="statement-annotations">Statement annotations<a class="headerlink" href="#statement-annotations" title="Permanent link">&para;</a></h2>
+<h1 id="annotation">Annotation<a class="headerlink" href="#annotation" title="Permanent link">&para;</a></h1>
+<p>Toàn bộ các annotation thuộc package <code>io.github.larkbatis.annotations</code>. Tất cả đều có phạm vi <code>@Retention(CLASS)</code>: chúng chỉ phục vụ cho trình biên dịch và không bao giờ tồn tại lúc runtime. Đó là lý do khi dùng Java module (JPMS), bạn chỉ cần khai báo <code>requires static</code>.</p>
+<h2 id="annotation-cho-statement">Annotation cho statement<a class="headerlink" href="#annotation-cho-statement" title="Permanent link">&para;</a></h2>
 <h3 id="select-insert-update-delete"><code>@Select</code> <code>@Insert</code> <code>@Update</code> <code>@Delete</code><a class="headerlink" href="#select-insert-update-delete" title="Permanent link">&para;</a></h3>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">METHOD</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Select</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p><code>String[]</code>, joined with a single space. Applied to a mapper method.</p>
+<p>Nhận một mảng <code>String[]</code>, các chuỗi được nối với nhau bằng một dấu cách đơn. Được áp dụng trên phương thức của mapper interface.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@Select</span><span class="p">({</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="s">"SELECT id, name, email, created_at"</span><span class="p">,</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="s">"FROM users"</span><span class="p">,</span>
@@ -1972,25 +1970,20 @@ declares the artifact <code>requires static</code>.</p>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">})</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">User</span><span class="w"> </span><span class="nf">findByEmail</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">);</span>
 </span></code></pre></div>
-<p>A method may have <strong>either</strong> a statement annotation <strong>or</strong> an XML statement. Both, or
-neither, is a compile error.</p>
+<p>Mỗi phương thức chỉ được phép khai báo <strong>hoặc</strong> bằng annotation <strong>hoặc</strong> bằng XML. Nếu khai báo cả hai, hoặc không khai báo cái nào, trình biên dịch sẽ báo lỗi.</p>
 <hr />
 <h2 id="mapper"><code>@Mapper</code><a class="headerlink" href="#mapper" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">TYPE</span><span class="p">)</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Mapper</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Marks an interface whose statements (or some of them) live in mapper XML. The XML file's
-<code>&lt;mapper namespace="…"&gt;</code> must be this interface's fully-qualified name, and each statement
-<code>id</code> must match a method name.</p>
-<p>Purely annotation-based mappers do <strong>not</strong> need it: the marker exists so the processor can
-see XML-only interfaces at all, which would otherwise never reach a processing round.</p>
+<p>Đánh dấu interface có statement (toàn bộ hoặc một phần) được định nghĩa trong mapper XML. Thuộc tính <code>&lt;mapper namespace="…"&gt;</code> của tệp XML bắt buộc phải là tên đầy đủ (FQN) của interface này, và thuộc tính <code>id</code> của mỗi statement phải khớp với tên phương thức tương ứng.</p>
+<p>Các mapper chỉ dùng annotation <strong>không bắt buộc</strong> phải có <code>@Mapper</code>: annotation này tồn tại nhằm giúp annotation processor phát hiện được các interface chỉ dùng XML, vốn dĩ không có annotation nào trên phương thức để kích hoạt lượt xử lý.</p>
 <hr />
 <h2 id="param"><code>@Param</code><a class="headerlink" href="#param" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">PARAMETER</span><span class="p">)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Param</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Names a parameter for <code>#{}</code> resolution. Required when a method has several parameters,
-and a reliable substitute for compiling with <code>-parameters</code>.</p>
+<p>Đặt tên rõ ràng cho tham số để resolve trong <code>#{}</code>. Bắt buộc sử dụng khi phương thức có nhiều tham số, và là giải pháp thay thế an toàn khi dự án không bật cờ biên dịch <code>-parameters</code>.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name FROM users WHERE name LIKE #{pattern} AND id &gt; #{after}"</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">page</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"pattern"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pattern</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"after"</span><span class="p">)</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">after</span><span class="p">);</span>
 </span></code></pre></div>
@@ -2003,73 +1996,64 @@ and a reliable substitute for compiling with <code>-parameters</code>.</p>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">keyColumn</span><span class="p">()</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Only the generated-keys subset of the MyBatis annotation is supported.</p>
+<p>Chỉ hỗ trợ tập thuộc tính phục vụ lấy khoá tự sinh (generated keys) của MyBatis.</p>
 <table>
 <thead>
 <tr>
-<th>Attribute</th>
-<th></th>
+<th>Thuộc tính</th>
+<th>Ý nghĩa</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>useGeneratedKeys</code></td>
-<td>Ask the driver for generated keys after an <code>INSERT</code></td>
+<td>Yêu cầu JDBC driver trả về khoá tự sinh sau câu lệnh <code>INSERT</code></td>
 </tr>
 <tr>
 <td><code>keyProperty</code></td>
-<td>Property (or <code>param.property</code>) the key is assigned to. <strong>Required</strong> when <code>useGeneratedKeys</code> is set; a wrong name is a compile error. Comma-separated for composite keys</td>
+<td>Tên thuộc tính (hoặc <code>param.property</code>) nhận giá trị khoá được sinh. <strong>Bắt buộc</strong> khi bật <code>useGeneratedKeys</code>; đặt sai tên sẽ báo lỗi biên dịch. Dùng dấu phẩy để phân tách khoá tổng hợp</td>
 </tr>
 <tr>
 <td><code>keyColumn</code></td>
-<td>Column name(s) of the key, comma-separated. Strongly recommended: omitting it produces a <strong>mandatory build warning</strong> and falls back to the non-portable <code>RETURN_GENERATED_KEYS</code>. See <a href="../../usage/generated-keys/">Generated Keys</a></td>
+<td>Tên cột chứa khoá trong database, phân tách bằng dấu phẩy. Khuyến nghị luôn khai báo: nếu bỏ trống, trình biên dịch sẽ phát <strong>cảnh báo bắt buộc</strong> và fallback về <code>RETURN_GENERATED_KEYS</code> vốn không đảm bảo tính di động giữa các hệ quản trị database. Xem <a href="../../usage/generated-keys/">Khoá tự sinh</a></td>
 </tr>
 </tbody>
 </table>
-<p>If both are comma-separated, the two lists must be the same length.</p>
+<p>Nếu cả hai thuộc tính đều chứa danh sách phân tách bằng dấu phẩy, hai danh sách phải có cùng số lượng phần tử.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name, email) VALUES (#{name}, #{email})"</span><span class="p">)</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
 </span></code></pre></div>
-<p><a href="../../usage/generated-keys/">Details</a></p>
+<p><a href="../../usage/generated-keys/">Chi tiết</a></p>
 <hr />
 <h2 id="orderby"><code>@OrderBy</code><a class="headerlink" href="#orderby" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">PARAMETER</span><span class="p">)</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">OrderBy</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="nf">allowed</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Permits a <code>String</code> parameter to be bound to <code>${}</code>, by compiling it to a <code>switch</code> over the
-literal allow-list. A value outside the list is rejected at runtime with
-<code>LarkBatisRejectedException</code> and never reaches the SQL text.</p>
+<p>Cho phép tham số kiểu <code>String</code> được chèn vào <code>${}</code>, bằng cách biên dịch thành câu lệnh <code>switch</code> kiểm tra trên danh sách giá trị cho phép (allow-list). Giá trị nằm ngoài danh sách sẽ bị từ chối lúc runtime với ngoại lệ <code>LarkBatisRejectedException</code> và tuyệt đối không bao giờ lọt vào chuỗi SQL.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id, name, email, created_at FROM users ORDER BY ${sort}"</span><span class="p">)</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="nd">@OrderBy</span><span class="p">(</span><span class="n">allowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="s">"name"</span><span class="p">,</span><span class="w"> </span><span class="s">"created_at"</span><span class="p">})</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">sort</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Without it, a <code>String</code> parameter bound to <code>${}</code> is a compile error.
-<a href="../../usage/raw-sql/">Details</a></p>
+<p>Nếu không có annotation này, tham số <code>String</code> gắn vào <code>${}</code> sẽ gây lỗi biên dịch.
+<a href="../../usage/raw-sql/">Chi tiết</a></p>
 <hr />
 <h2 id="padpow2"><code>@PadPow2</code><a class="headerlink" href="#padpow2" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">TYPE</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">PadPow2</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Pads a <code>&lt;foreach&gt;</code> placeholder count up to the next power of two, repeating the last
-element, which bounds SQL-text variants at log₂(n) instead of n. Hibernate calls the same
-trick <code>in_clause_parameter_padding</code>.</p>
-<p>On an interface it applies to every statement; on a method, to that one.</p>
+<p>Bổ sung (pad) số lượng phần tử giữ chỗ trong <code>&lt;foreach&gt;</code> lên luỹ thừa của 2 gần nhất bằng cách lặp lại phần tử cuối cùng. Kỹ thuật này giới hạn số biến thể câu SQL ở mức log₂(n) thay vì n, giúp database tái sử dụng execution plan trong cache. Trong Hibernate, kỹ thuật tương đương có tên là <code>in_clause_parameter_padding</code>.</p>
+<p>Khi đặt trên interface, quy tắc áp dụng cho mọi statement bên trong; khi đặt trên phương thức, quy tắc chỉ áp dụng cho phương thức đó.</p>
 <div class="admonition warning">
-<p class="admonition-title">Enforced, not trusted</p>
-<p>Repeating the last element is invisible only in an <code>IN</code> list. The generator requires
-the <code>&lt;foreach&gt;</code> body to be a single <code>#{}</code> bind and the statement not to be an
-<code>INSERT</code>. Outside those limits padding is a <strong>compile error</strong>, never silently
-duplicated rows.</p>
+<p class="admonition-title">Quy tắc bắt buộc, không phụ thuộc vào suy đoán</p>
+<p>Việc lặp lại phần tử cuối cùng chỉ an toàn tuyệt đối trong mệnh đề <code>IN</code>. Bộ sinh code yêu cầu phần thân của <code>&lt;foreach&gt;</code> chỉ được chứa duy nhất một liên kết <code>#{}</code> và câu lệnh không phải là <code>INSERT</code>. Nằm ngoài các giới hạn này, việc pad sẽ <strong>báo lỗi biên dịch</strong>, tránh tuyệt đối nguy cơ chèn trùng lặp dữ liệu trong im lặng.</p>
 </div>
-<p><a href="../../usage/foreach-and-batches/#padpow2-bounding-the-sql-variants">Details</a></p>
+<p><a href="../../usage/foreach-and-batches/#padpow2-bounding-the-sql-variants">Chi tiết</a></p>
 <hr />
 <h2 id="column"><code>@Column</code><a class="headerlink" href="#column" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">FIELD</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Column</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Names the column a result property reads from, where the build-time <code>snake_case</code> →
-<code>camelCase</code> convention is not enough: a legacy name the property should not be bent to,
-or one that has no relation to the property name at all.</p>
+<p>Chỉ định tên cột mà một thuộc tính kết quả sẽ đọc, áp dụng trong trường hợp quy ước chuyển đổi <code>snake_case</code> → <code>camelCase</code> lúc build không đáp ứng được: tên cột legacy không muốn đổi tên field Java, hoặc tên cột hoàn toàn khác với tên thuộc tính.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Contact</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="s">"contact_id"</span><span class="p">)</span>
@@ -2086,72 +2070,43 @@ or one that has no relation to the property name at all.</p>
 </span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">    </span><span class="c1">// ...</span>
 </span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Read on the <strong>field, the setter and the getter</strong>: the annotation targets <code>FIELD</code> and
-<code>METHOD</code> both, and the site you pick is the site that is read. Two of them naming
-different columns for one property is a compile error, because there is no correct way to
-pick between them.</p>
-<p>The name replaces the property name everywhere a column is matched: the positional reader
-when the select list parses, and the name-based <code>switch</code> when it does not. Matching stays
-case-insensitive, and underscores are ignored on both sides by default, so
-<code>@Column("usr_email")</code> also matches a <code>USR_EMAIL</code> or <code>usrEmail</code> label. Under
-<a href="../configuration/#column-naming"><code>-Alarkbatis.mapUnderscoreToCamelCase=false</code></a> the
-underscores are significant: the same annotation then matches <code>USR_EMAIL</code> but not
-<code>usrEmail</code>, which is also what makes <code>@Column</code> the way to keep one column mapped in a
-build that turned the convention off.</p>
+<p>Được đọc trên cả <strong>field, setter và getter</strong>: annotation hỗ trợ cả <code>FIELD</code> và <code>METHOD</code>, bạn khai báo ở đâu thì processor sẽ đọc ở đó. Khai báo hai vị trí khác nhau trỏ về hai cột khác nhau cho cùng một thuộc tính sẽ báo lỗi biên dịch, vì không có cách nào xác định vị trí nào là chính xác.</p>
+<p>Tên chỉ định này thay thế tên thuộc tính ở mọi nơi khớp cột: trình đọc theo vị trí cột khi phân tích được câu SELECT, và câu lệnh <code>switch</code> theo tên khi không phân tích được. Việc so khớp không phân biệt hoa thường, và dấu gạch dưới mặc định được bỏ qua ở cả hai phía, do đó <code>@Column("usr_email")</code> cũng khớp với nhãn cột <code>USR_EMAIL</code> hoặc <code>usrEmail</code>. Nếu tắt cờ <a href="../configuration/#column-naming"><code>-Alarkbatis.mapUnderscoreToCamelCase=false</code></a>, dấu gạch dưới sẽ có ý nghĩa phân biệt: annotation khi đó khớp <code>USR_EMAIL</code> nhưng không khớp <code>usrEmail</code>.</p>
 <div class="admonition warning">
-<p class="admonition-title">One column, one property</p>
-<p>Two properties resolving to the same column is a compile error naming both, and that
-includes a <code>@Column</code> colliding with another property's own name. The generated
-reader switches on that name, so there is no reading that could be right.</p>
+<p class="admonition-title">Một cột chỉ ánh xạ vào một thuộc tính</p>
+<p>Hai thuộc tính cùng ánh xạ vào một cột là lỗi biên dịch và thông báo lỗi sẽ nêu rõ tên cả hai thuộc tính. Lỗi này bao gồm cả trường hợp một thuộc tính dùng <code>@Column</code> trùng tên với một thuộc tính khác. Bộ đọc sinh sẵn dùng câu lệnh switch trên tên cột, nên không thể có cách ánh xạ nào đúng nếu bị trùng lặp.</p>
 </div>
-<p>A <code>&lt;resultMap&gt;</code> still wins where it applies: it names columns per statement, which is
-more specific than a class-wide default.</p>
+<p>Thẻ <code>&lt;resultMap&gt;</code> luôn có độ ưu tiên cao nhất nếu được sử dụng: cấu hình trong XML định nghĩa ánh xạ cho từng statement cụ thể, chi tiết hơn cấu hình mặc định trên class.</p>
 <hr />
 <h2 id="larkbatisrow"><code>@LarkBatisRow</code><a class="headerlink" href="#larkbatisrow" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">(</span><span class="n">TYPE</span><span class="p">)</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">LarkBatisRow</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Asks for a generated row reader for a class that never appears as a statement's
-<code>resultType</code>: the shape of an ad-hoc query, read only by the
-<a href="../../usage/raw-sql/#the-escape-hatch">escape hatch</a>.</p>
+<p>Yêu cầu sinh row reader cho một class không bao giờ xuất hiện làm <code>resultType</code> của statement nào: thường là cấu trúc dữ liệu của các truy vấn ad-hoc, chỉ được đọc qua <a href="../../usage/raw-sql/#the-escape-hatch">lối thoát thủ công</a>.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nd">@LarkBatisRow</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DomainCount</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">domain</span><span class="p">;</span>
 </span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">total</span><span class="p">;</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="c1">// no-arg constructor + setters, as for any result class</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="c1">// constructor khong tham so + setter, tuong tu moi class ket qua</span>
 </span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DomainCount</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">countByDomain</span><span class="p">(</span><span class="n">LarkBatisSession</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minimum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">query</span><span class="p">(</span>
 </span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">            </span><span class="n">SqlFragment</span><span class="p">.</span><span class="na">unsafeRawSql</span><span class="p">(</span><span class="s">"SELECT ... GROUP BY domain HAVING COUNT(*) &gt;= ?"</span><span class="p">),</span>
 </span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">            </span><span class="n">ps</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">setInt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">minimum</span><span class="p">),</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">            </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span><span class="w">   </span><span class="c1">// generated because of the annotation</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">            </span><span class="n">DomainCountRow</span><span class="p">.</span><span class="na">READER</span><span class="p">);</span><span class="w">   </span><span class="c1">// duoc sinh ra nho co annotation</span>
 </span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The same reasoning keeps <code>s.query(...)</code> taking a <code>RowReader&lt;T&gt;</code> instead of a <code>Class&lt;T&gt;</code>.
-A <code>Class</code> there would have to be inspected at runtime to find setters, costing the
-no-reflection property the whole design rests on. The reader is generated, so javac
-checks the result type and there is nothing to discover at startup.</p>
-<p>The class has the same contract as any result class: no-arg constructor and setters. Its
-<strong>declaration order is the canonical column order</strong> of <code>READER</code>, there being no select
-list to take an order from. Hand-assembled SQL either selects the columns in that order,
-or reads through <code>DomainCountRow.columns(rs)</code> and <code>DomainCountRow.read(rs, c)</code>, which
-match on name.</p>
-<p>Marking a class that a statement already returns is harmless: one reader is generated
-either way.</p>
+<p>Lý do <code>s.query(...)</code> nhận một <code>RowReader&lt;T&gt;</code> thay vì nhận <code>Class&lt;T&gt;</code>: nếu nhận <code>Class</code>, runtime buộc phải dùng reflection để tìm setter lúc chạy, làm mất đi đặc tính không dùng reflection của toàn bộ thiết kế. Nhờ reader được sinh sẵn, javac kiểm tra kiểu kết quả ngay lúc compile và không cần dò tìm gì khi ứng dụng khởi động.</p>
+<p>Class áp dụng annotation này tuân thủ đúng quy ước của result class: constructor không tham số và các setter. <strong>Thứ tự khai báo field trong class chính là thứ tự cột chuẩn</strong> của <code>READER</code>, do không có câu SELECT tĩnh nào để xác định thứ tự. Câu SQL tự lắp ghép phải SELECT các cột theo đúng thứ tự đó, hoặc đọc thông qua <code>DomainCountRow.columns(rs)</code> và <code>DomainCountRow.read(rs, c)</code> để so khớp theo tên cột.</p>
+<p>Đánh dấu annotation này lên một class đã được một statement trả về hoàn toàn không gây lỗi: processor chỉ sinh ra duy nhất một reader.</p>
 <hr />
 <h2 id="handler"><code>@Handler</code><a class="headerlink" href="#handler" title="Permanent link">&para;</a></h2>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nd">@Retention</span><span class="p">(</span><span class="n">CLASS</span><span class="p">)</span><span class="w"> </span><span class="nd">@Target</span><span class="p">({</span><span class="n">PARAMETER</span><span class="p">,</span><span class="w"> </span><span class="n">FIELD</span><span class="p">,</span><span class="w"> </span><span class="n">METHOD</span><span class="p">})</span>
 </span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">Handler</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="nf">value</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Names the <code>LarkBatisTypeHandler</code> that moves one parameter or one result property: named
-explicitly, called directly from generated code, with no registry lookup and no discovery
-scan. It also lifts the <a href="../../usage/types/">type whitelist</a> for the value it moves, which
-is usually the reason to reach for it.</p>
-<p>For a type that always moves the same way, registering it once for the whole build with
-<a href="../configuration/#type-handlers-for-a-whole-build"><code>-Alarkbatis.typeHandlers</code></a> says the
-same thing without an annotation per site. This annotation still wins wherever it
-appears.</p>
+<p>Chỉ định rõ <code>LarkBatisTypeHandler</code> dùng để chuyển đổi một tham số hoặc một thuộc tính kết quả: gọi trực tiếp từ code sinh ra, không cần tra cứu registry và không quét classpath. Annotation này cũng gỡ bỏ giới hạn <a href="../../usage/types/">danh sách kiểu dữ liệu mặc định</a> cho giá trị tương ứng.</p>
+<p>Với kiểu dữ liệu luôn chuyển đổi theo một cách cố định trong toàn bộ dự án, bạn có thể đăng ký một lần qua cờ <a href="../configuration/#type-handlers-for-a-whole-build"><code>-Alarkbatis.typeHandlers</code></a> thay vì phải gắn annotation ở từng chỗ. Tuy nhiên, <code>@Handler</code> tại vị trí cụ thể luôn có độ ưu tiên cao nhất.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Wallet</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
 </span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
@@ -2161,18 +2116,11 @@ appears.</p>
 </span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT id FROM wallet WHERE balance &gt;= #{floor}"</span><span class="p">)</span>
 </span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">atLeast</span><span class="p">(</span><span class="nd">@Handler</span><span class="p">(</span><span class="n">MoneyHandler</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w"> </span><span class="n">Money</span><span class="w"> </span><span class="n">floor</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Read on the <strong>field, the setter and the getter</strong>, as <code>@Column</code> is, and two of them naming
-different handlers is a compile error. A mapper XML <code>typeHandler=</code> attribute names the
-same thing and is read the same way; the two must agree.</p>
-<p>The handler class has to be public and concrete, with a public no-argument constructor,
-and stateless, because one instance is shared. See
-<a href="../../usage/types/#custom-type-handlers">custom type handlers</a> for the full contract.</p>
+<p>Được đọc trên <strong>field, setter và getter</strong>, tương tự như <code>@Column</code>. Khai báo hai handler khác nhau trên cùng một thuộc tính sẽ gây lỗi biên dịch. Thuộc tính <code>typeHandler=</code> trong mapper XML có ý nghĩa tương đương và tuân thủ cùng quy tắc này.</p>
+<p>Class handler phải là public, cụ thể (concrete), có constructor public không tham số, và là stateless (không lưu trạng thái) vì chỉ một instance duy nhất được dùng chung. Xem <a href="../../usage/types/#custom-type-handlers">type handler tuỳ biến</a> để nắm đầy đủ quy chuẩn.</p>
 <div class="admonition note">
-<p class="admonition-title">Why <code>Class&lt;?&gt;</code> and not <code>Class&lt;? extends LarkBatisTypeHandler&lt;?&gt;&gt;</code></p>
-<p>Bounding it would make <code>larkbatis-annotations</code> depend on <code>larkbatis-runtime</code>, and
-that artifact has no dependencies, which is what lets you declare it
-<code>requires static</code>. The processor makes the check javac would have made, and gets to
-say <em>why</em> a handler was rejected while it is at it.</p>
+<p class="admonition-title">Tại sao dùng <code>Class&lt;?&gt;</code> thay vì <code>Class&lt;? extends LarkBatisTypeHandler&lt;?&gt;&gt;</code></p>
+<p>Nếu ràng buộc kiểu chặt chẽ trong annotation, artifact <code>larkbatis-annotations</code> sẽ bị phụ thuộc vào <code>larkbatis-runtime</code>. Việc không phụ thuộc dependency nào giúp bạn có thể khai báo <code>larkbatis-annotations</code> với phạm vi <code>requires static</code>. Processor sẽ thực hiện toàn bộ các bước kiểm tra kiểu thay cho javac và đưa ra thông báo lỗi chi tiết nếu handler không hợp lệ.</p>
 </div>
 
 

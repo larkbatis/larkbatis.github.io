@@ -1967,17 +1967,17 @@ plugin settings in between.</p>
 </tr>
 <tr>
 <td><code>larkbatis.mapperDir</code></td>
-<td>Directories of mapper XML, comma- or path-separator-separated — one option however many directories, since a repeated <code>-A</code> of the same name is the last one javac reads, not the union. Only files whose root element is <code>&lt;mapper&gt;</code> are read</td>
+<td>Directories of mapper XML, comma- or path-separator-separated. Use one option for all directories, since a repeated <code>-A</code> of the same name is the last one javac reads, not the union. Only files whose root element is <code>&lt;mapper&gt;</code> are read</td>
 <td>Set by the build plugin to <code>src/main/resources</code></td>
 </tr>
 <tr>
 <td><code>larkbatis.mapUnderscoreToCamelCase</code></td>
-<td><code>false</code> makes underscores significant when a column label is matched to a property — MyBatis's own default. Anything that is not <code>true</code> or <code>false</code> is a build error</td>
+<td><code>false</code> makes underscores significant when a column label is matched to a property, which is MyBatis's own default. Anything that is not <code>true</code> or <code>false</code> is a build error</td>
 <td><code>true</code></td>
 </tr>
 <tr>
 <td><code>larkbatis.typeHandlers</code></td>
-<td>A default handler per Java type, <code>javaType:handlerClass</code> pairs separated by commas — the build-time answer to a <code>&lt;typeHandlers&gt;</code> block</td>
+<td>A default handler per Java type, <code>javaType:handlerClass</code> pairs separated by commas: the build-time answer to a <code>&lt;typeHandlers&gt;</code> block</td>
 <td>none</td>
 </tr>
 <tr>
@@ -2056,10 +2056,10 @@ build keeps the semantics it had under MyBatis, whose own default is <em>off</em
 <p>Leaving it on is a behaviour change for a codebase migrating from a MyBatis config that
 never set it: columns MyBatis left unmapped start being read. Switching it off makes the
 build <strong>name every column that stops reaching a property</strong>, and the property it stops
-reaching — MyBatis leaves that silent, and a null in production is a bad place to find
+reaching. MyBatis leaves that silent, and a null in production is a bad place to find
 out:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>UserMapper.all: mapUnderscoreToCamelCase is off, so these columns reach no property and
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>their properties keep their defaults — user_name → userName. Alias the column in the SQL,
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>their properties keep their defaults: user_name → userName. Alias the column in the SQL,
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>or name it with @Column.
 </span></code></pre></div>
 <p>Unlike MyBatis, the convention applies to <strong>both</strong> sides: with it on, a property or
@@ -2074,7 +2074,7 @@ of that type picks it up. The same thing, decided during <code>javac</code>:</p>
 <p>Each entry applies to every property and every <code>#{}</code> of that type that does not name a
 handler of its own. <code>@Handler</code> and a <code>typeHandler</code> attribute both still win, because
 naming it at the site is the more specific answer.</p>
-<p>Every entry is checked while the build runs — the java type and the handler class must
+<p>Every entry is checked while the build runs: the java type and the handler class must
 both be on the compilation classpath, and the handler must implement
 <code>LarkBatisTypeHandler&lt;ThatType&gt;</code>, be public and concrete, and have a public no-argument
 constructor. What it produces is the same generated shape <code>@Handler</code> produces: one
@@ -2082,7 +2082,7 @@ constructor. What it produces is the same generated shape <code>@Handler</code> 
 <div class="admonition tip">
 <p class="admonition-title">An entry that moves nothing is a build warning</p>
 <p>A registered type that no property or <code>#{}</code> in the compilation has is exactly what a
-typo in the java-type half looks like — no property changes, no error, no handler.
+typo in the java-type half looks like: no property changes, no error, no handler.
 That entry is named in a warning rather than left silent.</p>
 </div>
 <table>
@@ -2170,7 +2170,7 @@ That entry is named in a warning rather than left silent.</p>
 <tr>
 <td><code>addParametersFlag</code> / <code>&lt;addParameters&gt;</code></td>
 <td><code>true</code></td>
-<td>Whether <code>-parameters</code> is turned on. Switching it off needs <code>@Param</code> on every mapper parameter — see the next section for why. Maven honours an explicit <code>&lt;parameters&gt;false&lt;/parameters&gt;</code> and warns instead of overriding it</td>
+<td>Whether <code>-parameters</code> is turned on. Switching it off needs <code>@Param</code> on every mapper parameter (see the next section for why). Maven honours an explicit <code>&lt;parameters&gt;false&lt;/parameters&gt;</code> and warns instead of overriding it</td>
 </tr>
 </tbody>
 </table>
