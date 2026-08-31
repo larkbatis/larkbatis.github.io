@@ -116,12 +116,4 @@ Three honest trade-offs, in the order teams actually hit them:
    `@OrderBy(allowed = {...})` switch. That migration is the first time anyone actually
    looks at every raw-SQL splice in the codebase.
 
-## Status
 
-`0.1.0-SNAPSHOT`, and not yet published to Maven Central. Milestones M1 through M4 are
-implemented: the runtime core, the annotation processor, mapper XML with dynamic tags,
-`<foreach>` and batches, one-level join result maps, `Stream` returns, transactions, both
-build plugins, JPMS descriptors and the Spring integration. M5 has landed the
-[benchmark suite](wiki/performance.md) and the [migration scanner](features/migration.md).
-The native-image smoke test is still not run, for want of a GraalVM install. See the
-[Roadmap](features/roadmap.md).

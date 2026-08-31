@@ -75,7 +75,7 @@ class with no accessors at all.
 
 ```kotlin
 annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")  // after
+annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // after
 ```
 
 The error message says so when it spots a Lombok annotation on the class, but the fix is

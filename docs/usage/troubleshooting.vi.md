@@ -50,7 +50,7 @@ Lombok chèn getter và setter vào AST khi processor của chính nó chạy. D
 
 ```kotlin
 annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")  // đặt sau Lombok
+annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // đặt sau Lombok
 ```
 
 ## Sửa mapper XML nhưng code không sinh lại

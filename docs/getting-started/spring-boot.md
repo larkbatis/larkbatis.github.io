@@ -10,9 +10,9 @@ auto-configuration supplies the single `LarkBatisSession` those methods ask for.
 ```kotlin title="build.gradle.kts"
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
-    implementation("io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0-SNAPSHOT")
-    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
+    implementation("io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0")
+    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")
 
     runtimeOnly("com.h2database:h2")
 }

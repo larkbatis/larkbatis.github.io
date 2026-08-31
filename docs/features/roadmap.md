@@ -71,7 +71,5 @@ Each already has a compile error naming its replacement. See
 
 ## Versioning
 
-`0.1.0-SNAPSHOT`, not yet published to Maven Central. Until then, build the repositories
-locally and publish to your Maven local repository. Documentation is versioned alongside
-releases. The version selector in the header switches between them, and `latest` always
-points at the most recent release.
+Documentation is versioned alongside releases. The version selector in the header switches
+between them, and `latest` always points at the most recent release.

@@ -9,8 +9,7 @@ processor that never reaches the application classpath.
 | `io.github.larkbatis:larkbatis-runtime` | `implementation` | `LarkBatisSession`, `LarkBatisTx`, `JdbcCodec`, `SqlFragment`. Zero dependencies beyond JDBC |
 | `io.github.larkbatis:larkbatis-processor` | `annotationProcessor` | The generator. Build-only: it must never appear on a runtime classpath |
 
-Current version: **`0.1.0-SNAPSHOT`**. The artifacts are not yet on Maven Central, so
-today you build the repositories locally and publish to your Maven local repository.
+Current version: **`0.1.0`**.
 
 ## Requirements
 
@@ -33,9 +32,9 @@ java {
 }
 
 dependencies {
-    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
-    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0-SNAPSHOT")
-    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
+    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0")
+    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -57,12 +56,12 @@ tasks.withType<JavaCompile>().configureEach {
   <dependency>
     <groupId>io.github.larkbatis</groupId>
     <artifactId>larkbatis-annotations</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </dependency>
   <dependency>
     <groupId>io.github.larkbatis</groupId>
     <artifactId>larkbatis-runtime</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </dependency>
 </dependencies>
 
@@ -77,7 +76,7 @@ tasks.withType<JavaCompile>().configureEach {
           <path>
             <groupId>io.github.larkbatis</groupId>
             <artifactId>larkbatis-processor</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.0</version>
           </path>
         </annotationProcessorPaths>
       </configuration>
@@ -92,9 +91,9 @@ One starter replaces the three declarations above, and there is no `@MapperScan`
 
 ```kotlin
 dependencies {
-    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
-    implementation("io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0-SNAPSHOT")
-    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
+    implementation("io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0")
+    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")
 }
 ```
 
@@ -113,7 +112,7 @@ regenerates nothing.
     ```kotlin
     plugins {
         java
-        id("io.github.larkbatis") version "0.1.0-SNAPSHOT"
+        id("io.github.larkbatis") version "0.1.0"
     }
     ```
 
@@ -123,7 +122,7 @@ regenerates nothing.
     <plugin>
       <groupId>io.github.larkbatis</groupId>
       <artifactId>larkbatis-maven-plugin</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.1.0</version>
       <extensions>true</extensions>
     </plugin>
     ```
@@ -137,7 +136,7 @@ accessors at all.
 
 ```kotlin
 annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")  // after
+annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // after
 ```
 
 The build error names the problem when it spots a Lombok annotation on the class. The fix

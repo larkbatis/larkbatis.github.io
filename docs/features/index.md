@@ -4,8 +4,7 @@ The complete matrix. :material-check: means implemented and tested;
 :material-alert: means narrowed with a documented rule; :material-close: means dropped by
 design, with a compile error naming the replacement.
 
-Version **`0.1.0-SNAPSHOT`**. Milestones M1 through M4 are implemented, M5 is in
-progress.
+Version **`0.1.0`**.
 
 ## Statements
 

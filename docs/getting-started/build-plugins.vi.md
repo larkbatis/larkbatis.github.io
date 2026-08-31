@@ -20,12 +20,12 @@ nào thêm bất cứ thứ gì vào classpath lúc chạy của ứng dụng.
 ```kotlin title="build.gradle.kts"
 plugins {
     java
-    id("io.github.larkbatis") version "0.1.0-SNAPSHOT"
+    id("io.github.larkbatis") version "0.1.0"
 }
 
 dependencies {
-    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0-SNAPSHOT")
-    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
     // larkbatis-processor tự động được đưa vào annotationProcessor
 }
 ```
@@ -65,7 +65,7 @@ chạy trên chính project này:
     <plugin>
       <groupId>io.github.larkbatis</groupId>
       <artifactId>larkbatis-maven-plugin</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.1.0</version>
       <extensions>true</extensions>   <!-- bắt buộc -->
     </plugin>
   </plugins>

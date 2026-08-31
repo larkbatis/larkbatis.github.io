@@ -9,8 +9,7 @@ processor không bao giờ lọt ra classpath ứng dụng.
 | `io.github.larkbatis:larkbatis-runtime` | `implementation` | `LarkBatisSession`, `LarkBatisTx`, `JdbcCodec`, `SqlFragment`. Không phụ thuộc gì ngoài JDBC |
 | `io.github.larkbatis:larkbatis-processor` | `annotationProcessor` | Bộ sinh code. Chỉ dùng lúc build: tuyệt đối không được xuất hiện trên classpath lúc chạy |
 
-Phiên bản hiện tại: **`0.1.0-SNAPSHOT`**. Các artifact chưa lên Maven Central, nên hiện
-giờ bạn phải build các repository ở máy mình rồi publish vào Maven local repository.
+Phiên bản hiện tại: **`0.1.0`**.
 
 ## Yêu cầu
 
@@ -33,9 +32,9 @@ java {
 }
 
 dependencies {
-    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
-    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0-SNAPSHOT")
-    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
+    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0")
+    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -57,12 +56,12 @@ tasks.withType<JavaCompile>().configureEach {
   <dependency>
     <groupId>io.github.larkbatis</groupId>
     <artifactId>larkbatis-annotations</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </dependency>
   <dependency>
     <groupId>io.github.larkbatis</groupId>
     <artifactId>larkbatis-runtime</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </dependency>
 </dependencies>
 
@@ -77,7 +76,7 @@ tasks.withType<JavaCompile>().configureEach {
           <path>
             <groupId>io.github.larkbatis</groupId>
             <artifactId>larkbatis-processor</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.0</version>
           </path>
         </annotationProcessorPaths>
       </configuration>
@@ -92,9 +91,9 @@ Một starter thay cho cả ba khai báo ở trên, và không cần `@MapperSca
 
 ```kotlin
 dependencies {
-    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
-    implementation("io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0-SNAPSHOT")
-    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
+    implementation("io.github.larkbatis:larkbatis-spring-boot-starter:0.1.0")
+    annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")
 }
 ```
 
@@ -114,7 +113,7 @@ công cụ build biết rằng những file đó là đầu vào biên dịch.
     ```kotlin
     plugins {
         java
-        id("io.github.larkbatis") version "0.1.0-SNAPSHOT"
+        id("io.github.larkbatis") version "0.1.0"
     }
     ```
 
@@ -124,7 +123,7 @@ công cụ build biết rằng những file đó là đầu vào biên dịch.
     <plugin>
       <groupId>io.github.larkbatis</groupId>
       <artifactId>larkbatis-maven-plugin</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.1.0</version>
       <extensions>true</extensions>
     </plugin>
     ```
@@ -138,7 +137,7 @@ thấy một lớp kết quả không có lấy một accessor nào.
 
 ```kotlin
 annotationProcessor("org.projectlombok:lombok")
-annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0-SNAPSHOT")  // sau
+annotationProcessor("io.github.larkbatis:larkbatis-processor:0.1.0")  // sau
 ```
 
 Lỗi build có nêu đúng vấn đề khi nó phát hiện annotation của Lombok trên lớp đó, nhưng

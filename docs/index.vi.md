@@ -84,6 +84,4 @@ Nửa còn lại được đo lường qua kết nối mạng thực tế. Một
 2. **Thời gian xử lý chuyển dịch sang pha build (shift-left).** Quá trình sinh code đòi hỏi chi phí biên dịch: lập trình viên trả chi phí này một lần lúc build thay vì để hệ thống production gánh chịu trên từng truy vấn.
 3. **Cần cập nhật các vị trí gọi `${}`.** Tham số kiểu `String` gắn trực tiếp vào `${}` là lỗi biên dịch. Giá trị này bắt buộc phải dùng [`SqlFragment`](usage/raw-sql.md), kiểu dữ liệu tập giá trị đóng, hoặc `@OrderBy(allowed = {...})`.
 
-## Trạng thái dự án
 
-Hiện tại là **`0.1.0-SNAPSHOT`**, chưa phát hành lên Maven Central. Các milestone M1 đến M4 đã hoàn thành: lõi runtime, annotation processor, mapper XML kèm thẻ động, `<foreach>` và batch insert, result map join một cấp, kiểu trả về `Stream`, transaction, cả hai build plugin, mô tả JPMS và tích hợp Spring. M5 đã hoàn thành [bộ benchmark](wiki/performance.md) và [công cụ quét mapper cũ](features/migration.md). Xem [Lộ trình phát triển](features/roadmap.md).

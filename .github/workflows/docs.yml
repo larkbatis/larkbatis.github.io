@@ -93,8 +93,8 @@ jobs:
               aliases="$INPUT_ALIASES"
               ;;
             *)
-              ver="dev"                # main is the moving development site
-              aliases=""
+              ver="0.1.0"
+              aliases="latest"
               ;;
           esac
           echo "version=$ver"     >> "$GITHUB_OUTPUT"

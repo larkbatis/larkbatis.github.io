@@ -19,12 +19,12 @@ application's runtime classpath.
 ```kotlin title="build.gradle.kts"
 plugins {
     java
-    id("io.github.larkbatis") version "0.1.0-SNAPSHOT"
+    id("io.github.larkbatis") version "0.1.0"
 }
 
 dependencies {
-    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0-SNAPSHOT")
-    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0-SNAPSHOT")
+    implementation("io.github.larkbatis:larkbatis-runtime:0.1.0")
+    implementation("io.github.larkbatis:larkbatis-annotations:0.1.0")
     // larkbatis-processor lands on annotationProcessor automatically
 }
 ```
@@ -64,7 +64,7 @@ this project:
     <plugin>
       <groupId>io.github.larkbatis</groupId>
       <artifactId>larkbatis-maven-plugin</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.1.0</version>
       <extensions>true</extensions>   <!-- required -->
     </plugin>
   </plugins>

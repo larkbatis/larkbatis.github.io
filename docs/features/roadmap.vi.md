@@ -54,4 +54,4 @@ Mỗi tính năng này đều đã có lỗi biên dịch rõ ràng kèm giải 
 
 ## Chính sách phiên bản
 
-Hiện tại là **`0.1.0-SNAPSHOT`**, chưa phát hành lên Maven Central. Bạn có thể build các repository cục bộ và cài đặt vào Maven local. Tài liệu được đánh phiên bản song song với các bản phát hành. Trình chọn phiên bản trên thanh điều hướng cho phép chuyển đổi giữa các bản tài liệu, và `latest` luôn trỏ tới bản phát hành mới nhất.
+Tài liệu được đánh phiên bản song song với các bản phát hành. Trình chọn phiên bản trên thanh điều hướng cho phép chuyển đổi giữa các bản tài liệu, và `latest` luôn trỏ tới bản phát hành mới nhất.

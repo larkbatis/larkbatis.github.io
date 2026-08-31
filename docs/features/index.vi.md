@@ -2,7 +2,7 @@
 
 Bảng tổng hợp tính năng đầy đủ. Ký hiệu :material-check: là đã hiện thực và có test kiểm thử; :material-alert: là được thu hẹp phạm vi theo quy tắc rõ ràng; :material-close: là chủ động loại bỏ từ khâu thiết kế (trình biên dịch sẽ báo lỗi kèm theo giải pháp thay thế).
 
-Phiên bản hiện tại: **`0.1.0-SNAPSHOT`**. Các milestone từ M1 đến M4 đã hoàn thành, M5 đang được tiến hành.
+Phiên bản hiện tại: **`0.1.0`**.
 
 ## Statement
 
