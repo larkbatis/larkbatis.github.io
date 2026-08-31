@@ -1934,7 +1934,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">hasActiveTransaction</span><span class="p">()</span>
 </span></code></pre></div>
 <h2 id="larkbatistx"><code>LarkBatisTx</code><a class="headerlink" href="#larkbatistx" title="Permanent link">&para;</a></h2>
-<p>Đại diện cho một phạm vi transaction, hỗ trợ try-with-resources.</p>
+<p>Đại diện cho programmatic transaction scope (<code>AutoCloseable</code>), quản lý transaction boundary theo cơ chế vote-to-commit.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">LarkBatisTx</span><span class="w"> </span><span class="n">tx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">session</span><span class="p">.</span><span class="na">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">mapper</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">tx</span><span class="p">.</span><span class="na">commit</span><span class="p">();</span>

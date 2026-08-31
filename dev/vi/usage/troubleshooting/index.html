@@ -2118,9 +2118,7 @@ hoặc <code>!list.isEmpty()</code>. Xem <a href="../dynamic-sql/#the-test-gramm
 hoặc một kiểu
 giá trị đóng. Xem <a href="../raw-sql/">SQL thô</a>.</p>
 <h2 id="larkbatisrollbackonlyexception-khi-commit"><code>LarkBatisRollbackOnlyException</code> khi commit<a class="headerlink" href="#larkbatisrollbackonlyexception-khi-commit" title="Permanent link">&para;</a></h2>
-<p>Một phạm vi transaction bên trong đã rời đi mà không bỏ phiếu, làm hỏng transaction,
-rồi phạm vi ngoài mới gọi commit. Exception này vẫn tốt hơn một lần rollback âm thầm
-trông y như thành công. Xem <a href="../transactions/">Transaction</a>.</p>
+<p>Một transaction scope con bên trong đã kết thúc mà không gọi <code>commit()</code>, khiến transaction bị đánh dấu rollback-only trước khi scope ngoài cùng gọi commit. Ngoại lệ này giúp phát hiện sớm lỗi logic thay vì âm thầm rollback. Xem <a href="../transactions/">Transaction</a>.</p>
 <h2 id="larkbatisunboundedvariantsexception"><code>LarkBatisUnboundedVariantsException</code><a class="headerlink" href="#larkbatisunboundedvariantsexception" title="Permanent link">&para;</a></h2>
 <p>Bạn đã đặt <code>fail-on-unbounded-fragment: true</code> (rất tốt, ở staging) và một statement sinh
 ra nhiều hơn <code>max-sql-variants</code> câu SQL khác nhau. Hãy tìm cái <code>${}</code> hoặc cái
