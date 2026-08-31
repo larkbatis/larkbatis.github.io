@@ -121,6 +121,11 @@ constructor. What it produces is the same generated shape `@Handler` produces: o
         mapperDir = layout.projectDirectory.dir("src/main/mappers")
         addProcessorDependency = false   // manage the processor version yourself
         addParametersFlag = false        // you already pass -parameters, or use @Param everywhere
+        mapUnderscoreToCamelCase = false  // keep MyBatis's default (underscores are significant)
+        typeHandlers = "com.example.Money:com.example.MoneyHandler"
+        registryPackage = "com.example.app"
+        springConfig = false             // suppress the generated @Configuration
+        springConfigPackage = "com.example.config"
     }
     ```
 
@@ -131,6 +136,11 @@ constructor. What it produces is the same generated shape `@Handler` produces: o
       <mapperDir>src/main/mappers</mapperDir>     <!-- default: src/main/resources -->
       <addProcessorPath>false</addProcessorPath>  <!-- default: true -->
       <addParameters>false</addParameters>        <!-- default: true -->
+      <mapUnderscoreToCamelCase>false</mapUnderscoreToCamelCase>
+      <typeHandlers>com.example.Money:com.example.MoneyHandler</typeHandlers>
+      <registryPackage>com.example.app</registryPackage>
+      <springConfig>false</springConfig>
+      <springConfigPackage>com.example.config</springConfigPackage>
     </configuration>
     ```
 
@@ -140,6 +150,18 @@ constructor. What it produces is the same generated shape `@Handler` produces: o
 | `mapperDirs` / `<mapperDirs>` | empty | More of them, see below |
 | `addProcessorDependency` / `<addProcessorPath>` | `true` | Whether `larkbatis-processor` is put on the annotation processor path |
 | `addParametersFlag` / `<addParameters>` | `true` | Whether `-parameters` is turned on. Switching it off needs `@Param` on every mapper parameter (see the next section for why). Maven honours an explicit `<parameters>false</parameters>` and warns instead of overriding it |
+| `mapUnderscoreToCamelCase` / `<mapUnderscoreToCamelCase>` | not set (processor default: `true`) | `false` makes underscores significant when a column label is matched to a property |
+| `typeHandlers` / `<typeHandlers>` | not set | Default handler per Java type, `javaType:handlerClass` pairs separated by commas |
+| `registryPackage` / `<registryPackage>` | not set (common package prefix) | Package for the generated `LarkBatisMappers` registry class |
+| `springConfig` / `<springConfig>` | not set (emitted when spring-context is on classpath) | `false` suppresses the generated Spring `@Configuration` |
+| `springConfigPackage` / `<springConfigPackage>` | not set (same as `registryPackage`) | Package for the generated Spring `@Configuration` class |
+
+!!! tip "Build plugin settings vs processor options"
+
+    The processor options listed in the [table above](#processor-options) can also be passed
+    directly as `-Alarkbatis.xxx=value` in `compilerArgs`. The build plugin settings are a
+    convenience: they pass the same `-A` flags for you, skip options you do not set, and
+    respect a manual `-A` flag when one is already present.
 
 Maven additionally requires `<extensions>true</extensions>` on the plugin declaration.
 Without it nothing happens, and nothing says so. See [Build
