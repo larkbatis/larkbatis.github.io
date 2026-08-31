@@ -11,6 +11,18 @@ would cost, with file and line numbers. It compiles nothing and resolves no depe
 so it runs against a checkout of a service nobody has built yet, which is when the
 question "would this even work for us" actually gets asked.
 
+A project that already applies the Gradle plugin has the task registered for it, over
+its own directory:
+
+```console
+$ ./gradlew larkbatisScan
+$ ./gradlew larkbatisScan --args="--summary --min=BLOCKER src/main"
+```
+
+The scanner runs out of process off a detached configuration, so it never reaches a
+configuration your application can see. To point it at a codebase that has none of this
+set up — the usual case, since the question comes before the decision — build the CLI:
+
 ```console
 $ ./gradlew :larkbatis-scanner:installDist
 $ ./build/install/larkbatis-scanner/bin/larkbatis-scan /path/to/legacy-service
@@ -44,7 +56,7 @@ Ordered by how much human judgement a finding needs, because the first question 
 
 | | Meaning |
 |---|---|
-| **BLOCKER** | No LarkBatis equivalent; the design dropped it. The mapper changes |
+| **BLOCKER** | No LarkBatis equivalent; the feature was dropped. The mapper changes |
 | **EDIT** | A rewrite with a known shape. The tool can say exactly what to write |
 | **REVIEW** | Supported, but only after someone decides how |
 | **INFO** | Compiles as-is; worth knowing before it surprises someone |
@@ -71,7 +83,7 @@ wall when it is nothing of the kind.
 | OGNL truthiness (`test="count"`) | EDIT | `count != 0`, `user != null`, `list.isEmpty()` |
 | `Map` or `Object` parameter | BLOCKER | A parameter object, or `@Param` arguments |
 | `@SelectProvider` family | BLOCKER | Move the SQL into the mapper, or use the escape hatch |
-| Plugin / interceptor | BLOCKER | Paging, auditing and soft-delete plugins become explicit SQL or a decorator |
+| Plugin / interceptor | BLOCKER | Paging, auditing and soft-delete become explicit SQL, a type handler or a decorator. [Recipe per plugin kind](mybatis-differences.md#what-replaces-a-plugin) |
 | Lazy loading | BLOCKER | Fetch eagerly with a join, or split into two statements |
 | Nested `select=` in a result mapping | BLOCKER | Express it as a join |
 | Result map nested deeper than one level | BLOCKER | Assemble in Java from two statements |
@@ -89,7 +101,7 @@ wall when it is nothing of the kind.
 | Custom `TypeHandler` | REVIEW | Mapper XML `typeHandler=` is read as-is; rewrite the handler class against `LarkBatisTypeHandler` |
 | `<script>` in an annotation | REVIEW | Read, but the same grammar rules apply, so check the tests it contains |
 | Direct `SqlSession` use | REVIEW | Call the mapper, or use `session.query(SqlFragment, binder, GeneratedRow.READER)` |
-| `mapUnderscoreToCamelCase` is off | REVIEW | LarkBatis applies it at build time, always. Affected columns need `@Column` on the property, or a `<resultMap>` |
+| `mapUnderscoreToCamelCase` is off | REVIEW | LarkBatis applies it at build time and defaults it to *on*. Carry the setting across with `-Alarkbatis.mapUnderscoreToCamelCase=false`, or leave it on and give the affected columns `@Column` or a `<resultMap>` |
 | More than one environment / `DataSource` | REVIEW | One `DataSource` per build for now |
 | `<foreach>` | INFO | Supported; counted because it is what makes a statement's SQL-variant count grow |
 | Dynamic statement | INFO | Compiles to boolean locals and a `StringBuilder` |

@@ -33,11 +33,12 @@ Best of three, `findAll` over 10,000 rows.
 The 129 B per row that remains is very nearly all payload: the bean itself plus the
 `String`s the driver returns. That is a floor, not a first step.
 
-### Three things the measurements contradicted
+### Three results worth knowing before you quote any of this
 
 **1 · The row-read path wins by more than the dynamic-SQL path** (−73%/−87% versus
-−45%/−57%). The design's own expectations were *most* cautious about the row-read path,
-on the theory that the JIT would inline `MethodInvoker` well. That caution was wrong.
+−45%/−57%). The reasonable guess is the other way round — that the JIT inlines
+`MethodInvoker` well enough to make reflection cheap and the savings would have to come
+from SQL assembly. It does not, and they do not.
 
 **2 · Escape analysis does not clean up the per-column garbage.** If it did, stock would
 not allocate ~1.0 KB per row. The `setValue` → `BeanWrapper` → `Invoker` chain is too deep
@@ -163,7 +164,7 @@ The old caveat still stands: in a real Spring Boot application this sits under c
 creation and pool warmup. But 55 ms is not noise in a serverless or native-image context,
 which is exactly where the claim is made.
 
-### Megamorphic behaviour: the prediction was wrong
+### Megamorphic behaviour: the advantage barely moves
 
 50 single-row reads of a 6-column table. `mono` reads one result class 50 times; `mega`
 reads 50 different result classes once each.
@@ -185,16 +186,16 @@ cost, is identical either way.
 
 !!! warning "Do not argue 'it gets worse at scale'"
 
-    The design expected the gap to widen substantially with many mappers. It does not. The
-    honest claim is that the advantage is already large with one bean type and stays
-    roughly constant, which is the better argument anyway, because it does not depend on
-    the reader's codebase being big.
+    A codebase with hundreds of result classes does not widen the gap. The claim these
+    numbers support is that the advantage is already large with one bean type and stays
+    roughly constant — the better argument anyway, because it does not depend on how big
+    your codebase is.
 
 ### JDK version matters
 
-The design asked for the suite on two JDKs straddling JEP 416, which put core reflection on
-method handles. It named 11 and 21; LarkBatis requires 17, and JEP 416 landed in 18, so
-17-versus-21 straddles the same change.
+The suite runs on two JDKs straddling JEP 416, which put core reflection on method
+handles. LarkBatis requires 17 and JEP 416 landed in 18, so 17-versus-21 straddles that
+change.
 
 | | JDK 17 | JDK 21 | change |
 |---|---:|---:|---:|
@@ -249,12 +250,12 @@ same 10,000 × 4 workload. Always say which JDK a number came from.
 
     LarkBatis contains no `Proxy.newProxyInstance`, no `Class.forName` and no
     `setAccessible`, in the runtime module or in generated code, so there is no
-    reachability metadata to write for the mapper layer. That is a property of the design
-    you can check by reading it.
+    reachability metadata to write for the mapper layer. That is a property you can check
+    by reading the code.
 
-    **An actual native-image build has not been run yet.** The smoke test is open M5 work.
-    Until there is a real build, this is the project's strongest *qualitative* promise and
-    it is unverified. It should not be presented as a result.
+    **An actual native-image build has not been run yet.** Until there is one, this is the
+    project's strongest *qualitative* promise and it is unverified. It should not be
+    presented as a result.
 
 Your JDBC driver may still need metadata of its own. That is a driver concern, not a
 mapper-layer one.

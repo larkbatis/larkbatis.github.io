@@ -127,7 +127,7 @@ Not by convention:
 
 ## The counterarguments, taken seriously
 
-The design document lists four objections it considers serious, and answers each one:
+Four objections are worth answering directly:
 
 | Objection | Answer |
 |---|---|

@@ -73,9 +73,11 @@ Store `Instant`, and convert at the edge of the mapper.
 
 ## Column naming
 
-Columns find properties by `snake_case` → `camelCase`, applied at build time, always:
-`created_at` → `setCreatedAt`. There is no `mapUnderscoreToCamelCase` switch to turn off,
-because there is no runtime to switch it in.
+Columns find properties by `snake_case` → `camelCase`, applied at build time:
+`created_at` → `setCreatedAt`. It is on by default — MyBatis defaults it off — and
+`-Alarkbatis.mapUnderscoreToCamelCase=false` carries that default across. The choice is
+baked into the generated reader; there is no runtime setting either way. See
+[Configuration](../features/configuration.md#column-naming).
 
 Where the convention is not enough, a `<resultMap>` names the column explicitly:
 
@@ -103,8 +105,9 @@ put it on. Two of them naming different columns for one property is a compile er
 so is two properties landing on the same column. See
 [`@Column`](../features/annotations.md#column).
 
-A codebase that relied on `mapUnderscoreToCamelCase` being *off* needs `@Column` or a
-`<resultMap>`, and the [migration scanner](../features/migration.md) reports the case.
+A codebase that relied on `mapUnderscoreToCamelCase` being *off* either carries the
+setting across or gives the affected columns `@Column` or a `<resultMap>`; the
+[migration scanner](../features/migration.md) reports the case either way.
 
 ## Custom type handlers
 
@@ -183,10 +186,13 @@ table above, and these compile anyway.
 
 ### What is still not there
 
-**No discovery.** No `<typeHandlers>` registry, no `@MappedTypes` scan, no
-`(Type, JdbcType)` lookup. Being explicit is the trade: you lose "declare it once and it
-applies everywhere", and you gain a generated call site that javac type-checks and you
-can navigate to in the IDE.
+**No discovery.** No `@MappedTypes` scan, no package scan, no `(Type, JdbcType)` lookup.
+"Declare it once and it applies everywhere" is available, but written out rather than
+found: `-Alarkbatis.typeHandlers=com.example.Money:com.example.MoneyHandler` registers a
+default handler per Java type for the whole build, checked during `javac`. See
+[Configuration](../features/configuration.md#type-handlers-for-a-whole-build). What you
+get either way is a generated call site that javac type-checks and you can navigate to in
+the IDE.
 
 **One reading per result class.** One row reader is generated per class, so a property
 has one handler. Two statements naming different handlers for the same property is a

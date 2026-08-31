@@ -26,18 +26,18 @@ and `MetaObject` from the row-read path measurably improved things, LarkBatis's 
 claim was proven on a real codebase for a few hundred lines of experiment. If it did not,
 several months were saved.
 
-It improved things, by more than the design expected. See
+It improved things, and by a wide margin. See
 [Performance](../wiki/performance.md).
 
 ## M5: what is actually left
 
 | | Status |
 |---|---|
-| `larkbatis-benchmarks` (JMH; pinned sessions; STATEMENT-scope cache; H2 over TCP; JDK 17 vs 21; 50-bean megamorphic experiment) | Done. [Results](../wiki/performance.md#measured-on-larkbatis-itself), including two findings that contradict the design |
+| `larkbatis-benchmarks` (JMH; pinned sessions; STATEMENT-scope cache; H2 over TCP; JDK 17 vs 21; 50-bean megamorphic experiment) | Done. [Results](../wiki/performance.md#measured-on-larkbatis-itself) |
 | `larkbatis-scanner` (`larkbatis-scan`) | Implemented. [Details](migration.md) |
 | **Native-image smoke test** | **Not run.** The development machine has no GraalVM |
 | A migrated service running in a real environment for a week | Not done. The trial migration passed its whole test suite on a copy |
-| The design revision, rewritten around what was learned | Done, alongside a workspace-wide removal of section-number references, whose numbering was never a stable thing for code comments and error messages to point at |
+| The design revision, rewritten around what the benchmarks and the trial migration showed | Done |
 
 !!! warning "The native-image promise is unverified"
 
@@ -64,7 +64,7 @@ runtime that can inspect types.
 Full OGNL · `<bind>` · the `@SelectProvider` family · lazy loading · plugins and
 interceptors · `Object`/`Map` parameters · `<discriminator>` · nested selects in
 `<collection>` · second-level cache · runtime `addMapper()` · `RowBounds` · TypeHandler
-discovery · `ExecutorType`.
+discovery by scan · `ExecutorType`.
 
 Each already has a compile error naming its replacement. See
 [MyBatis Differences](mybatis-differences.md).

@@ -46,7 +46,7 @@ reachability nào của GraalVM phải viết, vì chẳng có reflection ở đ
 
 ## Cái gì ở đây không mới
 
-LarkBatis không phải một ý tưởng mới, và tài liệu thiết kế nói thẳng điều đó. Micronaut
+LarkBatis không phải một ý tưởng mới. Micronaut
 Data biên dịch truy vấn thành code lúc build mà không dùng reflection; jOOQ sinh code từ
 schema; Spring Data có một nhánh AOT. **Điều không cái nào trong số đó làm là giữ lại
 mô hình mapper của MyBatis**: mapper XML, `#{}`, `<if>`, `<foreach>`, `<resultMap>`. Hàng

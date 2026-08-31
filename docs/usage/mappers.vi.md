@@ -108,9 +108,11 @@ public class User {
 }
 ```
 
-Cột tìm ra property theo `snake_case` → `camelCase`, **áp dụng lúc build, luôn luôn**:
-`created_at` → `setCreatedAt`. Không có tuỳ chọn `mapUnderscoreToCamelCase`, bởi vì
-chẳng có runtime nào để mà bật tắt nó.
+Cột tìm ra property theo `snake_case` → `camelCase`, **áp dụng lúc build**:
+`created_at` → `setCreatedAt`. Mặc định là bật — MyBatis thì mặc định tắt — và
+`-Alarkbatis.mapUnderscoreToCamelCase=false` mang mặc định của MyBatis sang. Lựa chọn
+này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
+Xem [Cấu hình](../features/configuration.md#column-naming).
 
 Chỗ nào quy ước đó không đủ thì đặt tên cột ngay trên property bằng
 [`@Column`](../features/annotations.md#column) trên field, setter hoặc getter, hoặc đặt

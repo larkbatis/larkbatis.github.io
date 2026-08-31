@@ -31,7 +31,7 @@ dependencies {
 
 What it does, and all it does:
 
-- passes `-Alarkbatis.mapperDir=<dir>` to `compileJava` (default `src/main/resources`;
+- passes `-Alarkbatis.mapperDir=<dirs>` to `compileJava` (default `src/main/resources`;
   only files whose root element is `<mapper>` are read, so other XML in the same tree is
   ignored),
 - registers the mapper XML files as inputs of `compileJava`, so editing a mapper
@@ -42,8 +42,18 @@ What it does, and all it does:
 ```kotlin title="Configuration"
 larkbatis {
     mapperDir = layout.projectDirectory.dir("src/main/mappers")
-    addProcessorDependency = false   // manage the processor version yourself
+    mapperDirs.from("src/main/legacy-mappers")   // as many more as the module has
+    addProcessorDependency = false               // manage the processor version yourself
+    addParametersFlag = false                    // only with @Param on every parameter
 }
+```
+
+It also registers `larkbatisScan`, the [migration report](../features/migration.md), over
+this project:
+
+```console
+./gradlew larkbatisScan
+./gradlew larkbatisScan --args="--summary src/main"
 ```
 
 ## Maven
@@ -64,7 +74,11 @@ larkbatis {
 ```xml title="Configuration (all optional)"
 <configuration>
   <mapperDir>src/main/mappers</mapperDir>     <!-- default: src/main/resources -->
+  <mapperDirs>                                <!-- as many more as the module has -->
+    <mapperDir>src/main/legacy-mappers</mapperDir>
+  </mapperDirs>
   <addProcessorPath>false</addProcessorPath>  <!-- default: true -->
+  <addParameters>false</addParameters>        <!-- default: true -->
 </configuration>
 ```
 
@@ -76,7 +90,7 @@ The plugin therefore works as a build extension (`AbstractMavenLifecycleParticip
 which runs before execution plans are calculated. For each project declaring it, the
 extension:
 
-- injects `-Alarkbatis.mapperDir=<dir>` into `maven-compiler-plugin`'s `<compilerArgs>`
+- injects `-Alarkbatis.mapperDir=<dirs>` into `maven-compiler-plugin`'s `<compilerArgs>`
   (skipped where that option is already passed by hand),
 - appends `larkbatis-processor` to `<annotationProcessorPaths>`, creating the element
   when absent,
@@ -131,6 +145,10 @@ problems become warnings, never a failed build.
 | Test-scoped mappers | Not supported. Only `compileJava` / the `compile` execution is wired. Mapper interfaces belong in `src/main/java`; test sources use them as ordinary classes |
 | Multi-module builds | Everything is per-project. A mapper XML must live in the same module as the interface its `namespace` names; one pointing elsewhere is ignored with a build warning |
 | `mapperDir` containing a comma | Not supported. The processor treats commas as separators between directories |
+| A mapper directory in another module | Allowed but pointless: a namespace has to name an interface compiled in the same module, and a file matching none is reported and ignored |
+
+Several directories at once — and the rules for combining them with the singular
+setting — are in [Configuration](../features/configuration.md#mapper-xml-in-more-than-one-directory).
 
 ## Doing it without a plugin
 

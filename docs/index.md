@@ -100,7 +100,7 @@ one row costs **94.2 µs on MyBatis and 89.2 µs on LarkBatis**: five percent, o
 TCP, which is the cheapest round trip there is. A real database only shrinks the
 difference. **LarkBatis pays for reporting queries, exports, batches and list screens. It
 changes almost nothing for single-record lookups.** [Performance](wiki/performance.md) has
-the full tables, the method, and the two places the design's predictions turned out wrong.
+the full tables, the method, and the two results that cut against the obvious guess.
 
 ## What it costs
 

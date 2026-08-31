@@ -22,8 +22,8 @@ one would quietly grow back into an interpreter.
 
 Everything else happens at build time. Not "usually", not "when possible": everything.
 
-The design reserved one more slot — a `databaseId` chosen once at startup, so a statement
-could have a per-vendor variant. **It was never built.** A `databaseId` attribute on a
+One more slot is reserved — a `databaseId` chosen once at startup, so a statement could
+have a per-vendor variant. **It was never built.** A `databaseId` attribute on a
 statement is a compile error today, and the answer to two vendors is two mapper
 interfaces. The row is called out here rather than quietly left off, because a list that
 claims to be closed has to be honest about what is on it.
@@ -83,7 +83,7 @@ point.
 Before adding anything, the question is: *does this need a runtime value that is not on
 the list?*
 
-- **No** → it belongs at build time, and the design question is only what the generated
+- **No** → it belongs at build time, and the only question left is what the generated
   code should look like.
 - **Yes** → either the list grows, which requires a very good reason, or the feature is
   dropped with a compile error naming the replacement.

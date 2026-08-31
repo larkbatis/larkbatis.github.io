@@ -37,7 +37,7 @@ answers to "does this reach an application's runtime classpath".
 
 The rule that keeps this honest: **build-only modules must never leak onto an
 application's runtime classpath.** The generator is a compile-time tool; if it can be
-reached at runtime, someone will eventually reach for it, and the design's central claim
+reached at runtime, someone will eventually reach for it, and LarkBatis's central claim
 stops being checkable.
 
 ## The build phase

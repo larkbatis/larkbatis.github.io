@@ -100,8 +100,8 @@ mất **94,2 µs trên MyBatis và 89,2 µs trên LarkBatis**: chênh năm phầ
 loopback, tức là round trip rẻ nhất có thể có. Một database thật chỉ làm khoảng cách đó
 hẹp thêm. **LarkBatis đáng tiền cho truy vấn báo cáo, export, batch và màn hình danh
 sách. Nó gần như không thay đổi gì cho việc tra cứu một bản ghi.**
-[Hiệu năng](wiki/performance.md) có đầy đủ số liệu, phương pháp đo, và hai chỗ mà dự đoán
-của thiết kế hoá ra là sai.
+[Hiệu năng](wiki/performance.md) có đầy đủ số liệu, phương pháp đo, và hai kết quả đi
+ngược lại phỏng đoán thông thường.
 
 ## Cái giá phải trả
 

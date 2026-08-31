@@ -23,7 +23,7 @@ sách mở sẽ âm thầm mọc lại thành một trình thông dịch.
 Mọi thứ khác đều xảy ra lúc build. Không phải "thường là", không phải "khi có thể": là
 mọi thứ.
 
-Bản thiết kế còn để dành một chỗ nữa — một `databaseId` chọn một lần lúc khởi động, để
+Còn một chỗ nữa được để dành — một `databaseId` chọn một lần lúc khởi động, để
 mỗi statement có thể có biến thể riêng cho từng loại database. **Chỗ đó chưa bao giờ được
 làm.** Hiện tại, thuộc tính `databaseId` trên một statement là lỗi biên dịch, và câu trả
 lời cho hai loại database là hai interface mapper. Dòng này được nói rõ ra thay vì lặng lẽ

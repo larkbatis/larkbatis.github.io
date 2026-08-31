@@ -61,7 +61,7 @@ existing `DuplicateKeyException` handlers keep working unchanged.
 | Sharing a transaction with `JdbcTemplate` or JPA | works | Same `DataSourceUtils`, same `DataSourceTransactionManager` |
 | Spring AOP on a mapper bean | works | The mapper is a real bean |
 | MyBatis `ExecutorType.BATCH` | absent | There is no executor. Batch is a [method signature](foreach-and-batches.md#jdbc-batches) |
-| MyBatis plugins / interceptors | absent | Dropped; they hook a runtime pipeline that does not exist |
+| MyBatis plugins / interceptors | absent | Dropped: the four objects they wrap are what a generated body replaces. Spring AOP on the mapper bean works, and [there is a recipe per plugin kind](../features/mybatis-differences.md#what-replaces-a-plugin) |
 
 ## Properties
 
@@ -77,8 +77,8 @@ a fragment whose value set is not bounded grows them without limit. See
 
 !!! note "`log-sql` is not implemented"
 
-    It appears in the design document's property list and is not implemented. Every
-    generated body would have to carry a logging branch, and the generated shape has none.
+    Every generated body would have to carry a logging branch, and the generated shape
+    has none.
     SQL logging belongs to the driver or the pool (`net.ttddyy:datasource-proxy`, p6spy)
     until there is a reason to change that.
 

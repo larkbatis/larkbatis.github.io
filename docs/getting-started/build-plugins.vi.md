@@ -32,7 +32,7 @@ dependencies {
 
 Nó làm gì, và chỉ làm đúng những việc này:
 
-- truyền `-Alarkbatis.mapperDir=<dir>` cho `compileJava` (mặc định
+- truyền `-Alarkbatis.mapperDir=<dirs>` cho `compileJava` (mặc định
   `src/main/resources`; chỉ những file có phần tử gốc là `<mapper>` mới được đọc, nên
   XML khác trong cùng cây thư mục bị bỏ qua),
 - đăng ký các file mapper XML làm đầu vào của `compileJava`, để sửa một mapper thì các
@@ -43,8 +43,18 @@ Nó làm gì, và chỉ làm đúng những việc này:
 ```kotlin title="Cấu hình"
 larkbatis {
     mapperDir = layout.projectDirectory.dir("src/main/mappers")
-    addProcessorDependency = false   // tự quản phiên bản processor
+    mapperDirs.from("src/main/legacy-mappers")   // thêm bao nhiêu thư mục cũng được
+    addProcessorDependency = false               // tự quản phiên bản processor
+    addParametersFlag = false                    // chỉ khi mọi tham số đều có @Param
 }
+```
+
+Plugin cũng đăng ký `larkbatisScan`, tức [báo cáo migration](../features/migration.md),
+chạy trên chính project này:
+
+```console
+./gradlew larkbatisScan
+./gradlew larkbatisScan --args="--summary src/main"
 ```
 
 ## Maven
@@ -65,7 +75,11 @@ larkbatis {
 ```xml title="Cấu hình (đều là tuỳ chọn)"
 <configuration>
   <mapperDir>src/main/mappers</mapperDir>     <!-- mặc định: src/main/resources -->
+  <mapperDirs>                                <!-- thêm bao nhiêu thư mục cũng được -->
+    <mapperDir>src/main/legacy-mappers</mapperDir>
+  </mapperDirs>
   <addProcessorPath>false</addProcessorPath>  <!-- mặc định: true -->
+  <addParameters>false</addParameters>        <!-- mặc định: true -->
 </configuration>
 ```
 
@@ -77,7 +91,7 @@ Vì thế plugin hoạt động như một build extension
 (`AbstractMavenLifecycleParticipant`), chạy trước khi kế hoạch thực thi được tính.
 Với mỗi project khai báo nó, extension sẽ:
 
-- chèn `-Alarkbatis.mapperDir=<dir>` vào `<compilerArgs>` của
+- chèn `-Alarkbatis.mapperDir=<dirs>` vào `<compilerArgs>` của
   `maven-compiler-plugin` (bỏ qua nếu tuỳ chọn đó đã được truyền tay),
 - nối `larkbatis-processor` vào `<annotationProcessorPaths>`, tự tạo phần tử này nếu
   chưa có,
@@ -134,6 +148,10 @@ không bao giờ làm hỏng bản build.
 | Mapper trong scope test | Không hỗ trợ. Chỉ `compileJava` / execution `compile` được nối dây. Interface mapper thuộc về `src/main/java`; mã test dùng chúng như lớp bình thường |
 | Build nhiều module | Mọi thứ đều theo từng project. Một mapper XML phải nằm cùng module với interface mà `namespace` của nó gọi tên; cái nào trỏ đi nơi khác sẽ bị bỏ qua kèm cảnh báo build |
 | `mapperDir` có chứa dấu phẩy | Không hỗ trợ; processor coi dấu phẩy là ký tự phân tách giữa các thư mục |
+| Thư mục mapper nằm ở module khác | Được phép, nhưng vô ích: một `namespace` phải gọi tên interface được biên dịch trong cùng module, file nào không khớp sẽ bị báo và bỏ qua |
+
+Cách khai báo nhiều thư mục cùng lúc, và quy tắc khi dùng chung với tuỳ chọn số ít, nằm ở
+[Cấu hình](../features/configuration.md#mapper-xml-in-more-than-one-directory).
 
 ## Làm mà không cần plugin
 

@@ -61,7 +61,7 @@ vậy các handler `DuplicateKeyException` sẵn có của bạn vẫn chạy ng
 | Chia sẻ transaction với `JdbcTemplate` hoặc JPA | chạy | Cùng `DataSourceUtils`, cùng `DataSourceTransactionManager` |
 | Spring AOP trên một bean mapper | chạy | Mapper là một bean thật |
 | `ExecutorType.BATCH` của MyBatis | không có | Làm gì có executor. Batch là một [chữ ký phương thức](foreach-and-batches.md#jdbc-batches) |
-| Plugin / interceptor của MyBatis | không có | Bỏ theo thiết kế |
+| Plugin / interceptor của MyBatis | không có | Đã bỏ: bốn đối tượng mà chúng bọc chính là thứ mà thân phương thức sinh ra thay thế. Spring AOP trên bean mapper vẫn chạy, và [có công thức thay thế cho từng loại plugin](../features/mybatis-differences.md#what-replaces-a-plugin) |
 
 ## Các property
 
@@ -77,9 +77,8 @@ bản SQL, nên một fragment có tập giá trị không bị chặn sẽ làm
 
 !!! note "`log-sql` chưa được hiện thực"
 
-    Nó xuất hiện trong danh sách property của tài liệu thiết kế nhưng không được hiện
-    thực. Mọi thân phương thức sinh ra sẽ phải mang thêm một nhánh ghi log, mà hình dạng
-    sinh ra thì không có nhánh nào như vậy. Việc ghi log SQL thuộc về driver hoặc pool
+    Mọi thân phương thức sinh ra sẽ phải mang thêm một nhánh ghi log, mà hình dạng sinh
+    ra thì không có nhánh nào như vậy. Việc ghi log SQL thuộc về driver hoặc pool
     (`net.ttddyy:datasource-proxy`, p6spy) cho tới khi có lý do đổi điều đó.
 
 ## Khi mặc định không vừa

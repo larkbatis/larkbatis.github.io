@@ -174,8 +174,12 @@ pick between them.
 
 The name replaces the property name everywhere a column is matched: the positional reader
 when the select list parses, and the name-based `switch` when it does not. Matching stays
-case-insensitive with underscores ignored, so `@Column("usr_email")` also matches a
-`USR_EMAIL` label.
+case-insensitive, and underscores are ignored on both sides by default, so
+`@Column("usr_email")` also matches a `USR_EMAIL` or `usrEmail` label. Under
+[`-Alarkbatis.mapUnderscoreToCamelCase=false`](configuration.md#column-naming) the
+underscores are significant: the same annotation then matches `USR_EMAIL` but not
+`usrEmail`, which is also what makes `@Column` the way to keep one column mapped in a
+build that turned the convention off.
 
 !!! warning "One column, one property"
 
@@ -244,6 +248,11 @@ Names the `LarkBatisTypeHandler` that moves one parameter or one result property
 explicitly, called directly from generated code, with no registry lookup and no discovery
 scan. It also lifts the [type whitelist](../usage/types.md) for the value it moves, which
 is usually the reason to reach for it.
+
+For a type that always moves the same way, registering it once for the whole build with
+[`-Alarkbatis.typeHandlers`](configuration.md#type-handlers-for-a-whole-build) says the
+same thing without an annotation per site. This annotation still wins wherever it
+appears.
 
 ```java
 public class Wallet {

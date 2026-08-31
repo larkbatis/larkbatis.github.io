@@ -45,7 +45,7 @@ reachability metadata to write, because there is no reflection anywhere.
 
 ## What is not novel here
 
-LarkBatis is not a new idea, and the design says so plainly. Micronaut Data compiles
+LarkBatis is not a new idea. Micronaut Data compiles
 queries into code at build time with no reflection; jOOQ generates from a schema; Spring
 Data has an AOT branch. **What none of them do is keep the MyBatis mapper model**:
 mapper XML, `#{}`, `<if>`, `<foreach>` and `<resultMap>`, which thousands of codebases in

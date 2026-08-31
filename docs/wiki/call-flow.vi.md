@@ -124,6 +124,6 @@ Một `findById` trả về một dòng thực hiện phần việc cột bằng
 vấn báo cáo trả về 10.000 dòng thực hiện nó 40.000 lần, và đó là chỗ một truy vấn 3,0 ms
 trở thành 0,8 ms. Cùng code, cùng thiết kế; hệ số nhân chính là số dòng.
 
-Nói thẳng như tài liệu thiết kế đã nói: **LarkBatis là một khoản đầu tư cho truy vấn báo
+Nói thẳng ra: **LarkBatis là một khoản đầu tư cho truy vấn báo
 cáo, export, batch và màn hình danh sách. Nó gần như không thay đổi gì cho việc tra cứu
 một bản ghi.**

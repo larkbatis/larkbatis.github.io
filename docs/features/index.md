@@ -67,8 +67,9 @@ progress.
 | `Instant`, `LocalDate`, `LocalTime`, `LocalDateTime` | :material-check: | |
 | Enums (by `name()`) | :material-check: | Also a closed-value type, so valid for `${}` |
 | `@Column` | :material-check: | Names the column on the field, the setter or the getter. [Details](annotations.md#column) |
-| `@Handler` custom handlers | :material-check: | Named on the property, the parameter, or in mapper XML. No discovery. [Details](../usage/types.md#custom-type-handlers) |
-| TypeHandler discovery / registry | :material-close: | There is no registry to discover into |
+| `@Handler` custom handlers | :material-check: | Named on the property, the parameter, or in mapper XML. [Details](../usage/types.md#custom-type-handlers) |
+| `<typeHandlers>`, one handler per Java type | :material-check: | Written out as `-Alarkbatis.typeHandlers` pairs and resolved during `javac`. [Details](configuration.md#type-handlers-for-a-whole-build) |
+| TypeHandler discovery (`<package>`, `@MappedTypes`) | :material-close: | Nothing is scanned. The list is written out, which is also what makes it readable |
 
 ## Sessions, transactions, execution
 
@@ -83,7 +84,7 @@ progress.
 | Multi-row `VALUES` via `<foreach>` | :material-check: | |
 | The escape hatch (`query`, `queryOne`, `queryStream`, `update`) | :material-check: | Takes `SqlFragment`, never `String` |
 | `ExecutorType.BATCH` / `REUSE` | :material-close: | There is no executor |
-| Plugins / interceptors | :material-close: | Hook a runtime pipeline that does not exist. Spring AOP on a mapper bean still works |
+| Plugins / interceptors | :material-close: | The four objects MyBatis intercepts are what a generated body replaces, and the mechanism is a JDK proxy. [What replaces a plugin](mybatis-differences.md#what-replaces-a-plugin) |
 | Second-level cache (`<cache>`, `<cache-ref>`) | :material-close: | Cache above the mapper, where invalidation is visible |
 | First-level cache | :material-close: | No session to hold it |
 | Runtime `addMapper()` | :material-close: | The mapper set is closed at compile time |

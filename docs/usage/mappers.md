@@ -108,9 +108,11 @@ public class User {
 }
 ```
 
-Columns find properties by `snake_case` → `camelCase`, **applied at build time,
-always**: `created_at` → `setCreatedAt`. There is no `mapUnderscoreToCamelCase` switch,
-because there is no runtime to switch it in.
+Columns find properties by `snake_case` → `camelCase`, **applied at build time**:
+`created_at` → `setCreatedAt`. It is on by default — MyBatis defaults it off — and
+`-Alarkbatis.mapUnderscoreToCamelCase=false` carries that default across. The choice is
+baked into the generated reader; there is no runtime setting either way. See
+[Configuration](../features/configuration.md#column-naming).
 
 Where the convention is not enough, name the column on the property with
 [`@Column`](../features/annotations.md#column) on the field, the setter or the getter,

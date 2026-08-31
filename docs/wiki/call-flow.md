@@ -123,6 +123,6 @@ A `findById` returning one row does the reflective column work 4 times. A report
 returning 10,000 rows does it 40,000 times, and that is where a 3.0 ms query becomes a
 0.8 ms one. Same code, same design; the multiplier is the row count.
 
-Stated as bluntly as the design document states it: **LarkBatis is an investment for
+To put it bluntly: **LarkBatis is an investment for
 report queries, exports, batches and list screens. It changes almost nothing for
 single-record lookups.**

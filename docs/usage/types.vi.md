@@ -74,9 +74,11 @@ cột thì chẳng có múi giờ nào để mang, nên phép chuyển đổi c�
 
 ## Đặt tên cột { #column-naming }
 
-Cột tìm ra property theo `snake_case` → `camelCase`, áp dụng lúc build, luôn luôn:
-`created_at` → `setCreatedAt`. Không có tuỳ chọn `mapUnderscoreToCamelCase` nào để tắt
-đi, bởi vì chẳng có runtime nào để mà tắt nó trong đó.
+Cột tìm ra property theo `snake_case` → `camelCase`, áp dụng lúc build:
+`created_at` → `setCreatedAt`. Mặc định là bật — MyBatis thì mặc định tắt — và
+`-Alarkbatis.mapUnderscoreToCamelCase=false` mang mặc định của MyBatis sang. Lựa chọn
+này được nướng thẳng vào reader sinh ra; không có tuỳ chọn runtime nào cho cả hai chiều.
+Xem [Cấu hình](../features/configuration.md#column-naming).
 
 Chỗ nào quy ước không đủ thì một `<resultMap>` gọi tên cột tường minh:
 
@@ -104,8 +106,9 @@ trong số đó ghi hai tên cột khác nhau cho cùng một property là lỗi
 property rơi vào cùng một cột cũng vậy. Xem
 [`@Column`](../features/annotations.md#column).
 
-Một codebase từng dựa vào việc `mapUnderscoreToCamelCase` bị *tắt* sẽ cần `@Column` hoặc
-`<resultMap>`, và [trình quét mã cũ](../features/migration.md) có báo cáo trường hợp này.
+Một codebase từng dựa vào việc `mapUnderscoreToCamelCase` bị *tắt* thì hoặc mang luôn
+tuỳ chọn đó sang, hoặc gắn `@Column` / `<resultMap>` cho những cột bị ảnh hưởng; dù chọn
+cách nào thì [trình quét mã cũ](../features/migration.md) cũng báo cáo trường hợp này.
 
 ## Type handler tuỳ biến { #custom-type-handlers }
 
@@ -184,10 +187,12 @@ trên, mà những đoạn trên vẫn biên dịch được.
 
 ### Những gì vẫn không có
 
-**Không tự tìm handler.** Không có registry `<typeHandlers>`, không quét `@MappedTypes`,
-không tra `(Type, JdbcType)`. Tường minh là cái giá phải trả: bạn mất đi "khai báo một
-lần rồi áp dụng khắp nơi", và bạn được một chỗ gọi sinh ra mà javac kiểm tra kiểu được,
-còn IDE thì nhảy tới được.
+**Không tự tìm handler.** Không quét `@MappedTypes`, không quét package, không tra
+`(Type, JdbcType)`. "Khai báo một lần rồi áp dụng khắp nơi" thì vẫn có, nhưng phải viết
+ra chứ không được dò tìm: `-Alarkbatis.typeHandlers=com.example.Money:com.example.MoneyHandler`
+đăng ký handler mặc định theo kiểu Java cho cả build, kiểm tra ngay lúc `javac`. Xem
+[Cấu hình](../features/configuration.md#type-handlers-for-a-whole-build). Đằng nào bạn
+cũng được một chỗ gọi sinh ra mà javac kiểm tra kiểu được, còn IDE thì nhảy tới được.
 
 **Một cách đọc cho mỗi lớp kết quả.** Mỗi lớp chỉ sinh một row reader, nên mỗi property
 chỉ có một handler. Hai statement gọi tên hai handler khác nhau cho cùng một property là
