@@ -44,7 +44,7 @@ public boolean hasActiveTransaction()
 
 ## `LarkBatisTx`
 
-Đại diện cho một phạm vi transaction, hỗ trợ try-with-resources.
+Đại diện cho programmatic transaction scope (`AutoCloseable`), quản lý transaction boundary theo cơ chế vote-to-commit.
 
 ```java
 try (LarkBatisTx tx = session.begin()) {

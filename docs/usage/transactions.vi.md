@@ -1,6 +1,6 @@
 # Transaction
 
-Trong ứng dụng độc lập, `LarkBatisTx` quản lý phạm vi transaction. Khi tích hợp với Spring, bạn sử dụng `@Transactional` chuẩn và LarkBatis sẽ tự động đồng bộ kết nối qua Spring Transaction Manager.
+Khi chạy độc lập (standalone), `LarkBatisTx` cung cấp **programmatic transaction scope (ranh giới transaction theo khối lệnh)** tương thích với `AutoCloseable`. Khi tích hợp trong Spring, transaction boundary được quản lý hoàn toàn bằng `@Transactional` (declarative transaction) và LarkBatis sẽ tự động đồng bộ kết nối qua `DataSourceUtils`.
 
 ## `LarkBatisTx`
 
@@ -14,17 +14,17 @@ try (LarkBatisTx tx = session.begin()) {
 
 Ba nguyên tắc cốt lõi giúp đảm bảo an toàn dữ liệu mặc định:
 
-**1 · `commit()` là một lá phiếu (vote), không phải lệnh commit tức thì.** Việc commit thực sự chỉ diễn ra khi phạm vi ngoài cùng đóng lại. Cơ chế này cho phép lồng các scope transaction mà phạm vi bên trong không vô tình commit dở dang công việc của phạm vi bên ngoài.
+**1 · `commit()` mang ngữ nghĩa vote (bỏ phiếu), không phải lệnh commit tức thì.** Việc commit vật lý xuống database chỉ diễn ra khi scope ngoài cùng (outermost transaction scope) đóng lại. Cơ chế này cho phép lồng các transaction scope (nested scopes) một cách an toàn mà không làm commit dở dang dữ liệu của scope ngoài.
 
-**2 · Rời khỏi một scope mà không gọi `commit()` sẽ đánh dấu toàn bộ transaction là rollback-only.** Một lệnh `return` sớm, một exception không bắt, hoặc quên gọi `tx.commit()`: tất cả đều kích hoạt rollback an toàn. Bạn không bao giờ rơi vào tình huống lưu dữ liệu dở dang do thoát khối lệnh bất ngờ.
+**2 · Thoát khỏi một transaction scope mà chưa gọi `commit()` sẽ tự động đánh dấu rollback-only.** Khi gặp lệnh `return` sớm, ngoại lệ chưa bắt (unhandled exception), hoặc quên gọi `tx.commit()`: toàn bộ transaction sẽ tự động chuyển sang trạng thái rollback-only, ngăn chặn hoàn toàn nguy cơ commit thiếu dữ liệu.
 
-**3 · Gọi commit trên transaction đã bị đánh dấu hỏng sẽ ném ngoại lệ ngay lập tức.** Nếu một scope bên trong kết thúc mà không commit rồi scope ngoài gọi `commit()`, hệ thống sẽ ném `LarkBatisRollbackOnlyException` thay vì âm thầm rollback khiến lập trình viên tưởng nhầm là đã lưu thành công.
+**3 · Commit trên transaction đã bị đánh dấu hỏng sẽ ném ngoại lệ ngay lập tức.** Nếu một transaction scope con bên trong kết thúc mà không commit rồi scope ngoài gọi `commit()`, hệ thống sẽ ném `LarkBatisRollbackOnlyException` thay vì âm thầm rollback, giúp lập trình viên phát hiện sớm lỗi logic nghiệp vụ.
 
 ```java
 try (LarkBatisTx outer = session.begin()) {
-    try (LarkBatisTx inner = session.begin()) {  // tham gia vào transaction ngoài
+    try (LarkBatisTx inner = session.begin()) {  // tham gia vào transaction ngoài (nested scope)
         mapper.insert(a);
-        inner.commit();                          // bỏ phiếu hợp lệ
+        inner.commit();                          // bỏ phiếu (vote)
     }
     mapper.insert(b);
     outer.commit();                              // bỏ phiếu; đóng scope ngoài cùng mới commit xuống DB

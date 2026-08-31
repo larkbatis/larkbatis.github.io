@@ -103,9 +103,7 @@ giá trị đóng. Xem [SQL thô](raw-sql.md).
 
 ## `LarkBatisRollbackOnlyException` khi commit
 
-Một phạm vi transaction bên trong đã rời đi mà không bỏ phiếu, làm hỏng transaction,
-rồi phạm vi ngoài mới gọi commit. Exception này vẫn tốt hơn một lần rollback âm thầm
-trông y như thành công. Xem [Transaction](transactions.md).
+Một transaction scope con bên trong đã kết thúc mà không gọi `commit()`, khiến transaction bị đánh dấu rollback-only trước khi scope ngoài cùng gọi commit. Ngoại lệ này giúp phát hiện sớm lỗi logic thay vì âm thầm rollback. Xem [Transaction](transactions.md).
 
 ## `LarkBatisUnboundedVariantsException`
 
