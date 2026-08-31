@@ -1,6 +1,6 @@
 # Transaction
 
-Khi chạy độc lập (standalone), `LarkBatisTx` cung cấp **programmatic transaction scope (ranh giới transaction theo khối lệnh)** tương thích với `AutoCloseable`. Khi tích hợp trong Spring, transaction boundary được quản lý hoàn toàn bằng `@Transactional` (declarative transaction) và LarkBatis sẽ tự động đồng bộ kết nối qua `DataSourceUtils`.
+Khi chạy độc lập (standalone), `LarkBatisTx` cung cấp **programmatic transaction scope** tương thích với `AutoCloseable`. Khi tích hợp trong Spring, transaction boundary được quản lý hoàn toàn bằng `@Transactional` (declarative transaction) và LarkBatis sẽ tự động đồng bộ kết nối qua `DataSourceUtils`.
 
 ## `LarkBatisTx`
 
