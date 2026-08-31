@@ -28,7 +28,7 @@ public Connection conn() {
 }
 ```
 
-`DataSourceUtils` returns the active connection bound to the running `@Transactional` scope, or opens a new connection if called outside a transaction. `release()` is a no-op during active transactions and closes the connection only when running standalone. This is why generated mapper methods do not close connections directly. See [Transactions](transactions.md#why-generated-code-never-closes-connections-directly).
+`DataSourceUtils` returns the active connection bound to the running `@Transactional` scope, or opens a new connection if called outside a transaction. `release()` is a no-op during active transactions and closes the connection only when running standalone. This is why generated mapper methods do not close connections directly. See [Transactions](transactions.md#why-generated-code-never-closes-the-connection).
 
 `SpringLarkBatisSession` is stateless and thread-safe.
 
@@ -45,8 +45,9 @@ Exception translation uses Spring's `SQLExceptionTranslator` (`SQLExceptionSubcl
 | `Stream<T>` returns | Supported | Stream holds connection until closed; no-op release inside transactions |
 | Interop with `JdbcTemplate` / JPA | Supported | Shares identical `DataSourceTransactionManager` context |
 | Spring AOP on mappers | Supported | Mappers are regular Spring beans |
-| MyBatis `ExecutorType.BATCH` | Replaced | Batching is declared via [method signatures](foreach-and-batches.md#jdbc-batch-inserts) |
+| MyBatis `ExecutorType.BATCH` | Replaced | Batching is declared via [method signatures](foreach-and-batches.md#jdbc-batches) |
 | MyBatis Interceptor plugins | Replaced | Replaced with explicit SQL, custom type handlers, or Spring AOP. [See recipes](../features/mybatis-differences.md#what-replaces-a-plugin) |
+
 
 ## Configuration Properties
 

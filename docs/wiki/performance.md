@@ -14,7 +14,7 @@ Here is the breakdown of performance differences between LarkBatis and standard 
 | Parameter validation | Runtime error | Compile-time error | Mappers are compiled into standard Java classes; `javac` checks parameter types directly |
 | Raw SQL security auditing | Inspect every XML file | Search for `unsafeRawSql` | Dynamic SQL splices pass through `SqlFragment.unsafeRawSql`, creating a single audit point |
 
-## Benchmark Measurements
+## Benchmark Measurements { #measured-on-larkbatis-itself }
 
 These numbers are measured using JMH 1.37 across 10,000-row result sets against H2 on JDK 21 (Apple M5 Pro):
 
@@ -58,7 +58,7 @@ Measuring `findById(7)` returning 1 row with 4 columns over loopback TCP:
 
 | Connection Transport | MyBatis | LarkBatis | Latency Δ | Allocation Δ |
 |---|---:|---:|---:|---:|
-| In-memory direct call | 1.45 µs | 0.36 µs | −75% | 6.6 KB → 1.6 KB (−75%) |
+| In-process direct call | 1.45 µs | 0.36 µs | −75% | 6.6 KB → 1.6 KB (−75%) |
 | H2 via TCP socket (loopback) | 94.2 µs | 89.2 µs | **−5%** | 8.9 KB → 4.0 KB (−55%) |
 
 Over a real TCP connection, network latency accounts for over 90% of total response time. However, memory allocation reductions (55%) still reduce GC churn under high throughput.
@@ -86,7 +86,7 @@ Thanks to JEP 416 (re-implementing core reflection using method handles), MyBati
 
 LarkBatis maintains a 5.3× throughput advantage on JDK 21 without relying on reflection.
 
-## Unverified Claims & Ongoing Work
+## GraalVM Native Image Compatibility { #native-image }
 
 | Area | Current Status |
 |---|---|

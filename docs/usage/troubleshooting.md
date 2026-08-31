@@ -17,7 +17,7 @@ error: no parameter or property named 'id' in findById(long)
 
 In Gradle, incremental compilation can invoke annotation processors over existing class files where parameter names were stripped (unless compiled with `-parameters`). Clean builds succeed because they parse Java source files directly, but subsequent incremental builds fail.
 
-### How to fix it
+### The `-parameters` compiler flag { #what-the-flag-actually-does }
 
 === "Option 1: Compile with `-parameters` (Recommended)"
 

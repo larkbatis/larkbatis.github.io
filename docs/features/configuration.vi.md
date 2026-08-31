@@ -33,6 +33,14 @@ Truyền cho `javac` dưới dạng tham số `-A<key>=<value>`:
     </configuration>
     ```
 
+### Ánh xạ tên cột (Column Naming) { #column-naming }
+
+Mặc định, cột `created_at` sẽ tự động được ánh xạ sang setter `setCreatedAt`. Để tắt quy tắc này (giữ nguyên cách xử lý cũ của MyBatis), cấu hình:
+
+```
+-Alarkbatis.mapUnderscoreToCamelCase=false
+```
+
 ### Đăng ký TypeHandler toàn dự án { #type-handlers-for-a-whole-build }
 
 Thay vì cấu hình thẻ `<typeHandlers>` trong XML runtime, bạn khai báo trực tiếp cho `javac`:
@@ -75,6 +83,9 @@ Compiler sẽ xác thực cả kiểu dữ liệu Java lẫn class handler trong
       <addParameters>false</addParameters>
     </configuration>
     ```
+
+### Cấu hình nhiều thư mục XML { #mapper-xml-in-more-than-one-directory }
+
 
 ## Cấu hình Runtime
 

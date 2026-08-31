@@ -84,7 +84,7 @@ try (ResultSet gk = ps.getGeneratedKeys()) {
 
 Nếu số lượng khóa trả về không khớp với số dòng gửi đi, hệ thống lập tức ném `LarkBatisKeyCountMismatchException`.
 
-## Thẻ `<selectKey>` không được hỗ trợ
+## Thẻ `<selectKey>` không được hỗ trợ { #selectkey-is-not-supported }
 
 LarkBatis loại bỏ thẻ `<selectKey>` vì nó ẩn giấu một câu lệnh truy vấn thứ hai bên trong cấu hình. Thay vào đó, hãy tách thành 2 phương thức mapper tường minh:
 

@@ -161,7 +161,7 @@ Use `<foreach>` in `<insert>` statements to insert multiple rows in a single SQL
 </insert>
 ```
 
-## JDBC batch inserts
+## JDBC batch inserts { #jdbc-batches }
 
 Batching in LarkBatis is declared via **method signatures**: an `@Insert` taking a `List<T>` compiles directly to JDBC `addBatch()` / `executeBatch()` calls:
 

@@ -89,3 +89,8 @@ Do LarkBatis sinh lệnh gọi trực tiếp không dùng reflection, hiệu nă
 2. **Escape Analysis không thể loại bỏ heap allocation của MyBatis**: Chuỗi gọi sâu `setValue → BeanWrapper → Invoker` ngăn JIT Compiler thực hiện scalar replacement cho `PropertyTokenizer` và `Object[]`.
 3. **Hiệu quả tỷ lệ thuận với số lượng dòng kết quả**: LarkBatis mang lại lợi thế tối đa cho các tác vụ báo cáo, export dữ liệu lớn, xử lý batch và danh sách nhiều dòng. Với các truy vấn tìm kiếm 1 bản ghi đơn lẻ qua mạng, độ trễ phụ thuộc chủ yếu vào network I/O.
 
+## Khả năng tương thích GraalVM Native Image { #native-image }
+
+LarkBatis loại bỏ hoàn toàn dynamic proxy và Java reflection trong runtime, giúp ứng dụng sẵn sàng biên dịch sang GraalVM Native Image mà không cần cấu hình reachability metadata cho tầng mapper.
+
+

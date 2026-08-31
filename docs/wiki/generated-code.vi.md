@@ -82,7 +82,7 @@ try (PreparedStatement ps = c.prepareStatement(sql)) {
 3. Loại bỏ tiền tố `AND` bằng toán tử ba ngôi trên các biến boolean, không cắt chuỗi lúc runtime.
 4. Quá trình gán tham số duyệt qua cùng các biến điều kiện, đảm bảo số lượng và thứ tự dấu `?` luôn khớp tuyệt đối.
 
-## Row Reader (`UserRow`)
+## Row Reader (`UserRow`) { #row-readers }
 
 ```java
 public final class UserRow {

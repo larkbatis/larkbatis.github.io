@@ -85,7 +85,7 @@ try (PreparedStatement ps = c.prepareStatement(sql)) {
 3. **Leading `AND`/`OR` handling**: Inlines prefix decisions using ternary conditions based on active flags.
 4. **Synchronized parameter binding**: Uses the exact same boolean flags (`c0`, `c1`) to bind parameters, guaranteeing that bound parameters always match query placeholders.
 
-## Anatomy of Generated Row Readers
+## Anatomy of Generated Row Readers { #row-readers }
 
 Each result bean gets a dedicated `RowReader` class with three read strategies:
 

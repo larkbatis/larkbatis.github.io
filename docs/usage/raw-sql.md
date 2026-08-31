@@ -87,7 +87,7 @@ To structurally bound `<foreach>` variants, use `@PadPow2`. See [foreach and Bat
 
 Using `${}` inside a `SELECT` column list prevents the compiler from predicting column positions. The statement automatically falls back to reading columns by name from `ResultSetMetaData` on the first row. The build outputs a note whenever this fallback occurs.
 
-## The manual escape hatch
+## The manual escape hatch { #the-escape-hatch }
 
 When you need to construct complex queries dynamically in Java, write a `default` method on your mapper interface:
 

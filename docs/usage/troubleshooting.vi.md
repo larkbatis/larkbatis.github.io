@@ -17,7 +17,8 @@ error: no parameter or property named 'id' in findById(long)
 
 **Nguyên nhân**: Gradle incremental build chạy processor trên các **file `.class`** đã biên dịch trước đó. Mặc định `javac` không lưu tên tham số vào bytecode nên processor chỉ thấy `arg0`, `arg1`.
 
-**Giải pháp**:
+### Cờ trình biên dịch `-parameters` { #what-the-flag-actually-does }
+
 1. Bật cờ `-parameters` trong cấu hình biên dịch:
    ```kotlin title="build.gradle.kts"
    tasks.withType<JavaCompile>().configureEach {
@@ -25,6 +26,7 @@ error: no parameter or property named 'id' in findById(long)
    }
    ```
 2. Hoặc gắn annotation `@Param("id")` tường minh trên tham số.
+
 
 ## Lỗi không tìm thấy Getter/Setter khi dùng Lombok
 

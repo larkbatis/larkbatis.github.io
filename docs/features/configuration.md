@@ -33,7 +33,7 @@ Passed to javac as `-A<name>=<value>`.
     </configuration>
     ```
 
-### Column naming options
+### Column naming options { #column-naming }
 
 By default, column `created_at` maps automatically to setter `setCreatedAt`. This transformation is baked into generated reader classes. To preserve legacy MyBatis behavior (where underscore mapping was disabled by default), set:
 
@@ -49,7 +49,7 @@ By default, column `created_at` maps automatically to setter `setCreatedAt`. Thi
 
 When disabled, javac will report build warnings naming any columns that no longer map to properties.
 
-### Project-wide custom type handlers
+### Project-wide custom type handlers { #type-handlers-for-a-whole-build }
 
 In MyBatis, you declared `<typeHandlers>` in `mybatis-config.xml`. In LarkBatis, configure them at compile time:
 
@@ -104,7 +104,8 @@ Each configured pair applies globally to all parameters and properties of that t
 | `springConfig` | Auto | Toggles generation of Spring `@Configuration` |
 | `springConfigPackage` | `registryPackage` | Target package for Spring configuration class |
 
-### Configuring multiple XML directories
+### Configuring multiple XML directories { #mapper-xml-in-more-than-one-directory }
+
 
 If your mapper XML files are split across multiple directories:
 

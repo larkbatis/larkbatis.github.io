@@ -55,7 +55,7 @@ If you store enums as integer ordinals or custom database codes, write a [custom
 
 Zone-aware types (`ZonedDateTime`, `OffsetDateTime`) are intentionally not built-in because standard database columns don't carry timezone metadata. We recommend storing `Instant` in the database and converting to specific time zones in your application layer.
 
-## Column naming conventions
+## Column naming conventions { #column-naming }
 
 Columns map to properties using `snake_case` → `camelCase` at build time: `created_at` maps to `setCreatedAt`. This is enabled by default. To preserve legacy MyBatis behavior, pass `-Alarkbatis.mapUnderscoreToCamelCase=false`. See [Configuration](../features/configuration.md#column-naming).
 

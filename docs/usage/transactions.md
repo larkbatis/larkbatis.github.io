@@ -80,7 +80,7 @@ This works because `SpringLarkBatisSession.conn()` delegates to Spring's `DataSo
 | Interop with `JdbcTemplate` / JPA | Shares identical transaction context via `DataSourceTransactionManager` |
 | `Stream<T>` query methods | Transaction manages connection lifecycle; caller closes the stream |
 
-## Why generated code never closes Connections directly
+## Why generated code never closes Connections directly { #why-generated-code-never-closes-the-connection }
 
 ```java
 Connection c = s.conn();
