@@ -2176,7 +2176,12 @@ That entry is named in a warning rather than left silent.</p>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">mapperDir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">layout</span><span class="p">.</span><span class="na">projectDirectory</span><span class="p">.</span><span class="na">dir</span><span class="p">(</span><span class="s">"src/main/mappers"</span><span class="p">)</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">addProcessorDependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">   </span><span class="c1">// manage the processor version yourself</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">addParametersFlag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">        </span><span class="c1">// you already pass -parameters, or use @Param everywhere</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">mapUnderscoreToCamelCase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">  </span><span class="c1">// keep MyBatis's default (underscores are significant)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="n">typeHandlers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"com.example.Money:com.example.MoneyHandler"</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="n">registryPackage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"com.example.app"</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="n">springConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">             </span><span class="c1">// suppress the generated @Configuration</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="n">springConfigPackage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"com.example.config"</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="p">}</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -2184,7 +2189,12 @@ That entry is named in a warning rather than left silent.</p>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&lt;mapperDir&gt;</span>src/main/mappers<span class="nt">&lt;/mapperDir&gt;</span><span class="w">     </span><span class="cm">&lt;!-- default: src/main/resources --&gt;</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&lt;addProcessorPath&gt;</span>false<span class="nt">&lt;/addProcessorPath&gt;</span><span class="w">  </span><span class="cm">&lt;!-- default: true --&gt;</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&lt;addParameters&gt;</span>false<span class="nt">&lt;/addParameters&gt;</span><span class="w">        </span><span class="cm">&lt;!-- default: true --&gt;</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nt">&lt;/configuration&gt;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">&lt;mapUnderscoreToCamelCase&gt;</span>false<span class="nt">&lt;/mapUnderscoreToCamelCase&gt;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nt">&lt;typeHandlers&gt;</span>com.example.Money:com.example.MoneyHandler<span class="nt">&lt;/typeHandlers&gt;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="nt">&lt;registryPackage&gt;</span>com.example.app<span class="nt">&lt;/registryPackage&gt;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="nt">&lt;springConfig&gt;</span>false<span class="nt">&lt;/springConfig&gt;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span><span class="nt">&lt;springConfigPackage&gt;</span>com.example.config<span class="nt">&lt;/springConfigPackage&gt;</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="nt">&lt;/configuration&gt;</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -2218,8 +2228,40 @@ That entry is named in a warning rather than left silent.</p>
 <td><code>true</code></td>
 <td>Whether <code>-parameters</code> is turned on. Switching it off needs <code>@Param</code> on every mapper parameter (see the next section for why). Maven honours an explicit <code>&lt;parameters&gt;false&lt;/parameters&gt;</code> and warns instead of overriding it</td>
 </tr>
+<tr>
+<td><code>mapUnderscoreToCamelCase</code> / <code>&lt;mapUnderscoreToCamelCase&gt;</code></td>
+<td>not set (processor default: <code>true</code>)</td>
+<td><code>false</code> makes underscores significant when a column label is matched to a property</td>
+</tr>
+<tr>
+<td><code>typeHandlers</code> / <code>&lt;typeHandlers&gt;</code></td>
+<td>not set</td>
+<td>Default handler per Java type, <code>javaType:handlerClass</code> pairs separated by commas</td>
+</tr>
+<tr>
+<td><code>registryPackage</code> / <code>&lt;registryPackage&gt;</code></td>
+<td>not set (common package prefix)</td>
+<td>Package for the generated <code>LarkBatisMappers</code> registry class</td>
+</tr>
+<tr>
+<td><code>springConfig</code> / <code>&lt;springConfig&gt;</code></td>
+<td>not set (emitted when spring-context is on classpath)</td>
+<td><code>false</code> suppresses the generated Spring <code>@Configuration</code></td>
+</tr>
+<tr>
+<td><code>springConfigPackage</code> / <code>&lt;springConfigPackage&gt;</code></td>
+<td>not set (same as <code>registryPackage</code>)</td>
+<td>Package for the generated Spring <code>@Configuration</code> class</td>
+</tr>
 </tbody>
 </table>
+<div class="admonition tip">
+<p class="admonition-title">Build plugin settings vs processor options</p>
+<p>The processor options listed in the <a href="#processor-options">table above</a> can also be passed
+directly as <code>-Alarkbatis.xxx=value</code> in <code>compilerArgs</code>. The build plugin settings are a
+convenience: they pass the same <code>-A</code> flags for you, skip options you do not set, and
+respect a manual <code>-A</code> flag when one is already present.</p>
+</div>
 <p>Maven additionally requires <code>&lt;extensions&gt;true&lt;/extensions&gt;</code> on the plugin declaration.
 Without it nothing happens, and nothing says so. See <a href="../../getting-started/build-plugins/">Build
 Plugins</a>.</p>
