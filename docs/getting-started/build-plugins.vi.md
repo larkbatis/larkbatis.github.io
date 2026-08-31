@@ -20,7 +20,7 @@ nào thêm bất cứ thứ gì vào classpath lúc chạy của ứng dụng.
 ```kotlin title="build.gradle.kts"
 plugins {
     java
-    id("io.github.larkbatis") version "0.1.0"
+    id("io.github.larkbatis") version "0.1.2"
 }
 
 dependencies {
@@ -65,7 +65,7 @@ chạy trên chính project này:
     <plugin>
       <groupId>io.github.larkbatis</groupId>
       <artifactId>larkbatis-maven-plugin</artifactId>
-      <version>0.1.0</version>
+      <version>0.1.2</version>
       <extensions>true</extensions>   <!-- bắt buộc -->
     </plugin>
   </plugins>

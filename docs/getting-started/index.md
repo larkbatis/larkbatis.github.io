@@ -112,7 +112,7 @@ regenerates nothing.
     ```kotlin
     plugins {
         java
-        id("io.github.larkbatis") version "0.1.0"
+        id("io.github.larkbatis") version "0.1.2"
     }
     ```
 
@@ -122,7 +122,7 @@ regenerates nothing.
     <plugin>
       <groupId>io.github.larkbatis</groupId>
       <artifactId>larkbatis-maven-plugin</artifactId>
-      <version>0.1.0</version>
+      <version>0.1.2</version>
       <extensions>true</extensions>
     </plugin>
     ```

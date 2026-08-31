@@ -19,7 +19,7 @@ application's runtime classpath.
 ```kotlin title="build.gradle.kts"
 plugins {
     java
-    id("io.github.larkbatis") version "0.1.0"
+    id("io.github.larkbatis") version "0.1.2"
 }
 
 dependencies {
@@ -64,7 +64,7 @@ this project:
     <plugin>
       <groupId>io.github.larkbatis</groupId>
       <artifactId>larkbatis-maven-plugin</artifactId>
-      <version>0.1.0</version>
+      <version>0.1.2</version>
       <extensions>true</extensions>   <!-- required -->
     </plugin>
   </plugins>
