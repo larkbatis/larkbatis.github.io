@@ -123,8 +123,8 @@ Tất cả đều là unchecked exception, kế thừa từ `LarkBatisException`
 | `LarkBatisException` | Ngoại lệ gốc, bọc một `SQLException` kèm câu SQL gây lỗi |
 | `LarkBatisRejectedException` | Giá trị đưa vào factory của `SqlFragment` hoặc câu lệnh switch `@OrderBy` bị từ chối; giá trị này chưa từng lọt vào chuỗi SQL |
 | `LarkBatisEmptyForeachException` | Collection trong thẻ `<foreach>` rỗng; nêu rõ tên statement và tên tham số |
-| `LarkBatisNoKeyException` | Statement yêu cầu lấy khoá tự sinh nhưng JDBC driver không trả về khoá nào |
-| `LarkBatisKeyCountMismatchException` | Thao tác batch insert nhận được số lượng khoá tự sinh ít hơn số dòng dữ liệu |
+| `LarkBatisNoKeyException` | Statement yêu cầu Generated Keys nhưng JDBC driver không trả về khoá nào |
+| `LarkBatisKeyCountMismatchException` | Thao tác batch insert nhận được số lượng Generated Keys ít hơn số dòng dữ liệu |
 | `LarkBatisUnboundedVariantsException` | Statement vượt quá ngưỡng `max-sql-variants` và ứng dụng đang bật chế độ ném lỗi thay vì chỉ cảnh báo |
 | `LarkBatisRollbackOnlyException` | Gọi `commit()` trên một transaction đã bị scope bên trong đánh dấu rollback |
 

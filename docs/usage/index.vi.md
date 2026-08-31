@@ -55,7 +55,7 @@ LarkBatisMapperConfiguration.java một file, nếu Spring có trên classpath l
     `<resultMap>`, một cấp `<association>` / `<collection>`, và quy tắc sắp xếp khiến nó
     hoạt động.
 
--   **[Khoá tự sinh](generated-keys.md)**
+-   **[Generated Keys](generated-keys.md)**
 
     `useGeneratedKeys`, vì sao `keyColumn` lại quan trọng, và việc đếm khoá ở chế độ
     batch.

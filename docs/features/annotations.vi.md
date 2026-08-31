@@ -66,13 +66,13 @@ public @interface Options {
 }
 ```
 
-Chỉ hỗ trợ tập thuộc tính phục vụ lấy khoá tự sinh (generated keys) của MyBatis.
+Chỉ hỗ trợ tập thuộc tính phục vụ lấy Generated Keys của MyBatis.
 
 | Thuộc tính | Ý nghĩa |
 |---|---|
-| `useGeneratedKeys` | Yêu cầu JDBC driver trả về khoá tự sinh sau câu lệnh `INSERT` |
-| `keyProperty` | Tên thuộc tính (hoặc `param.property`) nhận giá trị khoá được sinh. **Bắt buộc** khi bật `useGeneratedKeys`; đặt sai tên sẽ báo lỗi biên dịch. Dùng dấu phẩy để phân tách khoá tổng hợp |
-| `keyColumn` | Tên cột chứa khoá trong database, phân tách bằng dấu phẩy. Khuyến nghị luôn khai báo: nếu bỏ trống, trình biên dịch sẽ phát **cảnh báo bắt buộc** và fallback về `RETURN_GENERATED_KEYS` vốn không đảm bảo tính di động giữa các hệ quản trị database. Xem [Khoá tự sinh](../usage/generated-keys.md) |
+| `useGeneratedKeys` | Yêu cầu JDBC driver trả về Generated Keys sau câu lệnh `INSERT` |
+| `keyProperty` | Tên thuộc tính (hoặc `param.property`) nhận giá trị khoá được sinh. **Bắt buộc** khi bật `useGeneratedKeys`; đặt sai tên sẽ báo lỗi biên dịch. Dùng dấu phẩy để phân tách khoá tổ hợp |
+| `keyColumn` | Tên cột chứa khoá trong database, phân tách bằng dấu phẩy. Khuyến nghị luôn khai báo: nếu bỏ trống, trình biên dịch sẽ phát **cảnh báo bắt buộc** và fallback về `RETURN_GENERATED_KEYS` vốn không đảm bảo tính di động giữa các hệ quản trị database. Xem [Generated Keys](../usage/generated-keys.md) |
 
 Nếu cả hai thuộc tính đều chứa danh sách phân tách bằng dấu phẩy, hai danh sách phải có cùng số lượng phần tử.
 

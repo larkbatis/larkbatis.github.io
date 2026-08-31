@@ -109,7 +109,7 @@ plugins:
             Dynamic SQL: SQL động
             foreach and Batches: foreach và batch
             Result Maps and Joins: Result map và join
-            Generated Keys: Khoá tự sinh
+            Generated Keys: Generated Keys
             Streaming Results: Stream kết quả
             Transactions: Transaction
             Raw SQL and SqlFragment: SQL thô và SqlFragment

@@ -1,6 +1,6 @@
-# Khoá tự sinh
+# Generated Keys
 
-`@Options(useGeneratedKeys = true, ...)` yêu cầu JDBC driver trả về khoá tự sinh sau câu lệnh `INSERT` và gán trực tiếp vào property của đối tượng tham số.
+`@Options(useGeneratedKeys = true, ...)` yêu cầu JDBC driver trả về Generated Keys (giá trị khoá tự tăng / sequence) sau câu lệnh `INSERT` và gán trực tiếp vào property của đối tượng tham số.
 
 ```java
 @Insert("INSERT INTO users (name, email, created_at) VALUES (#{name}, #{email}, #{createdAt})")
@@ -33,10 +33,10 @@ public int insert(User u) {
 }
 ```
 
-1.  **Tên cột** khoá được khai báo tường minh vì `RETURN_GENERATED_KEYS` có hành vi không đồng nhất giữa các hệ quản trị database. Xem chi tiết bên dưới.
+1.  Khai báo tường minh **tên cột Generated Keys** (`keyColumn`) vì cờ `RETURN_GENERATED_KEYS` có hành vi không đồng nhất giữa các hệ quản trị database. Xem chi tiết bên dưới.
 2.  Cả setter lẫn accessor đều được xác định tĩnh lúc build từ `keyProperty` và kiểu dữ liệu của property đó.
 
-## Luôn khai báo tên cột khoá tường minh
+## Luôn khai báo tên cột `keyColumn` tường minh
 
 !!! warning "`keyColumn` là tuỳ chọn trong annotation nhưng gần như bắt buộc trên production"
 
@@ -57,7 +57,7 @@ public int insert(User u) {
 
 `keyProperty` là **thuộc tính bắt buộc**: bật `useGeneratedKeys` mà thiếu `keyProperty` là lỗi biên dịch.
 
-Với khoá tổ hợp (composite keys), hãy phân tách các tên bằng dấu phẩy ở cả hai thuộc tính; hai danh sách phải có cùng số lượng phần tử:
+Với composite primary key (khoá chính tổ hợp), hãy phân tách các tên bằng dấu phẩy ở cả hai thuộc tính; hai danh sách phải có cùng số lượng phần tử:
 
 ```java
 @Options(useGeneratedKeys = true, keyProperty = "tenantId,id", keyColumn = "tenant_id,id")
@@ -75,9 +75,9 @@ int insert(@Param("u") User u, @Param("audit") String audit);
 
 Tên tham số không tồn tại sẽ bị bắt ngay **lúc biên dịch**, không phải lỗi `ReflectionException` lúc runtime.
 
-## Insert theo batch
+## Batch Insert và Generated Keys
 
-Một `@Insert` nhận `List<T>` biên dịch thành `addBatch()` / `executeBatch()`, và các khoá trả về dưới dạng một `ResultSet` duy nhất được ánh xạ tương ứng vào từng phần tử của danh sách:
+Một `@Insert` nhận `List<T>` biên dịch thành `addBatch()` / `executeBatch()`, và các Generated Keys trả về dưới dạng một `ResultSet` duy nhất được ánh xạ tương ứng vào từng phần tử của danh sách:
 
 ```java
 int n = LarkBatisSql.sum(ps.executeBatch());
@@ -97,7 +97,7 @@ Phép kiểm tra số lượng này đảm bảo an toàn: một số JDBC drive
 
 ## `<selectKey>` không được hỗ trợ { #selectkey-is-not-supported }
 
-Những database không hỗ trợ khoá tự sinh (hoặc quy trình đọc sequence *trước* khi insert) thường dùng `<selectKey>` trong MyBatis. Tính năng này không được hỗ trợ vì thực chất nó là một câu lệnh thứ hai chạy ngầm ẩn dưới dạng tuỳ chọn. Hãy viết tường minh câu lệnh thứ hai đó ra:
+Những database không hỗ trợ cơ chế trả về Generated Keys (hoặc quy trình cần lấy sequence *trước* khi insert) thường dùng `<selectKey>` trong MyBatis. Tính năng này không được hỗ trợ vì thực chất nó là một câu lệnh thứ hai chạy ngầm ẩn dưới dạng tuỳ chọn cấu hình. Hãy viết tường minh câu lệnh thứ hai đó ra:
 
 ```java
 @Select("SELECT user_seq.NEXTVAL FROM dual")
@@ -117,6 +117,6 @@ try (LarkBatisTx tx = session.begin()) {
 
 [Trình quét mã cũ](../features/migration.md) sẽ tự động phát hiện mọi thẻ `<selectKey>` và gợi ý đoạn code thay thế tương ứng.
 
-## Khi không có khoá nào trả về
+## Khi không có Generated Key nào trả về
 
-Nếu một statement khai báo `useGeneratedKeys` mà JDBC driver không trả về khoá nào, `LarkBatisNoKeyException` sẽ được ném ra kèm tên statement, ngăn ngừa việc giá trị mặc định `0` lan truyền trong ứng dụng và gây lỗi ở tầng nghiệp vụ khác.
+Nếu một statement khai báo `useGeneratedKeys` mà JDBC driver không trả về khoá nào, `LarkBatisNoKeyException` sẽ được ném ra kèm tên statement, ngăn ngừa việc giá trị id mặc định `0` lan truyền trong ứng dụng và gây lỗi ở tầng nghiệp vụ khác.

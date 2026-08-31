@@ -209,7 +209,7 @@ public int insertAll(List<Order> orders) {
 ```
 
 1.  Batch rỗng sẽ trả về 0 ngay lập tức mà không gửi lệnh nào xuống database.
-2.  Một số JDBC driver trả về ít khoá hơn số dòng. Kiểm tra này giúp phát hiện lỗi thiếu ID trong batch. Xem [Khoá tự sinh](generated-keys.md).
+2.  Một số JDBC driver trả về ít khoá hơn số dòng. Kiểm tra này giúp phát hiện lỗi thiếu ID trong batch. Xem [Generated Keys](generated-keys.md).
 
 !!! note "Batch không đi cùng với SQL động"
 

@@ -44,7 +44,7 @@ public User findById(long id) {
 
 -   :material-book-open-variant: **[Sử dụng](usage/index.md)**
 
-    Interface mapper, mapper XML, SQL động, `<foreach>`, result map, khoá tự sinh, stream, transaction.
+    Interface mapper, mapper XML, SQL động, `<foreach>`, result map, Generated Keys, stream, transaction.
 
 -   :material-sitemap: **[Wiki](wiki/index.md)**
 

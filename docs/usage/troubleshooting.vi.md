@@ -75,7 +75,7 @@ làm nó khó hiểu. Xem [Java Module](../getting-started/jpms.md).
 
 Một cảnh báo build bắt buộc, và đáng để coi như lỗi: Oracle trả về `ROWID` còn PostgreSQL
 trả về mọi cột dưới cờ đó. Hãy gọi tên cột khoá tường minh. Xem
-[Khoá tự sinh](generated-keys.md).
+[Generated Keys](generated-keys.md).
 
 ## `LarkBatisEmptyForeachException` lúc chạy
 
