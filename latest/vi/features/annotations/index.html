@@ -893,7 +893,7 @@
   <span class="md-ellipsis">
     
   
-    Khoá tự sinh
+    Generated Keys
   
 
     
@@ -1996,7 +1996,7 @@
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">keyColumn</span><span class="p">()</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Chỉ hỗ trợ tập thuộc tính phục vụ lấy khoá tự sinh (generated keys) của MyBatis.</p>
+<p>Chỉ hỗ trợ tập thuộc tính phục vụ lấy Generated Keys của MyBatis.</p>
 <table>
 <thead>
 <tr>
@@ -2007,15 +2007,15 @@
 <tbody>
 <tr>
 <td><code>useGeneratedKeys</code></td>
-<td>Yêu cầu JDBC driver trả về khoá tự sinh sau câu lệnh <code>INSERT</code></td>
+<td>Yêu cầu JDBC driver trả về Generated Keys sau câu lệnh <code>INSERT</code></td>
 </tr>
 <tr>
 <td><code>keyProperty</code></td>
-<td>Tên thuộc tính (hoặc <code>param.property</code>) nhận giá trị khoá được sinh. <strong>Bắt buộc</strong> khi bật <code>useGeneratedKeys</code>; đặt sai tên sẽ báo lỗi biên dịch. Dùng dấu phẩy để phân tách khoá tổng hợp</td>
+<td>Tên thuộc tính (hoặc <code>param.property</code>) nhận giá trị khoá được sinh. <strong>Bắt buộc</strong> khi bật <code>useGeneratedKeys</code>; đặt sai tên sẽ báo lỗi biên dịch. Dùng dấu phẩy để phân tách khoá tổ hợp</td>
 </tr>
 <tr>
 <td><code>keyColumn</code></td>
-<td>Tên cột chứa khoá trong database, phân tách bằng dấu phẩy. Khuyến nghị luôn khai báo: nếu bỏ trống, trình biên dịch sẽ phát <strong>cảnh báo bắt buộc</strong> và fallback về <code>RETURN_GENERATED_KEYS</code> vốn không đảm bảo tính di động giữa các hệ quản trị database. Xem <a href="../../usage/generated-keys/">Khoá tự sinh</a></td>
+<td>Tên cột chứa khoá trong database, phân tách bằng dấu phẩy. Khuyến nghị luôn khai báo: nếu bỏ trống, trình biên dịch sẽ phát <strong>cảnh báo bắt buộc</strong> và fallback về <code>RETURN_GENERATED_KEYS</code> vốn không đảm bảo tính di động giữa các hệ quản trị database. Xem <a href="../../usage/generated-keys/">Generated Keys</a></td>
 </tr>
 </tbody>
 </table>

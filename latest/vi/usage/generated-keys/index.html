@@ -34,7 +34,7 @@
     
     
       
-        <title>Khoá tự sinh - LarkBatis</title>
+        <title>Generated Keys - LarkBatis</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#khoa-tu-sinh" class="md-skip">
+        <a href="#generated-keys" class="md-skip">
           Bỏ qua
         </a>
       
@@ -125,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Khoá tự sinh
+              Generated Keys
             
           </span>
         </div>
@@ -907,7 +907,7 @@
   <span class="md-ellipsis">
     
   
-    Khoá tự sinh
+    Generated Keys
   
 
     
@@ -925,7 +925,7 @@
   <span class="md-ellipsis">
     
   
-    Khoá tự sinh
+    Generated Keys
   
 
     
@@ -951,10 +951,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#luon-khai-bao-ten-cot-khoa-tuong-minh" class="md-nav__link">
+  <a href="#luon-khai-bao-ten-cot-keycolumn-tuong-minh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Luôn khai báo tên cột khoá tường minh
+        Luôn khai báo tên cột keyColumn tường minh
       
     </span>
   </a>
@@ -973,10 +973,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#insert-theo-batch" class="md-nav__link">
+  <a href="#batch-insert-va-generated-keys" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Insert theo batch
+        Batch Insert và Generated Keys
       
     </span>
   </a>
@@ -995,10 +995,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khi-khong-co-khoa-nao-tra-ve" class="md-nav__link">
+  <a href="#khi-khong-co-generated-key-nao-tra-ve" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Khi không có khoá nào trả về
+        Khi không có Generated Key nào trả về
       
     </span>
   </a>
@@ -1754,10 +1754,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#luon-khai-bao-ten-cot-khoa-tuong-minh" class="md-nav__link">
+  <a href="#luon-khai-bao-ten-cot-keycolumn-tuong-minh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Luôn khai báo tên cột khoá tường minh
+        Luôn khai báo tên cột keyColumn tường minh
       
     </span>
   </a>
@@ -1776,10 +1776,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#insert-theo-batch" class="md-nav__link">
+  <a href="#batch-insert-va-generated-keys" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Insert theo batch
+        Batch Insert và Generated Keys
       
     </span>
   </a>
@@ -1798,10 +1798,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#khi-khong-co-khoa-nao-tra-ve" class="md-nav__link">
+  <a href="#khi-khong-co-generated-key-nao-tra-ve" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Khi không có khoá nào trả về
+        Khi không có Generated Key nào trả về
       
     </span>
   </a>
@@ -1833,8 +1833,8 @@
   
 
 
-<h1 id="khoa-tu-sinh">Khoá tự sinh<a class="headerlink" href="#khoa-tu-sinh" title="Permanent link">&para;</a></h1>
-<p><code>@Options(useGeneratedKeys = true, ...)</code> yêu cầu JDBC driver trả về khoá tự sinh sau câu lệnh <code>INSERT</code> và gán trực tiếp vào property của đối tượng tham số.</p>
+<h1 id="generated-keys">Generated Keys<a class="headerlink" href="#generated-keys" title="Permanent link">&para;</a></h1>
+<p><code>@Options(useGeneratedKeys = true, ...)</code> yêu cầu JDBC driver trả về Generated Keys (giá trị khoá tự tăng / sequence) sau câu lệnh <code>INSERT</code> và gán trực tiếp vào property của đối tượng tham số.</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Insert</span><span class="p">(</span><span class="s">"INSERT INTO users (name, email, created_at) VALUES (#{name}, #{email}, #{createdAt})"</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"id"</span><span class="p">)</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">);</span>
@@ -1863,10 +1863,10 @@
 </span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li><strong>Tên cột</strong> khoá được khai báo tường minh vì <code>RETURN_GENERATED_KEYS</code> có hành vi không đồng nhất giữa các hệ quản trị database. Xem chi tiết bên dưới.</li>
+<li>Khai báo tường minh <strong>tên cột Generated Keys</strong> (<code>keyColumn</code>) vì cờ <code>RETURN_GENERATED_KEYS</code> có hành vi không đồng nhất giữa các hệ quản trị database. Xem chi tiết bên dưới.</li>
 <li>Cả setter lẫn accessor đều được xác định tĩnh lúc build từ <code>keyProperty</code> và kiểu dữ liệu của property đó.</li>
 </ol>
-<h2 id="luon-khai-bao-ten-cot-khoa-tuong-minh">Luôn khai báo tên cột khoá tường minh<a class="headerlink" href="#luon-khai-bao-ten-cot-khoa-tuong-minh" title="Permanent link">&para;</a></h2>
+<h2 id="luon-khai-bao-ten-cot-keycolumn-tuong-minh">Luôn khai báo tên cột <code>keyColumn</code> tường minh<a class="headerlink" href="#luon-khai-bao-ten-cot-keycolumn-tuong-minh" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title"><code>keyColumn</code> là tuỳ chọn trong annotation nhưng gần như bắt buộc trên production</p>
 <p><code>prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)</code> không đảm bảo tính di động (portable):</p>
@@ -1882,7 +1882,7 @@
 <p>Hãy xử lý cảnh báo này trong quá trình code review để đảm bảo ứng dụng vận hành chính xác trên môi trường production.</p>
 </div>
 <p><code>keyProperty</code> là <strong>thuộc tính bắt buộc</strong>: bật <code>useGeneratedKeys</code> mà thiếu <code>keyProperty</code> là lỗi biên dịch.</p>
-<p>Với khoá tổ hợp (composite keys), hãy phân tách các tên bằng dấu phẩy ở cả hai thuộc tính; hai danh sách phải có cùng số lượng phần tử:</p>
+<p>Với composite primary key (khoá chính tổ hợp), hãy phân tách các tên bằng dấu phẩy ở cả hai thuộc tính; hai danh sách phải có cùng số lượng phần tử:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@Options</span><span class="p">(</span><span class="n">useGeneratedKeys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">keyProperty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenantId,id"</span><span class="p">,</span><span class="w"> </span><span class="n">keyColumn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tenant_id,id"</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="keyproperty-khi-co-nhieu-tham-so"><code>keyProperty</code> khi có nhiều tham số<a class="headerlink" href="#keyproperty-khi-co-nhieu-tham-so" title="Permanent link">&para;</a></h2>
@@ -1892,8 +1892,8 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">"u"</span><span class="p">)</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="nd">@Param</span><span class="p">(</span><span class="s">"audit"</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">audit</span><span class="p">);</span>
 </span></code></pre></div>
 <p>Tên tham số không tồn tại sẽ bị bắt ngay <strong>lúc biên dịch</strong>, không phải lỗi <code>ReflectionException</code> lúc runtime.</p>
-<h2 id="insert-theo-batch">Insert theo batch<a class="headerlink" href="#insert-theo-batch" title="Permanent link">&para;</a></h2>
-<p>Một <code>@Insert</code> nhận <code>List&lt;T&gt;</code> biên dịch thành <code>addBatch()</code> / <code>executeBatch()</code>, và các khoá trả về dưới dạng một <code>ResultSet</code> duy nhất được ánh xạ tương ứng vào từng phần tử của danh sách:</p>
+<h2 id="batch-insert-va-generated-keys">Batch Insert và Generated Keys<a class="headerlink" href="#batch-insert-va-generated-keys" title="Permanent link">&para;</a></h2>
+<p>Một <code>@Insert</code> nhận <code>List&lt;T&gt;</code> biên dịch thành <code>addBatch()</code> / <code>executeBatch()</code>, và các Generated Keys trả về dưới dạng một <code>ResultSet</code> duy nhất được ánh xạ tương ứng vào từng phần tử của danh sách:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LarkBatisSql</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="na">executeBatch</span><span class="p">());</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ResultSet</span><span class="w"> </span><span class="n">gk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="p">.</span><span class="na">getGeneratedKeys</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -1908,7 +1908,7 @@
 </span></code></pre></div>
 <p>Phép kiểm tra số lượng này đảm bảo an toàn: một số JDBC driver trả về ít khoá hơn số dòng chèn thực tế. Việc bỏ qua lỗi này sẽ khiến một phần dữ liệu trong batch có id không được gán mà không ai hay biết. <code>LarkBatisKeyCountMismatchException</code> sẽ chỉ rõ tên statement, số lượng khoá kỳ vọng và số lượng thực tế nhận được.</p>
 <h2 id="selectkey-is-not-supported"><code>&lt;selectKey&gt;</code> không được hỗ trợ<a class="headerlink" href="#selectkey-is-not-supported" title="Permanent link">&para;</a></h2>
-<p>Những database không hỗ trợ khoá tự sinh (hoặc quy trình đọc sequence <em>trước</em> khi insert) thường dùng <code>&lt;selectKey&gt;</code> trong MyBatis. Tính năng này không được hỗ trợ vì thực chất nó là một câu lệnh thứ hai chạy ngầm ẩn dưới dạng tuỳ chọn. Hãy viết tường minh câu lệnh thứ hai đó ra:</p>
+<p>Những database không hỗ trợ cơ chế trả về Generated Keys (hoặc quy trình cần lấy sequence <em>trước</em> khi insert) thường dùng <code>&lt;selectKey&gt;</code> trong MyBatis. Tính năng này không được hỗ trợ vì thực chất nó là một câu lệnh thứ hai chạy ngầm ẩn dưới dạng tuỳ chọn cấu hình. Hãy viết tường minh câu lệnh thứ hai đó ra:</p>
 <div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@Select</span><span class="p">(</span><span class="s">"SELECT user_seq.NEXTVAL FROM dual"</span><span class="p">)</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kt">long</span><span class="w"> </span><span class="nf">nextUserId</span><span class="p">();</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
@@ -1922,8 +1922,8 @@
 </span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><a href="../../features/migration/">Trình quét mã cũ</a> sẽ tự động phát hiện mọi thẻ <code>&lt;selectKey&gt;</code> và gợi ý đoạn code thay thế tương ứng.</p>
-<h2 id="khi-khong-co-khoa-nao-tra-ve">Khi không có khoá nào trả về<a class="headerlink" href="#khi-khong-co-khoa-nao-tra-ve" title="Permanent link">&para;</a></h2>
-<p>Nếu một statement khai báo <code>useGeneratedKeys</code> mà JDBC driver không trả về khoá nào, <code>LarkBatisNoKeyException</code> sẽ được ném ra kèm tên statement, ngăn ngừa việc giá trị mặc định <code>0</code> lan truyền trong ứng dụng và gây lỗi ở tầng nghiệp vụ khác.</p>
+<h2 id="khi-khong-co-generated-key-nao-tra-ve">Khi không có Generated Key nào trả về<a class="headerlink" href="#khi-khong-co-generated-key-nao-tra-ve" title="Permanent link">&para;</a></h2>
+<p>Nếu một statement khai báo <code>useGeneratedKeys</code> mà JDBC driver không trả về khoá nào, <code>LarkBatisNoKeyException</code> sẽ được ném ra kèm tên statement, ngăn ngừa việc giá trị id mặc định <code>0</code> lan truyền trong ứng dụng và gây lỗi ở tầng nghiệp vụ khác.</p>
 
 
 
