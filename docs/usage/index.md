@@ -67,7 +67,7 @@ LarkBatisMapperConfiguration.java generated when Spring is on the classpath
 
     Default `#{}` mappings, `JdbcCodec`, `@Column`, `@Handler`, enums, and `java.time` support.
 
--   **[Spring Integration](spring.md)**
+-   **[Spring Integration](../spring/spring.md)**
 
     How LarkBatis integrates with Spring Boot without proxies or runtime scanning.
 

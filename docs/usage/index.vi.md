@@ -67,7 +67,7 @@ LarkBatisMapperConfiguration.java # Class @Configuration cho Spring (nếu có s
 
     Hệ thống kiểu dữ liệu hỗ trợ sẵn, `JdbcCodec`, `@Column`, custom `LarkBatisTypeHandler`, enum và `java.time`.
 
--   **[Tích hợp Spring](spring.md)**
+-   **[Tích hợp Spring](../spring/spring.md)**
 
     Cơ chế hoạt động của Spring Boot Starter, tương thích Spring Boot 3 & 4 và quản lý transaction qua `DataSourceUtils`.
 
