@@ -170,5 +170,5 @@ Mọi thứ—từ câu lệnh SQL, chỉ số cột trong `ResultSet`, cho đ�
 - Mệnh đề `WHERE id IN (...)` và batch insert → [foreach và Batching](../usage/foreach-and-batches.md)
 - Join dữ liệu quan hệ 1-N → [Result Maps](../usage/result-maps.md)
 - Truy vấn tập dữ liệu lớn qua con trỏ → [Streaming](../usage/streaming.md)
-- Tích hợp Spring Boot → [Spring Boot](spring-boot.md)
+- Tích hợp Spring Boot → [Spring Boot](../spring/spring-boot.md)
 

@@ -5,8 +5,6 @@ hide:
 
 # LarkBatis
 
-# LarkBatis
-
 **An ahead-of-time MyBatis.** SQL text, parameter positions, type handlers, column-to-setter mappings, and dynamic SQL trees: everything about a mapper's *shape* is resolved at build time. What ships at runtime is plain generated Java mapper code plus a thin JDBC layer—roughly 1,500 lines with zero extra dependencies, no reflection, no proxies, and no OGNL.
 
 You keep the MyBatis programming model you already know: mapper interfaces, `#{}` parameters, mapper XML, `<if>`/`<where>`/`<foreach>`, and `<resultMap>`. What you lose is the runtime interpreter underneath.

@@ -91,7 +91,7 @@ dependencies {
 }
 ```
 
-See [Spring Boot](spring-boot.md) for full setup instructions, and [Spring Integration](../usage/spring.md) for how transactions and connections work under the hood.
+See [Spring Boot](../spring/spring-boot.md) for full setup instructions, and [Spring Integration](../spring/spring.md) for how transactions and connections work under the hood.
 
 ## Mapper XML
 

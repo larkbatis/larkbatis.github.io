@@ -115,6 +115,7 @@ plugins:
             Raw SQL and SqlFragment: SQL thô và SqlFragment
             Types and Handlers: Kiểu dữ liệu và handler
             Spring Integration: Tích hợp Spring
+            Spring: Spring
             Troubleshooting: Xử lý sự cố
             Architecture: Kiến trúc
             Shape vs Value: Shape và value
@@ -194,7 +195,6 @@ nav:
   - Getting Started:
       - getting-started/index.md
       - Quick Start: getting-started/quick-start.md
-      - Spring Boot: getting-started/spring-boot.md
       - Build Plugins: getting-started/build-plugins.md
       - Java Modules: getting-started/jpms.md
   - Usage:
@@ -209,8 +209,10 @@ nav:
       - Transactions: usage/transactions.md
       - Raw SQL and SqlFragment: usage/raw-sql.md
       - Types and Handlers: usage/types.md
-      - Spring Integration: usage/spring.md
       - Troubleshooting: usage/troubleshooting.md
+  - Spring:
+      - Spring Boot: spring/spring-boot.md
+      - Spring Integration: spring/spring.md
   - Wiki:
       - wiki/index.md
       - Architecture: wiki/architecture.md

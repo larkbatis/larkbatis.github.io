@@ -91,7 +91,7 @@ dependencies {
 }
 ```
 
-Xem [Spring Boot](spring-boot.md) để biết cách thiết lập chi tiết và [Tích hợp Spring](../usage/spring.md) để hiểu cơ chế hoạt động bên dưới.
+Xem [Spring Boot](../spring/spring-boot.md) để biết cách thiết lập chi tiết và [Tích hợp Spring](../spring/spring.md) để hiểu cơ chế hoạt động bên dưới.
 
 ## Dự án sử dụng Mapper XML
 

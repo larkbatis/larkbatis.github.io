@@ -28,7 +28,7 @@ public Connection conn() {
 }
 ```
 
-`DataSourceUtils` returns the active connection bound to the running `@Transactional` scope, or opens a new connection if called outside a transaction. `release()` is a no-op during active transactions and closes the connection only when running standalone. This is why generated mapper methods do not close connections directly. See [Transactions](transactions.md#why-generated-code-never-closes-the-connection).
+`DataSourceUtils` returns the active connection bound to the running `@Transactional` scope, or opens a new connection if called outside a transaction. `release()` is a no-op during active transactions and closes the connection only when running standalone. This is why generated mapper methods do not close connections directly. See [Transactions](../usage/transactions.md#why-generated-code-never-closes-the-connection).
 
 `SpringLarkBatisSession` is stateless and thread-safe.
 
@@ -45,7 +45,7 @@ Exception translation uses Spring's `SQLExceptionTranslator` (`SQLExceptionSubcl
 | `Stream<T>` returns | Supported | Stream holds connection until closed; no-op release inside transactions |
 | Interop with `JdbcTemplate` / JPA | Supported | Shares identical `DataSourceTransactionManager` context |
 | Spring AOP on mappers | Supported | Mappers are regular Spring beans |
-| MyBatis `ExecutorType.BATCH` | Replaced | Batching is declared via [method signatures](foreach-and-batches.md#jdbc-batches) |
+| MyBatis `ExecutorType.BATCH` | Replaced | Batching is declared via [method signatures](../usage/foreach-and-batches.md#jdbc-batches) |
 | MyBatis Interceptor plugins | Replaced | Replaced with explicit SQL, custom type handlers, or Spring AOP. [See recipes](../features/mybatis-differences.md#what-replaces-a-plugin) |
 
 
@@ -57,7 +57,7 @@ larkbatis:
   fail-on-unbounded-fragment: false   # throw exception instead of warning
 ```
 
-See [Raw SQL](raw-sql.md#tracking-sql-variants) for details on SQL variant tracking.
+See [Raw SQL](../usage/raw-sql.md#tracking-sql-variants) for details on SQL variant tracking.
 
 !!! note "SQL query logging"
 

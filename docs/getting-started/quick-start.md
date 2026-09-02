@@ -170,4 +170,4 @@ Every column index and getter/setter call was determined at build time. Nothing 
 - `WHERE id IN (...)` and batch inserts → [foreach and Batches](../usage/foreach-and-batches.md)
 - Joining parent and child entities → [Result Maps and Joins](../usage/result-maps.md)
 - Large result sets without memory bloat → [Streaming Results](../usage/streaming.md)
-- Using Spring Boot instead of `main()` → [Spring Boot](spring-boot.md)
+- Using Spring Boot instead of `main()` → [Spring Boot](../spring/spring-boot.md)

@@ -82,17 +82,43 @@ public class AccountService {
 
 1.  Standard constructor injection of a normal bean. The bean is `AccountMapper$$Impl`, declared by the generated `LarkBatisMapperConfiguration` in your base package (which `@SpringBootApplication`'s default `@ComponentScan` picks up automatically).
 
-`@Transactional` works out of the box because `SpringLarkBatisSession.conn()` delegates to `DataSourceUtils`, which returns the connection already participating in the active transaction. Spring manages the transaction while LarkBatis simply borrows the connection. That means `REQUIRES_NEW`, `NESTED`, custom rollback rules, and `readOnly = true` behave exactly as they do with `JdbcTemplate`. Sharing transactions with `JdbcTemplate` or JPA works for the same reason. See [Spring Integration](../usage/spring.md) for details.
+`@Transactional` works out of the box because `SpringLarkBatisSession.conn()` delegates to `DataSourceUtils`, which returns the connection already participating in the active transaction. Spring manages the transaction while LarkBatis simply borrows the connection. That means `REQUIRES_NEW`, `NESTED`, custom rollback rules, and `readOnly = true` behave exactly as they do with `JdbcTemplate`. Sharing transactions with `JdbcTemplate` or JPA works for the same reason. See [Spring Integration](spring.md) for details.
 
-## 4 · Configure (optional)
+## 4 · Configuration
+
+Unlike `mybatis-spring-boot-starter`, LarkBatis **does not use** `application.yml` for mapper locations or MyBatis settings. Because SQL is resolved at compile time, Spring never sees your XML files.
+
+### Runtime properties (`application.yml`)
+You only configure runtime monitoring here:
 
 ```yaml title="application.yml"
 larkbatis:
   max-sql-variants: 64                # distinct SQL strings per statement before warning
-  fail-on-unbounded-fragment: false   # true = throw exception; great in staging
+  fail-on-unbounded-fragment: false   # throw exception instead of warning
 ```
 
-Both settings help monitor the operational cost of `${}`: statement caches are keyed by SQL text, so unbounded dynamic fragments could grow caches indefinitely. See [Configuration](../features/configuration.md).
+Both settings help monitor the operational cost of `${}`. See [Configuration](../features/configuration.md) for details.
+
+### Build-time properties (XML & Settings)
+If you need to change where XML mappers are loaded from, or if you need to set global MyBatis options (like `mapUnderscoreToCamelCase`), you configure the build plugin instead:
+
+=== "Gradle (`build.gradle.kts`)"
+    ```kotlin
+    larkbatis {
+        mapperDir = layout.projectDirectory.dir("src/main/resources/mapper") // (1)!
+        mapUnderscoreToCamelCase = true
+    }
+    ```
+
+=== "Maven (`pom.xml`)"
+    ```xml
+    <configuration>
+      <mapperDir>src/main/resources/mapper</mapperDir> <!-- 1 -->
+      <mapUnderscoreToCamelCase>true</mapUnderscoreToCamelCase>
+    </configuration>
+    ```
+
+1. LarkBatis already defaults to `src/main/resources`. You only need to set this if your XML files are somewhere else.
 
 ## What the processor generated
 
@@ -122,4 +148,4 @@ public class LarkBatisMapperConfiguration {
 
 Because `@Bean AccountMapper accountMapper(LarkBatisSession s)` has a static return type, Spring AOT treats it like any standard bean: no runtime `getObjectType()` inspection, no proxy hints, and no `reflect-config.json` needed for the mapper layer.
 
-See [Spring Integration](../usage/spring.md) for full details on Spring Boot 3 / 4 support and available properties.
+See [Spring Integration](spring.md) for full details on Spring Boot 3 / 4 support and available properties.

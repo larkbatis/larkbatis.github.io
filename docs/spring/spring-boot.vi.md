@@ -86,7 +86,12 @@ public class AccountService {
 
 Annotation `@Transactional` hoạt động mượt mà vì `SpringLarkBatisSession.conn()` gọi `DataSourceUtils.getConnection(dataSource)`, tự động liên kết với connection đang hoạt động của Spring Transaction Manager. Mọi cơ chế propagation (`REQUIRES_NEW`, `NESTED`), rollback rules và `readOnly = true` đều hoạt động tương tự như khi sử dụng `JdbcTemplate`.
 
-## 4. Cấu hình Properties (Tuỳ chọn)
+## 4. Cấu hình
+
+Khác với `mybatis-spring-boot-starter`, LarkBatis **không dùng** `application.yml` để trỏ đường dẫn file XML hay cấu hình MyBatis. Vì SQL được xử lý triệt để lúc biên dịch, Spring ở runtime hoàn toàn không biết đến sự tồn tại của mapper XML.
+
+### Cấu hình Runtime (`application.yml`)
+Bạn chỉ dùng file này để thiết lập các cờ giám sát runtime:
 
 ```yaml title="application.yml"
 larkbatis:
@@ -95,6 +100,27 @@ larkbatis:
 ```
 
 Xem chi tiết tại [Cấu hình](../features/configuration.md).
+
+### Cấu hình Build-time (XML Mapper)
+Nếu file XML của bạn không nằm ở `src/main/resources` (mặc định), hoặc bạn cần bật các tính năng như `mapUnderscoreToCamelCase`, hãy khai báo trực tiếp vào build plugin:
+
+=== "Gradle (`build.gradle.kts`)"
+    ```kotlin
+    larkbatis {
+        mapperDir = layout.projectDirectory.dir("src/main/resources/mapper") // (1)!
+        mapUnderscoreToCamelCase = true
+    }
+    ```
+
+=== "Maven (`pom.xml`)"
+    ```xml
+    <configuration>
+      <mapperDir>src/main/resources/mapper</mapperDir> <!-- 1 -->
+      <mapUnderscoreToCamelCase>true</mapUnderscoreToCamelCase>
+    </configuration>
+    ```
+
+1. LarkBatis mặc định đã quét `src/main/resources`. Bạn chỉ cần khai báo thuộc tính này nếu để XML ở thư mục khác.
 
 ## Mã nguồn Spring Configuration được sinh ra
 
@@ -124,5 +150,5 @@ public class LarkBatisMapperConfiguration {
 
 Phương thức `@Bean AccountMapper accountMapper(LarkBatisSession s)` có kiểu trả về tĩnh rõ ràng. Spring AOT phân tích và đăng ký bean trực tiếp mà không cần cấu hình reflection metadata hay JDK dynamic proxy hints.
 
-Đọc tiếp: [Tích hợp Spring chi tiết](../usage/spring.md).
+Đọc tiếp: [Tích hợp Spring chi tiết](spring.md).
 
